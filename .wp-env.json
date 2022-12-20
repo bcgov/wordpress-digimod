@@ -1,0 +1,9 @@
+{
+	"core": null,
+	"plugins": [
+		"./multiple-blocks-plugin" 
+	],
+	"themes": [
+		"./wordpress-v2-theme"
+	]
+}

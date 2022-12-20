@@ -1,0 +1,10 @@
+{
+	"version": 2,
+	"patterns": ["test-pattern"],
+	"settings": {
+		"layout": {
+			"contentSize": "840px",
+			"wideSize": "1100px"
+		}
+	}
+}
