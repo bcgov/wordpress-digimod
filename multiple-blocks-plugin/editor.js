@@ -13,9 +13,7 @@ function update(){
     const url_string = window.location.href;
     var url = new URL(url_string);
     var id = url.searchParams.get("post");
-
-    console.log('id: ', id, window.location);
-    $('.edit-post-header__settings').prepend(`<button onclick="window.open(\'http://localhost:3000/wordpress-preview/${id}\','_blank');" type="button" class="components-button editor-post-switch-to-draft is-tertiary">Preview on digital.gov.bc</button>`);
+    $('.edit-post-header__settings').prepend(`<button onclick="window.open(\'https://digital-gov-frontend-test-c0cce6-test.apps.silver.devops.gov.bc.ca/wordpress-preview/${id}\','_blank');" type="button" class="components-button editor-post-switch-to-draft is-tertiary">Preview on digital.gov.bc.ca</button>`);
 }
 update();
 // console.log('update func: ', update);
