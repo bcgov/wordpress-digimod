@@ -82,3 +82,12 @@ add_action('init', function() {
 	remove_theme_support('core-block-patterns');
 });
 
+
+// allow aria-label on tags
+// $allowed_html = array(
+// 	'ul' => array(
+// 	'aria-label' => array()
+// 	)
+// );
+
+// wp_kses_allowed_html('page',$allowed_html);

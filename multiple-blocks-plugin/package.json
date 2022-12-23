@@ -5,7 +5,9 @@
     "author": "The WordPress Contributors",
     "license": "GPL-2.0-or-later",
     "main": "build/index.js",
-    "scripts": {"build:dm-annotate": "wp-scripts build --webpack-src-dir=blocks/dm-annotate/src/ --output-path=blocks/dm-annotate/build/",
+    "scripts": {
+      "build:dm-annotate": "wp-scripts build --webpack-src-dir=blocks/dm-annotate/src/ --output-path=blocks/dm-annotate/build/",
+      "build:custom": "wp-scripts build assets/js/block_extensions.js --output-path=dist",
 		"build": "wp-scripts build",
   "format": "wp-scripts format",
   "lint:css": "wp-scripts lint-style",

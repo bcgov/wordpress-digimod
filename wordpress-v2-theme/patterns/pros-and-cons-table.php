@@ -12,8 +12,8 @@
         <!-- wp:multiple-blocks-plugin/dm-col-sm-12-md-6 -->
         <div class="col-sm-12 col-md-6">
 
-            <!-- wp:list {"className":"prosList"} -->
-            <ul class="prosList">
+            <!-- wp:list {"className":"prosList", "ariaLabel":"pros list"} -->
+            <ul class="prosList" aria-label="pros list">
             <!-- wp:list-item -->
             <li>Advantage 1</li>
             <!-- /wp:list-item -->
@@ -31,8 +31,8 @@
         <!-- wp:multiple-blocks-plugin/dm-col-sm-12-md-6 -->
         <div class="col-sm-12 col-md-6">
 
-            <!-- wp:list {"className":"consList"} -->
-            <ul class="consList">
+            <!-- wp:list {"className":"consList" , "ariaLabel":"cons list"} -->
+            <ul class="consList"  aria-label="cons list">
             <!-- wp:list-item -->
             <li>Disadvantage 1</li>
             <!-- /wp:list-item -->
