@@ -4,12 +4,20 @@ import fs from "fs";
 import {execSync} from 'child_process'
 
 let prototypes = [
+  `<!-- wp:multiple-blocks-plugin/content-banner {"className":"cc", "content":"cc"} -->
+  <div dm-type="rich-text" dm-name="content"> cc </div>
+  <!-- /wp:multiple-blocks-plugin/h2-heading -->`,
+
+  `<!-- wp:multiple-blocks-plugin/h2-heading {"className":"sc-BeQoi sc-olbas iwFZjo iISgDu heading", "content":"Section Title"} -->
+  <div dm-type="rich-text" dm-name="content"> Section Title </div>
+  <!-- /wp:multiple-blocks-plugin/h2-heading -->`,
+
   // note - this block should have a blank output in the save function - this is just for the editor only
-  `<!-- wp:multiple-blocks-plugin/dm-annotate {"content":"Supports to help you create or improve a digital service."} -->
+  `<!-- wp:multiple-blocks-plugin/annotate {"content":"Supports to help you create or improve a digital service."} -->
   <div class="dmAnnotate">
     <div dm-type="rich-text" dm-name="content"> Supports to help you create or improve a digital service. </div>
   </div>
-  <!-- /wp:multiple-blocks-plugin/dm-annotate -->`,
+  <!-- /wp:multiple-blocks-plugin/annotate -->`,
 
 `<!-- wp:multiple-blocks-plugin/dm-content-banner -->
 <div id="main-content-anchor" class="sc-cCsOjp sc-ciZhAO itMmZS cpyNMI horizontalAlignment bannerCenterText container">

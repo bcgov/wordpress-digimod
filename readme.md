@@ -28,3 +28,18 @@ run `wp-env start` in the root directory to start wordpress development site
 Since blocks are written with JSX, they need to be re-built after each edit:
 
 `wp-scripts build --webpack-src-dir=blocks/dm-accordian/src/ --output-path=blocks/dm-accordian/build/`
+
+## If wordpress crashes because of an error in plugin
+If wordpress crashes because of an error in plugin, we need to change the volume contents.
+
+Login to pod with
+
+`kubectl exec --stdin --tty POD-NAME -- /bin/bash`
+
+navigate to `wp-content/plugins/`
+
+Use `vi` or other editor to change the file(s).
+
+Save and quit the editor.
+
+Wordpress should be working now.

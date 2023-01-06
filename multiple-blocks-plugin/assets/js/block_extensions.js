@@ -1,5 +1,7 @@
 // ------------
 // Allow application of custom html attributes to various blocks, ex aria-label for list elements
+// To build run: 
+// wp-scripts build --webpack-src-dir=assets/js --output-path=dist
 // ------------
 
 // import assign from 'lodash.assign';
@@ -81,3 +83,15 @@ addFilter(
 	'editorskit/applyExtraClass',
 	applyExtraClass
 );
+
+/* ARIA-LABEL FIX END */
+
+/* Add custom classes to core blocks, so that blocks such as headers are styled correctly */
+
+// wp.domReady( () => {
+//     wp.blocks.registerBlockStyle( 'core/list', {
+//       name: 'custom-list-style',
+//       label: 'Custom list style',
+//       isDefault: true
+//     } );
+//   } );
