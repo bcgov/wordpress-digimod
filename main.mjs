@@ -4,6 +4,14 @@ import fs from "fs";
 import {execSync} from 'child_process'
 
 let prototypes = [
+  `<!-- wp:multiple-blocks-plugin/four-columns-text {"className":"cc", "content":"cc"} -->
+  <div dm-type="rich-text" dm-name="content"> cc </div>
+  <!-- /wp:multiple-blocks-plugin/four-columns-text -->`,
+
+   `<!-- wp:multiple-blocks-plugin/dm-col-sm-12-md-3-text {"className":"cc", "content":"cc"} -->
+  <div dm-type="rich-text" dm-name="content"> cc </div>
+  <!-- /wp:multiple-blocks-plugin/dm-col-sm-12-md-3-text -->`,
+
   `<!-- wp:multiple-blocks-plugin/content-banner {"className":"cc", "content":"cc"} -->
   <div dm-type="rich-text" dm-name="content"> cc </div>
   <!-- /wp:multiple-blocks-plugin/h2-heading -->`,
@@ -905,7 +913,11 @@ let pluginPHP = `<?php
 function create_block_multiple_blocks_plugin_block_init() {
   `+forPluginPHP+`
 }
-add_action( 'init', 'create_block_multiple_blocks_plugin_block_init' );`
+add_action( 'init', 'create_block_multiple_blocks_plugin_block_init' );
+
+require('custom.php');
+
+?>`
 
 // write plugin php
 

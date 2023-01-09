@@ -297,3 +297,9 @@ Text Domain:
     font-size: 37.32px;
     font-weight: 700;
 }
+
+/* EDITOR OVERRIDES */
+/* hide default "page title" entry box */
+.edit-post-visual-editor__post-title-wrapper{
+    display:none;
+}

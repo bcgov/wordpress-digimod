@@ -29,6 +29,10 @@ Since blocks are written with JSX, they need to be re-built after each edit:
 
 `wp-scripts build --webpack-src-dir=blocks/dm-accordian/src/ --output-path=blocks/dm-accordian/build/`
 
+## building Gutenberg javascript extension
+
+`wp-scripts build assets/js/block_extensions.js --output-path=dist`
+
 ## If wordpress crashes because of an error in plugin
 If wordpress crashes because of an error in plugin, we need to change the volume contents.
 

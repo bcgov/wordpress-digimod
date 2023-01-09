@@ -19,13 +19,20 @@ import { __ } from '@wordpress/i18n';
     const onChange_bannerTitle = ( newContent ) => {
       setAttributes( { bannerTitle: newContent } );
     };
-    const MY_TEMPLATE = [
-      [ 'core/image', {} ]
-    ];
 
+    const MY_TEMPLATE = [
+      // [ 'core/image', {} ]
+      // [ 'core/image', {} ],
+      ['multiple-blocks-plugin/dm-col-sm-12-md-3-text', {}],
+      ['multiple-blocks-plugin/dm-col-sm-12-md-3-text', {}],
+      ['multiple-blocks-plugin/dm-col-sm-12-md-3-text', {}],
+      ['multiple-blocks-plugin/dm-col-sm-12-md-3-text', {}]
+  ];
+    
     return (
-<div class="col-sm-12 col-md-6">
-  <InnerBlocks template={ MY_TEMPLATE } templateLock="all"></InnerBlocks>
+<div class="row">
+<InnerBlocks template={ MY_TEMPLATE } templateLock="all" />
 </div>
+
 	);
   }

@@ -88,10 +88,31 @@ addFilter(
 
 /* Add custom classes to core blocks, so that blocks such as headers are styled correctly */
 
-// wp.domReady( () => {
-//     wp.blocks.registerBlockStyle( 'core/list', {
-//       name: 'custom-list-style',
-//       label: 'Custom list style',
-//       isDefault: true
-//     } );
-//   } );
+wp.domReady( () => {
+    wp.blocks.registerBlockStyle( 'core/post-title', {
+      name: '_ sc-cOFTSb bGhVVJ',
+      label: 'Digimod Page Title',
+    //   isDefault: true
+    } );
+    // wp.blocks.unregisterBlockStyle( 'core/post-title', 'default' );
+  } );
+
+// function addListBlockClassName( settings, name ) {
+//     if ( name == 'core/post-title' ) {
+//         console.log("POST_TITLE SETTINGS: ", settings)
+//         return settings;
+//     }
+
+//     // return lodash.assign( {}, settings, {
+//     //     supports: lodash.assign( {}, settings.supports, {
+//     //         className: true,
+//     //     } ),
+//     // } );
+//     return settings;
+// }
+
+// wp.hooks.addFilter(
+//     'blocks.registerBlockType',
+//     'multiple-blocks-plugin/override-settings',
+//     addListBlockClassName
+// );

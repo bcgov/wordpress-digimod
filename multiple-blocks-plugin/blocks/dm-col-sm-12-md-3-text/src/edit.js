@@ -19,12 +19,15 @@ import { __ } from '@wordpress/i18n';
     const onChange_bannerTitle = ( newContent ) => {
       setAttributes( { bannerTitle: newContent } );
     };
+    
     const MY_TEMPLATE = [
-      [ 'core/image', {} ]
-    ];
+      // [ 'core/image', {} ]
+      // [ 'core/image', {} ],
+      ['core/paragraph', {}]
+  ];
 
     return (
-<div class="col-sm-12 col-md-6">
+<div class="col-sm-12 col-md-3">
   <InnerBlocks template={ MY_TEMPLATE } templateLock="all"></InnerBlocks>
 </div>
 	);
