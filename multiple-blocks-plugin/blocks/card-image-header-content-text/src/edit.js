@@ -21,7 +21,7 @@ import { __ } from '@wordpress/i18n';
     };
     
     return (
-<div class="sc-bWXABl gFRdeg cardHorizontalText">
+<div class="card-with-image-header-content-text">
 <InnerBlocks></InnerBlocks>
 </div>
 	);

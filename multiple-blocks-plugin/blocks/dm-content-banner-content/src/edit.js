@@ -29,7 +29,7 @@ import { __ } from '@wordpress/i18n';
   <div class="sc-jOhDuK jXeQNE sideImageText">
     
     <InnerBlocks template={ MY_TEMPLATE } templateLock="all"></InnerBlocks>
-    <RichText className="sc-eKBdFk hhA-dJm subTitle"
+    <RichText className="content-banner-short-text"
       tagName="div"
       value={ attributes.content }
       allowedFormats={ [  ] }

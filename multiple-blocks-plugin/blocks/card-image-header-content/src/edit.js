@@ -22,7 +22,7 @@ import { __ } from '@wordpress/i18n';
     
     return (
 <div class="row">
-  <div class="sc-fvNpTx fXvxkj cardHorizontal">
+  <div class="card-with-image-header-content">
     <InnerBlocks></InnerBlocks>
   </div>
 </div>

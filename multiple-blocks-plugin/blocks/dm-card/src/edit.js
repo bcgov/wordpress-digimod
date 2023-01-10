@@ -21,7 +21,7 @@ import { __ } from '@wordpress/i18n';
     };
     
     return (
-<div class="ant-card ant-card-bordered sc-jQHtVU bGtrCL cardRound">
+<div class="ant-card ant-card-bordered dm-card">
   <div class="ant-card-body">
     <div class="cardText">
       <div>

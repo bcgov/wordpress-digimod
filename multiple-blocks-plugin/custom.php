@@ -307,7 +307,7 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
     $template = array(
       array('core/post-title', array(
         'level' => 1,
-        'className' => 'sc-cOFTSb bGhVVJ'
+        'className' => 'h1-heading'
       )));
 
     $post_type_object = get_post_type_object( 'page' );

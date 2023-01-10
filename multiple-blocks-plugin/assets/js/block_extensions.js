@@ -90,7 +90,7 @@ addFilter(
 
 wp.domReady( () => {
     wp.blocks.registerBlockStyle( 'core/post-title', {
-      name: '_ sc-cOFTSb bGhVVJ',
+      name: '_ h1-heading',
       label: 'Digimod Page Title',
     //   isDefault: true
     } );

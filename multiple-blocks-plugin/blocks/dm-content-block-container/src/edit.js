@@ -21,7 +21,7 @@ import { __ } from '@wordpress/i18n';
     };
     
     return (
-<div class="sc-cCsOjp sc-bZnhIo itMmZS fHWvXR horizontalAlignment contentBlockContainer container">
+<div class="content-banner-wrapper contentBlockContainer container">
   <InnerBlocks></InnerBlocks>
 </div>
 	);

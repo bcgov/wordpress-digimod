@@ -21,7 +21,7 @@ import { __ } from '@wordpress/i18n';
     };
     
     return (
-  <RichText className="sc-BeQoi sc-olbas iwFZjo iISgDu heading"
+  <RichText className="h2-heading"
       tagName="h2"
       value={ attributes.content }
       allowedFormats={ [  ] }

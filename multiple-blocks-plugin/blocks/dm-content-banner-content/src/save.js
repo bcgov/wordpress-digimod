@@ -7,7 +7,7 @@ import {RichText, useBlockProps, InnerBlocks } from '@wordpress/block-editor';
   <div class="sc-jOhDuK jXeQNE sideImageText">
     
     <InnerBlocks.Content></InnerBlocks.Content>
-    <RichText.Content className="sc-eKBdFk hhA-dJm subTitle"
+    <RichText.Content className="content-banner-short-text"
     tagName="div"
     value={ props.attributes.content }
   ></RichText.Content>

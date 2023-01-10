@@ -21,7 +21,7 @@ import { __ } from '@wordpress/i18n';
     };
     
     return (
-<div class="sc-grREDI ehcsox cardHorizontalImage">
+<div class="card-with-image-header-content-image">
 <InnerBlocks></InnerBlocks>
 </div>
 	);
