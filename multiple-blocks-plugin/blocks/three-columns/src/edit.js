@@ -19,13 +19,17 @@ import { __ } from '@wordpress/i18n';
     const onChange_bannerTitle = ( newContent ) => {
       setAttributes( { bannerTitle: newContent } );
     };
-    const MY_TEMPLATE = [
-      ['core/paragraph', {}],
-  ];
 
+    const MY_TEMPLATE = [
+      ['multiple-blocks-plugin/dm-col-sm-12-md-4', {}],
+      ['multiple-blocks-plugin/dm-col-sm-12-md-4', {}],
+      ['multiple-blocks-plugin/dm-col-sm-12-md-4', {}]
+  ];
+    
     return (
-<div class="col-sm-12 col-md-4">
-  <InnerBlocks template={ MY_TEMPLATE } templateLock={false}></InnerBlocks>
+<div class="row">
+<InnerBlocks template={ MY_TEMPLATE } templateLock="all" />
 </div>
+
 	);
   }

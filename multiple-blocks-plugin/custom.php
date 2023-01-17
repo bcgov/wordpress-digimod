@@ -194,7 +194,7 @@ function process_deny_ready_to_publish_edit( $allcaps, $caps, $args )
 
 
 /*
- * Whitelist specific Gutenberg blocks (paragraph, heading, image and lists)
+ * Whitelist specific Gutenberg blocks (paragraph, heading, image, lists, etc.)
  *
  */
 add_filter( 'allowed_block_types_all', 'allowed_block_types', 0, 2 );
@@ -208,6 +208,8 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
   // echo (implode ($block_types));
   $ret = array();
   
+  // allow all custom blocks that don't start with "dm-" - these ones are for internal use (construction of other blocks)
+  // also filter out card-image blocks - these are for internal use too
   foreach ($block_types as &$value) {
     // echo(' item: ');
     // echo($value->name);
@@ -225,6 +227,9 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
   array_push($ret, 'core/list');
   array_push($ret, 'core/list-item');
   array_push($ret, 'core/post-title');
+  // array_push($ret, 'core/column');
+  // array_push($ret, 'core/columns');
+  array_push($ret, 'core/image');
 
 	return $ret;
 }

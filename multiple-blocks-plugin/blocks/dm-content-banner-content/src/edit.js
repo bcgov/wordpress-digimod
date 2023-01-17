@@ -26,8 +26,7 @@ import { __ } from '@wordpress/i18n';
 
     return (
 <div class="col-sm-12 col-md-6">
-  <div class="sc-jOhDuK jXeQNE sideImageText">
-    
+  <div>
     <InnerBlocks template={ MY_TEMPLATE } templateLock="all"></InnerBlocks>
     <RichText className="content-banner-short-text"
       tagName="div"

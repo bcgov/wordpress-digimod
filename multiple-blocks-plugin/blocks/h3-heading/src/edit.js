@@ -19,13 +19,14 @@ import { __ } from '@wordpress/i18n';
     const onChange_bannerTitle = ( newContent ) => {
       setAttributes( { bannerTitle: newContent } );
     };
-    const MY_TEMPLATE = [
-      ['core/paragraph', {}],
-  ];
-
+    
     return (
-<div class="col-sm-12 col-md-4">
-  <InnerBlocks template={ MY_TEMPLATE } templateLock={false}></InnerBlocks>
-</div>
-	);
+  <RichText className="h3-heading"
+      tagName="h3"
+      value={ attributes.content }
+      allowedFormats={ [  ] }
+      onChange={ onChange_content }
+      placeholder={ 'Heading...' }
+    ></RichText>
+  	);
   }

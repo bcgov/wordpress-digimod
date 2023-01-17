@@ -5,8 +5,10 @@
 // ------------
 
 // import assign from 'lodash.assign';
+import { createHigherOrderComponent } from '@wordpress/compose';
 const { addFilter } = wp.hooks;
 const { __ } = wp.i18n;
+
 
 // Enable spacing control on the following blocks
 const enableSpacingControlOnBlocks = [
@@ -115,4 +117,72 @@ wp.domReady( () => {
 //     'blocks.registerBlockType',
 //     'multiple-blocks-plugin/override-settings',
 //     addListBlockClassName
+// );
+
+
+/* ADD CUSTOM CLASSES TO DEFAULT BLOCKS */
+// const ALLOWED_BLOCKS = [ 'core/columns' ];
+// const addClassNameInEditor = createHigherOrderComponent((BlockEdit) => {
+//     return (props) => {
+//         const { name, attributes } = props;
+        
+//         console.log('A: ', name)
+//         // return early from the block modification
+//         if (! ALLOWED_BLOCKS.includes(name)) {
+//             return <BlockEdit {...props} />;
+//         }
+//         console.log('C: ', name)
+//         const {
+//             className,
+//             hasBackgroundPattern,
+//             backgroundPatternShape,
+//             backgroundPatternColor
+//         } = attributes;
+
+//         // if ( ! hasBackgroundPattern ) {
+//         //     return <BlockEdit {...props} />;
+//         // }
+
+//         // const backgroundPatternColorClassName = `has-${backgroundPatternColor}-background-pattern-color`;
+//         // const backgroundPatternShapeClassName = `has-${backgroundPatternShape}-background-pattern-shape`;
+//         return <BlockEdit {...props} className={`row`} />;
+//         // return <BlockEdit {...props} className={`${className || ''} ayooo`} />;
+//     };
+// }, 'addClassNameInEditor');
+
+// addFilter(
+//     'editor.BlockListBlock',
+//     'multiple-blocks-plugin/addClassNameInEditor',
+//     addClassNameInEditor,
+// );
+
+// function saveSpacingAttributes(props, block, attributes) {
+
+//     // return early from the block modification
+//     if (! ALLOWED_BLOCKS.includes(block.name)) {
+//         return props;
+//     }
+
+//     const {
+//         className,
+//         hasBackgroundPattern,
+//         backgroundPatternShape,
+//         backgroundPatternColor
+//     } = attributes;
+
+//     // if ( ! hasBackgroundPattern ) {
+//     //     return props;
+//     // }
+
+//     // const backgroundPatternColorClassName = `has-${backgroundPatternColor}-background-pattern-color`;
+//     // const backgroundPatternShapeClassName = `has-${backgroundPatternShape}-background-pattern-shape`;
+//     console.log('save apply: ', block.name);
+//     // return {...props, className: `${className || ''} has-background-pattern ${backgroundPatternColorClassName} ${backgroundPatternShapeClassName}`};
+//     return {...props, className: `row`};
+// }
+
+// addFilter(
+//     'blocks.getSaveContent.extraProps',
+//     'namespace/backgroundPatterns/saveSpacingAttributes',
+//     saveSpacingAttributes,
 // );

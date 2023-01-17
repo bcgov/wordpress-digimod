@@ -19,10 +19,14 @@ import { __ } from '@wordpress/i18n';
     const onChange_bannerTitle = ( newContent ) => {
       setAttributes( { bannerTitle: newContent } );
     };
+
+    const MY_TEMPLATE = [
+      ['core/paragraph', {}],
+  ];
     
     return (
 <div class="col-sm-12 col-md-6">
-  <InnerBlocks></InnerBlocks>
+  <InnerBlocks template={ MY_TEMPLATE } templateLock={false}></InnerBlocks>
 </div>
 	);
   }
