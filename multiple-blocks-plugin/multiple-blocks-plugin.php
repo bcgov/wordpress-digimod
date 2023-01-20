@@ -38,7 +38,9 @@ register_block_type( __DIR__ . '/blocks/dm-card/build' );
 register_block_type( __DIR__ . '/blocks/card-image-header-content/build' );
 register_block_type( __DIR__ . '/blocks/card-image-header-content-image/build' );
 register_block_type( __DIR__ . '/blocks/card-image-header-content-text/build' );
-
+register_block_type( __DIR__ . '/blocks/dm-pros-list/build' );
+register_block_type( __DIR__ . '/blocks/dm-cons-list/build' );
+register_block_type( __DIR__ . '/blocks/pros-and-cons/build' );
 }
 add_action( 'init', 'create_block_multiple_blocks_plugin_block_init' );
 
