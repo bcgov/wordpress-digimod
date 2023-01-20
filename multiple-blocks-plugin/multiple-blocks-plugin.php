@@ -22,6 +22,7 @@ register_block_type( __DIR__ . '/blocks/dm-col-sm-12-md-3-text/build' );
 register_block_type( __DIR__ . '/blocks/h2-heading/build' );
 register_block_type( __DIR__ . '/blocks/h3-heading/build' );
 register_block_type( __DIR__ . '/blocks/annotate/build' );
+register_block_type( __DIR__ . '/blocks/accordian/build' );
 register_block_type( __DIR__ . '/blocks/dm-content-banner/build' );
 register_block_type( __DIR__ . '/blocks/dm-content-banner-content/build' );
 register_block_type( __DIR__ . '/blocks/dm-content-banner-image/build' );

@@ -5,20 +5,21 @@
     "author": "The WordPress Contributors",
     "license": "GPL-2.0-or-later",
     "main": "build/index.js",
-    "scripts": {"build:four-columns-text": "wp-scripts build --webpack-src-dir=blocks/four-columns-text/src/ --output-path=blocks/four-columns-text/build/",
-		"build": "wp-scripts build",
-  "format": "wp-scripts format",
-  "lint:css": "wp-scripts lint-style",
-  "lint:js": "wp-scripts lint-js",
-  "packages-update": "wp-scripts packages-update",
-  "plugin-zip": "wp-scripts plugin-zip",
-  "start": "wp-scripts start"
-  },
-  "devDependencies": {
-  "@wordpress/scripts": "^24.4.0"
-  },
-  "dependencies": {
-  "npm": "^8.19.3"
-  }
-  }
-  
+    "scripts": {
+        "build:four-columns-text": "wp-scripts build --webpack-src-dir=blocks/four-columns-text/src/ --output-path=blocks/four-columns-text/build/",
+        "build:accordian": "wp-scripts build --webpack-src-dir=blocks/accordian/src/ --output-path=blocks/accordian/build/",
+        "build": "wp-scripts build",
+        "format": "wp-scripts format",
+        "lint:css": "wp-scripts lint-style",
+        "lint:js": "wp-scripts lint-js",
+        "packages-update": "wp-scripts packages-update",
+        "plugin-zip": "wp-scripts plugin-zip",
+        "start": "wp-scripts start"
+    },
+    "devDependencies": {
+        "@wordpress/scripts": "^24.4.0"
+    },
+    "dependencies": {
+        "npm": "^8.19.3"
+    }
+}

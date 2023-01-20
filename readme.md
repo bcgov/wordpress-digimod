@@ -27,7 +27,7 @@ run `wp-env start` in the root directory to start wordpress development site
 ## making changes to an existing block
 Since blocks are written with JSX, they need to be re-built after each edit:
 
-`wp-scripts build --webpack-src-dir=blocks/dm-accordian/src/ --output-path=blocks/dm-accordian/build/`
+`wp-scripts build --webpack-src-dir=blocks/accordian/src/ --output-path=blocks/accordian/build/`
 
 ## building Gutenberg javascript extension
 
