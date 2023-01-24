@@ -14,6 +14,9 @@
  */
 
 function create_block_multiple_blocks_plugin_block_init(){
+// register_block_type( __DIR__ . '/blocks/template-custom-field/build' );
+include(  __DIR__ . '/blocks/template-custom-field/src/index.php');
+
 register_block_type( __DIR__ . '/blocks/content-banner/build' );
 register_block_type( __DIR__ . '/blocks/four-columns-text/build' );
 register_block_type( __DIR__ . '/blocks/two-columns/build' );
@@ -41,6 +44,8 @@ register_block_type( __DIR__ . '/blocks/card-image-header-content-text/build' );
 register_block_type( __DIR__ . '/blocks/dm-pros-list/build' );
 register_block_type( __DIR__ . '/blocks/dm-cons-list/build' );
 register_block_type( __DIR__ . '/blocks/pros-and-cons/build' );
+
+
 }
 add_action( 'init', 'create_block_multiple_blocks_plugin_block_init' );
 

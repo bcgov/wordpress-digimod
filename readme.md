@@ -42,8 +42,4 @@ Login to pod with
 
 navigate to `wp-content/plugins/`
 
-Use `vi` or other editor to change the file(s).
-
-Save and quit the editor.
-
-Wordpress should be working now.
+rename crashing plugin from "plugin" to "plugin.disabled"

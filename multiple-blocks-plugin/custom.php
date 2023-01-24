@@ -240,71 +240,72 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
 * Creating a function to create our CPT
 */
   
-// function custom_post_type() {
+function custom_post_type() {
   
-//   // Set UI labels for Custom Post Type
-//       $labels = array(
-//           'name'                => _x( 'Digimod Page', 'Post Type General Name', 'twentytwentyone' ),
-//           'singular_name'       => _x( 'Digimod Page', 'Post Type Singular Name', 'twentytwentyone' ),
-//           'menu_name'           => __( 'Digimod Pages', 'twentytwentyone' ),
-//           'parent_item_colon'   => __( 'Parent Digimod Page', 'twentytwentyone' ),
-//           'all_items'           => __( 'All Digimod Pages', 'twentytwentyone' ),
-//           'view_item'           => __( 'View Digimod Page', 'twentytwentyone' ),
-//           'add_new_item'        => __( 'Add New Digimod Page', 'twentytwentyone' ),
-//           'add_new'             => __( 'Add New', 'twentytwentyone' ),
-//           'edit_item'           => __( 'Edit Digimod Page', 'twentytwentyone' ),
-//           'update_item'         => __( 'Update Digimod Page', 'twentytwentyone' ),
-//           'search_items'        => __( 'Search Digimod Page', 'twentytwentyone' ),
-//           'not_found'           => __( 'Not Found', 'twentytwentyone' ),
-//           'not_found_in_trash'  => __( 'Not found in Trash', 'twentytwentyone' ),
-//       );
+  // Set UI labels for Custom Post Type
+      $labels = array(
+          'name'                => _x( 'Common Component Page', 'Post Type General Name', 'twentytwentyone' ),
+          'singular_name'       => _x( 'Common Component Page', 'Post Type Singular Name', 'twentytwentyone' ),
+          'menu_name'           => __( 'Common Components', 'twentytwentyone' ),
+          'parent_item_colon'   => __( 'Parent Common Component Page', 'twentytwentyone' ),
+          'all_items'           => __( 'All Common Component Pages', 'twentytwentyone' ),
+          'view_item'           => __( 'View Common Component Page', 'twentytwentyone' ),
+          'add_new_item'        => __( 'Add New Common Component Page', 'twentytwentyone' ),
+          'add_new'             => __( 'Add New', 'twentytwentyone' ),
+          'edit_item'           => __( 'Edit Common Component Page', 'twentytwentyone' ),
+          'update_item'         => __( 'Update Common Component Page', 'twentytwentyone' ),
+          'search_items'        => __( 'Search Common Component Page', 'twentytwentyone' ),
+          'not_found'           => __( 'Not Found', 'twentytwentyone' ),
+          'not_found_in_trash'  => __( 'Not found in Trash', 'twentytwentyone' ),
+      );
         
-//   // Set other options for Custom Post Type
+  // Set other options for Custom Post Type
         
-//       $args = array(
-//           'label'               => __( 'digimod-pages', 'twentytwentyone' ),
-//           'description'         => __( 'Regular digimod pages', 'twentytwentyone' ),
-//           'labels'              => $labels,
-//           // Features this CPT supports in Post Editor
-//           // 'supports'            => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'comments', 'revisions', 'custom-fields', ),
-//           // You can associate this CPT with a taxonomy or custom taxonomy. 
-//           // 'taxonomies'          => array( 'genres' ),
-//           /* A hierarchical CPT is like Pages and can have
-//           * Parent and child items. A non-hierarchical CPT
-//           * is like Posts.
-//           */
-//           'hierarchical'        => true,
-//           'public'              => true,
-//           'show_ui'             => true,
-//           'show_in_menu'        => true,
-//           'show_in_nav_menus'   => true,
-//           'show_in_admin_bar'   => true,
-//           'menu_position'       => 5,
-//           'can_export'          => true,
-//           'has_archive'         => true,
-//           'exclude_from_search' => false,
-//           'publicly_queryable'  => true,
-//           'capability_type'     => 'page',
-//           'show_in_rest' => true,
-//           'template' => array(
-//             array('core/post-title', array(
-//               'level' => 1,
-//               'className' => 'sc-cOFTSb bGhVVJ'
-//             ))
-//           )
-//       );
+      $args = array(
+          'label'               => __( 'common-components', 'twentytwentyone' ),
+          'description'         => __( 'Regular common component pages', 'twentytwentyone' ),
+          'labels'              => $labels,
+          // Features this CPT supports in Post Editor
+          'supports'            => array( 'custom-fields'),
+          // 'supports'            => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'comments', 'revisions', 'custom-fields', ),
+          // You can associate this CPT with a taxonomy or custom taxonomy. 
+          // 'taxonomies'          => array( 'genres' ),
+          /* A hierarchical CPT is like Pages and can have
+          * Parent and child items. A non-hierarchical CPT
+          * is like Posts.
+          */
+          'hierarchical'        => true,
+          'public'              => true,
+          'show_ui'             => true,
+          'show_in_menu'        => true,
+          'show_in_nav_menus'   => true,
+          'show_in_admin_bar'   => true,
+          'menu_position'       => 5,
+          'can_export'          => true,
+          'has_archive'         => true,
+          'exclude_from_search' => false,
+          'publicly_queryable'  => true,
+          'capability_type'     => 'page',
+          'show_in_rest' => true,
+          // 'template' => array(
+          //   array('core/post-title', array(
+          //     'level' => 1,
+          //     'className' => 'sc-cOFTSb bGhVVJ'
+          //   ))
+          // )
+      );
         
-//       // Registering your Custom Post Type
-//       register_post_type( 'digimod-page', $args );
+      // Registering your Custom Post Type
+      register_post_type( 'common-component', $args );
     
-//   }
+  }
     
-//   /* Hook into the 'init' action so that the function
-//   * Containing our post type registration is not 
-//   * unnecessarily executed. 
-//   */
+  /* Hook into the 'init' action so that the function
+  * Containing our post type registration is not 
+  * unnecessarily executed. 
+  */
     
-//   add_action( 'init', 'custom_post_type', 0 );
+  add_action( 'init', 'custom_post_type', 0 );
 
   /* ADD DEFAULT TEMPLATE TO PAGE TYPE */
 
