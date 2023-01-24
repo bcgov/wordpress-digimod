@@ -8,6 +8,9 @@
     "scripts": {
         "build:four-columns-text": "wp-scripts build --webpack-src-dir=blocks/four-columns-text/src/ --output-path=blocks/four-columns-text/build/",
         "build:accordian": "wp-scripts build --webpack-src-dir=blocks/accordian/src/ --output-path=blocks/accordian/build/",
+        "build:embed-youtube": "wp-scripts build --webpack-src-dir=blocks/embed-youtube/src/ --output-path=blocks/embed-youtube/build/",
+        "build:two-tabs": "wp-scripts build --webpack-src-dir=blocks/two-tabs/src/ --output-path=blocks/two-tabs/build/",
+
         "build": "wp-scripts build",
         "format": "wp-scripts format",
         "lint:css": "wp-scripts lint-style",
