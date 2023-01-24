@@ -224,6 +224,9 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
   }
 
   array_push($ret, 'core/paragraph');
+  array_push($ret, 'core/video');
+  array_push($ret, 'core/embed');
+  array_push($ret, 'core/cover');
   array_push($ret, 'core/list');
   array_push($ret, 'core/list-item');
   array_push($ret, 'core/post-title');
