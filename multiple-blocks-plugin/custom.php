@@ -3,10 +3,12 @@
 // add custom javascript
 function myguten_enqueue() {
   
-  wp_enqueue_script(
-    'jq',
-    plugins_url( 'jquery-3.6.2.min.js', __FILE__ )
-  );
+  // todo: this conflicts with ACF - probably includes it's own jq, so not needed if acf is defined
+  // wp_enqueue_script(
+  //   'jq',
+  //   plugins_url( 'jquery-3.6.2.min.js', __FILE__ )
+  // );
+
   wp_enqueue_script(
     'myguten-script',
     plugins_url( 'editor.js', __FILE__ )
@@ -324,4 +326,21 @@ function custom_post_type() {
   }
   add_action( 'init', 'set_page_template',20 );
 
-  ?>
+
+/* OVERRIDE YOUTUBE EMBED TO GENERATE DESIRED HTML OUTPUT */
+
+
+
+function function_to_core_gallery($block_attributes, $content, $block){
+  return sprintf('<div react-component="ReactPlayer" url="%1$s"></div>',$block_attributes['url']);
+}
+
+add_filter( 'register_block_type_args', 'update_core_gallery', 10, 2 ); 
+function update_core_gallery( $args, $name ) {
+   if ( $name == 'core/embed' )
+      $args['render_callback'] = 'function_to_core_gallery';
+
+  return $args;
+} 
+
+?>

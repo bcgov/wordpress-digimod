@@ -3,7 +3,7 @@
   "apiVersion": 2,
   "name": "multiple-blocks-plugin/template-custom-field",
   "version": "0.1.0",
-  "title": "template custom field",
+  "title": "Template Raw custom field",
   "category": "widgets",
   "icon": "smiley",
   "description": "Example block scaffolded with Create Block tool.",

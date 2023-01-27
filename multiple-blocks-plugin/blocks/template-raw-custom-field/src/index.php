@@ -14,21 +14,28 @@
  *
  * @return string Returns the custom field
  */
-function render_block_custom_field( $attributes, $content, $block ) {
-	if ( ! isset( $block->context['postId'] ) ) {
-		return '';
-	}
+function render_block_template_custom_field( $attributes, $content, $block ) {
+	// echo('php running');
 
-	$post_ID = $block->context['postId'];
-    $test = get_post_meta( get_the_ID(), 'test', true );
-    if( empty( $test ) ) {
-		return $content;
-	}
+	// if ( ! isset( $block->context['postId'] ) ) {
+	// 	echo('no id');
+	// 	return '';
+	// }
 
-    echo('php running');
+	// $post_ID = $block->context['postId'];
+    // $test = get_post_meta( 52, 'test', true );
+    // if( empty( $test ) ) {
+	// 	return $content;
+	// }
+	// echo ('attrs: ');
+	// echo(implode(array_keys($attributes)));
+	// print_r('attrs:');
+	// print_r($attributes);
+
+    $test = get_field($attributes["content"]);
 
     return sprintf(
-		'<div>%1$s</div>',
+		'%1$s',
 		$test
 	);
 
@@ -61,8 +68,8 @@ function render_block_custom_field( $attributes, $content, $block ) {
 /**
  * Registers the `core/post-title` block on the server.
  */
-function register() {
-    echo('registering..');
+function register_template_custom_field() {
+    // echo('registering..');
 	// register_block_type_from_metadata(
 	// 	__DIR__ . '/template-custom-field',
 	// 	array(
@@ -70,7 +77,7 @@ function register() {
 	// 	)
 	// );
     // automatically load dependencies and version
-    $asset_file = include( plugin_dir_path( __FILE__ ) . 'build/index.asset.php');
+    $asset_file = include( plugin_dir_path( __FILE__ ) . '../build/index.asset.php');
 
     // wp_register_script(
     //     'template-custom-field',
@@ -78,12 +85,12 @@ function register() {
     //     $asset_file['dependencies'],
     //     $asset_file['version']
     // );
-
-    register_block_type( 'multiple-blocks-plugin/template-custom-field', array(
+	
+    register_block_type( plugin_dir_path( __FILE__ ) .'../build', array(
         'api_version' => 2,
-        'editor_script' => 'template-custom-field',
-        'render_callback' => 'render_block_custom_field'
+        // 'editor_script' => 'template-custom-field',
+        'render_callback' => 'render_block_template_custom_field'
     ) );
 
 }
-add_action( 'init', 'register' );
+add_action( 'init', 'register_template_custom_field' );

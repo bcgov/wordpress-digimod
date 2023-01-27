@@ -10,19 +10,20 @@ import { __ } from '@wordpress/i18n';
       setAttributes,
     } = props;
 
-    const blockProps = useBlockProps();
+    // const blockProps = useBlockProps();
 
     const onChange_content = ( newContent ) => {
       setAttributes( { content: newContent } );
     };
     
-    const onChange_bannerTitle = ( newContent ) => {
-      setAttributes( { bannerTitle: newContent } );
-    };
-    
     return (
-  <div>
-    custom field
-  </div>
+      <RichText className="h1-heading"
+      tagName="h1"
+      value={ attributes.content }
+      allowedFormats={ [  ] }
+      onChange={ onChange_content }
+      placeholder={ 'Heading...' }
+    ></RichText>
+
   	);
   }

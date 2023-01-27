@@ -1,9 +1,13 @@
 {
-	"core": null,
+	"core": "WordPress/WordPress#6.1.1",
 	"plugins": [
-		"./multiple-blocks-plugin" 
+		"./multiple-blocks-plugin"
 	],
 	"themes": [
 		"./wordpress-v2-theme"
-	]
+	],
+	"config": {
+		"DISALLOW_FILE_MODS":false,
+		"FS_METHOD":"direct"
+	}
 }

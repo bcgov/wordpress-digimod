@@ -13,12 +13,21 @@
  * @package           create-block
  */
 
+ // TODO: DELETE THIS
+//  add_filter('https_ssl_verify', '__return_false');
+
+require(  __DIR__ . '/blocks/template-raw-custom-field/src/index.php');
+require(  __DIR__ . '/blocks/template-h1-custom-field/src/index.php');
+require(  __DIR__ . '/blocks/template-p-custom-field/src/index.php');
+require(  __DIR__ . '/blocks/template-h3-custom-field/src/index.php');
+require(  __DIR__ . '/blocks/template-conditional-custom-field/src/index.php');
+require(  __DIR__ . '/blocks/template-link-button-custom-field/src/index.php');
+
 function create_block_multiple_blocks_plugin_block_init(){
-// register_block_type( __DIR__ . '/blocks/template-custom-field/build' );
-include(  __DIR__ . '/blocks/template-custom-field/src/index.php');
+
 
 register_block_type( __DIR__ . '/blocks/content-banner/build' );
-register_block_type( __DIR__ . '/blocks/two-tabs/build' );
+// register_block_type( __DIR__ . '/blocks/two-tabs/build' );
 register_block_type( __DIR__ . '/blocks/four-columns-text/build' );
 register_block_type( __DIR__ . '/blocks/two-columns/build' );
 register_block_type( __DIR__ . '/blocks/three-columns/build' );

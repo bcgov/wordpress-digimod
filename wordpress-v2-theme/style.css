@@ -156,16 +156,19 @@ Text Domain:
     margin-left: -8px;
 }
 
-.wp-block-post-content{
+.wp-block-post-content, .edit-site-block-editor__block-list{
 	background-color: rgb(242, 242, 242) !important;
+}
+.edit-site-block-editor__block-list{
+    padding: 0 200px;
+}
+.edit-site-block-editor__block-list .row{
+    margin: 0 !important;
 }
 
 .col-sm-12.col-md-3>.block-editor-inner-blocks, .col-sm-12.col-md-3>.block-editor-inner-blocks>.block-editor-block-list__layout,
 .col-sm-12.col-md-4>.block-editor-inner-blocks, .col-sm-12.col-md-4>.block-editor-inner-blocks>.block-editor-block-list__layout{
 	height:100%;
-}
-.editor-styles-wrapper{
-	background:red !important;
 }
 
 .card-with-image-header-content>.block-editor-inner-blocks{
@@ -310,4 +313,21 @@ Text Domain:
     padding-top: 6px; 
     padding-bottom: 6px; 
     top: 12px;
+}
+
+/* LINK BUTTON */
+.ExternalLinkButton{
+    background-color: rgb(0, 51, 102);
+    border: none;
+    border-radius: 4px;
+    color: white;
+    padding: 12px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 18px;
+    font-family: "BC Sans", "Noto Sans", Verdana, Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
 }

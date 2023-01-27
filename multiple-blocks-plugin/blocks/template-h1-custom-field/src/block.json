@@ -1,9 +1,9 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 2,
-    "name": "multiple-blocks-plugin/template-custom-field",
+    "name": "multiple-blocks-plugin/template-h1-custom-field",
     "version": "0.1.0",
-    "title": "template custom field",
+    "title": "Template H1 custom field",
     "category": "widgets",
     "icon": "smiley",
     "description": "Example block scaffolded with Create Block tool.",
