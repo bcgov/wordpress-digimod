@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "multiple-blocks-plugin/meta-block",
+  "version": "0.1.0",
+  "title": "Meta block",
+  "category": "widgets",
+  "icon": "smiley",
+  "description": "Example block scaffolded with Create Block tool.",
+  "attributes": {
+    "field_name": {
+      "type": "string",
+      "default": ""
+    },
+    "field_value": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "supports": {
+    "html": false
+  },
+  "textdomain": "multiple-blocks-plugin",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

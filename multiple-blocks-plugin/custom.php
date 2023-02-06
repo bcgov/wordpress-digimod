@@ -19,7 +19,7 @@ function myguten_enqueue() {
    wp_enqueue_script(
     'block_extensions',
     esc_url( plugins_url( '/dist/block_extensions.js', __FILE__ ) ),
-    array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor' ),
+    array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor','acf-input' ),
     '1.0.0',
     true // Enqueue the script in the footer.
   );
@@ -343,4 +343,74 @@ function update_core_gallery( $args, $name ) {
   return $args;
 } 
 
+
+/* CUSTOM API ENDPOINTS */
+function ret_tempate( $request_data  ) {
+  $t = get_block_template('wordpress-v2-theme//wp-custom-template-common-component');
+  return rest_ensure_response( array('content'=>$t->content) );
+
+  // return $t->content;
+
+
+  // $ts = get_block_templates();
+  // print_r($ts);
+
+  
+  // $posts = get_posts( array(
+  //   'author' => $data['id'],
+  // ) );
+
+  // if ( empty( $posts ) ) {
+  //   return null;
+  // }
+
+  // return $posts[0]->post_title;
+
+
+
+  // $parameters = $request_data->get_params();
+  // $type = '';
+  // if(!isset( $parameters['type'] ) || empty($parameters['type']) ) {
+  //   $type = 'wp-custom-template-common-component';
+  // }else{
+  //   $type = $parameters['type'];
+  // }
+
+  //   	// if(!isset( $parameters['type'] ) || empty($parameters['type']) ) {
+  //   		// $response = wp_get_theme()->get_page_templates();
+  //   	// } else {
+	// 			$args = array(
+	//         'post_type' => 'page',
+	//         'post_status' => 'publish',
+	//         'meta_query' => array(
+  //           array(
+  //             'key' => '_wp_page_template',
+  //             'value' => $type
+  //           )
+  //       	)
+  //   		);
+	// 			$query = new WP_Query($args);
+	// 			$response = $query->posts;
+  //   	// }
+
+  //     // No static frontpage is set
+  //     if( count($response) < 1 ) {
+  //       return new WP_Error( 'wpse-error',
+  //         esc_html__( 'No templates found', 'wpse' ),
+  //         [ 'status' => 404 ] );
+  //     }
+
+  //     // Return the response
+  //     return $response;
+}
+
+add_action( 'rest_api_init', function () {
+  register_rest_route( 'multiple-blocks-plugin/v1', '/author/(?P<id>\d+)', array(
+    'methods' => 'GET',
+    'callback' => 'ret_tempate',
+    'permission_callback' => function () {
+      return current_user_can( 'edit_pages' );
+    }
+  ) );
+} );
 ?>

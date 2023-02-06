@@ -8,7 +8,8 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 const { addFilter } = wp.hooks;
 const { __ } = wp.i18n;
-
+import { select, subscribe } from '@wordpress/data'
+import { parse } from '@wordpress/block-serialization-default-parser';
 
 // Enable spacing control on the following blocks
 const enableSpacingControlOnBlocks = [
@@ -187,3 +188,82 @@ wp.domReady( () => {
 //     saveSpacingAttributes,
 // );
 
+// MANUALLY POPULATE EDITOR
+function getTemplate(){
+    console.log('getTemplate()..')
+    return fetch("http://localhost:8888/wp-json/multiple-blocks-plugin/v1/author/1")
+        .then((response) => {
+            return response.json();
+            
+            // Do something with response
+        }).then((jsn)=>{
+            console.log('fetched: ', jsn);
+            return jsn.content;
+        })
+        .catch(function (err) {
+            console.log("Unable to fetch -", err);
+        });
+}
+
+
+function processInnerBlocks(blockItems) {
+    console.log('processInnerBlocks(): ', blockItems);
+
+    return blockItems.map(blockItem => {
+      let innerBlocks = blockItem['innerBlocks'] || [];
+      if (innerBlocks.length) {
+        console.log('recursive..');
+        blockItem['innerBlocks'] = processInnerBlocks(innerBlocks);
+      }
+      return wp.blocks.createBlock(blockItem['blockName'], blockItem['attrs'], blockItem['innerBlocks']);
+    });
+  }
+  
+  
+  
+
+function addBlock(){
+    getTemplate().then((template)=>{
+        // console.log('got template: ', template);
+        let parsed = parse(template);
+        parsed.forEach((blockItem=>{
+            console.log('inserting block: ', blockItem);
+            if (blockItem['blockName']){
+                // let insertedBlock = wp.blocks.createBlock(blockItem['blockName'], blockItem['attrs'], blockItem['innerBlocks']);
+                let insertedBlock = wp.blocks.createBlock(blockItem['blockName'], blockItem['attrs'], processInnerBlocks(blockItem['innerBlocks']));
+
+                // wp.data.dispatch( 'core/block-editor' ).insertBlock(insertedBlock);
+            }
+        }));
+        // console.log('parsed: ', parsed);
+    });
+    
+
+    // // console.log('addBlock()');
+    // let content = "Test content";
+    // let name = 'core/paragraph';
+    // let insertedBlock = wp.blocks.createBlock(name, {
+    //     content: content,
+    // });
+    // // wp.data.dispatch('core/editor').insertBlocks(insertedBlock);
+    // wp.data.dispatch( 'core/block-editor' ).insertBlock(insertedBlock);
+}
+
+
+function whenEditorIsReady() {
+    // console.log('whenEditorIsReady()');
+    return new Promise((resolve) => {
+        const unsubscribe = subscribe(() => {
+            // This will trigger after the initial render blocking, before the window load event
+            // This seems currently more reliable than using __unstableIsEditorReady
+            if (select('core/editor').isCleanNewPost() || select('core/block-editor').getBlockCount() > 0) {
+                unsubscribe()
+                resolve()
+            }
+        })
+    })
+}
+
+whenEditorIsReady().then(() => {
+    addBlock();
+  })
