@@ -19,9 +19,14 @@ import { __ } from '@wordpress/i18n';
     const onChange_bannerTitle = ( newContent ) => {
       setAttributes( { bannerTitle: newContent } );
     };
+
+    let extraClasses='';
+    if(props['attributes']['className']){
+      extraClasses = ' '+props['attributes']['className'];
+    }
     
     return (
-<div class="row">
+<div className={"row"+extraClasses}>
   <InnerBlocks></InnerBlocks>
 </div>
 	);

@@ -271,7 +271,7 @@ function custom_post_type() {
           'description'         => __( 'Regular common component pages', 'twentytwentyone' ),
           'labels'              => $labels,
           // Features this CPT supports in Post Editor
-          'supports'            => array( 'custom-fields'),
+          'supports'            => array( 'title','custom-fields'),
           // 'supports'            => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'comments', 'revisions', 'custom-fields', ),
           // You can associate this CPT with a taxonomy or custom taxonomy. 
           // 'taxonomies'          => array( 'genres' ),
@@ -303,6 +303,63 @@ function custom_post_type() {
       // Registering your Custom Post Type
       register_post_type( 'common-component', $args );
     
+      // COMMUNITY OF PRACTICE
+      // Set UI labels for Custom Post Type
+      $labels_cop = array(
+        'name'                => _x( 'Community of Practice Page', 'Post Type General Name', 'twentytwentyone' ),
+        'singular_name'       => _x( 'Community of Practice', 'Post Type Singular Name', 'twentytwentyone' ),
+        'menu_name'           => __( 'Communities of Practice', 'twentytwentyone' ),
+        'parent_item_colon'   => __( 'Parent Community of Practice Page', 'twentytwentyone' ),
+        'all_items'           => __( 'All Communities of Practice Pages', 'twentytwentyone' ),
+        'view_item'           => __( 'View Community of Practice Page', 'twentytwentyone' ),
+        'add_new_item'        => __( 'Add New Community of Practice Page', 'twentytwentyone' ),
+        'add_new'             => __( 'Add New', 'twentytwentyone' ),
+        'edit_item'           => __( 'Edit Community of Practice Page', 'twentytwentyone' ),
+        'update_item'         => __( 'Update Community of Practice Page', 'twentytwentyone' ),
+        'search_items'        => __( 'Search Community of Practice Page', 'twentytwentyone' ),
+        'not_found'           => __( 'Not Found', 'twentytwentyone' ),
+        'not_found_in_trash'  => __( 'Not found in Trash', 'twentytwentyone' ),
+    );
+      
+// Set other options for Custom Post Type
+      
+    $args_cop = array(
+        'label'               => __( 'cop', 'twentytwentyone' ),
+        'description'         => __( 'Regular community of practice pages', 'twentytwentyone' ),
+        'labels'              => $labels_cop,
+        // Features this CPT supports in Post Editor
+        'supports'            => array( 'title','custom-fields'),
+        // 'supports'            => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'comments', 'revisions', 'custom-fields', ),
+        // You can associate this CPT with a taxonomy or custom taxonomy. 
+        // 'taxonomies'          => array( 'genres' ),
+        /* A hierarchical CPT is like Pages and can have
+        * Parent and child items. A non-hierarchical CPT
+        * is like Posts.
+        */
+        'hierarchical'        => true,
+        'public'              => true,
+        'show_ui'             => true,
+        'show_in_menu'        => true,
+        'show_in_nav_menus'   => true,
+        'show_in_admin_bar'   => true,
+        'menu_position'       => 5,
+        'can_export'          => true,
+        'has_archive'         => true,
+        'exclude_from_search' => false,
+        'publicly_queryable'  => true,
+        'capability_type'     => 'page',
+        'show_in_rest' => true,
+        // 'template' => array(
+        //   array('core/post-title', array(
+        //     'level' => 1,
+        //     'className' => 'sc-cOFTSb bGhVVJ'
+        //   ))
+        // )
+    );
+      
+    // Registering your Custom Post Type
+    register_post_type( 'cop', $args_cop );
+    // flush_rewrite_rules( false );
   }
     
   /* Hook into the 'init' action so that the function
@@ -331,14 +388,104 @@ function custom_post_type() {
 
 
 
-function function_to_core_gallery($block_attributes, $content, $block){
+function override_core_embed($block_attributes, $content, $block){
   return sprintf('<div react-component="ReactPlayer" url="%1$s"></div>',$block_attributes['url']);
 }
 
-add_filter( 'register_block_type_args', 'update_core_gallery', 10, 2 ); 
-function update_core_gallery( $args, $name ) {
+
+
+function override_core_image($block_attributes, $content, $block){
+  // todo: is there a better way of doing this?
+  // unwrap image out of figure tag, add any additional classes to the image class (originally assigned to figure tag)
+  // print_r($block_attributes);
+  $className = '';
+  if (array_key_exists('className',$block_attributes))
+    $className = $block_attributes['className'];
+  $innerHtml = $block->inner_html;
+  
+  // echo(' inner html: '.$innerHtml);
+
+  preg_match_all('/<img[^>]+>/i', $innerHtml, $imgTags);
+  $img = $imgTags[0];
+
+  // echo('img[0]'. $img[0]);
+  preg_match_all('/class="[^"]+"/i', $img[0], $classAttrs);
+
+  if(empty($classAttrs[0])){
+    // echo('NO CLASS');
+    $img = str_replace('<img', sprintf('<img class="%s"',$className), $img[0]);
+  }else{
+
+    $img = preg_replace('/class="[^"]+"/i', sprintf('class="%s"',$className) , $img)[0];
+  }
+
+  // print_r($imgTags);
+  // print_r($block);
+  $img = process_acf_short_codes($img); // in case we have ACF fields in url
+  // echo(' processing img: '. $img);
+  return $img;//sprintf('<div react-component="ReactPlayer" url="%1$s"></div>',$block_attributes['url']);
+}
+
+function process_acf_short_codes($content){
+  // for some reason ACF shortcodes are not working in templates, so parse them out here for raw html block
+  // todo: investigate why it's not working in templates
+  // todo: add this feature to any block content
+
+  // it may have been html encoded, need to process that..
+
+  preg_match_all('/\[acf field="(.*?)"\]/', $content, $matches);
+  $names = $matches[1];
+
+  $replaceWithFunction = function ($name) {
+    $replacing_with = get_field($name);
+    return $replacing_with;
+  };
+
+  $newHtml = preg_replace_callback('/\[acf field=".*?"\]/', function ($matches) use ($names, $replaceWithFunction) {
+      static $i = 0;
+      return $replaceWithFunction($names[$i++]);
+  }, $content);
+
+  // it may have been html encoded, need to process that..
+  
+  preg_match_all('/\[acf field=&quot;(.*?)&quot;\]/', $newHtml, $matches);
+  $names = $matches[1];
+
+  $replaceWithFunction = function ($name) {
+    // echo('replacing: '. $name);
+    $replacing_with = get_field($name);
+    // echo(' with: '.$replacing_with);
+    return $replacing_with;
+  };
+  // echo('$newHtml: '.$newHtml);
+  $newHtml = preg_replace_callback('/\[acf field=&quot;.*?&quot;\]/', function ($matches) use ($names, $replaceWithFunction) {
+    // echo('REPLACE');
+      static $i = 0;
+      return $replaceWithFunction($names[$i++]);
+  }, $newHtml);
+
+
+  return $newHtml;
+}
+
+function override_core_html($block_attributes, $content, $block){
+  // echo('HTML');
+  $r =process_acf_short_codes($content);
+  // echo('r: '.$r);
+  // echo("HTML DONE");
+  return $r;
+}
+
+add_filter( 'register_block_type_args', 'override_core', 10, 2 ); 
+function override_core( $args, $name ) {
    if ( $name == 'core/embed' )
-      $args['render_callback'] = 'function_to_core_gallery';
+      $args['render_callback'] = 'override_core_embed';
+
+    if ( $name == 'core/image' )
+      $args['render_callback'] = 'override_core_image';
+
+    if ( $name == 'core/html' )
+      $args['render_callback'] = 'override_core_html';
 
   return $args;
 } 
@@ -413,4 +560,51 @@ add_action( 'rest_api_init', function () {
     }
   ) );
 } );
+
+
+/* RENDER IMAGES WITHOUT FIGURE TAG */
+
+function imageOnly($deprecated, $attr, $content = null) 
+{
+    echo('image only!');
+    return do_shortcode( $content );
+}
+add_filter( 'img_caption_shortcode', 'imageOnly', 10, 3 );
+
+// Here's some code generated by AI in case more advanced filtering is needed (not tested):
+//
+// What's the code to prevent WordPress from wrapping image tag inside figure tag when using the image block in the gutenberg editor?
+//
+// You can prevent WordPress from wrapping images in a figure tag by using a filter in your theme's functions.php file. Here's an example of the code:
+// add_filter( 'img_caption_shortcode', 'my_img_caption_shortcode_filter', 10, 3 );
+// function my_img_caption_shortcode_filter( $empty, $attr, $content ){
+//   $atts = shortcode_atts( array(
+//       'id'      => '',
+//       'align'   => 'alignnone',
+//       'width'   => '',
+//       'caption' => '',
+//       'class'   => '',
+//   ), $attr, 'caption' );
+
+//   $atts['width'] = (int) $atts['width'];
+
+//   if ( $atts['width'] < 1 || empty( $atts['caption'] ) ) {
+//       return $content;
+//   }
+
+//   if ( ! empty( $atts['id'] ) ) {
+//       $atts['id'] = 'id="' . esc_attr( sanitize_html_class( $atts['id'] ) ) . '" ';
+//   }
+
+//   $class = trim( 'wp-caption ' . $atts['align'] . ' ' . $atts['class'] );
+
+//   if ( current_theme_supports( 'html5', 'caption' ) ) {
+//       return '<figure ' . $atts['id'] . ' class="' . esc_attr( $class ) . '">'
+//       . do_shortcode( $content ) . '<figcaption class="wp-caption-text">' . $atts['caption'] . '</figcaption></figure>';
+//   }
+
+//   return '<div ' . $atts['id'] . ' class="' . esc_attr( $class ) . '">'
+//   . do_shortcode( $content ) . '<p class="wp-caption-text">' . $atts['caption'] . '</p></div>';
+// }
+// This code will remove the wrapping figure tag, while preserving the caption text. You can customize the code to meet your needs.
 ?>

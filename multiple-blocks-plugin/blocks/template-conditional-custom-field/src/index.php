@@ -16,7 +16,26 @@
  */
 function render_block_template_conditional_custom_field( $attributes, $content, $block ) {
 
-    $test = get_field($attributes["content"]);
+    $test = '';
+    $els_or = explode("OR",str_replace(' ', '', $attributes["content"]));
+    
+    if (count($els_or)==0){ // if it's a single string, just get custom field
+        $test = get_field($attributes["content"]);
+    }else{
+        // it's an "OR" expression - parse out
+        $one_set = false;
+        foreach ($els_or as $value) {
+            // print_r(' checking: '. $value);
+            $v = get_field($value);
+            // print_r(' value: '. $v);
+            if ($v){
+                // print_r(' defined');
+                return $content;
+            }
+        }
+        // print_r(' not defined');
+        return;
+    }
     // render if custom field exists
     if ($test){
 	    return $content;
@@ -25,10 +44,29 @@ function render_block_template_conditional_custom_field( $attributes, $content, 
     }
     
 
-    // return sprintf(
-	// 	'%1$s',
-	// 	$test
-	// );
+   // todo: implement some tokenizer to process arbitrary expressions:
+   // something like this:
+
+   // $tokens = token_get_all("<?php {$input}");
+    // $expr = '';
+
+    // foreach($tokens as $token){
+
+    //   if(is_string($token)){
+
+    //     if(in_array($token, array('(', ')', '+', '-', '/', '*'), true))
+    //       $expr .= $token;
+
+    //    continue;   
+    //   }
+
+    //   list($id, $text) = $token;
+
+    //   if(in_array($id, array(T_DNUMBER, T_LNUMBER)))
+    //     $expr .= $text;
+    // }
+
+    // $result = eval("<?php {$expr}");
 
 }
 

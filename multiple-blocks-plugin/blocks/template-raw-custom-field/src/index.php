@@ -33,11 +33,8 @@ function render_block_template_custom_field( $attributes, $content, $block ) {
 	// print_r($attributes);
 
     $test = get_field($attributes["content"]);
+	return $test; 
 
-    return sprintf(
-		'%1$s',
-		$test
-	);
 
 	// $title   = get_the_title();
 

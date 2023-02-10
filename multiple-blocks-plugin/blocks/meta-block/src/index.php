@@ -38,7 +38,7 @@ add_action('init', function () {
  */
 function metablock_handler($post,$callback){
     //No blocks? Return early
-    if( ! has_blocks($post->post_content) ){
+    if(is_null($post) || ! has_blocks($post->post_content) ){
         return;
     }
     $block_name = 'multiple-blocks-plugin/meta-block';

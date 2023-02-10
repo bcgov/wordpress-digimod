@@ -1,0 +1,25 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "multiple-blocks-plugin/template-paragraph-container",
+  "version": "0.1.0",
+  "title": "Template paragraph container",
+  "category": "widgets",
+  "icon": "smiley",
+  "description": "Allows nesting of arbitrary blocks inside paragraph.",
+  "attributes": {
+    "content": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    }
+  },
+  "supports": {
+    "html": false
+  },
+  "textdomain": "multiple-blocks-plugin",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

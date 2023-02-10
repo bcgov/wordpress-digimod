@@ -23,7 +23,7 @@ import { __ } from '@wordpress/i18n';
     return (
       <RichText
       { ...blockProps }
-      tagName="p"
+      tagName="span"
       onChange={ onChange_content }
       value={ attributes.content }
   />

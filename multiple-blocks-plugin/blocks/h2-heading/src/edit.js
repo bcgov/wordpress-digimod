@@ -20,8 +20,13 @@ import { __ } from '@wordpress/i18n';
       setAttributes( { bannerTitle: newContent } );
     };
     
+    let extraClasses='';
+    if(props['attributes']['className']){
+      extraClasses = ' '+props['attributes']['className'];
+    }
+    
     return (
-  <RichText className="h2-heading"
+  <RichText className={"h2-heading"+extraClasses}
       tagName="h2"
       value={ attributes.content }
       allowedFormats={ [  ] }
