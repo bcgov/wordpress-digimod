@@ -27,6 +27,7 @@ require(  __DIR__ . '/blocks/template-paragraph-container/src/index.php');
 require(  __DIR__ . '/blocks/template-image-custom-field/src/index.php');
 require(  __DIR__ . '/blocks/template-badges-custom-field/src/index.php');
 require(  __DIR__ . '/blocks/template-acf-wysiwyg-container/src/index.php');
+require(  __DIR__ . '/blocks/template-badges-editor/src/index.php');
 
 require(  __DIR__ . '/blocks/meta-block/src/index.php');
 
@@ -70,5 +71,6 @@ add_action( 'init', 'create_block_multiple_blocks_plugin_block_init' );
 
 
 require('custom.php');
+// print_r(get_field('tags',58))
 
 ?>

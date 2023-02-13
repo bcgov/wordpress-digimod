@@ -251,7 +251,6 @@ function processInnerBlocks(blockItems) {
         // wrap it in a container
         let container = wp.blocks.createBlock("multiple-blocks-plugin/template-acf-wysiwyg-container", {'field_name':attrs['content']}, [htmlBlock]);
         insertedBlock = container;
-
     }else{
           insertedBlock =  wp.blocks.createBlock(blockItem['blockName'], attrs, blockItem['innerBlocks']);
     }
@@ -300,9 +299,10 @@ function addBlock(){
                     if (!val)
                         val = acf.getFields({name:attrs['content']})[0].val();
 
-                    console.log('getting template-custom-field..', attrs['content'])
-                    console.log('raw contents: ')
-                    console.log(val);
+                    // console.log('getting template-custom-field..', attrs['content'])
+                    // console.log('raw contents: ')
+                    // console.log(val);
+
                     // attrs['content']="raw!";
                     // insertedBlock =  wp.blocks.createBlock("core/paragraph", attrs, blockItem['innerBlocks']);
                     // insert as html, we'll convert it to blocks later..
@@ -311,7 +311,34 @@ function addBlock(){
                     // wrap it in a container
                     let container = wp.blocks.createBlock("multiple-blocks-plugin/template-acf-wysiwyg-container", {'field_name':attrs['content']}, [htmlBlock]);
                     insertedBlock = container;
+                }else if (blockItem['blockName']=="multiple-blocks-plugin/template-badges-custom-field"){
+                    // todo: do this only one way
+                    let val = acf.get(attrs['content']);
+                    let allValues = null;
 
+                    if (!val){
+                        val = acf.getFields({name:attrs['content']})[0].val();
+                        let k = acf.getFields({name:attrs['content']})[0];
+                        allValues = k.$control().find(':checkbox').map(function(){return jQuery(this).val()}).get();
+                    }else{
+                        allValues = acf.get(attrs['content']+"allValues");
+                    }
+                    console.log('checkbox val: ', val)
+
+                    //---
+                    
+                    
+                    // console.log('getting template-custom-field..', attrs['content'])
+                    // console.log('raw contents: ')
+                    // console.log(val);
+
+                    attrs['all_values'] = allValues;
+                    attrs['field_value'] = val;
+                    //---
+
+                    attrs['field_name']=attrs['content'];
+                    // attrs['tag_type']='p';
+                    insertedBlock = wp.blocks.createBlock("multiple-blocks-plugin/template-badges-editor", attrs, innerBlocksResult);
                 }else{
                     insertedBlock = wp.blocks.createBlock(blockItem['blockName'], attrs, innerBlocksResult);
                 }
@@ -398,5 +425,6 @@ function whenEditorIsReady() {
 }
 
 whenEditorIsReady().then(() => {
-    addBlock();
+    if (!wp.data.select("core/edit-site")) // do not fire on full-site editing page
+        addBlock();
   })

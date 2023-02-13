@@ -10,7 +10,6 @@
         "build:accordian": "wp-scripts build --webpack-src-dir=blocks/accordian/src/ --output-path=blocks/accordian/build/",
         "build:embed-youtube": "wp-scripts build --webpack-src-dir=blocks/embed-youtube/src/ --output-path=blocks/embed-youtube/build/",
         "build:two-tabs": "wp-scripts build --webpack-src-dir=blocks/two-tabs/src/ --output-path=blocks/two-tabs/build/",
-
         "build": "wp-scripts build",
         "format": "wp-scripts format",
         "lint:css": "wp-scripts lint-style",
@@ -20,7 +19,7 @@
         "start": "wp-scripts start"
     },
     "devDependencies": {
-        "@wordpress/scripts": "^24.4.0"
+        "@wordpress/scripts": "^25.3.0"
     },
     "dependencies": {
         "npm": "^8.19.3"
