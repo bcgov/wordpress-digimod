@@ -207,15 +207,56 @@ function getTemplate(){
 
 
 function processInnerBlocks(blockItems) {
-    console.log('processInnerBlocks(): ', blockItems);
+    // console.log('processInnerBlocks(): ', blockItems);
 
     return blockItems.map(blockItem => {
       let innerBlocks = blockItem['innerBlocks'] || [];
       if (innerBlocks.length) {
-        console.log('recursive..');
+        // console.log('recursive..');
         blockItem['innerBlocks'] = processInnerBlocks(innerBlocks);
       }
-      return wp.blocks.createBlock(blockItem['blockName'], blockItem['attrs'], blockItem['innerBlocks']);
+      let attrs = blockItem['attrs'];
+      if (!attrs['content'])
+        attrs = {...blockItem['attrs'], 'content':blockItem['innerContent'][0]};
+
+      
+      // swap block into meta block if this block is a template block, so user can edit it and save custom fields from gutenberg
+      console.log('=== checking inner: ', blockItem['blockName'])
+      let insertedBlock = null;
+      if(blockItem['blockName']=="multiple-blocks-plugin/template-h3-custom-field"){
+          attrs['field_name']=attrs['content'];
+          attrs['tag_type']='h3';
+          attrs['class_name']="h3-heading";
+          insertedBlock = wp.blocks.createBlock("multiple-blocks-plugin/meta-block", attrs, blockItem['innerBlocks']);
+      }else if (blockItem['blockName']=="multiple-blocks-plugin/template-p-custom-field"){
+        attrs['field_name']=attrs['content'];
+        attrs['tag_type']='p';
+        insertedBlock = wp.blocks.createBlock("multiple-blocks-plugin/meta-block", attrs, blockItem['innerBlocks']);
+      }else if (blockItem['blockName']=="multiple-blocks-plugin/template-custom-field"){
+        
+        // todo: do this only one way
+        let val = acf.get(attrs['content']);
+        if (!val)
+            val = acf.getFields({name:attrs['content']})[0].val();
+            
+        console.log('getting template-custom-field..', attrs['content'])
+        console.log('raw contents: ')
+        console.log(val);
+        // attrs['content']="raw!";
+
+        // insertedBlock = wp.blocks.createBlock("core/html", {"content":val})
+
+        let htmlBlock = wp.blocks.createBlock("core/html", {"content":val})
+
+        // wrap it in a container
+        let container = wp.blocks.createBlock("multiple-blocks-plugin/template-acf-wysiwyg-container", {'field_name':attrs['content']}, [htmlBlock]);
+        insertedBlock = container;
+
+    }else{
+          insertedBlock =  wp.blocks.createBlock(blockItem['blockName'], attrs, blockItem['innerBlocks']);
+    }
+
+      return insertedBlock;
     });
   }
   
@@ -223,20 +264,112 @@ function processInnerBlocks(blockItems) {
   
 
 function addBlock(){
+    // remove all blocks
+    wp.data.dispatch( 'core/block-editor' ).removeBlocks(wp.data.select( 'core/block-editor' ).getBlocks().map(k=>k.clientId));
+
     getTemplate().then((template)=>{
         // console.log('got template: ', template);
         let parsed = parse(template);
         parsed.forEach((blockItem=>{
-            console.log('inserting block: ', blockItem);
+            // console.log('inserting block: ',blockItem['blockName'], blockItem);
             if (blockItem['blockName']){
-                // let insertedBlock = wp.blocks.createBlock(blockItem['blockName'], blockItem['attrs'], blockItem['innerBlocks']);
-                let insertedBlock = wp.blocks.createBlock(blockItem['blockName'], blockItem['attrs'], processInnerBlocks(blockItem['innerBlocks']));
+                let originalBlockName = blockItem['blockName'];
+                
 
-                // wp.data.dispatch( 'core/block-editor' ).insertBlock(insertedBlock);
+                console.log('== checking block: ', blockItem['blockName']);
+
+                // let insertedBlock = wp.blocks.createBlock(blockItem['blockName'], blockItem['attrs'], blockItem['innerBlocks']);
+                let innerBlocksResult = processInnerBlocks(blockItem['innerBlocks']);
+                // console.log('innerBlocksResult: ', innerBlocksResult);
+
+                let attrs = blockItem['attrs'];
+                if (!attrs['content'])
+                    attrs = {...blockItem['attrs'], 'content':blockItem['innerContent'][0]};
+                // swap block into meta block if this block is a template block, so user can edit it and save custom fields from gutenberg
+                let insertedBlock = null;
+                if(blockItem['blockName']=="multiple-blocks-plugin/template-h3-custom-field"){
+                    attrs['field_name']=attrs['content'];
+                    insertedBlock = wp.blocks.createBlock("multiple-blocks-plugin/meta-block", attrs, innerBlocksResult);
+                }else if (blockItem['blockName']=="multiple-blocks-plugin/template-p-custom-field"){
+                    attrs['field_name']=attrs['content'];
+                    attrs['tag_type']='p';
+                    insertedBlock = wp.blocks.createBlock("multiple-blocks-plugin/meta-block", attrs, innerBlocksResult);
+                }else if (blockItem['blockName']=="multiple-blocks-plugin/template-custom-field"){
+                    // todo: do this only one way
+                    let val = acf.get(attrs['content']);
+                    if (!val)
+                        val = acf.getFields({name:attrs['content']})[0].val();
+
+                    console.log('getting template-custom-field..', attrs['content'])
+                    console.log('raw contents: ')
+                    console.log(val);
+                    // attrs['content']="raw!";
+                    // insertedBlock =  wp.blocks.createBlock("core/paragraph", attrs, blockItem['innerBlocks']);
+                    // insert as html, we'll convert it to blocks later..
+                    let htmlBlock = wp.blocks.createBlock("core/html", {"content":val})
+
+                    // wrap it in a container
+                    let container = wp.blocks.createBlock("multiple-blocks-plugin/template-acf-wysiwyg-container", {'field_name':attrs['content']}, [htmlBlock]);
+                    insertedBlock = container;
+
+                }else{
+                    insertedBlock = wp.blocks.createBlock(blockItem['blockName'], attrs, innerBlocksResult);
+                }
+                
+                console.log('actual insert: ', insertedBlock);
+                if (originalBlockName!="core/html") // do not render html blocks from the template
+                    wp.data.dispatch( 'core/block-editor' ).insertBlock(insertedBlock);
+                // console.log('done insert');
             }
         }));
         // console.log('parsed: ', parsed);
+
+        // convert html blocks into actual blocks (to process ACF wysiwyg)
+        console.log('CONVERTING HTML BLOCKS to core blocks..');
+
+        function processBlock(block, blocksToProcess) {
+            console.log('processBlock: ', block);
+            if (block.name === "core/html") {
+                blocksToProcess.push(block);
+                return blocksToProcess;
+                
+            }
+            
+            if (block.innerBlocks.length>0) {
+                block.innerBlocks.forEach(function(innerBlock) {
+                    console.log('calling recursive..')
+                    processBlock(innerBlock,blocksToProcess);
+                });
+            }
+            return blocksToProcess;
+        }
+            
+        let blocksToProcess = [];
+        let allBlocks = wp.data.select("core/editor").getBlocks()
+        
+        allBlocks.forEach(function(block, blockIndex) {
+            console.log('passing blocksToProcess: ', blocksToProcess);
+            processBlock(block, blocksToProcess);            
+        });
+        console.log('blockstoprocess: ', blocksToProcess);
+
+        //
+        setTimeout(function(){ // todo: RACE CONDITION resolve async issue - probably still running some async stuff above, need to wait for it to finish..
+            blocksToProcess.forEach(function(bp){
+                wp.data.dispatch("core/editor").replaceBlocks(bp.clientId, wp.blocks.rawHandler({
+                    HTML: wp.blocks.getBlockContent(bp)
+                }));
+            })
+            // remove first block - it will be a blank paragraph
+            // todo: again need to wait for above..
+            wp.data.dispatch( 'core/block-editor' ).removeBlocks(wp.data.select( 'core/block-editor' ).getBlocks().map(k=>k.clientId)[0]);
+        },1000)
+        // })
+        
+
+        
     });
+    
     
 
     // // console.log('addBlock()');

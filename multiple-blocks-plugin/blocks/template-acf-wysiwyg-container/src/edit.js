@@ -1,6 +1,6 @@
 import { TextControl } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { useBlockProps } from "@wordpress/block-editor";
+import { useBlockProps, InnerBlocks } from "@wordpress/block-editor";
 import { InspectorControls, RichText } from "@wordpress/block-editor";
 import { useSelect, useDispatch } from "@wordpress/data";
 import { useEffect } from "@wordpress/element";
@@ -8,11 +8,11 @@ import { useEffect } from "@wordpress/element";
 import "./editor.scss";
 
 export default function Edit({ attributes, setAttributes, isSelected }) {
-  var postID = acf.get('post_id');
-  console.log('meta block RENDER, ACF post id: ', postID);
+//   var postID = acf.get('post_id');
+//   console.log('meta block RENDER, ACF post id: ', postID);
 
 	//Get meta value
-	const { meta } = acf.getFields('uid')[0].val();
+	// const { meta } = acf.getFields('uid')[0].val();
 
   //useSelect((select) => ({meta: select("core/editor").getEditedPostAttribute("meta"),}));
 	//Updates meta value
@@ -61,29 +61,6 @@ export default function Edit({ attributes, setAttributes, isSelected }) {
   
 
 	return (
-		<div {...useBlockProps()}>
-			<InspectorControls>
-				<TextControl
-					label={__("Field Name")}
-					onChange={setFieldName}
-					value={field_name}
-				/>
-				{field_name.length > 0 ? (
-					<TextControl
-						label={__("Field Value")}
-						onChange={setFieldValue}
-						value={field_value}
-					/>
-				) : null}
-			</InspectorControls>
-			{/* {field_value ? <p>{field_value}</p> : <p>No value</p>} */}
-			<RichText className={class_name}
-				tagName={tag_type}
-				value={ attributes.field_value }
-				allowedFormats={ [  ] }
-				onChange={ setFieldValue }
-				placeholder={ 'Field value..' }
-				></RichText>
-		</div>
+		<InnerBlocks></InnerBlocks>
 	);
 }

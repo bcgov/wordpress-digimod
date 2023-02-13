@@ -26,7 +26,7 @@ import { __ } from '@wordpress/i18n';
   ];
     
     return (
-<div class="row">
+<div className="row">
 <InnerBlocks template={ MY_TEMPLATE } templateLock="all" />
 </div>
 

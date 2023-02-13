@@ -199,7 +199,7 @@ function process_deny_ready_to_publish_edit( $allcaps, $caps, $args )
  * Whitelist specific Gutenberg blocks (paragraph, heading, image, lists, etc.)
  *
  */
-add_filter( 'allowed_block_types_all', 'allowed_block_types', 0, 2 );
+// add_filter( 'allowed_block_types_all', 'allowed_block_types', 0, 2 );
  
 function allowed_block_types( $allowed_blocks, $editor_context ) {
   if ($editor_context->name != 'core/edit-post'){
@@ -493,14 +493,16 @@ function override_core( $args, $name ) {
 
 /* CUSTOM API ENDPOINTS */
 function ret_tempate( $request_data  ) {
-  $t = get_block_template('wordpress-v2-theme//wp-custom-template-common-component');
+  // $ts = get_block_templates();
+  // print_r($ts);
+
+  $t = get_block_template('wordpress-v2-theme//wp-custom-template-cc');
   return rest_ensure_response( array('content'=>$t->content) );
 
   // return $t->content;
 
 
-  // $ts = get_block_templates();
-  // print_r($ts);
+  
 
   
   // $posts = get_posts( array(
@@ -556,7 +558,7 @@ add_action( 'rest_api_init', function () {
     'methods' => 'GET',
     'callback' => 'ret_tempate',
     'permission_callback' => function () {
-      return current_user_can( 'edit_pages' );
+      return true;//current_user_can( 'edit_pages' );
     }
   ) );
 } );

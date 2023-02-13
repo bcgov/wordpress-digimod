@@ -24,7 +24,7 @@ import { __ } from '@wordpress/i18n';
   ];
 
     return (
-<div class="col-sm-12 col-md-4">
+<div className="col-sm-12 col-md-4">
   <InnerBlocks template={ MY_TEMPLATE } templateLock={false}></InnerBlocks>
 </div>
 	);
