@@ -20,18 +20,14 @@ run `npm install` inside multipule-blocks-plugin for block creation dependencies
 ## Starting development environment
 run `wp-env start` in the root directory to start wordpress development site
 
-## to create a new block from html prototype
-- add an element to the prototypes array near the top of the main.mjs file.
-- execute main.mjs (`node main.mjs`)
-
 ## making changes to an existing block
 Since blocks are written with JSX, they need to be re-built after each edit:
 
 `wp-scripts build --webpack-src-dir=blocks/accordian/src/ --output-path=blocks/accordian/build/`
 
-## building Gutenberg javascript extension
+## building Gutenberg javascript extensions
 
-`wp-scripts build assets/js/block_extensions.js --output-path=dist`
+`wp-scripts build assets/js/index.js --output-path=dist`
 
 ## If wordpress crashes because of an error in plugin
 If wordpress crashes because of an error in plugin, we need to change the volume contents.
@@ -43,3 +39,27 @@ Login to pod with
 navigate to `wp-content/plugins/`
 
 rename crashing plugin from "plugin" to "plugin.disabled"
+
+## Tests - JavaScript
+To run javascript tests:
+
+`npx jest`
+
+Note: corrently there are no regular jest tests.
+
+To check jest JS coverage:
+
+`npx jest --coverage`
+
+To run end-to-end tests for blocks:
+
+`npm run test:e2e`
+
+To debug end-to-end tests in Chrome browser:
+
+`npm run test:e2e:debug`
+
+After running the command, tests will be available for debugging in Chrome by going to chrome://inspect/#devices and clicking inspect under the path to /test-e2e.js.
+
+## Tests - PHP
+Install PHP, Composer, PHPUnit
