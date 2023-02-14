@@ -345,6 +345,14 @@ Text Domain:
     margin-top:60px !important;
 }
 
+.width-100{
+    width:100% !important;
+}
+
+.margin-bottom-15{
+    margin-bottom:15px !important;
+}
+
 /* BADGES ROW */
 .badgeWrapper{
     display: flex;
