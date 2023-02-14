@@ -32,6 +32,7 @@ function create_block_multiple_blocks_plugin_block_init(){
 
 // register_block_type( __DIR__ . '/blocks/meta-block/build' );
 
+// register_block_type( __DIR__ . '/blocks/wrapper-block/build' );
 register_block_type( __DIR__ . '/blocks/content-banner/build' );
 // register_block_type( __DIR__ . '/blocks/two-tabs/build' );
 register_block_type( __DIR__ . '/blocks/four-columns-text/build' );

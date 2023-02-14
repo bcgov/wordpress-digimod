@@ -3,28 +3,15 @@
 // add custom javascript
 function myguten_enqueue() {
   
-  // todo: this conflicts with ACF - probably includes it's own jq, so not needed if acf is defined
-  // wp_enqueue_script(
-  //   'jq',
-  //   plugins_url( 'jquery-3.6.2.min.js', __FILE__ )
-  // );
-
   wp_enqueue_script(
-    'myguten-script',
-    plugins_url( 'editor.js', __FILE__ )
-  );
-  
-
-   // Enqueue our script
-   wp_enqueue_script(
     'block_extensions',
-    esc_url( plugins_url( '/dist/block_extensions.js', __FILE__ ) ),
+    esc_url( plugins_url( '/dist/index.js', __FILE__ ) ),
     array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor','acf-input' ),
     '1.0.0',
     true // Enqueue the script in the footer.
   );
-}
 
+}
 
 add_action( 'enqueue_block_editor_assets', 'myguten_enqueue' );
 

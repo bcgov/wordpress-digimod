@@ -15,6 +15,9 @@ function update(){
     var id = url.searchParams.get("post");
     jQuery('.edit-post-header__settings').prepend(`<button onclick="window.open(\'https://digital-gov-frontend-test-c0cce6-test.apps.silver.devops.gov.bc.ca/wordpress-preview/${id}\','_blank');" type="button" class="components-button editor-post-switch-to-draft is-tertiary">Preview on digital.gov.bc.ca</button>`);
 }
-update();
+// update();
 // console.log('update func: ', update);
-waitUntilElementLoad('.edit-post-header__settings',100,update)
+
+export const addPreviewOnDigimodButton = () => {
+    waitUntilElementLoad('.edit-post-header__settings',100,update)
+}

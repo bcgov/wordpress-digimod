@@ -10,17 +10,21 @@
         "build:accordian": "wp-scripts build --webpack-src-dir=blocks/accordian/src/ --output-path=blocks/accordian/build/",
         "build:embed-youtube": "wp-scripts build --webpack-src-dir=blocks/embed-youtube/src/ --output-path=blocks/embed-youtube/build/",
         "build:two-tabs": "wp-scripts build --webpack-src-dir=blocks/two-tabs/src/ --output-path=blocks/two-tabs/build/",
-
         "build": "wp-scripts build",
         "format": "wp-scripts format",
         "lint:css": "wp-scripts lint-style",
         "lint:js": "wp-scripts lint-js",
         "packages-update": "wp-scripts packages-update",
         "plugin-zip": "wp-scripts plugin-zip",
-        "start": "wp-scripts start"
+        "start": "wp-scripts start",
+        "test": "npx jest",
+        "test:e2e": "npx wp-scripts test-e2e",
+        "test:e2e:debug": "npx wp-scripts --inspect-brk test-e2e --config e2e-tests/jest.config.js --puppeteer-devtools"
     },
     "devDependencies": {
-        "@wordpress/scripts": "^24.4.0"
+        "@wordpress/e2e-test-utils": "^9.3.0",
+        "@wordpress/e2e-tests": "^6.3.0",
+        "@wordpress/scripts": "^25.3.0"
     },
     "dependencies": {
         "npm": "^8.19.3"

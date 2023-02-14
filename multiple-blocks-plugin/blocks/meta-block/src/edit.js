@@ -8,11 +8,11 @@ import { useEffect } from "@wordpress/element";
 import "./editor.scss";
 
 export default function Edit({ attributes, setAttributes, isSelected }) {
-  var postID = acf.get('post_id');
-  console.log('ACF post id: ', postID);
+  // var postID = acf.get('post_id');
+  // console.log('ACF post id: ', postID);
 
-	//Get meta value
-	const { meta } = acf.getFields('uid')[0].val();
+	// //Get meta value
+	// const { meta } = acf.getFields('uid')[0].val();
 
   //useSelect((select) => ({meta: select("core/editor").getEditedPostAttribute("meta"),}));
 	//Updates meta value
