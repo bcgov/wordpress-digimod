@@ -11,5 +11,5 @@ import {RichText, useBlockProps, InnerBlocks } from '@wordpress/block-editor';
 <div className={"row"+extraClasses}>
   <InnerBlocks.Content></InnerBlocks.Content>
 </div>
-	)
+	) 
   }

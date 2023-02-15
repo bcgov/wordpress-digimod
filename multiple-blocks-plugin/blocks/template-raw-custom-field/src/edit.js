@@ -17,17 +17,15 @@ import { __ } from '@wordpress/i18n';
     };
     
     const onChange_bannerTitle = ( newContent ) => {
-      setAttributes( { bannerTitle: newContent } ); 
+      setAttributes( { bannerTitle: newContent } );
     };
-
-    let extraClasses='';
-    if(props['attributes']['className']){
-      extraClasses = ' '+props['attributes']['className'];
-    }
     
     return (
-<div className={"row"+extraClasses}>
-  <InnerBlocks></InnerBlocks>
-</div>
-	);
+      <RichText
+      { ...blockProps }
+      tagName="div"
+      onChange={ onChange_content }
+      value={ attributes.content }
+  />
+  	);
   }
