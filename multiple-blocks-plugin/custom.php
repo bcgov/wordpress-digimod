@@ -346,6 +346,7 @@ function custom_post_type() {
       
     // Registering your Custom Post Type
     register_post_type( 'cop', $args_cop );
+    // run this once to clear 404 error for custom post types
     // flush_rewrite_rules( false );
   }
     
