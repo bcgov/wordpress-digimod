@@ -32,7 +32,7 @@ function render_block_template_custom_field( $attributes, $content, $block ) {
 	// print_r('attrs:');
 	// print_r($attributes);
 
-    $test = get_field($attributes["content"]);
+    $test = get_field($attributes["field_name"]);
 	return $test; 
 
 

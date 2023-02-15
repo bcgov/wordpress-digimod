@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Two columns block Two columns block should be available 1`] = `
+"<!-- wp:multiple-blocks-plugin/two-columns -->
+<div class=\\"row\\"></div>
+<!-- /wp:multiple-blocks-plugin/two-columns -->"
+`;

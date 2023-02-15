@@ -16,9 +16,14 @@
         "lint:js": "wp-scripts lint-js",
         "packages-update": "wp-scripts packages-update",
         "plugin-zip": "wp-scripts plugin-zip",
-        "start": "wp-scripts start"
+        "start": "wp-scripts start",
+        "test": "npx jest",
+        "test:e2e": "npx wp-scripts test-e2e",
+        "test:e2e:debug": "npx wp-scripts --inspect-brk test-e2e --config e2e-tests/jest.config.js --puppeteer-devtools"
     },
     "devDependencies": {
+        "@wordpress/e2e-test-utils": "^9.3.0",
+        "@wordpress/e2e-tests": "^6.3.0",
         "@wordpress/scripts": "^25.3.0"
     },
     "dependencies": {

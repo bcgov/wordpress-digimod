@@ -3,28 +3,15 @@
 // add custom javascript
 function myguten_enqueue() {
   
-  // todo: this conflicts with ACF - probably includes it's own jq, so not needed if acf is defined
-  // wp_enqueue_script(
-  //   'jq',
-  //   plugins_url( 'jquery-3.6.2.min.js', __FILE__ )
-  // );
-
   wp_enqueue_script(
-    'myguten-script',
-    plugins_url( 'editor.js', __FILE__ )
-  );
-  
-
-   // Enqueue our script
-   wp_enqueue_script(
     'block_extensions',
-    esc_url( plugins_url( '/dist/block_extensions.js', __FILE__ ) ),
+    esc_url( plugins_url( '/dist/index.js', __FILE__ ) ),
     array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor','acf-input' ),
     '1.0.0',
     true // Enqueue the script in the footer.
   );
-}
 
+}
 
 add_action( 'enqueue_block_editor_assets', 'myguten_enqueue' );
 
@@ -415,8 +402,30 @@ function override_core_image($block_attributes, $content, $block){
     // echo('NO CLASS');
     $img = str_replace('<img', sprintf('<img class="%s"',$className), $img[0]);
   }else{
-
     $img = preg_replace('/class="[^"]+"/i', sprintf('class="%s"',$className) , $img)[0];
+  }
+
+  // print_r($block_attributes);
+
+  if(array_key_exists('templatedURL',$block_attributes)){
+    // The regular expression to match the src attribute value
+    $regex = '/(<img[^>]+)(src=["\']?[^"\']+[\'"]?)([^>]*>)/';
+
+    // The new src attribute value
+    $newSrc = $block_attributes['templatedURL'];
+
+    // Replace the src attribute value in the HTML string using preg_replace
+    $img = preg_replace($regex, '$1src="' . $newSrc . '"$3', $img);
+
+  }elseif(array_key_exists('templatedCustomField',$block_attributes)){
+    // The regular expression to match the src attribute value
+    $regex = '/(<img[^>]+)(src=["\']?[^"\']+[\'"]?)([^>]*>)/';
+
+    // The new src attribute value
+    $newSrc = get_field($block_attributes['templatedCustomField']);
+
+    // Replace the src attribute value in the HTML string using preg_replace
+    $img = preg_replace($regex, '$1src="' . $newSrc . '"$3', $img);
   }
 
   // print_r($imgTags);

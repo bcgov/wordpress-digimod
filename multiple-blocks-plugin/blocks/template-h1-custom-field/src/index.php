@@ -15,7 +15,7 @@
  * @return string Returns the custom field
  */
 function render_block_template_h1_custom_field( $attributes, $content, $block ) {
-    $test = get_field($attributes["content"]);
+    $test = get_field($attributes["field_name"]);
     return sprintf(
 		'<h1 class="h1-heading">%1$s</h1>',
 		$test

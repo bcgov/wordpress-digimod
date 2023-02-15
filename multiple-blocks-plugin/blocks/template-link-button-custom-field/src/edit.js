@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
-  import { useBlockProps, RichText, InnerBlocks } from '@wordpress/block-editor';
+  import { useBlockProps, RichText, InnerBlocks , InspectorControls } from '@wordpress/block-editor';
+  import { TextControl } from "@wordpress/components";
 
   import './editor.scss';
 
@@ -30,13 +31,14 @@ import { __ } from '@wordpress/i18n';
               onChange={ onChange_content }
               placeholder={ 'Button text...' }
             ></RichText>
-            <RichText 
-              tagName="div"
-              value={ attributes.url }
-              allowedFormats={ [  ] }
-              onChange={ onChange_url }
-              placeholder={ 'custom field url..' }
-            ></RichText>
+            <InspectorControls>
+				<TextControl
+					label="Field Name"
+					onChange={onChange_url}
+					value={attributes.url}
+				/>
+			</InspectorControls>
+      
           </div>
         </div>
       </div>

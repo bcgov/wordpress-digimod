@@ -30,11 +30,13 @@ require(  __DIR__ . '/blocks/template-acf-wysiwyg-container/src/index.php');
 require(  __DIR__ . '/blocks/template-badges-editor/src/index.php');
 
 require(  __DIR__ . '/blocks/meta-block/src/index.php');
+require(  __DIR__ . '/blocks/template-cc-links-custom-field/src/index.php');
 
 function create_block_multiple_blocks_plugin_block_init(){
 
 // register_block_type( __DIR__ . '/blocks/meta-block/build' );
 
+// register_block_type( __DIR__ . '/blocks/wrapper-block/build' );
 register_block_type( __DIR__ . '/blocks/content-banner/build' );
 // register_block_type( __DIR__ . '/blocks/two-tabs/build' );
 register_block_type( __DIR__ . '/blocks/four-columns-text/build' );

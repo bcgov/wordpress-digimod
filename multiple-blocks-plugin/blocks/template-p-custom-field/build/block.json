@@ -10,6 +10,9 @@
   "attributes": {
     "content": {
       "type": "string"
+    },
+    "field_name": {
+      "type": "string"
     }
   },
   "supports": {

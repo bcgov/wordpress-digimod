@@ -341,8 +341,20 @@ Text Domain:
     max-width: 100% !important;
 }
 
+.margin-bottom-60{
+    margin-top:60px !important;
+}
+
 .margin-top-60{
     margin-top:60px !important;
+}
+
+.margin-bottom-15{
+    margin-bottom:15px;
+}
+
+.width-100{
+    width:100%;
 }
 
 /* BADGES ROW */

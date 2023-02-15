@@ -7,7 +7,8 @@
     "category": "widgets",
     "icon": "smiley",
     "description": "Example block scaffolded with Create Block tool.",
-    "attributes": {"content":{"type":"string"}},
+    "attributes": {"content":{"type":"string"},
+    "field_name":{"type":"string"}},
     "supports": {
       "html": false
     },
