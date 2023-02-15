@@ -15,7 +15,7 @@
  * @return string Returns the custom field
  */
 function render_block_template_badges_custom_field( $attributes, $content, $block ) {
-    $tags = get_field($attributes["content"]);
+    $tags = get_field($attributes["field_name"]);
     // print_r($tags);
 
     $html = '<div class="badgeWrapper" role="list" aria-label="tags">';

@@ -34,6 +34,9 @@ const addAriaLabelAttribute = ( settings, name ) => {
 };
 
 
+
+
+
 // APPLY ATTRIBUTE
 
 
@@ -53,7 +56,7 @@ function applyAriaLabelAttribute( extraProps, blockType, attributes ) {
     }
 
 	const { ariaLabel } = attributes;
-	
+
 	//check if attribute exists for old Gutenberg version compatibility
 	//add attribute only when it's dfined
 	if ( typeof ariaLabel !== 'undefined' && ariaLabel!='' ) {
@@ -63,7 +66,72 @@ function applyAriaLabelAttribute( extraProps, blockType, attributes ) {
 	return extraProps;
 }
 
+
+
+// const addImageTemplateUrl = ( settings, name ) => {
+//     // if not core paragraph block just return props
+//     if (name !== 'core/paragraph') {
+//         return props
+//       }
+
+//       // extend attributs with the new extendedSettings object
+//       const attributes = {
+//         ...props.attributes,
+//         templatedURL: {
+//           type: 'string',
+//           default: '',
+//         }
+//       }
+
+//       return {...props, attributes}
+// };
+
+// /**
+//  * Add mobile visibility controls on Advanced Block Panel.
+//  *
+//  * @param {function} BlockEdit Block edit component.
+//  *
+//  * @return {function} BlockEdit Modified block edit component.
+//  */
+// const withAdvancedControls = createHigherOrderComponent( ( BlockEdit ) => {
+// 	return ( props ) => {
+
+// 		const {
+// 			attributes,
+// 			setAttributes,
+// 			isSelected,
+// 		} = props;
+
+// 		const {
+// 			templatedURL,
+// 		} = attributes;
+
+
+// 		return (
+// 			<Fragment>
+// 				<BlockEdit {...props} />
+// 					<InspectorAdvancedControls>
+//                     <TextControl
+// 					label="Template URL"
+// 					onChange={ () => setAttributes( {  visibleOnMobile: templatedURL } ) }
+// 					value={templatedURL}
+// 				/>
+// 					</InspectorAdvancedControls>
+
+// 			</Fragment>
+// 		);
+// 	};
+// }, 'withAdvancedControls');
+
+// addFilter(
+// 	'editor.BlockEdit',
+// 	'editorskit/custom-advanced-control',
+// 	withAdvancedControls
+// );
+
 export const allowAriaLabel = () => {
+    // addFilter('blocks.registerBlockType', 'multiple-blocks-plugin/attribute/image_template_url', addImageTemplateUrl);
+
     addFilter('blocks.registerBlockType', 'multiple-blocks-plugin/attribute/aria_label', addAriaLabelAttribute);
     addFilter('blocks.getSaveContent.extraProps','multiple-blocks-plugin/applyAriaLabelAttribute',applyAriaLabelAttribute);
 }

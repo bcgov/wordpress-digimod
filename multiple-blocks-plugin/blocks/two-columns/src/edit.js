@@ -10,7 +10,9 @@ import { __ } from '@wordpress/i18n';
       setAttributes,
     } = props;
 
-    const blockProps = useBlockProps();
+    const blockProps = useBlockProps({
+      className:"row"
+    });
 
     const onChange_content = ( newContent ) => {
       setAttributes( { content: newContent } );
@@ -26,7 +28,7 @@ import { __ } from '@wordpress/i18n';
   ];
     
     return (
-<div class="row"  {...useBlockProps()}>
+<div {...blockProps}>
 <InnerBlocks template={ MY_TEMPLATE } templateLock="all" />
 </div>
 

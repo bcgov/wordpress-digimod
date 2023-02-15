@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
-  import { useBlockProps, RichText, InnerBlocks } from '@wordpress/block-editor';
+  import { useBlockProps, RichText, InnerBlocks , InspectorControls } from '@wordpress/block-editor';
+  import { TextControl } from "@wordpress/components";
 
   import './editor.scss';
 
@@ -10,7 +11,7 @@ import { __ } from '@wordpress/i18n';
       setAttributes,
     } = props;
 
-    // const blockProps = useBlockProps();
+    const blockProps = useBlockProps();
 
     const onChange_content = ( newContent ) => {
       setAttributes( { content: newContent } );
@@ -21,16 +22,10 @@ import { __ } from '@wordpress/i18n';
     const onChange_linkText = ( newContent ) => {
       setAttributes( { linkText: newContent } );
     };
-    
+
     return (
+    <div {...blockProps}>
         <p style={{"color":"#1890ff"}}>
-            <RichText 
-          tagName="div"
-          value={ attributes.content }
-          allowedFormats={ [  ] }
-          onChange={ onChange_content }
-          placeholder={ 'Link custom field...' }
-        ></RichText>
         <RichText 
           tagName="div"
           value={ attributes.linkText }
@@ -38,14 +33,24 @@ import { __ } from '@wordpress/i18n';
           onChange={ onChange_linkText }
           placeholder={ 'Link text...' }
         ></RichText>
-        <RichText 
-          tagName="div"
-          value={ attributes.url }
-          allowedFormats={ [  ] }
-          onChange={ onChange_url }
-          placeholder={ 'Link URL..' }
-        ></RichText>
-      </p>
 
+        <InspectorControls>
+
+				<TextControl
+					label="Link URL custom field"
+					onChange={onChange_url}
+					value={attributes.url}
+				/>
+        <TextControl
+					label="Link text custom field"
+					onChange={onChange_content}
+					value={attributes.content}
+				/>
+			</InspectorControls>
+
+				
+
+      </p>
+    </div>
   	);
   }

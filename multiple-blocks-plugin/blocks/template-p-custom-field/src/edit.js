@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
-  import { useBlockProps, RichText, InnerBlocks } from '@wordpress/block-editor';
+  import { useBlockProps, RichText, InnerBlocks , InspectorControls } from '@wordpress/block-editor';
+  import { TextControl } from "@wordpress/components";
 
   import './editor.scss';
 
@@ -15,8 +16,13 @@ import { __ } from '@wordpress/i18n';
     const onChange_content = ( newContent ) => {
       setAttributes( { content: newContent } );
     };
+
+    const setFieldName = ( newContent ) => {
+      setAttributes( { field_name: newContent } );
+    };
     
     return (
+      <div>
       <RichText
       tagName="p"
       value={ attributes.content }
@@ -24,6 +30,14 @@ import { __ } from '@wordpress/i18n';
       onChange={ onChange_content }
       placeholder={ 'paragraph...' }
     ></RichText>
+    <InspectorControls>
+				<TextControl
+					label="Field Name"
+					onChange={setFieldName}
+					value={attributes.field_name}
+				/>
+			</InspectorControls>
+      </div>
         // <RichText
         // placeholder={ 'Heading...' }
         // className="h1-heading"

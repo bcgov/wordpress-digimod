@@ -106,3 +106,7 @@ wordpress-v2-theme/wordpress-v2-theme.zip
 
 # Testing data
 multiple-blocks-plugin/artifacts/
+
+vendor/
+
+.vs/

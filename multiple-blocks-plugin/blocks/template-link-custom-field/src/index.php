@@ -22,7 +22,7 @@ function render_block_template_link_custom_field( $attributes, $content, $block 
     }else{
         $text = $attributes["linkText"];
     }
-   
+
     return sprintf(
 		'<a href="%1$s">%2$s</a>',
 		$url, $text

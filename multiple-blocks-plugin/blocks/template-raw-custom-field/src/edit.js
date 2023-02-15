@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
-  import { useBlockProps, RichText, InnerBlocks } from '@wordpress/block-editor';
+  import { useBlockProps, RichText, InnerBlocks , InspectorControls } from '@wordpress/block-editor';
+  import { TextControl } from "@wordpress/components";
 
   import './editor.scss';
 
@@ -10,7 +11,9 @@ import { __ } from '@wordpress/i18n';
       setAttributes,
     } = props;
 
-    const blockProps = useBlockProps();
+    const blockProps = useBlockProps({
+      className:"trcf-wrapper"
+    });
 
     const onChange_content = ( newContent ) => {
       setAttributes( { content: newContent } );
@@ -19,13 +22,24 @@ import { __ } from '@wordpress/i18n';
     const onChange_bannerTitle = ( newContent ) => {
       setAttributes( { bannerTitle: newContent } );
     };
+
+    const setFieldName = ( newContent ) => {
+      setAttributes( { field_name: newContent } );
+    };
     
     return (
-      <RichText
-      { ...blockProps }
-      tagName="span"
-      onChange={ onChange_content }
-      value={ attributes.content }
-  />
+      <div {...blockProps}>
+
+            
+
+        <InnerBlocks></InnerBlocks>
+        <InspectorControls>
+				<TextControl
+					label={__("Field Name")}
+					onChange={setFieldName}
+					value={attributes.field_name}
+				/>
+			</InspectorControls>
+        </div>
   	);
   }

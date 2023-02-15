@@ -27,6 +27,7 @@ require(  __DIR__ . '/blocks/template-paragraph-container/src/index.php');
 require(  __DIR__ . '/blocks/template-image-custom-field/src/index.php');
 require(  __DIR__ . '/blocks/template-badges-custom-field/src/index.php');
 require(  __DIR__ . '/blocks/meta-block/src/index.php');
+require(  __DIR__ . '/blocks/template-cc-links-custom-field/src/index.php');
 
 function create_block_multiple_blocks_plugin_block_init(){
 
