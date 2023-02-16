@@ -28,12 +28,13 @@ require(  __DIR__ . '/blocks/template-image-custom-field/src/index.php');
 require(  __DIR__ . '/blocks/template-badges-custom-field/src/index.php');
 require(  __DIR__ . '/blocks/meta-block/src/index.php');
 require(  __DIR__ . '/blocks/template-cc-links-custom-field/src/index.php');
+require(  __DIR__ . '/blocks/embed-youtube/src/index.php');
 
 function create_block_multiple_blocks_plugin_block_init(){
 
 // register_block_type( __DIR__ . '/blocks/meta-block/build' );
 
-// register_block_type( __DIR__ . '/blocks/wrapper-block/build' );
+register_block_type( __DIR__ . '/blocks/heading/build' );
 register_block_type( __DIR__ . '/blocks/content-banner/build' );
 // register_block_type( __DIR__ . '/blocks/two-tabs/build' );
 register_block_type( __DIR__ . '/blocks/four-columns-text/build' );
@@ -44,7 +45,7 @@ register_block_type( __DIR__ . '/blocks/h2-heading/build' );
 register_block_type( __DIR__ . '/blocks/h3-heading/build' );
 register_block_type( __DIR__ . '/blocks/annotate/build' );
 register_block_type( __DIR__ . '/blocks/accordian/build' );
-register_block_type( __DIR__ . '/blocks/embed-youtube/build' );
+// register_block_type( __DIR__ . '/blocks/embed-youtube/build' );
 register_block_type( __DIR__ . '/blocks/dm-content-banner/build' );
 register_block_type( __DIR__ . '/blocks/dm-content-banner-content/build' );
 register_block_type( __DIR__ . '/blocks/dm-content-banner-image/build' );
