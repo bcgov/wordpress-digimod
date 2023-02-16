@@ -1,7 +1,8 @@
 import { __ } from '@wordpress/i18n';
 
   import { useBlockProps, RichText, InnerBlocks,InspectorControls } from '@wordpress/block-editor';
-  import { CheckboxControl } from '@wordpress/components';
+  import { CheckboxControl, PanelBody,
+    PanelRow, Panel } from '@wordpress/components';
   import { useState, useEffect } from '@wordpress/element';
 
   import './editor.scss';
@@ -65,15 +66,20 @@ import { __ } from '@wordpress/i18n';
     return (
       <div  { ...blockProps }>
         <InspectorControls>
-        {[...all_values].map((x, i) =>
-              <CheckboxControl
-              label={x}
-              help={x}
-              onChange={() => handleCheckboxChange(x)}
-              checked={selected.includes(x)}
-          />
-        )}
-			
+          <PanelBody title="Badges Settings" initialOpen={ true }>
+            
+            {[...all_values].map((x, i) =>
+            <PanelRow>
+                  <CheckboxControl
+                  label={x}
+                  // help={x}
+                  onChange={() => handleCheckboxChange(x)}
+                  checked={selected.includes(x)}
+              />
+              </PanelRow>
+            )}
+          
+        </PanelBody>
 			</InspectorControls>
 
       <div class="badgeWrapper" role="list" aria-label="tags">

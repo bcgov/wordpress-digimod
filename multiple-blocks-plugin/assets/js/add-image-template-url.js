@@ -21,30 +21,8 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
         templatedCustomField
     } = attributes;
 
-    // const id = `#block-${props.clientId}`
-    // let includeStyles = false
-    // let css = `${id}{`
-
-    // if (attributes.extendedSettings.columnCount) {
-    //   includeStyles = true
-    //   css += `column-count: ${attributes.extendedSettings.columnCount};`
-    // }
-
-    // if (attributes.extendedSettings.columnGap) {
-    //   includeStyles = true
-    //   css += `column-gap: ${attributes.extendedSettings.columnGap};`
-    // }
-
-    // css += '}'
-
-    // const beforeBlock = includeStyles ? (
-    //   <style>
-    //     {css}
-    //   </style>
-    // ) : null
-
     return (
-        			<Fragment>
+          <Fragment>
 				<BlockEdit {...props} />
 					<InspectorAdvancedControls>
                     <TextControl
@@ -60,46 +38,6 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 					</InspectorAdvancedControls>
 
 			</Fragment>
-    //   <Fragment>
-    //       {beforeBlock}
-    //       <BlockEdit { ...props } />
-    //       <InspectorControls>
-    //           <PanelBody title="Columns" initialOpen={ false }>
-    //             <RangeControl
-    //               label="Column count"
-    //               initialPosition={1}
-    //               min={1}
-    //               max={4}
-    //               value={attributes.extendedSettings.columnCount ? attributes.extendedSettings.columnCount : 1}
-    //               onChange={(columnCount) => setAttributes({extendedSettings: {...attributes.extendedSettings, columnCount}})}
-    //             />
-    //             <UnitControl
-    //               label="Column gap"
-    //               value={attributes.extendedSettings.columnGap ? attributes.extendedSettings.columnGap : '20px'}
-    //               units={
-    //                 [
-    //                   {
-    //                     value: 'px',
-    //                     label: 'px',
-    //                     default: 20
-    //                   },
-    //                   {
-    //                     value: '%',
-    //                     label: '%',
-    //                     default: 4
-    //                   },
-    //                   {
-    //                     value: 'vw',
-    //                     label: 'vw',
-    //                     default: 2
-    //                   },
-    //                 ]
-    //               }
-    //               onChange={(columnGap) => setAttributes({extendedSettings: {...attributes.extendedSettings, columnGap}})}
-    //             />
-    //           </PanelBody>
-    //       </InspectorControls>
-    //   </Fragment>
     );
   }
 }, 'withInspectorControls')
@@ -134,7 +72,11 @@ export const addImageTemplateUrl = () => {
             templatedCustomField: {
             type: 'string',
             default: '',
-            }
+            },
+            // finalUrl: { // for some reason url and other attributes don't appear in PHP, this will store final URL
+            // type: 'string',
+            // default: '',
+            // }
         }
   
       return {...props, attributes}
@@ -149,4 +91,11 @@ export const addImageTemplateUrl = () => {
     'extending-gutenberg/edit',
     withInspectorControls
     )
+
+    // const getBlockAttributes = function(props, blockType){
+    //   console.log('getBlockAttributes: ', props, blockType)
+    //   return props;
+    // }
+    // console.log('adding getBlockAttributes filter..')
+    // addFilter('blocks.getBlockAttributes','extending-gutenberg/testtt',getBlockAttributes);
 }

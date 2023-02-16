@@ -1,194 +1,6 @@
-// ------------
-// Allow application of custom html attributes to various blocks, ex aria-label for list elements
-// To build run: 
-// wp-scripts build --webpack-src-dir=assets/js --output-path=dist
-// ------------
-
-// import assign from 'lodash.assign';
-import { createHigherOrderComponent } from '@wordpress/compose';
-const { addFilter } = wp.hooks;
-const { __ } = wp.i18n;
 import { select, subscribe } from '@wordpress/data'
 import { parse } from '@wordpress/block-serialization-default-parser';
 
-// Enable spacing control on the following blocks
-const enableSpacingControlOnBlocks = [
-    'core/list',
-];
-
-
-/**
- * Add spacing control attribute to block.
- *
- * @param {object} settings Current block settings.
- * @param {string} name Name of block.
- *
- * @returns {object} Modified block settings.
- */
-const addSpacingControlAttribute = ( settings, name ) => {
-    // Do nothing if it's another block than our defined ones.
-    if ( ! enableSpacingControlOnBlocks.includes( name ) ) {
-        return settings;
-    }
-    // console.log("APPLY");
-    // Use Lodash's assign to gracefully handle if attributes are undefined
-    settings.attributes = Object.assign( settings.attributes, {
-        ariaLabel: {
-            type: 'string',
-            default: '',
-        },
-    } );
-
-    return settings;
-};
-
-addFilter( 'blocks.registerBlockType', 'extend-block-example/attribute/spacing', addSpacingControlAttribute );
-
-
-// APPLY ATTRIBUTE
-/**
- * External Dependencies
- */
-
-
-/**
- * Add custom element class in save element.
- *
- * @param {Object} extraProps     Block element.
- * @param {Object} blockType      Blocks object.
- * @param {Object} attributes     Blocks attributes.
- *
- * @return {Object} extraProps Modified block element.
- */
-function applyExtraClass( extraProps, blockType, attributes ) {
-    // Do nothing if it's another block than our defined ones.
-    if ( ! enableSpacingControlOnBlocks.includes( blockType.name ) ) {
-        return extraProps;
-    }
-
-	const { ariaLabel } = attributes;
-	
-    // console.log('visibleOnMobile: ', ariaLabel, extraProps, attributes);
-
-	//check if attribute exists for old Gutenberg version compatibility
-	//add class only when test = false
-	if ( typeof ariaLabel !== 'undefined' && ariaLabel!='' ) {
-        // console.log('ASSIGNING, extraprops: ', extraProps);
-        Object.assign( extraProps, { 'aria-label': ariaLabel } );
-		// extraProps.className = classnames( extraProps.className, 'mobile-hidden' );
-	}
-
-	return extraProps;
-}
-
-addFilter(
-	'blocks.getSaveContent.extraProps',
-	'editorskit/applyExtraClass',
-	applyExtraClass
-);
-
-/* ARIA-LABEL FIX END */
-
-/* Add custom classes to core blocks, so that blocks such as headers are styled correctly */
-
-wp.domReady( () => {
-    wp.blocks.registerBlockStyle( 'core/post-title', {
-      name: '_ h1-heading',
-      label: 'Digimod Page Title',
-    //   isDefault: true
-    } );
-    // wp.blocks.unregisterBlockStyle( 'core/post-title', 'default' );
-  } );
-
-// function addListBlockClassName( settings, name ) {
-//     if ( name == 'core/post-title' ) {
-//         console.log("POST_TITLE SETTINGS: ", settings)
-//         return settings;
-//     }
-
-//     // return lodash.assign( {}, settings, {
-//     //     supports: lodash.assign( {}, settings.supports, {
-//     //         className: true,
-//     //     } ),
-//     // } );
-//     return settings;
-// }
-
-// wp.hooks.addFilter(
-//     'blocks.registerBlockType',
-//     'multiple-blocks-plugin/override-settings',
-//     addListBlockClassName
-// );
-
-
-/* ADD CUSTOM CLASSES TO DEFAULT BLOCKS */
-// const ALLOWED_BLOCKS = [ 'core/columns' ];
-// const addClassNameInEditor = createHigherOrderComponent((BlockEdit) => {
-//     return (props) => {
-//         const { name, attributes } = props;
-        
-//         console.log('A: ', name)
-//         // return early from the block modification
-//         if (! ALLOWED_BLOCKS.includes(name)) {
-//             return <BlockEdit {...props} />;
-//         }
-//         console.log('C: ', name)
-//         const {
-//             className,
-//             hasBackgroundPattern,
-//             backgroundPatternShape,
-//             backgroundPatternColor
-//         } = attributes;
-
-//         // if ( ! hasBackgroundPattern ) {
-//         //     return <BlockEdit {...props} />;
-//         // }
-
-//         // const backgroundPatternColorClassName = `has-${backgroundPatternColor}-background-pattern-color`;
-//         // const backgroundPatternShapeClassName = `has-${backgroundPatternShape}-background-pattern-shape`;
-//         return <BlockEdit {...props} className={`row`} />;
-//         // return <BlockEdit {...props} className={`${className || ''} ayooo`} />;
-//     };
-// }, 'addClassNameInEditor');
-
-// addFilter(
-//     'editor.BlockListBlock',
-//     'multiple-blocks-plugin/addClassNameInEditor',
-//     addClassNameInEditor,
-// );
-
-// function saveSpacingAttributes(props, block, attributes) {
-
-//     // return early from the block modification
-//     if (! ALLOWED_BLOCKS.includes(block.name)) {
-//         return props;
-//     }
-
-//     const {
-//         className,
-//         hasBackgroundPattern,
-//         backgroundPatternShape,
-//         backgroundPatternColor
-//     } = attributes;
-
-//     // if ( ! hasBackgroundPattern ) {
-//     //     return props;
-//     // }
-
-//     // const backgroundPatternColorClassName = `has-${backgroundPatternColor}-background-pattern-color`;
-//     // const backgroundPatternShapeClassName = `has-${backgroundPatternShape}-background-pattern-shape`;
-//     console.log('save apply: ', block.name);
-//     // return {...props, className: `${className || ''} has-background-pattern ${backgroundPatternColorClassName} ${backgroundPatternShapeClassName}`};
-//     return {...props, className: `row`};
-// }
-
-// addFilter(
-//     'blocks.getSaveContent.extraProps',
-//     'namespace/backgroundPatterns/saveSpacingAttributes',
-//     saveSpacingAttributes,
-// );
-
-// MANUALLY POPULATE EDITOR
 function getTemplate(){
     console.log('getTemplate()..')
     return fetch("http://localhost:8888/wp-json/multiple-blocks-plugin/v1/author/1")
@@ -201,7 +13,7 @@ function getTemplate(){
             return jsn.content;
         })
         .catch(function (err) {
-            console.log("Unable to fetch -", err);
+            throw(err);
         });
 }
 
@@ -224,22 +36,32 @@ function processInnerBlocks(blockItems) {
       console.log('=== checking inner: ', blockItem['blockName'])
       let insertedBlock = null;
       if(blockItem['blockName']=="multiple-blocks-plugin/template-h3-custom-field"){
-          attrs['field_name']=attrs['content'];
+          attrs['field_name']=attrs['field_name'];
           attrs['tag_type']='h3';
           attrs['class_name']="h3-heading";
           insertedBlock = wp.blocks.createBlock("multiple-blocks-plugin/meta-block", attrs, blockItem['innerBlocks']);
       }else if (blockItem['blockName']=="multiple-blocks-plugin/template-p-custom-field"){
-        attrs['field_name']=attrs['content'];
+        attrs['field_name']=attrs['field_name'];
         attrs['tag_type']='p';
         insertedBlock = wp.blocks.createBlock("multiple-blocks-plugin/meta-block", attrs, blockItem['innerBlocks']);
+      }else if (blockItem['blockName']=="multiple-blocks-plugin/template-h1-custom-field"){
+        attrs['field_name']=attrs['field_name'];
+        attrs['tag_type']='h1';
+        attrs['class_name']='h1-heading';
+        insertedBlock = wp.blocks.createBlock("multiple-blocks-plugin/meta-block", attrs, blockItem['innerBlocks']);
+      }else if (blockItem['blockName']=="core/image"){
+        let imgSrc = jQuery(blockItem.innerHTML).find('img').attr('src'); // ugh
+        attrs['url']=imgSrc;
+        insertedBlock =  wp.blocks.createBlock(blockItem['blockName'], attrs, blockItem['innerBlocks']);
+        
       }else if (blockItem['blockName']=="multiple-blocks-plugin/template-custom-field"){
         
         // todo: do this only one way
-        let val = acf.get(attrs['content']);
+        let val = acf.get(attrs['field_name']);
         if (!val)
-            val = acf.getFields({name:attrs['content']})[0].val();
+            val = acf.getFields({name:attrs['field_name']})[0].val();
             
-        console.log('getting template-custom-field..', attrs['content'])
+        console.log('getting template-custom-field..', attrs['field_name'])
         console.log('raw contents: ')
         console.log(val);
         // attrs['content']="raw!";
@@ -247,14 +69,16 @@ function processInnerBlocks(blockItems) {
         // insertedBlock = wp.blocks.createBlock("core/html", {"content":val})
 
         let htmlBlock = wp.blocks.createBlock("core/html", {"content":val})
-
+        console.log('htmlBlock: ', htmlBlock);
         // wrap it in a container
-        let container = wp.blocks.createBlock("multiple-blocks-plugin/template-acf-wysiwyg-container", {'field_name':attrs['content']}, [htmlBlock]);
+        let container = wp.blocks.createBlock("multiple-blocks-plugin/template-acf-wysiwyg-container", {'field_name':attrs['field_name']}, [htmlBlock]);
         insertedBlock = container;
     }else{
           insertedBlock =  wp.blocks.createBlock(blockItem['blockName'], attrs, blockItem['innerBlocks']);
     }
 
+    console.log('inner returns insertedBlock: ', insertedBlock);
+   
       return insertedBlock;
     });
   }
@@ -287,17 +111,21 @@ function addBlock(){
                 // swap block into meta block if this block is a template block, so user can edit it and save custom fields from gutenberg
                 let insertedBlock = null;
                 if(blockItem['blockName']=="multiple-blocks-plugin/template-h3-custom-field"){
-                    attrs['field_name']=attrs['content'];
+                    attrs['field_name']=attrs['field_name'];
                     insertedBlock = wp.blocks.createBlock("multiple-blocks-plugin/meta-block", attrs, innerBlocksResult);
                 }else if (blockItem['blockName']=="multiple-blocks-plugin/template-p-custom-field"){
-                    attrs['field_name']=attrs['content'];
+                    attrs['field_name']=attrs['field_name'];
                     attrs['tag_type']='p';
+                    insertedBlock = wp.blocks.createBlock("multiple-blocks-plugin/meta-block", attrs, innerBlocksResult);
+                }else if (blockItem['blockName']=="multiple-blocks-plugin/template-h1-custom-field"){
+                    attrs['field_name']=attrs['field_name'];
+                    attrs['tag_type']='h1';
                     insertedBlock = wp.blocks.createBlock("multiple-blocks-plugin/meta-block", attrs, innerBlocksResult);
                 }else if (blockItem['blockName']=="multiple-blocks-plugin/template-custom-field"){
                     // todo: do this only one way
-                    let val = acf.get(attrs['content']);
+                    let val = acf.get(attrs['field_name']);
                     if (!val)
-                        val = acf.getFields({name:attrs['content']})[0].val();
+                        val = acf.getFields({name:attrs['field_name']})[0].val();
 
                     // console.log('getting template-custom-field..', attrs['content'])
                     // console.log('raw contents: ')
@@ -309,19 +137,23 @@ function addBlock(){
                     let htmlBlock = wp.blocks.createBlock("core/html", {"content":val})
 
                     // wrap it in a container
-                    let container = wp.blocks.createBlock("multiple-blocks-plugin/template-acf-wysiwyg-container", {'field_name':attrs['content']}, [htmlBlock]);
+                    let container = wp.blocks.createBlock("multiple-blocks-plugin/template-acf-wysiwyg-container", {'field_name':attrs['field_name']}, [htmlBlock]);
+                    insertedBlock = container;
+                }else if (blockItem['blockName']=="multiple-blocks-plugin/template-conditional-custom-field"){
+                    // unwrap
+                    let container = wp.blocks.createBlock("multiple-blocks-plugin/template-acf-wysiwyg-container", {'field_name':null}, innerBlocksResult);
                     insertedBlock = container;
                 }else if (blockItem['blockName']=="multiple-blocks-plugin/template-badges-custom-field"){
                     // todo: do this only one way
-                    let val = acf.get(attrs['content']);
+                    let val = acf.get(attrs['field_name']);
                     let allValues = null;
 
                     if (!val){
-                        val = acf.getFields({name:attrs['content']})[0].val();
-                        let k = acf.getFields({name:attrs['content']})[0];
+                        val = acf.getFields({name:attrs['field_name']})[0].val();
+                        let k = acf.getFields({name:attrs['field_name']})[0];
                         allValues = k.$control().find(':checkbox').map(function(){return jQuery(this).val()}).get();
                     }else{
-                        allValues = acf.get(attrs['content']+"allValues");
+                        allValues = acf.get(attrs['field_name']+"allValues");
                     }
                     console.log('checkbox val: ', val)
 
@@ -336,7 +168,7 @@ function addBlock(){
                     attrs['field_value'] = val;
                     //---
 
-                    attrs['field_name']=attrs['content'];
+                    attrs['field_name']=attrs['field_name'];
                     // attrs['tag_type']='p';
                     insertedBlock = wp.blocks.createBlock("multiple-blocks-plugin/template-badges-editor", attrs, innerBlocksResult);
                 }else{
@@ -424,7 +256,9 @@ function whenEditorIsReady() {
     })
 }
 
-whenEditorIsReady().then(() => {
-    if (!wp.data.select("core/edit-site")) // do not fire on full-site editing page
-        addBlock();
-  })
+export const contentInTemplateEditing = () => {
+    whenEditorIsReady().then(() => {
+        if (!wp.data.select("core/edit-site")) // do not fire on full-site editing page
+            addBlock();
+    })
+}

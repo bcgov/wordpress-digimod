@@ -45,7 +45,7 @@ export default function Edit({ attributes, setAttributes, isSelected }) {
 			val = acf.getFields({name:field_name})[0].val();
 			// todo: remove all fields to prevent overwriting when save function gets hit
   			// (prevents saving of ACF fields in a "normal" way - we are handling the saving through the meta blocks and PHP)
-			console.log('ACF REMOVE: ', field_name, acf.getFields({name:field_name})[0]);
+			console.log('ACF REMOVE from acf-wysiwyg: ', field_name, acf.getFields({name:field_name})[0]);
 			acf.set(field_name,val); // render function may get called repeatedly, we need to have the value saved somehwere in case it needs to be retreived later
 			acf.getFields({name:field_name})[0].remove();
 		}else if (acf.get(field_name)){

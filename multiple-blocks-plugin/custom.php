@@ -385,6 +385,9 @@ function override_core_image($block_attributes, $content, $block){
   // todo: is there a better way of doing this?
   // unwrap image out of figure tag, add any additional classes to the image class (originally assigned to figure tag)
   // print_r($block_attributes);
+  // $media = getMediaAttributes( $block['attributes'] );
+  //   $image_url = $media['url'];
+
   $className = '';
   if (array_key_exists('className',$block_attributes))
     $className = $block_attributes['className'];
@@ -431,8 +434,11 @@ function override_core_image($block_attributes, $content, $block){
   // print_r($imgTags);
   // print_r($block);
   $img = process_acf_short_codes($img); // in case we have ACF fields in url
+
+  // get final src
+
   // echo(' processing img: '. $img);
-  return $img;//sprintf('<div react-component="ReactPlayer" url="%1$s"></div>',$block_attributes['url']);
+  return $img;
 }
 
 function process_acf_short_codes($content){
