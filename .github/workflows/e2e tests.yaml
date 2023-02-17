@@ -34,7 +34,7 @@ jobs:
     - uses: php-actions/composer@v6 # or alternative dependency management
       with:
         php_version: "7.4"
-        version: "2.5.3"
+        version: "9.0"
     - name: Install dependencies
       uses: php-actions/phpunit@v9
       with:
