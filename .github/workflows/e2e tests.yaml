@@ -1,4 +1,4 @@
-name: e2e Tests
+name: Tests
 
 on:
   push:
@@ -7,32 +7,32 @@ on:
     branches: [ main ]
 
 jobs:
-  # build:
+  e2e-tests:
 
-  #   runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  #   strategy:
-  #     matrix:
-  #       node-version: [18.x]
+    strategy:
+      matrix:
+        node-version: [18.x]
 
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Use Node.js ${{ matrix.node-version }}
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: ${{ matrix.node-version }}
-  #     - run: npm -g i @wordpress/env
-  #     - run: npm install --prefix multiple-blocks-plugin/
-  #     - run: wp-env start --prefix multiple-blocks-plugin/
-  #     - run: npm run test:e2e --prefix multiple-blocks-plugin/
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm -g i @wordpress/env
+      - run: npm install --prefix multiple-blocks-plugin/
+      - run: wp-env start --prefix multiple-blocks-plugin/
+      - run: npm run test:e2e --prefix multiple-blocks-plugin/
 
-  build-test:
+  php-tests:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
     - uses: php-actions/composer@v6 # or alternative dependency management
-    - name: Install dependencies
+    - name: Run Tests
       uses: php-actions/phpunit@master
       with:
         php_extensions: "xdebug"
