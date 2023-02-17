@@ -32,13 +32,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: php-actions/composer@v6 # or alternative dependency management
-      with:
-        php_version: "7.4"
-        version: "2.5.3"
     - name: Install dependencies
-      uses: php-actions/phpunit@v9
+      uses: php-actions/@master
       with:
-        version: "9.0"
         bootstrap: vendor/autoload.php
         configuration: multiple-blocks-plugin/tests/phpunit.xml
         args: --coverage-text
