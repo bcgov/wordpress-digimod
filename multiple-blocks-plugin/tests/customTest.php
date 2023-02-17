@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 // echo('dir: '.getcwd());
 // require('multiple-blocks-plugin/custom.php');
 
-final class Tests extends TestCase
+final class customTest extends TestCase
 {
     // public function testCanBeCreatedFromValidEmailAddress(): void
     // {
