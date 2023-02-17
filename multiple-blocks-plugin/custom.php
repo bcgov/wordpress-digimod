@@ -225,6 +225,7 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
   array_push($ret, 'core/video');
   array_push($ret, 'core/embed');
   array_push($ret, 'core/freeform');
+  array_push($ret, 'core/separator');
   // array_push($ret, 'core/cover');
   array_push($ret, 'core/list');
   array_push($ret, 'core/list-item');
