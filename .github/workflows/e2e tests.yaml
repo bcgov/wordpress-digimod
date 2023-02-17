@@ -35,6 +35,10 @@ jobs:
     - name: Install dependencies
       uses: php-actions/phpunit@master
       with:
+        php_extensions: "xdebug"
         bootstrap: vendor/autoload.php
         configuration: multiple-blocks-plugin/tests/phpunit.xml
         args: --coverage-text
+      env:
+        XDEBUG_MODE: coverage
+        TEST_NAME: Scarlett
