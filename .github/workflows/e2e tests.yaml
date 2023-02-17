@@ -34,9 +34,9 @@ jobs:
     - uses: php-actions/composer@v6 # or alternative dependency management
       with:
         php_version: "7.4"
-        version: "9.0"
+        version: "2.5.3"
     - name: Install dependencies
-      uses: php-actions/phpunit@v9
+      uses: php-actions/phpunit@v9.0
       with:
         bootstrap: vendor/autoload.php
         configuration: multiple-blocks-plugin/tests/phpunit.xml
