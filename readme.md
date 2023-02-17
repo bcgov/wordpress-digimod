@@ -53,6 +53,12 @@ To check jest JS coverage:
 
 To run end-to-end tests for blocks:
 
+Start WordPress development environment:
+
+`wp-env start`
+
+Run tests:
+
 `npm run test:e2e`
 
 To debug end-to-end tests in Chrome browser:
@@ -63,3 +69,7 @@ After running the command, tests will be available for debugging in Chrome by go
 
 ## Tests - PHP
 Install PHP, Composer, PHPUnit
+
+Run
+
+`./vendor/bin/phpunit .\multiple-blocks-plugin\tests`
