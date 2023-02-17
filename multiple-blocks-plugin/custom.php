@@ -386,7 +386,7 @@ function custom_post_type() {
 
 
 function override_core_embed($block_attributes, $content, $block){
-  echo ('hello');
+  // echo ('hello');
   return sprintf('<div react-component="ReactPlayer" url="%1$s"></div>',$block_attributes['url']);
 }
 
