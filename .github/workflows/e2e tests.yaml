@@ -34,6 +34,8 @@ jobs:
     - uses: php-actions/composer@v6 # or alternative dependency management
     - uses: php-actions/phpunit@v9
       with:
+            php_version: "7.4"
+            version: "2.5"
             bootstrap: vendor/autoload.php
-            configuration: test/phpunit.xml
+            configuration: multiple-blocks-plugin/tests/phpunit.xml
             args: --coverage-text
