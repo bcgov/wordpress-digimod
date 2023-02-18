@@ -21,7 +21,7 @@ import { __ } from '@wordpress/i18n';
     };
     
     return (
-  <div class="dmAnnotate">
+  <div class="dmAnnotate" {...blockProps}>
     <RichText className="undefined"
       tagName="div"
       value={ attributes.content }
