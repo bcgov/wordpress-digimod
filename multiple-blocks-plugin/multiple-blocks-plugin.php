@@ -34,6 +34,9 @@ function create_block_multiple_blocks_plugin_block_init(){
 
 // register_block_type( __DIR__ . '/blocks/meta-block/build' );
 
+// register_block_type( __DIR__ . '/blocks/columns/build' );
+// register_block_type( __DIR__ . '/blocks/dm-column/build' );
+register_block_type( __DIR__ . '/blocks/scrollspy/build' );
 register_block_type( __DIR__ . '/blocks/heading/build' );
 register_block_type( __DIR__ . '/blocks/content-banner/build' );
 // register_block_type( __DIR__ . '/blocks/two-tabs/build' );

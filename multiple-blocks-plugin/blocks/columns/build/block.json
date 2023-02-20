@@ -1,27 +1,22 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 2,
-  "name": "multiple-blocks-plugin/heading",
+  "name": "multiple-blocks-plugin/columns",
   "version": "0.1.0",
-  "title": "Heading",
+  "title": "Columns",
   "category": "widgets",
   "icon": "smiley",
   "description": "Example block scaffolded with Create Block tool.",
   "attributes": {
+    "className": {
+      "type": "string"
+    },
     "content": {
-      "type": "string",
-      "source": "html",
-      "selector": "h1,h2,h3,h4,h5,h6",
-      "default": "",
-      "__experimentalRole": "content"
+      "type": "string"
     },
-    "level": {
-      "type": "number",
-      "default": 2
-    },
-    "id": {
+    "layout": {
       "type": "string",
-      "default": ""
+      "default": "two-equal"
     }
   },
   "supports": {

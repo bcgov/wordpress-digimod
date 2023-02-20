@@ -1,27 +1,16 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 2,
-    "name": "multiple-blocks-plugin/heading",
+    "name": "multiple-blocks-plugin/scrollspy",
     "version": "0.1.0",
-    "title": "Heading",
+    "title": "Scrollspy Menu",
     "category": "widgets",
     "icon": "smiley",
     "description": "Example block scaffolded with Create Block tool.",
     "attributes": {
-      "content": {
-        "type": "string",
-        "source": "html",
-        "selector": "h1,h2,h3,h4,h5,h6",
-        "default": "",
-        "__experimentalRole": "content"
-      },
       "level": {
         "type": "number",
         "default": 2
-      },
-      "id": {
-        "type": "string",
-        "default": ""
       }
     },
     "supports": {

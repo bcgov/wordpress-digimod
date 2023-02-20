@@ -1,4 +1,4 @@
-import { TextControl, Path, SVG,ToolbarDropdownMenu } from "@wordpress/components";
+import { TextControl, Path, SVG,ToolbarDropdownMenu,PanelBody,PanelRow  } from "@wordpress/components";
 import { __ , sprintf } from "@wordpress/i18n";
 import { useBlockProps, InspectorControls, BlockControls, RichText } from "@wordpress/block-editor";
 import { useSelect, useDispatch } from "@wordpress/data";
@@ -14,8 +14,8 @@ export default function Edit({ attributes, setAttributes, isSelected }) {
 	const tagName = 'h' + level;
 
 	//Update field_name
-	const setFieldName = (value) => {
-		setAttributes({ ...attributes, field_name: value });
+	const setId = (value) => {
+		setAttributes({ ...attributes, id: value });
 	};
 
 	//Update field_value
@@ -35,7 +35,19 @@ export default function Edit({ attributes, setAttributes, isSelected }) {
 					}
 				/>
 			</BlockControls>
+			<InspectorControls>
+			<PanelBody  title="Settings" initialOpen={ true }>
+				<PanelRow >
+					<TextControl
+						label="id"
+						onChange={setId}
+						value={attributes.id}
+					/>
+				</PanelRow >
+			</PanelBody>
+			</InspectorControls>
 			<RichText 
+				id={attributes.id}
 				tagName={tagName}
 				value={ content }
 				allowedFormats={ [  ] }
