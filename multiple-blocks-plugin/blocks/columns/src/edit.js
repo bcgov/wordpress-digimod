@@ -52,12 +52,12 @@ import { __ } from '@wordpress/i18n';
 
 
 
-    const { children, ...innerBlocksProps } = useInnerBlocksProps(blockProps,
-      {
-          template: MY_TEMPLATE,
-          templateLock:"all"
-      }
-  );
+    // const { children, ...innerBlocksProps } = useInnerBlocksProps(blockProps,
+    //   {
+    //       template: MY_TEMPLATE,
+    //       templateLock:"all"
+    //   }
+  // );
 
   // layout changed - render one version, then after a timeout, render another
   const setLayout = ( newContent ) => {
@@ -88,9 +88,10 @@ import { __ } from '@wordpress/i18n';
 
       return (
         <div {...blockProps}>
-           <div {...innerBlocksProps}>
+          <InnerBlocks></InnerBlocks>
+           {/* <div {...innerBlocksProps}>
             {children}
-          </div>
+          </div> */}
        
         <InspectorControls>
         <PanelBody  title="Settings" initialOpen={ true }>

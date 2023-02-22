@@ -231,8 +231,8 @@ h4{
 }
 
 hr{
-    border: none;
-    border-top: 1px solid #afafaf;
+    border: none !important;
+    border-top: 1px solid #afafaf !important;
   }
 
 /* PROS/CONS TABLE bullet styles */
@@ -418,9 +418,20 @@ hr{
     margin-bottom:10px !important;
 }
 .margin-bottom-15{
-    margin-bottom:15px;
+    margin-bottom:15px !important;
 }
-
+.margin-bottom-0{
+    margin-bottom:0 !important;
+}
+.margin-bottom-2{
+    margin-bottom:2px !important;
+}
+.margin-bottom-3{
+    margin-bottom:3px !important;
+}
+.margin-bottom-5{
+    margin-bottom:3px !important;
+}
 .pad-list-5 li{
     padding: 3px 0px;
 }

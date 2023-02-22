@@ -24,8 +24,8 @@ import { __ } from '@wordpress/i18n';
     
     return (
 <div {...blockProps}>
-  <div class="ant-card-body">
-    <div class="cardText">
+  <div className="ant-card-body">
+    <div className="cardText">
       <div>
         <InnerBlocks></InnerBlocks>
       </div>
