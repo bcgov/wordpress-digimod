@@ -1,7 +1,8 @@
 {
 	"core": "WordPress/WordPress#6.1.1",
 	"plugins": [
-		"./multiple-blocks-plugin"
+		"./multiple-blocks-plugin",
+		"./digital-gov-plugin"
 	],
 	"themes": [
 		"./wordpress-v2-theme"
