@@ -1,5 +1,8 @@
 <?php
 
+// disable automatic core updates
+// add_filter( 'auto_update_core', '__return_false' );
+
 // add custom javascript
 function myguten_enqueue() {
   
@@ -11,6 +14,7 @@ function myguten_enqueue() {
     true // Enqueue the script in the footer.
   );
 }
+
 
 add_action( 'enqueue_block_editor_assets', 'myguten_enqueue' );
 
@@ -34,6 +38,7 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
   
   // allow all custom blocks that don't start with "dm-" - these ones are for internal use (construction of other blocks)
   // also filter out card-image blocks - these are for internal use too
+  // filter out template related blocks as well
   foreach ($block_types as &$value) {
     // echo(' item: ');
     // echo($value->name);
@@ -42,6 +47,10 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
     if (str_starts_with($value->name,'multiple-blocks-plugin') 
         and !str_starts_with($value->name,'multiple-blocks-plugin/dm-') 
         and !str_starts_with($value->name,'multiple-blocks-plugin/card-image')
+        and !str_starts_with($value->name,'multiple-blocks-plugin/template')
+        and !str_starts_with($value->name,'multiple-blocks-plugin/meta-block')
+        and !str_starts_with($value->name,'multiple-blocks-plugin/h2-heading')
+        and !str_starts_with($value->name,'multiple-blocks-plugin/h3-heading')
     ){
       array_push($ret,$value->name);
     }
@@ -50,11 +59,13 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
   array_push($ret, 'core/paragraph');
   array_push($ret, 'core/video');
   array_push($ret, 'core/embed');
-  array_push($ret, 'core/cover');
+  array_push($ret, 'core/freeform');
+  array_push($ret, 'core/separator');
+  // array_push($ret, 'core/cover');
   array_push($ret, 'core/list');
   array_push($ret, 'core/list-item');
   array_push($ret, 'core/post-title');
-  // array_push($ret, 'core/column');
+  // array_push($ret, 'core/heading');
   // array_push($ret, 'core/columns');
   array_push($ret, 'core/image');
 
@@ -212,6 +223,7 @@ function custom_post_type() {
 
 
 function override_core_embed($block_attributes, $content, $block){
+  // echo ('hello');
   return sprintf('<div react-component="ReactPlayer" url="%1$s"></div>',$block_attributes['url']);
 }
 

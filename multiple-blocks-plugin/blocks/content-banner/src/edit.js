@@ -29,7 +29,7 @@ import { __ } from '@wordpress/i18n';
   ];
 
     return (
-    <div className="wp-block-group alignwide">
+    <div className="wp-block-group alignwide" {...blockProps}>
       <div id="main-content-anchor" className="content-banner-wrapper container">
         <div className="row middle-xs">
           <InnerBlocks template={ MY_TEMPLATE } templateLock="all" />

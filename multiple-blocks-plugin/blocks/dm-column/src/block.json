@@ -1,0 +1,19 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 2,
+    "name": "multiple-blocks-plugin/dm-column",
+    "version": "0.1.0",
+    "title": "Column",
+    "category": "widgets",
+    "icon": "smiley",
+    "description": "Example block scaffolded with Create Block tool.",
+    "attributes": {"classes":{"type":"string","default":"col-sm-12 col-md-6"}},
+    "supports": {
+      "html": false
+    },
+    "textdomain": "multiple-blocks-plugin",
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css"
+  }
+  

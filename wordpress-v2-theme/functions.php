@@ -83,6 +83,7 @@ add_action('init', function() {
 });
 
 
+
 // allow aria-label on tags
 // $allowed_html = array(
 // 	'ul' => array(

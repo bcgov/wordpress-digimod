@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Heading block Heading block should be available 1`] = `
+"<!-- wp:multiple-blocks-plugin/heading -->
+<h2></h2>
+<!-- /wp:multiple-blocks-plugin/heading -->"
+`;

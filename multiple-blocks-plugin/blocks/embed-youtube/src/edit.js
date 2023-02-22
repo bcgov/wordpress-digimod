@@ -40,5 +40,5 @@ const { select } = wp.data;
     return (
           <InnerBlocks template={ MY_TEMPLATE } templateLock="all" />
 
-	);
-  }
+    );
+    }
