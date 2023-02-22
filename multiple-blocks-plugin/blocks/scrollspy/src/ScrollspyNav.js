@@ -34,7 +34,7 @@ export default class ScrollspyNav extends Component {
 	 *  target sections. It highlights the nav link when scrolling to a corresponding section
 	 */
 	onScroll() {
-		console.log('===scroll!')
+		// console.log('===scroll!')
 	  let scrollSectionOffsetTop;
 	  let offset = null;
 	  let height = null;
@@ -54,7 +54,7 @@ export default class ScrollspyNav extends Component {
 
       let candidates =[];
 	  this.scrollTargetIds.forEach((sectionID, index) => {
-		console.log('====scroll target: ', sectionID, index);
+		// console.log('====scroll target: ', sectionID, index);
 		if (!document.getElementById(sectionID)) {
 		  console.warn(`${SCROLLSPY_NAV_NAMESPACE}: no element with id ${sectionID} present in the DOM`);
 		  return;
@@ -67,8 +67,8 @@ export default class ScrollspyNav extends Component {
 
             // Calculate the top and left positions
             // this calculates position relative to scrollable container (typically window)
-            console.log('targetRect.top: ', targetRect.top);
-            console.log(' scrollingElementRect.top: ', scrollingElementRect.top);
+            // console.log('targetRect.top: ', targetRect.top);
+            // console.log(' scrollingElementRect.top: ', scrollingElementRect.top);
 
             scrollSectionOffsetTop = targetRect.top - scrollingElementRect.top;
         }else{
@@ -76,18 +76,18 @@ export default class ScrollspyNav extends Component {
         }
 		
 	
-		console.log('vars: ')
-        console.log('scrollHeight: ', scrollHeight);
-        console.log('height: ', height);
-		console.log('offset: ', offset)
-		console.log('this.offset: ', this.offset)
-		console.log('scrollSectionOffsetTop: ', scrollSectionOffsetTop)
-		console.log(' document.getElementById(sectionID).scrollHeight: ',  document.getElementById(sectionID).scrollHeight)
-		console.log('offset - this.offset',offset - this.offset);
-		console.log(' scrollSectionOffsetTop + document.getElementById(sectionID).scrollHeight', scrollSectionOffsetTop + document.getElementById(sectionID).scrollHeight);
-		// console.log('',);
-		console.log('isBrowser && offset - this.offset >= scrollSectionOffsetTop: ', isBrowser && offset - this.offset >= scrollSectionOffsetTop)
-		console.log(' offset < scrollSectionOffsetTop + document.getElementById(sectionID).scrollHeight: ',  offset < scrollSectionOffsetTop + document.getElementById(sectionID).scrollHeight)
+		// console.log('vars: ')
+        // console.log('scrollHeight: ', scrollHeight);
+        // console.log('height: ', height);
+		// console.log('offset: ', offset)
+		// console.log('this.offset: ', this.offset)
+		// console.log('scrollSectionOffsetTop: ', scrollSectionOffsetTop)
+		// console.log(' document.getElementById(sectionID).scrollHeight: ',  document.getElementById(sectionID).scrollHeight)
+		// console.log('offset - this.offset',offset - this.offset);
+		// console.log(' scrollSectionOffsetTop + document.getElementById(sectionID).scrollHeight', scrollSectionOffsetTop + document.getElementById(sectionID).scrollHeight);
+		// // console.log('',);
+		// console.log('isBrowser && offset - this.offset >= scrollSectionOffsetTop: ', isBrowser && offset - this.offset >= scrollSectionOffsetTop)
+		// console.log(' offset < scrollSectionOffsetTop + document.getElementById(sectionID).scrollHeight: ',  offset < scrollSectionOffsetTop + document.getElementById(sectionID).scrollHeight)
 
         // highlight the last element visible in the viewport
         // if scrollSectionOffsetTop < 0, then we scrolled past it (element is outside of view, above)
@@ -114,7 +114,7 @@ export default class ScrollspyNav extends Component {
 		// }
 	  });
       
-      console.log('candidates: ', candidates);
+    //   console.log('candidates: ', candidates);
       this.scrollTargetIds.forEach((sectionID, index) => {
         if (candidates.at(-1)==sectionID){
             this.getNavLinkElement(sectionID).classList.add(this.activeNavClass);

@@ -1,8 +1,29 @@
-.active-scrollspy{
-  background:red !important;
-}
+
 .scrollspy{
   position: -webkit-sticky;
   position: sticky;
-  top: 0;
+  top: 5px;
+}
+.scrollspy a{
+  width:100%;
+  height:100%;
+  display: block;
+  padding: 10px 15px 10px 21px;
+  color:white !important;
+  transition:none !important;
+}
+
+a.active-scrollspy{
+  background:#f2f2f2 !important;
+  color:#0e3467 !important;
+}
+.scrollspy ul{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.scrollspyContainer{
+  background: #0e3467;
+  height:100%;
+  padding-top: 5px;
 }

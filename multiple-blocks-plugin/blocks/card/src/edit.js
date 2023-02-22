@@ -10,7 +10,9 @@ import { __ } from '@wordpress/i18n';
       setAttributes,
     } = props;
 
-    const blockProps = useBlockProps();
+    const blockProps = useBlockProps({
+      className:"ant-card ant-card-bordered dm-card"
+    });
 
     const onChange_content = ( newContent ) => {
       setAttributes( { content: newContent } );
@@ -19,14 +21,16 @@ import { __ } from '@wordpress/i18n';
     const onChange_bannerTitle = ( newContent ) => {
       setAttributes( { bannerTitle: newContent } );
     };
-
-    const MY_TEMPLATE = [
-      ['core/paragraph', {}],
-  ];
     
     return (
-<div className="col-sm-12 col-md-6">
-  <InnerBlocks template={ MY_TEMPLATE } templateLock={false}></InnerBlocks>
+<div {...blockProps}>
+  <div class="ant-card-body">
+    <div class="cardText">
+      <div>
+        <InnerBlocks></InnerBlocks>
+      </div>
+    </div>
+  </div>
 </div>
 	);
   }

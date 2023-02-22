@@ -1,14 +1,4 @@
-.active-scrollspy{
-	background:red !important;
-}
-.scrollspy{
-	position: -webkit-sticky;
-	position: sticky;
-	top: 0;
-}
-
-.col-sm-12.col-md-6:has([data-title="Scrollspy Menu"]) .block-editor-inner-blocks,
-.col-sm-12.col-md-6:has([data-title="Scrollspy Menu"]) .block-editor-block-list__layout,
+.block-editor-inner-blocks>.block-editor-block-list__layout:has([data-type="multiple-blocks-plugin/scrollspy"]),
 [data-title="Scrollspy Menu"]{
-	height:100%;
+    height:100%;
 }

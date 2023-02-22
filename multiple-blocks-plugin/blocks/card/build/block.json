@@ -1,32 +1,13 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 2,
-  "name": "multiple-blocks-plugin/columns",
+  "name": "multiple-blocks-plugin/card",
   "version": "0.1.0",
-  "title": "Columns",
+  "title": "Card",
   "category": "widgets",
   "icon": "smiley",
   "description": "Example block scaffolded with Create Block tool.",
-  "attributes": {
-    "className": {
-      "type": "string"
-    },
-    "content": {
-      "type": "string"
-    },
-    "layout": {
-      "type": "string",
-      "default": "two-equal"
-    },
-    "layout_apply": {
-      "type": "string",
-      "default": ""
-    },
-    "rerender": {
-      "type": "integer",
-      "default": 0
-    }
-  },
+  "attributes": {},
   "supports": {
     "html": false
   },

@@ -3,7 +3,7 @@
 	"patterns": ["test-pattern"],
 	"settings": {
 		"layout": {
-			"contentSize": "840px",
+			"contentSize": "1065px",
 			"wideSize": "1100px"
 		},
 		"blocks": {

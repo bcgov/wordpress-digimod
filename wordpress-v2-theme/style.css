@@ -67,7 +67,6 @@ Text Domain:
 }
 .dm-card {
     border-radius: 21px;
-    height: 95%;
     margin-bottom: 20px;
     width: 100%;
 }
@@ -146,7 +145,7 @@ h4{
 	}
 }
 /* EDITOR PATCHES */
-.row>.block-editor-inner-blocks{ /* Edit 2 - new wordpress version? had to expand this container to 100% */
+.row>.block-editor-inner-blocks, .row>.wp-block-multiple-blocks-plugin-columns{ /* Edit 2 - new wordpress version? had to expand this container to 100% */
     width: 100%;
 }
 
@@ -175,7 +174,10 @@ h4{
 }
 
 .col-sm-12.col-md-3>.block-editor-inner-blocks, .col-sm-12.col-md-3>.block-editor-inner-blocks>.block-editor-block-list__layout,
-.col-sm-12.col-md-4>.block-editor-inner-blocks, .col-sm-12.col-md-4>.block-editor-inner-blocks>.block-editor-block-list__layout{
+.col-sm-12.col-md-4>.block-editor-inner-blocks, .col-sm-12.col-md-4>.block-editor-inner-blocks>.block-editor-block-list__layout,
+.col-sm-12>.block-editor-inner-blocks, .col-md-10>.block-editor-inner-blocks>.block-editor-block-list__layout,
+.col-md-2>.block-editor-inner-blocks
+{
 	height:100%;
 }
 
@@ -196,6 +198,8 @@ h4{
 		width: 100%;
 	}
 }
+
+
 
 /* INLINE STYLES PORTS */
 .card-with-image-header-content-image img{
@@ -225,6 +229,11 @@ h4{
     margin-bottom: 10px;
     text-align: left;
 }
+
+hr{
+    border: none;
+    border-top: 1px solid #afafaf;
+  }
 
 /* PROS/CONS TABLE bullet styles */
 .prosList li:before{
@@ -352,16 +361,68 @@ h4{
     max-width: 100% !important;
 }
 
-.margin-bottom-60{
-    margin-top:60px !important;
+.padding-left-60{
+    padding-left:60px
+}
+.padding-left-50{
+    padding-left:50px
+}
+.padding-left-40{
+    padding-left:40px
+}
+.padding-left-30{
+    padding-left:30px
+}
+.padding-left-20{
+    padding-left:20px
+}
+.padding-left-10{
+    padding-left:10px
 }
 
+.margin-top-10{
+    margin-top:10px !important;
+}
+.margin-top-20{
+    margin-top:20px !important;
+}
+.margin-top-30{
+    margin-top:30px !important;
+}
+.margin-top-40{
+    margin-top:40px !important;
+}
+.margin-top-50{
+    margin-top:50px !important;
+}
 .margin-top-60{
     margin-top:60px !important;
 }
 
+.margin-bottom-60{
+    margin-bottom:60px !important;
+}
+.margin-bottom-50{
+    margin-bottom:50px !important;
+}
+.margin-bottom-40{
+    margin-bottom:40px !important;
+}
+.margin-bottom-30{
+    margin-bottom:30px !important;
+}
+.margin-bottom-20{
+    margin-bottom:20px !important;
+}
+.margin-bottom-10{
+    margin-bottom:10px !important;
+}
 .margin-bottom-15{
     margin-bottom:15px;
+}
+
+.pad-list-5 li{
+    padding: 3px 0px;
 }
 
 .width-100{
