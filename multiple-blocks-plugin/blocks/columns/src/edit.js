@@ -88,7 +88,7 @@ import { __ } from '@wordpress/i18n';
 
       return (
         <div {...blockProps}>
-          <InnerBlocks></InnerBlocks>
+          <InnerBlocks template={ MY_TEMPLATE } templateLock="all"></InnerBlocks>
            {/* <div {...innerBlocksProps}>
             {children}
           </div> */}

@@ -34,7 +34,12 @@ function create_block_multiple_blocks_plugin_block_init(){
 
 // register_block_type( __DIR__ . '/blocks/meta-block/build' );
 
+
+
 register_block_type( __DIR__ . '/blocks/columns/build' );
+// register_block_type( __DIR__ . '/blocks/dm-placeholder/build' );
+
+// register_block_type( __DIR__ . '/blocks/four-square-white-wide-banner/build' );
 register_block_type( __DIR__ . '/blocks/card/build' );
 register_block_type( __DIR__ . '/blocks/dm-column/build' );
 register_block_type( __DIR__ . '/blocks/scrollspy/build' );
