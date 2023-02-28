@@ -41,11 +41,12 @@ export default function Edit({ attributes, setAttributes, isSelected }) {
 					scrollDuration="1000"
 					scrollElementSelector = '[aria-label="Editor content"]'
 				>
+					<div className="scrollspy_highlight"></div>
 					<ul>
-						<li><a href="#mission1"><span class="scrollSpyLinkContent">Connected services</span></a></li>
-						<li><a href="#mission2"><span class="scrollSpyLinkContent">Digital Trust</span></a></li>
-						<li><a href="#mission3"><span class="scrollSpyLinkContent">Reliable and sustainable technology</span></a></li>
-						<li><a href="#mission4"><span class="scrollSpyLinkContent">Digitally equipped BC Public Service</span></a></li>
+						<li><a href="#mission1" id="mission1_link"><span class="scrollSpyLinkContent">Connected services</span></a></li>
+						<li><a href="#mission2" id="mission2_link"><span class="scrollSpyLinkContent">Digital Trust</span></a></li>
+						<li><a href="#mission3" id="mission3_link"><span class="scrollSpyLinkContent">Reliable and sustainable technology</span></a></li>
+						<li><a href="#mission4" id="mission4_link"><span class="scrollSpyLinkContent">Digitally equipped BC Public Service</span></a></li>
 						<li class="scrollSpyButtonWrapper"><a class="scrollSpyButton" href="#"><span class="scrollSpyLinkContent">Download the plan (PDF, 101.7KB)</span></a></li>
 					</ul>
 				</ScrollspyNav>
