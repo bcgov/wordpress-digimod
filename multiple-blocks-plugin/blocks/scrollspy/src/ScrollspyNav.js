@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { useEffect } from "@wordpress/element";
 
 const isBrowser = typeof window !== "undefined";
 const SCROLLSPY_NAV_NAMESPACE = "react-scrollspy-nav";
@@ -6,8 +7,12 @@ const SCROLLSPY_NAV_NAMESPACE = "react-scrollspy-nav";
  * ScrollspyNav component. Refer to below for the props it receives
  */
 export default class ScrollspyNav extends Component {
+	
+
 	constructor(props) {
 	  super(props);
+
+	  
   
 	  this.props = props;
 	  this.scrollTargetIds = this.props.scrollTargetIds;
@@ -17,7 +22,9 @@ export default class ScrollspyNav extends Component {
 	  this.offset = this.props.offset || 0;
 	  this.scrollElementSelector = this.props.scrollElementSelector;
   
-	//   console.log("CONSTRUCTOR, this: ", this);
+	  
+
+	  //   console.log("CONSTRUCTOR, this: ", this);
 	  this.onScroll = this.onScroll.bind(this);
   
 	  if(this.props.router && this.props.router === "HashRouter") {
@@ -235,6 +242,13 @@ export default class ScrollspyNav extends Component {
   
 	componentWillUnmount() {
 	  isBrowser && window.removeEventListener("scroll", this.onScroll);
+	}
+
+	componentDidUpdate(){
+		// highlight first item on load
+		try{
+			this.getNavLinkElement(this.scrollTargetIds[0]).classList.add(this.activeNavClass);
+		}catch(e){}
 	}
   
 	render() {

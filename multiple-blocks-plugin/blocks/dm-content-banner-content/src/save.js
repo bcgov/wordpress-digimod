@@ -5,7 +5,6 @@ import {RichText, useBlockProps, InnerBlocks } from '@wordpress/block-editor';
     return(
 <div class="col-sm-12 col-md-6">
   <div>
-    <p>{props.attributes.content}</p>
     <InnerBlocks.Content></InnerBlocks.Content>
     <RichText.Content className="content-banner-short-text"
     tagName="div"

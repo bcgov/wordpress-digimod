@@ -1,7 +1,7 @@
 <?php
 
-// disable automatic core updates
-// add_filter( 'auto_update_core', '__return_false' );
+// disable automatic core updates - updates should be done through open shift image updates
+add_filter( 'auto_update_core', '__return_false' );
 
 // add custom javascript
 function myguten_enqueue() {
@@ -61,7 +61,7 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
   array_push($ret, 'core/embed');
   array_push($ret, 'core/freeform');
   array_push($ret, 'core/separator');
-  // array_push($ret, 'core/cover');
+  array_push($ret, 'core/html');
   array_push($ret, 'core/list');
   array_push($ret, 'core/list-item');
   array_push($ret, 'core/post-title');

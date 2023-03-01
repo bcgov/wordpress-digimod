@@ -20,22 +20,7 @@ import { __ } from '@wordpress/i18n';
       setAttributes( { bannerTitle: newContent } );
     };
     
-    const MY_TEMPLATE = [
-      [ 'core/post-title', {'level':1} ]
-    ]
-
     return (
-<div class="col-sm-12 col-md-6">
-  <div>
-    <InnerBlocks template={ MY_TEMPLATE } templateLock={false}></InnerBlocks>
-    <RichText className="content-banner-short-text"
-      tagName="div"
-      value={ attributes.content }
-      allowedFormats={ [  ] }
-      onChange={ onChange_content }
-      placeholder={ 'Banner short text' }
-    ></RichText>
-  </div>
-</div>
+  <InnerBlocks></InnerBlocks>
 	);
   }
