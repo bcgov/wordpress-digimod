@@ -1,23 +1,20 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 2,
-  "name": "multiple-blocks-plugin/template-link-custom-field",
+  "name": "multiple-blocks-plugin/podcasts",
   "version": "0.1.0",
-  "title": "Template Link custom field",
+  "title": "podcasts",
   "category": "widgets",
   "icon": "smiley",
-  "description": "Example block scaffolded with Create Block tool.",
+  "description": "Displays podcast cards.",
   "attributes": {
+    "className": {
+      "type": "string"
+    },
     "content": {
       "type": "string"
     },
     "url": {
-      "type": "string"
-    },
-    "linkText": {
-      "type": "string"
-    },
-    "linkType": {
       "type": "string"
     }
   },

@@ -16,6 +16,9 @@
     },
     "linkText": {
       "type": "string"
+    },
+    "linkType": {
+      "type": "string"
     }
   },
   "supports": {

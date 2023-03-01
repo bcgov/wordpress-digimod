@@ -29,6 +29,9 @@ require(  __DIR__ . '/blocks/template-badges-custom-field/src/index.php');
 require(  __DIR__ . '/blocks/meta-block/src/index.php');
 require(  __DIR__ . '/blocks/template-cc-links-custom-field/src/index.php');
 require(  __DIR__ . '/blocks/embed-youtube/src/index.php');
+require(  __DIR__ . '/blocks/eventbrite-cards/src/index.php');
+require(  __DIR__ . '/blocks/podcasts/src/index.php');
+
 
 function create_block_multiple_blocks_plugin_block_init(){
 
@@ -49,8 +52,6 @@ register_block_type( __DIR__ . '/blocks/h2-heading/build' );
 register_block_type( __DIR__ . '/blocks/h3-heading/build' );
 register_block_type( __DIR__ . '/blocks/annotate/build' );
 register_block_type( __DIR__ . '/blocks/accordian/build' );
-register_block_type( __DIR__ . '/blocks/two-tabs/build' );
-register_block_type( __DIR__ . '/blocks/dm-tab-column/build' );
 // register_block_type( __DIR__ . '/blocks/embed-youtube/build' );
 register_block_type( __DIR__ . '/blocks/dm-content-banner/build' );
 register_block_type( __DIR__ . '/blocks/dm-content-banner-content/build' );

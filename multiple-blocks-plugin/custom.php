@@ -192,6 +192,63 @@ function custom_post_type() {
       
     // Registering your Custom Post Type
     register_post_type( 'cop', $args_cop );
+
+    // PODCASTS
+    // Set UI labels for Custom Post Type
+    $labels_podcast = array(
+      'name'                => _x( 'Podcast Page', 'Post Type General Name', 'twentytwentyone' ),
+      'singular_name'       => _x( 'Podcast', 'Post Type Singular Name', 'twentytwentyone' ),
+      'menu_name'           => __( 'Podcasts', 'twentytwentyone' ),
+      'parent_item_colon'   => __( 'Parent Podcast Page', 'twentytwentyone' ),
+      'all_items'           => __( 'All Podcasts Pages', 'twentytwentyone' ),
+      'view_item'           => __( 'View Podcast Page', 'twentytwentyone' ),
+      'add_new_item'        => __( 'Add New Podcast Page', 'twentytwentyone' ),
+      'add_new'             => __( 'Add New', 'twentytwentyone' ),
+      'edit_item'           => __( 'Edit Podcast Page', 'twentytwentyone' ),
+      'update_item'         => __( 'Update Podcast Page', 'twentytwentyone' ),
+      'search_items'        => __( 'Search Podcast Page', 'twentytwentyone' ),
+      'not_found'           => __( 'Not Found', 'twentytwentyone' ),
+      'not_found_in_trash'  => __( 'Not found in Trash', 'twentytwentyone' ),
+  );
+    
+// Set other options for Custom Post Type
+    
+  $args_podcast = array(
+      'label'               => __( 'cop', 'twentytwentyone' ),
+      'description'         => __( 'Regular Podcast pages', 'twentytwentyone' ),
+      'labels'              => $labels_podcast,
+      // Features this CPT supports in Post Editor
+      'supports'            => array( 'title','custom-fields'),
+      // 'supports'            => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'comments', 'revisions', 'custom-fields', ),
+      // You can associate this CPT with a taxonomy or custom taxonomy. 
+      // 'taxonomies'          => array( 'genres' ),
+      /* A hierarchical CPT is like Pages and can have
+      * Parent and child items. A non-hierarchical CPT
+      * is like Posts.
+      */
+      'hierarchical'        => true,
+      'public'              => true,
+      'show_ui'             => true,
+      'show_in_menu'        => true,
+      'show_in_nav_menus'   => true,
+      'show_in_admin_bar'   => true,
+      'menu_position'       => 5,
+      'can_export'          => true,
+      'has_archive'         => true,
+      'exclude_from_search' => false,
+      'publicly_queryable'  => true,
+      'capability_type'     => 'page',
+      'show_in_rest' => true,
+      // 'template' => array(
+      //   array('core/post-title', array(
+      //     'level' => 1,
+      //     'className' => 'sc-cOFTSb bGhVVJ'
+      //   ))
+      // )
+  );
+    
+  // Registering your Custom Post Type
+  register_post_type( 'podcast', $args_podcast );
     // run this once to clear 404 error for custom post types
     // flush_rewrite_rules( false );
   }
@@ -356,8 +413,7 @@ function ret_tempate( $request_data  ) {
   // return $t->content;
 
 
-  // $ts = get_block_templates();
-  // print_r($ts);
+
 
   
   // $posts = get_posts( array(
@@ -427,6 +483,148 @@ function imageOnly($deprecated, $attr, $content = null)
     return do_shortcode( $content );
 }
 add_filter( 'img_caption_shortcode', 'imageOnly', 10, 3 );
+
+function block_add_meta_box() {
+  add_meta_box( 'block_api_key', 'API Key', 'block_render_meta_box', 'post', 'normal', 'default' );
+  add_meta_box( 'block_api_key', 'API Key', 'block_render_meta_box', 'page', 'normal', 'default' );
+}
+
+function block_render_meta_box( $post ) {
+  wp_nonce_field( 'block_save_api_key', 'block_api_key_nonce' );
+  $api_key = get_post_meta( $post->ID, 'block_api_key', true );
+  echo '<input type="text" id="block_api_key" name="block_api_key" value="' . esc_attr( $api_key ) . '" />';
+}
+
+function block_save_meta_box( $post_id ) {
+  if ( ! isset( $_POST['block_api_key_nonce'] ) || ! wp_verify_nonce( $_POST['block_api_key_nonce'], 'block_save_api_key' ) ) {
+    return;
+  }
+  if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+    return;
+  }
+  if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
+    if ( ! current_user_can( 'edit_page', $post_id ) ) {
+      return;
+    }
+  } else {
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+      return;
+    }
+  }
+  if ( ! isset( $_POST['block_api_key'] ) ) {
+    delete_post_meta( $post_id, 'block_api_key' );
+    return;
+  }
+  $api_key = sanitize_text_field( $_POST['block_api_key'] );
+  update_post_meta( $post_id, 'block_api_key', $api_key );
+}
+
+//add_action( 'add_meta_boxes', 'block_add_meta_box' );
+add_action( 'save_post', 'block_save_meta_box' );
+// function block_get_api_key() {
+//   $api_key = get_api_key();
+//   wp_send_json_success( $api_key );
+// }
+
+// add_action( 'wp_ajax_get_api_key', 'block_get_api_key' );
+// add_action( 'wp_ajax_nopriv_get_api_key', 'block_get_api_key' );
+
+
+
+function multiple_blocks_metadata_block_block_init() {
+	register_block_type(
+		__DIR__ . '/build',
+		array(
+			'render_callback' => 'multiple_blocks_metadata_block_render_callback',
+		)
+	);
+}
+add_action( 'init', 'multiple_blocks_metadata_block_block_init' );
+
+function multiple_blocks_metadata_block_render_callback( $attributes, $content, $block ) {
+	
+	$api_key = get_post_meta( get_the_ID(), '_multiple_blocks_api_key', true );
+    
+	$output = "";
+
+	if( ! empty( $api_key ) ){
+		$output .= '<h3>' . esc_html( $api_key ) . '</h3>';
+	}
+	if( strlen( $output ) > 0 ){
+		return '<div ' . get_block_wrapper_attributes() . '>' . $output . '</div>';
+	} else {
+		return '<div ' . get_block_wrapper_attributes() . '>' . '<strong>' . __( 'Sorry. No fields available here!' ) . '</strong>' . '</div>';
+	}
+} 
+// register meta box
+function multiple_blocks_add_meta_box(){
+	add_meta_box(
+		'multiple_blocks_meta_box', 
+		__( 'Post Status' ), 
+		'multiple_blocks_build_meta_box_callback', 
+		'post', 
+		'side',
+		'default',
+		// hide the meta box in Gutenberg
+		array('__back_compat_meta_box' => true)
+	 );
+}
+
+// build meta box
+function multiple_blocks_build_meta_box_callback( $post ){
+	  wp_nonce_field( 'multiple_blocks_save_meta_box_data', 'multiple_blocks_meta_box_nonce' );
+	  $status = get_post_meta( $post->ID, '_multiple_blocks_api_key', true );
+	  ?>
+	  <div class="inside">
+	  	  <p><strong>status</strong></p>
+		  <p><input type="text" id="multiple_blocks_api_key" name="multiple_blocks_api_key" value="<?php echo esc_attr( $status ); ?>" /></p>	
+	  </div>
+	  <?php
+}
+add_action( 'add_meta_boxes', 'multiple_blocks_add_meta_box' );
+// save metadata
+function multiple_blocks_save_meta_box_data( $post_id ) {
+	if ( ! isset( $_POST['multiple_blocks_meta_box_nonce'] ) )
+		return;
+	if ( ! wp_verify_nonce( $_POST['multiple_blocks_meta_box_nonce'], 'multiple_blocks_save_meta_box_data' ) )
+		return;
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+		return;
+	if ( ! current_user_can( 'edit_post', $post_id ) )
+		return;
+
+	if ( ! isset( $_POST['multiple_blocks_api_key'] ) )
+		return;
+
+	$status = sanitize_text_field( $_POST['multiple_blocks_api_key'] );
+
+	update_post_meta( $post_id, '_multiple_blocks_api_key', $status );
+}
+add_action( 'save_post', 'multiple_blocks_save_meta_box_data' );
+
+/**
+ * Register the custom meta fields
+ */
+function multiple_blocks_register_meta() {
+
+    $metafields = [ '_multiple_blocks_api_key'];
+
+    foreach( $metafields as $metafield ){
+        // Pass an empty string to register the meta key across all existing post types.
+        register_post_meta( '', $metafield, array(
+            'show_in_rest' => true,
+            'type' => 'string',
+            'single' => true,
+            'sanitize_callback' => 'sanitize_text_field',
+            'auth_callback' => function() { 
+                return current_user_can( 'edit_posts' );
+            }
+        ));
+    }  
+}
+add_action( 'init', 'multiple_blocks_register_meta' );
+
+
 
 // Here's some code generated by AI in case more advanced filtering is needed (not tested):
 //

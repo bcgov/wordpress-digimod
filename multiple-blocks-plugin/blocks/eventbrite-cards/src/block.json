@@ -1,24 +1,26 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 2,
-  "name": "multiple-blocks-plugin/template-link-custom-field",
+  "name": "multiple-blocks-plugin/eventbrite-cards",
   "version": "0.1.0",
-  "title": "Template Link custom field",
+  "title": "eventbrite-cards",
   "category": "widgets",
   "icon": "smiley",
-  "description": "Example block scaffolded with Create Block tool.",
+  "description": "Displays eventbrite courses or events.",
   "attributes": {
+    "className": {
+      "type": "string"
+    },
     "content": {
       "type": "string"
     },
     "url": {
       "type": "string"
     },
-    "linkText": {
-      "type": "string"
-    },
-    "linkType": {
-      "type": "string"
+    "eventType": {
+      "type": "string",
+      "enum": ["Courses","Events"],
+      "default": "Events"
     }
   },
   "supports": {
