@@ -377,6 +377,10 @@ ol.no-indent-list{
     list-style-position: inside;
 }
 
+.indent-list{
+  list-style-position: outside;
+}
+
 .list-style-type-disc{
     list-style-type: disc;
 }
