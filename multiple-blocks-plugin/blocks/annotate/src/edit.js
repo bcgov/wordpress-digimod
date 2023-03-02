@@ -10,7 +10,9 @@ import { __ } from '@wordpress/i18n';
       setAttributes,
     } = props;
 
-    const blockProps = useBlockProps();
+    const blockProps = useBlockProps({
+      className:"dmAnnotate"
+    });
 
     const onChange_content = ( newContent ) => {
       setAttributes( { content: newContent } );
@@ -21,7 +23,7 @@ import { __ } from '@wordpress/i18n';
     };
     
     return (
-  <div class="dmAnnotate" {...blockProps}>
+  <div {...blockProps}>
     <RichText className="undefined"
       tagName="div"
       value={ attributes.content }
