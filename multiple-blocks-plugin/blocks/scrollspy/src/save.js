@@ -16,11 +16,21 @@ export default function save({ attributes }) {
 				>
 					<div className="scrollspy_highlight"></div>
 					<ul>
-						<li><a className="active-scrollspy" href="#mission1" id="mission1_link"><span class="scrollSpyLinkContent">Connected services</span></a></li>
-						<li><a href="#mission2" id="mission2_link"><span class="scrollSpyLinkContent">Digital trust</span></a></li>
-						<li><a href="#mission3" id="mission3_link"><span class="scrollSpyLinkContent">Reliable and sustainable technology</span></a></li>
-						<li><a href="#mission4" id="mission4_link"><span class="scrollSpyLinkContent">Digitally equipped BC Public Service</span></a></li>
-						<li class="scrollSpyButtonWrapper"><a class="scrollSpyButton" href="#"><span class="scrollSpyLinkContent">Download the plan (PDF, 101.7KB)</span></a></li>
+						<li><a className="active-scrollspy" href="#mission1" id="mission1_link">
+							<RichText.Content className="scrollSpyLinkContent" tagName="span" value={attributes.link1Text} />
+							</a></li>
+						<li><a href="#mission2" id="mission2_link"><span class="scrollSpyLinkContent">
+						<RichText.Content className="scrollSpyLinkContent" tagName="span" value={attributes.link2Text} />
+							</span></a></li>
+						<li><a href="#mission3" id="mission3_link"><span class="scrollSpyLinkContent">
+						<RichText.Content className="scrollSpyLinkContent" tagName="span" value={attributes.link3Text} />
+							</span></a></li>
+						<li><a href="#mission4" id="mission4_link"><span class="scrollSpyLinkContent">
+						<RichText.Content className="scrollSpyLinkContent" tagName="span" value={attributes.link4Text} />
+							</span></a></li>
+						<li class="scrollSpyButtonWrapper"><a class="scrollSpyButton" href="#">
+						<RichText.Content className="scrollSpyLinkContent" tagName="span" value={attributes.link5Text} />
+							</a></li>
 					</ul>
 				</div>
 		</div>

@@ -8,9 +8,25 @@
   "icon": "smiley",
   "description": "Example block scaffolded with Create Block tool.",
   "attributes": {
-    "level": {
-      "type": "number",
-      "default": 2
+    "link1Text": {
+      "type": "string",
+      "default": "Connected services"
+    },
+    "link2Text": {
+      "type": "string",
+      "default": "Digital trust"
+    },
+    "link3Text": {
+      "type": "string",
+      "default": "Reliable and sustainable technology"
+    },
+    "link4Text": {
+      "type": "string",
+      "default": "Digitally equipped BC Public Service"
+    },
+    "link5Text": {
+      "type": "string",
+      "default": "Download the plan (PDF, 101.7KB)"
     }
   },
   "supports": {

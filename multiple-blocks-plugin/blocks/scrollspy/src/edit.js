@@ -43,11 +43,65 @@ export default function Edit({ attributes, setAttributes, isSelected }) {
 				>
 					<div className="scrollspy_highlight"></div>
 					<ul>
-						<li><a href="#mission1" id="mission1_link"><span class="scrollSpyLinkContent">Connected services</span></a></li>
-						<li><a href="#mission2" id="mission2_link"><span class="scrollSpyLinkContent">Digital trust</span></a></li>
-						<li><a href="#mission3" id="mission3_link"><span class="scrollSpyLinkContent">Reliable and sustainable technology</span></a></li>
-						<li><a href="#mission4" id="mission4_link"><span class="scrollSpyLinkContent">Digitally equipped BC Public Service</span></a></li>
-						<li class="scrollSpyButtonWrapper"><a class="scrollSpyButton" href="#"><span class="scrollSpyLinkContent">Download the plan (PDF, 101.7KB)</span></a></li>
+						<li><a href="#" id="mission1_link" onClick={()=>{return false;}}>
+							<span>
+								<RichText
+									tagName="span"
+									className = "scrollSpyLinkContent"
+									value={ attributes.link1Text }
+									allowedFormats={ [ ] } 
+									onChange={ ( link1Text ) => setAttributes( { link1Text } ) } 
+									placeholder={ "Link 1 text..." } 
+								/>
+							</span></a></li>
+						<li><a href="#" id="mission2_link" onClick={()=>{return false;}}>
+						<span>
+								<RichText
+									tagName="span"
+									className = "scrollSpyLinkContent"
+									value={ attributes.link2Text }
+									allowedFormats={ [ ] } 
+									onChange={ ( link2Text ) => setAttributes( { link2Text } ) } 
+									placeholder={ "Link 2 text..." } 
+								/>
+							</span>
+							</a></li>
+						<li><a href="#" id="mission3_link" onClick={()=>{return false;}}>
+						<span>
+								<RichText
+									tagName="span"
+									className = "scrollSpyLinkContent"
+									value={ attributes.link3Text }
+									allowedFormats={ [ ] } 
+									onChange={ ( link3Text ) => setAttributes( { link3Text } ) }
+									placeholder={ "Link 3 text..." } 
+								/>
+							</span>
+							</a></li>
+						<li><a href="#" id="mission4_link" onClick={()=>{return false;}}>
+						<span>
+								<RichText
+									tagName="span"
+									className = "scrollSpyLinkContent"
+									value={ attributes.link4Text }
+									allowedFormats={ [ ] } 
+									onChange={ ( link4Text ) => setAttributes( { link4Text } ) } 
+									placeholder={ "Link 4 text..." } 
+								/>
+							</span>
+							</a></li>
+						<li class="scrollSpyButtonWrapper"><a class="scrollSpyButton" href="#" onClick={()=>{return false;}}>
+						<span>
+								<RichText
+									tagName="span"
+									className = "scrollSpyLinkContent"
+									value={ attributes.link4Text }
+									allowedFormats={ [ ] }
+									onChange={ ( link4Text ) => setAttributes( { link4Text } ) } 
+									placeholder={ "Link 4 text..." }
+								/>
+							</span>
+							</a></li>
 					</ul>
 				</ScrollspyNav>
 			</div>
