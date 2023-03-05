@@ -6,8 +6,6 @@ export default function save({ attributes }) {
 	let id = attributes.id;
 	const className = attributes.className || '';
 	
-	console.log('heading attributes: ', attributes);
-	
 	return   <RichText.Content 
 	  id = {id}
 	  tagName={tagName}
