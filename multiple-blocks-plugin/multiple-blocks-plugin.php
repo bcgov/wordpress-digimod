@@ -13,6 +13,7 @@
  * @package           create-block
  */
 
+ 
  // TODO: DELETE THIS - enable to allow installation of plugins in local dev
 //  add_filter('https_ssl_verify', '__return_false');
 
@@ -87,6 +88,4 @@ add_action( 'init', 'create_block_multiple_blocks_plugin_block_init' );
 
 
 require('custom.php');
-// print_r(get_field('tags',58))
-
 ?>

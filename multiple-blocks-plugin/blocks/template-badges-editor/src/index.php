@@ -124,11 +124,20 @@ add_filter('block_editor_rest_api_preload_paths',function( $preload_paths, $bloc
  *
  * @see: https://developer.wordpress.org/reference/hooks/rest_insert_this-post_type/
  */
-add_action('rest_insert_page', function($post){
-    //Find blocks using handler
+// add_action('rest_insert_common-component', function($post){
+//     throw new Exception('whooops');
+//     // echo('test');
+//     //Find blocks using handler
+//     template_badges_editor_handler($post,function($post,$field_name,$value){
+//         // echo('saving: '.$field_name);
+//         // print_r($value);
+//         update_field($field_name,$value,$post->ID);
+//     });
+// });
+
+add_action('save_post','save_post_callback3',10,3);
+function save_post_callback3($post_id,$post, $update){
     template_badges_editor_handler($post,function($post,$field_name,$value){
-        // echo('saving: '.$field_name);
-        // print_r($value);
         update_field($field_name,$value,$post->ID);
     });
-});
+}

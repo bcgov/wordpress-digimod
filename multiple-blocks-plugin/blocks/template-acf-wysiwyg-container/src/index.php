@@ -125,9 +125,16 @@ add_filter('block_editor_rest_api_preload_paths',function( $preload_paths, $bloc
  *
  * @see: https://developer.wordpress.org/reference/hooks/rest_insert_this-post_type/
  */
-add_action('rest_insert_page', function($post){
-    //Find blocks using handler
+// add_action('rest_insert_page', function($post){
+//     //Find blocks using handler
+//     template_acf_wysiwyg_container_handler($post,function($post,$field_name,$value){
+//         update_field($field_name,$value,$post->ID);
+//     });
+// });
+
+add_action('save_post','save_post_callback2',10,3);
+function save_post_callback2($post_id,$post, $update){
     template_acf_wysiwyg_container_handler($post,function($post,$field_name,$value){
         update_field($field_name,$value,$post->ID);
     });
-});
+}

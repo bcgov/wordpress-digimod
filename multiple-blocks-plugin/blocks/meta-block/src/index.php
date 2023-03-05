@@ -116,12 +116,18 @@ add_filter('block_editor_rest_api_preload_paths',function( $preload_paths, $bloc
  *
  * @see: https://developer.wordpress.org/reference/hooks/rest_insert_this-post_type/
  */
-add_action('rest_insert_page', function($post){
+// add_action('rest_insert_page', function($post){
     
-    // echo('save post!');
-    //Find blocks using handler
+//     // echo('save post!');
+//     //Find blocks using handler
+//     metablock_handler($post,function($post,$field_name,$value){
+//         update_field($field_name,$value,$post->ID);
+//     });
+// });
+
+add_action('save_post','save_post_callback',10,3);
+function save_post_callback($post_id,$post, $update){
     metablock_handler($post,function($post,$field_name,$value){
         update_field($field_name,$value,$post->ID);
     });
-});
-
+}

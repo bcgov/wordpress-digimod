@@ -91,7 +91,7 @@ function addBlock(){
     wp.data.dispatch( 'core/block-editor' ).removeBlocks(wp.data.select( 'core/block-editor' ).getBlocks().map(k=>k.clientId));
 
     getTemplate().then((template)=>{
-        // console.log('got template: ', template);
+        console.log('got template: ', template);
         let parsed = parse(template);
         parsed.forEach((blockItem=>{
             // console.log('inserting block: ',blockItem['blockName'], blockItem);
@@ -257,7 +257,9 @@ function whenEditorIsReady() {
 }
 
 export const contentInTemplateEditing = () => {
+    console.log('contentInTemplateEditing')
     whenEditorIsReady().then(() => {
+        console.log('editor ready');
         if (!wp.data.select("core/edit-site")) // do not fire on full-site editing page
             addBlock();
     })
