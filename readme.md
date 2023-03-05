@@ -41,7 +41,7 @@ navigate to `wp-content/plugins/`
 rename crashing plugin from "plugin" to "plugin.disabled"
 
 ## Tests - JavaScript
-To run javascript tests:
+### To run javascript tests:
 
 `npx jest`
 
@@ -51,9 +51,18 @@ To check jest JS coverage:
 
 `npx jest --coverage`
 
-To run end-to-end tests for blocks:
+### To run end-to-end tests for blocks:
+
+Start WordPress development environment:
+
+`wp-env start`
+
+Run tests:
 
 `npm run test:e2e`
+
+To run a specific test:
+`npm run test:e2e e2e-tests/two-columns.spec.js`
 
 To debug end-to-end tests in Chrome browser:
 
@@ -63,3 +72,7 @@ After running the command, tests will be available for debugging in Chrome by go
 
 ## Tests - PHP
 Install PHP, Composer, PHPUnit
+
+Run
+
+`./vendor/bin/phpunit .\multiple-blocks-plugin\tests`

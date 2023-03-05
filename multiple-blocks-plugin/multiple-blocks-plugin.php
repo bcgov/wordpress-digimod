@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:       Multiple Blocks Plugin
- * Description:       Example block scaffolded with Create Block tool.
+ * Plugin Name:       Digimod Blocks
+ * Description:       Contains blocks and custom functionality
  * Requires at least: 5.9
  * Requires PHP:      7.0
  * Version:           0.1.0
@@ -13,7 +13,7 @@
  * @package           create-block
  */
 
- // TODO: DELETE THIS - enable to allow installation of blocks on local
+ // TODO: DELETE THIS - enable to allow installation of plugins in local dev
 //  add_filter('https_ssl_verify', '__return_false');
 
 require(  __DIR__ . '/blocks/template-raw-custom-field/src/index.php');
@@ -31,14 +31,26 @@ require(  __DIR__ . '/blocks/template-badges-editor/src/index.php');
 
 require(  __DIR__ . '/blocks/meta-block/src/index.php');
 require(  __DIR__ . '/blocks/template-cc-links-custom-field/src/index.php');
+require(  __DIR__ . '/blocks/embed-youtube/src/index.php');
+require(  __DIR__ . '/blocks/eventbrite-cards/src/index.php');
+require(  __DIR__ . '/blocks/podcasts/src/index.php');
+
 
 function create_block_multiple_blocks_plugin_block_init(){
 
 // register_block_type( __DIR__ . '/blocks/meta-block/build' );
 
-// register_block_type( __DIR__ . '/blocks/wrapper-block/build' );
+
+
+register_block_type( __DIR__ . '/blocks/columns/build' );
+// register_block_type( __DIR__ . '/blocks/dm-placeholder/build' );
+
+// register_block_type( __DIR__ . '/blocks/four-square-white-wide-banner/build' );
+register_block_type( __DIR__ . '/blocks/card/build' );
+register_block_type( __DIR__ . '/blocks/dm-column/build' );
+register_block_type( __DIR__ . '/blocks/scrollspy/build' );
+register_block_type( __DIR__ . '/blocks/heading/build' );
 register_block_type( __DIR__ . '/blocks/content-banner/build' );
-// register_block_type( __DIR__ . '/blocks/two-tabs/build' );
 register_block_type( __DIR__ . '/blocks/four-columns-text/build' );
 register_block_type( __DIR__ . '/blocks/two-columns/build' );
 register_block_type( __DIR__ . '/blocks/three-columns/build' );
@@ -47,7 +59,9 @@ register_block_type( __DIR__ . '/blocks/h2-heading/build' );
 register_block_type( __DIR__ . '/blocks/h3-heading/build' );
 register_block_type( __DIR__ . '/blocks/annotate/build' );
 register_block_type( __DIR__ . '/blocks/accordian/build' );
-register_block_type( __DIR__ . '/blocks/embed-youtube/build' );
+// register_block_type( __DIR__ . '/blocks/two-tabs/build' );
+// register_block_type( __DIR__ . '/blocks/dm-tab-column/build' );
+// register_block_type( __DIR__ . '/blocks/embed-youtube/build' );
 register_block_type( __DIR__ . '/blocks/dm-content-banner/build' );
 register_block_type( __DIR__ . '/blocks/dm-content-banner-content/build' );
 register_block_type( __DIR__ . '/blocks/dm-content-banner-image/build' );

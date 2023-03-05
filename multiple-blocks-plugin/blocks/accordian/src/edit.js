@@ -49,7 +49,7 @@ export default function Edit(props) {
     //   </div>
 
     // </div>
-    <div className="ant-collapse ant-collapse-icon-position-right">
+    <div className="ant-collapse ant-collapse-icon-position-right" {...blockProps}>
       <div className="ant-collapse-item ant-collapse-item-active sc-elYLMi foWTyR PanelStyled">
         <div className="ant-collapse-header" role="button" tabIndex="0" aria-expanded="true">
           <div>

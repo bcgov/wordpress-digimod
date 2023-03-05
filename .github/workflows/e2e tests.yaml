@@ -1,4 +1,4 @@
-name: e2e Tests
+name: Tests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  e2e-tests:
 
     runs-on: ubuntu-latest
 
@@ -25,3 +25,20 @@ jobs:
       - run: npm install --prefix multiple-blocks-plugin/
       - run: wp-env start --prefix multiple-blocks-plugin/
       - run: npm run test:e2e --prefix multiple-blocks-plugin/
+
+  php-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: php-actions/composer@v6 # or alternative dependency management
+    - name: Run Tests
+      uses: php-actions/phpunit@master
+      with:
+        php_extensions: "xdebug"
+        bootstrap: vendor/autoload.php
+        configuration: multiple-blocks-plugin/tests/phpunit.xml
+        args: --coverage-text
+      env:
+        XDEBUG_MODE: coverage
+        TEST_NAME: Scarlett

@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
   import { useBlockProps, RichText, InnerBlocks , InspectorControls } from '@wordpress/block-editor';
-  import { TextControl } from "@wordpress/components";
+  import { TextControl, SelectControl } from "@wordpress/components";
 
   import './editor.scss';
 
@@ -46,6 +46,15 @@ import { __ } from '@wordpress/i18n';
 					onChange={onChange_content}
 					value={attributes.content}
 				/>
+        <SelectControl
+						label={ 'Link Type' }
+						value={ attributes.linkType }
+						options={ [
+							{ label: 'Internal', value: 'internal' },
+							{ label: 'External', value: 'external' },
+						] }
+						onChange={ ( value ) => setAttributes( { linkType: value } ) }
+					/>
 			</InspectorControls>
 
 				

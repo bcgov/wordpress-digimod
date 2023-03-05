@@ -2,6 +2,16 @@
 
 exports[`Two columns block Two columns block should be available 1`] = `
 "<!-- wp:multiple-blocks-plugin/two-columns -->
-<div class=\\"row\\"></div>
+<div class=\\"row\\"><!-- wp:multiple-blocks-plugin/dm-col-sm-12-md-6 -->
+<div class=\\"col-sm-12 col-md-6\\"><!-- wp:paragraph -->
+<p></p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:multiple-blocks-plugin/dm-col-sm-12-md-6 -->
+
+<!-- wp:multiple-blocks-plugin/dm-col-sm-12-md-6 -->
+<div class=\\"col-sm-12 col-md-6\\"><!-- wp:paragraph -->
+<p></p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:multiple-blocks-plugin/dm-col-sm-12-md-6 --></div>
 <!-- /wp:multiple-blocks-plugin/two-columns -->"
 `;

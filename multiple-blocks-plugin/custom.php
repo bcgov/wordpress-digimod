@@ -1,5 +1,8 @@
 <?php
 
+// disable automatic core updates - updates should be done through open shift image updates
+add_filter( 'auto_update_core', '__return_false' );
+
 // add custom javascript
 function myguten_enqueue() {
   
@@ -10,185 +13,32 @@ function myguten_enqueue() {
     '1.0.0',
     true // Enqueue the script in the footer.
   );
-
 }
+
 
 add_action( 'enqueue_block_editor_assets', 'myguten_enqueue' );
-
-
-/* CREATE CUSTOM ROLES */
-
-// Delete a role on plugin deactivation
-// add_action( 'switch_theme', 'deactivate_my_theme' );
-
-// function deactivate_my_theme() {
-// 	remove_role( 'basic_contributor' );
-// }
-
-// Add a role on plugin activation
-// add_action( 'after_switch_theme', 'activate_my_theme' );
-register_activation_hook( __FILE__, 'activate_my_theme' );
-function activate_my_theme() {
-  $editor = get_role( 'editor' );
-  add_role( 'copywriter', 'Copywriter', $editor->capabilities);
-  add_role( 'subject-matter-expert', 'Subject Matter Expert', $editor->capabilities);
-  add_role( 'production-manager', 'Production Manager', $editor->capabilities);
-	// add_role( 'basic_contributor', 'Basic Contributor',
-	// 	[
-	// 		'read'         => true,
-	// 		'edit_posts'   => true,
-	// 		'upload_files' => true,
-	// 	]
-	// );
-}
-
-/* ADD CAPABILITIES TO ROLES TO EDIT PAGES BASED ON CUSTOM PAGE STATUS */
-
-// Copywriter should not be able to edit their copy after the page goes into "review" state
-
-register_activation_hook( __FILE__, 'epp_add_cap' );
-
-/**
- * Add new capabilities to custom roles.
- *
- * @wp-hook "activate_" . __FILE__
- * @return  void
- */
-function epp_add_cap()
-{
-    global $wp_roles;
-
-    if ( ! isset( $wp_roles ) )
-        $wp_roles = new WP_Roles;
-
-    // copywriter can't edit pages under review OR ready to publish
-    $wp_roles->add_cap( 'copywriter', 'deny_ready_to_publish_OR_review_edit' );
-
-    // subject matter expert can't edit if page is ready to publish
-    $wp_roles->add_cap( 'subject-matter-expert', 'deny_ready_to_publish_edit' );
-}
-
-add_filter( 'user_has_cap', 'process_deny_review_edit', 10, 3 );
-
-/**
- * Allow editing others pending posts only with "deny_review_edit" capability.
- * Administrators can still edit those posts.
- *
- * @wp-hook user_has_cap
- * @param   array $allcaps All the capabilities of the user
- * @param   array $caps    [0] Required capability ('edit_others_posts')
- * @param   array $args    [0] Requested capability
- *                         [1] User ID
- *                         [2] Post ID
- * @return  array
- */
-function process_deny_review_edit( $allcaps, $caps, $args )
-{
-    // Not our capability
-    if ( ( 'edit_post' !== $args[0] && 'delete_post' !== $args[0] )
-        or empty ( $allcaps['deny_review_edit'] )
-    )
-        return $allcaps;
-
-    $post = get_post( $args[2] );
-
-    // if page is in "review" status, then deny editing to copywriter
-    // echo ($post->post_status);
-    // echo ('review' == $post->post_status);
-
-    if ( 'review' == $post->post_status )
-    { 
-        // echo($allcaps[ $caps[0] ]);
-        $allcaps[ $caps[0] ] = FALSE;
-    }else{
-        // post is in some other state - allow editing
-        $allcaps[ $caps[0] ] = TRUE;
-    }
-
-    return $allcaps;
-}
-
-add_filter( 'user_has_cap', 'process_deny_ready_to_publish_OR_review_edit', 10, 3 );
-
-/**
- * Allow editing others pending posts only with "deny_ready_to_publish_OR_review_edit" capability.
- * Administrators can still edit those posts.
- *
- * @wp-hook user_has_cap
- * @param   array $allcaps All the capabilities of the user
- * @param   array $caps    [0] Required capability ('edit_others_posts')
- * @param   array $args    [0] Requested capability
- *                         [1] User ID
- *                         [2] Post ID
- * @return  array
- */
-function process_deny_ready_to_publish_OR_review_edit( $allcaps, $caps, $args )
-{
-    // Not our capability
-    if ( ( 'edit_post' !== $args[0] && 'delete_post' !== $args[0] )
-        or empty ( $allcaps['deny_ready_to_publish_OR_review_edit'] )
-    )
-        return $allcaps;
-
-    $post = get_post( $args[2] );
-
-    // if page is in "ready-to-publish" or "review" status, then deny editing
-    if ( 'ready-to-publish' == $post->post_status or 'review' == $post->post_status )
-    { 
-        $allcaps[ $caps[0] ] = FALSE;
-    }else{
-        // post is in some other state - allow editing
-        $allcaps[ $caps[0] ] = TRUE;
-    }
-
-    return $allcaps;
-}
-
-add_filter( 'user_has_cap', 'process_deny_ready_to_publish_edit', 10, 3 );
-
-/**
- * Allow editing others pending posts only with "deny_ready_to_publish_edit" capability.
- * Administrators can still edit those posts.
- *
- * @wp-hook user_has_cap
- * @param   array $allcaps All the capabilities of the user
- * @param   array $caps    [0] Required capability ('edit_others_posts')
- * @param   array $args    [0] Requested capability
- *                         [1] User ID
- *                         [2] Post ID
- * @return  array
- */
-function process_deny_ready_to_publish_edit( $allcaps, $caps, $args )
-{
-    // Not our capability
-    if ( ( 'edit_post' !== $args[0] && 'delete_post' !== $args[0] )
-        or empty ( $allcaps['deny_ready_to_publish_edit'] )
-    )
-        return $allcaps;
-
-    $post = get_post( $args[2] );
-
-    // if page is in "ready-to-publish" or "review" status, then deny editing
-    //echo($post->post_status);
-    if ( 'ready-to-publish' == $post->post_status)
-    { 
-        $allcaps[ $caps[0] ] = FALSE;
-    }else{
-        // post is in some other state - allow editing
-        $allcaps[ $caps[0] ] = TRUE;
-    }
-
-    return $allcaps;
-}
 
 
 /*
  * Whitelist specific Gutenberg blocks (paragraph, heading, image, lists, etc.)
  *
  */
-// add_filter( 'allowed_block_types_all', 'allowed_block_types', 0, 2 );
- 
+add_filter( 'allowed_block_types_all', 'allowed_block_types', 0, 2 );
+$digimod_v2_pages = ['616','66', '87', '77', '68', '72', '89', '74', '85', '81', '83', '79', '228', '226', '221', '9', '632', '634', '636', 
+'639', '641', '643', '645', '652', '630', '647', '654', '666', '656', '658', '660', '662', '664', '668', '670', '672', '13'];
+
+function isGDXThemePage(){
+  global $digimod_v2_pages;
+  $post_id = isset($_GET['post']) ? $_GET['post'] : null;
+  
+  if(!in_array($post_id, $digimod_v2_pages))
+    return true;
+  else
+    return false;
+}
+
 function allowed_block_types( $allowed_blocks, $editor_context ) {
+  
   if ($editor_context->name != 'core/edit-post'){
     return;
   }
@@ -197,33 +47,55 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
   // echo (implode ($block_types));
   $ret = array();
   
-  // allow all custom blocks that don't start with "dm-" - these ones are for internal use (construction of other blocks)
-  // also filter out card-image blocks - these are for internal use too
-  foreach ($block_types as &$value) {
-    // echo(' item: ');
-    // echo($value->name);
-    // echo(' category: ');
-    // echo($value->category);
-    if (str_starts_with($value->name,'multiple-blocks-plugin') 
-        and !str_starts_with($value->name,'multiple-blocks-plugin/dm-') 
-        and !str_starts_with($value->name,'multiple-blocks-plugin/card-image')
-    ){
-      array_push($ret,$value->name);
+  if(isGDXThemePage()){
+    
+    foreach ($block_types as &$value) {
+      // echo('check: '.$value->name);
+
+      if (!str_starts_with($value->name,'multiple-blocks-plugin')){
+        // echo('push: '.$value->name);
+        array_push($ret,$value->name);
+      }
     }
+    return $ret;
+  }else{
+    // allow all custom blocks that don't start with "dm-" - these ones are for internal use (construction of other blocks)
+    // also filter out card-image blocks - these are for internal use too
+    // filter out template related blocks as well
+    foreach ($block_types as &$value) {
+      // echo(' item: ');
+      // echo($value->name);
+      // echo(' category: ');
+      // echo($value->category);
+    
+      
+      if (str_starts_with($value->name,'multiple-blocks-plugin') 
+          and !str_starts_with($value->name,'multiple-blocks-plugin/dm-') 
+          and !str_starts_with($value->name,'multiple-blocks-plugin/card-image')
+          and !str_starts_with($value->name,'multiple-blocks-plugin/template')
+          and !str_starts_with($value->name,'multiple-blocks-plugin/meta-block')
+          and !str_starts_with($value->name,'multiple-blocks-plugin/h2-heading')
+          and !str_starts_with($value->name,'multiple-blocks-plugin/h3-heading')
+      ){
+        array_push($ret,$value->name);
+      }
+    }
+
+    array_push($ret, 'core/paragraph');
+    array_push($ret, 'core/video');
+    array_push($ret, 'core/embed');
+    array_push($ret, 'core/freeform');
+    array_push($ret, 'core/separator');
+    array_push($ret, 'core/html');
+    array_push($ret, 'core/list');
+    array_push($ret, 'core/list-item');
+    array_push($ret, 'core/post-title');
+    // array_push($ret, 'core/heading');
+    // array_push($ret, 'core/columns');
+    array_push($ret, 'core/image');
+
+    return $ret;
   }
-
-  array_push($ret, 'core/paragraph');
-  array_push($ret, 'core/video');
-  array_push($ret, 'core/embed');
-  array_push($ret, 'core/cover');
-  array_push($ret, 'core/list');
-  array_push($ret, 'core/list-item');
-  array_push($ret, 'core/post-title');
-  // array_push($ret, 'core/column');
-  // array_push($ret, 'core/columns');
-  array_push($ret, 'core/image');
-
-	return $ret;
 }
 
 /* CUSTOM POST TYPES */
@@ -346,6 +218,64 @@ function custom_post_type() {
       
     // Registering your Custom Post Type
     register_post_type( 'cop', $args_cop );
+
+    // PODCASTS
+    // Set UI labels for Custom Post Type
+    $labels_podcast = array(
+      'name'                => _x( 'Podcast Page', 'Post Type General Name', 'twentytwentyone' ),
+      'singular_name'       => _x( 'Podcast', 'Post Type Singular Name', 'twentytwentyone' ),
+      'menu_name'           => __( 'Podcasts', 'twentytwentyone' ),
+      'parent_item_colon'   => __( 'Parent Podcast Page', 'twentytwentyone' ),
+      'all_items'           => __( 'All Podcasts Pages', 'twentytwentyone' ),
+      'view_item'           => __( 'View Podcast Page', 'twentytwentyone' ),
+      'add_new_item'        => __( 'Add New Podcast Page', 'twentytwentyone' ),
+      'add_new'             => __( 'Add New', 'twentytwentyone' ),
+      'edit_item'           => __( 'Edit Podcast Page', 'twentytwentyone' ),
+      'update_item'         => __( 'Update Podcast Page', 'twentytwentyone' ),
+      'search_items'        => __( 'Search Podcast Page', 'twentytwentyone' ),
+      'not_found'           => __( 'Not Found', 'twentytwentyone' ),
+      'not_found_in_trash'  => __( 'Not found in Trash', 'twentytwentyone' ),
+  );
+    
+// Set other options for Custom Post Type
+    
+  $args_podcast = array(
+      'label'               => __( 'cop', 'twentytwentyone' ),
+      'description'         => __( 'Regular Podcast pages', 'twentytwentyone' ),
+      'labels'              => $labels_podcast,
+      // Features this CPT supports in Post Editor
+      'supports'            => array( 'title','custom-fields'),
+      // 'supports'            => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'comments', 'revisions', 'custom-fields', ),
+      // You can associate this CPT with a taxonomy or custom taxonomy. 
+      // 'taxonomies'          => array( 'genres' ),
+      /* A hierarchical CPT is like Pages and can have
+      * Parent and child items. A non-hierarchical CPT
+      * is like Posts.
+      */
+      'hierarchical'        => true,
+      'public'              => true,
+      'show_ui'             => true,
+      'show_in_menu'        => true,
+      'show_in_nav_menus'   => true,
+      'show_in_admin_bar'   => true,
+      'menu_position'       => 5,
+      'can_export'          => true,
+      'has_archive'         => true,
+      'exclude_from_search' => false,
+      'publicly_queryable'  => true,
+      'capability_type'     => 'page',
+      'show_in_rest' => true,
+      // 'template' => array(
+      //   array('core/post-title', array(
+      //     'level' => 1,
+      //     'className' => 'sc-cOFTSb bGhVVJ'
+      //   ))
+      // )
+  );
+    
+  // Registering your Custom Post Type
+  register_post_type( 'podcast', $args_podcast );
+    // run this once to clear 404 error for custom post types
     // flush_rewrite_rules( false );
   }
     
@@ -359,6 +289,9 @@ function custom_post_type() {
   /* ADD DEFAULT TEMPLATE TO PAGE TYPE */
 
   function set_page_template() {
+    if(isGDXThemePage())
+      return;
+
     $template = array(
       array('core/post-title', array(
         'level' => 1,
@@ -376,12 +309,19 @@ function custom_post_type() {
 
 
 function override_core_embed($block_attributes, $content, $block){
+  if(isGDXThemePage())
+      return $content;
+    
+  // echo ('hello');
   return sprintf('<div react-component="ReactPlayer" url="%1$s"></div>',$block_attributes['url']);
 }
 
 
 
 function override_core_image($block_attributes, $content, $block){
+  if(isGDXThemePage())
+      return $content;
+
   // todo: is there a better way of doing this?
   // unwrap image out of figure tag, add any additional classes to the image class (originally assigned to figure tag)
   // print_r($block_attributes);
@@ -442,6 +382,9 @@ function override_core_image($block_attributes, $content, $block){
 }
 
 function process_acf_short_codes($content){
+  if(isGDXThemePage())
+      return $content;
+
   // for some reason ACF shortcodes are not working in templates, so parse them out here for raw html block
   // todo: investigate why it's not working in templates
   // todo: add this feature to any block content
@@ -484,6 +427,9 @@ function process_acf_short_codes($content){
 }
 
 function override_core_html($block_attributes, $content, $block){
+  if(isGDXThemePage())
+      return $content;
+
   // echo('HTML');
   $r =process_acf_short_codes($content);
   // echo('r: '.$r);
@@ -515,10 +461,6 @@ function ret_tempate( $request_data  ) {
   return rest_ensure_response( array('content'=>$t->content) );
 
   // return $t->content;
-
-
-  
-
   
   // $posts = get_posts( array(
   //   'author' => $data['id'],
@@ -583,10 +525,159 @@ add_action( 'rest_api_init', function () {
 
 function imageOnly($deprecated, $attr, $content = null) 
 {
-    echo('image only!');
-    return do_shortcode( $content );
+  if(isGDXThemePage())
+      return $content;
+
+  return do_shortcode( $content );
 }
 add_filter( 'img_caption_shortcode', 'imageOnly', 10, 3 );
+
+function block_add_meta_box() {
+  add_meta_box( 'block_api_key', 'API Key', 'block_render_meta_box', 'post', 'normal', 'default' );
+  add_meta_box( 'block_api_key', 'API Key', 'block_render_meta_box', 'page', 'normal', 'default' );
+}
+
+function block_render_meta_box( $post ) {
+  wp_nonce_field( 'block_save_api_key', 'block_api_key_nonce' );
+  $api_key = get_post_meta( $post->ID, 'block_api_key', true );
+  echo '<input type="text" id="block_api_key" name="block_api_key" value="' . esc_attr( $api_key ) . '" />';
+}
+
+function block_save_meta_box( $post_id ) {
+  if(isGDXThemePage())
+      return;
+
+  if ( ! isset( $_POST['block_api_key_nonce'] ) || ! wp_verify_nonce( $_POST['block_api_key_nonce'], 'block_save_api_key' ) ) {
+    return;
+  }
+  if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+    return;
+  }
+  if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
+    if ( ! current_user_can( 'edit_page', $post_id ) ) {
+      return;
+    }
+  } else {
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+      return;
+    }
+  }
+  if ( ! isset( $_POST['block_api_key'] ) ) {
+    delete_post_meta( $post_id, 'block_api_key' );
+    return;
+  }
+  $api_key = sanitize_text_field( $_POST['block_api_key'] );
+  update_post_meta( $post_id, 'block_api_key', $api_key );
+}
+
+//add_action( 'add_meta_boxes', 'block_add_meta_box' );
+add_action( 'save_post', 'block_save_meta_box' );
+// function block_get_api_key() {
+//   $api_key = get_api_key();
+//   wp_send_json_success( $api_key );
+// }
+
+// add_action( 'wp_ajax_get_api_key', 'block_get_api_key' );
+// add_action( 'wp_ajax_nopriv_get_api_key', 'block_get_api_key' );
+
+
+
+// function multiple_blocks_metadata_block_block_init() {
+// 	register_block_type(
+// 		__DIR__ . '/build',
+// 		array(
+// 			'render_callback' => 'multiple_blocks_metadata_block_render_callback',
+// 		)
+// 	);
+// }
+// add_action( 'init', 'multiple_blocks_metadata_block_block_init' );
+
+function multiple_blocks_metadata_block_render_callback( $attributes, $content, $block ) {
+	
+	$api_key = get_post_meta( get_the_ID(), '_multiple_blocks_api_key', true );
+    
+	$output = "";
+
+	if( ! empty( $api_key ) ){
+		$output .= '<h3>' . esc_html( $api_key ) . '</h3>';
+	}
+	if( strlen( $output ) > 0 ){
+		return '<div ' . get_block_wrapper_attributes() . '>' . $output . '</div>';
+	} else {
+		return '<div ' . get_block_wrapper_attributes() . '>' . '<strong>' . __( 'Sorry. No fields available here!' ) . '</strong>' . '</div>';
+	}
+} 
+// register meta box
+function multiple_blocks_add_meta_box(){
+	add_meta_box(
+		'multiple_blocks_meta_box', 
+		__( 'Post Status' ), 
+		'multiple_blocks_build_meta_box_callback', 
+		'post', 
+		'side',
+		'default',
+		// hide the meta box in Gutenberg
+		array('__back_compat_meta_box' => true)
+	 );
+}
+
+// build meta box
+function multiple_blocks_build_meta_box_callback( $post ){
+	  wp_nonce_field( 'multiple_blocks_save_meta_box_data', 'multiple_blocks_meta_box_nonce' );
+	  $status = get_post_meta( $post->ID, '_multiple_blocks_api_key', true );
+	  ?>
+	  <div class="inside">
+	  	  <p><strong>status</strong></p>
+		  <p><input type="text" id="multiple_blocks_api_key" name="multiple_blocks_api_key" value="<?php echo esc_attr( $status ); ?>" /></p>	
+	  </div>
+	  <?php
+}
+add_action( 'add_meta_boxes', 'multiple_blocks_add_meta_box' );
+// save metadata
+function multiple_blocks_save_meta_box_data( $post_id ) {
+	if ( ! isset( $_POST['multiple_blocks_meta_box_nonce'] ) )
+		return;
+	if ( ! wp_verify_nonce( $_POST['multiple_blocks_meta_box_nonce'], 'multiple_blocks_save_meta_box_data' ) )
+		return;
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+		return;
+	if ( ! current_user_can( 'edit_post', $post_id ) )
+		return;
+
+	if ( ! isset( $_POST['multiple_blocks_api_key'] ) )
+		return;
+
+	$status = sanitize_text_field( $_POST['multiple_blocks_api_key'] );
+
+	update_post_meta( $post_id, '_multiple_blocks_api_key', $status );
+}
+add_action( 'save_post', 'multiple_blocks_save_meta_box_data' );
+
+/**
+ * Register the custom meta fields
+ */
+function multiple_blocks_register_meta() {
+    if(isGDXThemePage())
+      return;
+
+    $metafields = [ '_multiple_blocks_api_key'];
+
+    foreach( $metafields as $metafield ){
+        // Pass an empty string to register the meta key across all existing post types.
+        register_post_meta( '', $metafield, array(
+            'show_in_rest' => true,
+            'type' => 'string',
+            'single' => true,
+            'sanitize_callback' => 'sanitize_text_field',
+            'auth_callback' => function() { 
+                return current_user_can( 'edit_posts' );
+            }
+        ));
+    }  
+}
+add_action( 'init', 'multiple_blocks_register_meta' );
+
+
 
 // Here's some code generated by AI in case more advanced filtering is needed (not tested):
 //

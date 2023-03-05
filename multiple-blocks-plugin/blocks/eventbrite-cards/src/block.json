@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "multiple-blocks-plugin/eventbrite-cards",
+  "version": "0.1.0",
+  "title": "eventbrite-cards",
+  "category": "widgets",
+  "icon": "smiley",
+  "description": "Displays eventbrite courses or events.",
+  "attributes": {
+    "className": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "eventType": {
+      "type": "string",
+      "enum": ["Courses","Events"],
+      "default": "Events"
+    }
+  },
+  "supports": {
+    "html": false
+  },
+  "textdomain": "multiple-blocks-plugin",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}
