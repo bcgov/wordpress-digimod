@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:       Multiple Blocks Plugin
- * Description:       Example block scaffolded with Create Block tool.
+ * Plugin Name:       Digimod Blocks
+ * Description:       Contains blocks and custom functionality
  * Requires at least: 5.9
  * Requires PHP:      7.0
  * Version:           0.1.0
@@ -13,7 +13,7 @@
  * @package           create-block
  */
 
- // TODO: DELETE THIS
+ // TODO: DELETE THIS - enable to allow installation of plugins in local dev
 //  add_filter('https_ssl_verify', '__return_false');
 
 require(  __DIR__ . '/blocks/template-raw-custom-field/src/index.php');

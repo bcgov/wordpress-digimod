@@ -19,15 +19,26 @@ function myguten_enqueue() {
 add_action( 'enqueue_block_editor_assets', 'myguten_enqueue' );
 
 
-
-
 /*
  * Whitelist specific Gutenberg blocks (paragraph, heading, image, lists, etc.)
  *
  */
 add_filter( 'allowed_block_types_all', 'allowed_block_types', 0, 2 );
- 
+$digimod_v2_pages = ['616','66', '87', '77', '68', '72', '89', '74', '85', '81', '83', '79', '228', '226', '221', '9', '632', '634', '636', 
+'639', '641', '643', '645', '652', '630', '647', '654', '666', '656', '658', '660', '662', '664', '668', '670', '672', '13'];
+
+function isGDXThemePage(){
+  global $digimod_v2_pages;
+  $post_id = isset($_GET['post']) ? $_GET['post'] : null;
+  
+  if(!in_array($post_id, $digimod_v2_pages))
+    return true;
+  else
+    return false;
+}
+
 function allowed_block_types( $allowed_blocks, $editor_context ) {
+  
   if ($editor_context->name != 'core/edit-post'){
     return;
   }
@@ -36,40 +47,55 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
   // echo (implode ($block_types));
   $ret = array();
   
-  // allow all custom blocks that don't start with "dm-" - these ones are for internal use (construction of other blocks)
-  // also filter out card-image blocks - these are for internal use too
-  // filter out template related blocks as well
-  foreach ($block_types as &$value) {
-    // echo(' item: ');
-    // echo($value->name);
-    // echo(' category: ');
-    // echo($value->category);
-    if (str_starts_with($value->name,'multiple-blocks-plugin') 
-        and !str_starts_with($value->name,'multiple-blocks-plugin/dm-') 
-        and !str_starts_with($value->name,'multiple-blocks-plugin/card-image')
-        and !str_starts_with($value->name,'multiple-blocks-plugin/template')
-        and !str_starts_with($value->name,'multiple-blocks-plugin/meta-block')
-        and !str_starts_with($value->name,'multiple-blocks-plugin/h2-heading')
-        and !str_starts_with($value->name,'multiple-blocks-plugin/h3-heading')
-    ){
-      array_push($ret,$value->name);
+  if(isGDXThemePage()){
+    
+    foreach ($block_types as &$value) {
+      // echo('check: '.$value->name);
+
+      if (!str_starts_with($value->name,'multiple-blocks-plugin')){
+        // echo('push: '.$value->name);
+        array_push($ret,$value->name);
+      }
     }
+    return $ret;
+  }else{
+    // allow all custom blocks that don't start with "dm-" - these ones are for internal use (construction of other blocks)
+    // also filter out card-image blocks - these are for internal use too
+    // filter out template related blocks as well
+    foreach ($block_types as &$value) {
+      // echo(' item: ');
+      // echo($value->name);
+      // echo(' category: ');
+      // echo($value->category);
+    
+      
+      if (str_starts_with($value->name,'multiple-blocks-plugin') 
+          and !str_starts_with($value->name,'multiple-blocks-plugin/dm-') 
+          and !str_starts_with($value->name,'multiple-blocks-plugin/card-image')
+          and !str_starts_with($value->name,'multiple-blocks-plugin/template')
+          and !str_starts_with($value->name,'multiple-blocks-plugin/meta-block')
+          and !str_starts_with($value->name,'multiple-blocks-plugin/h2-heading')
+          and !str_starts_with($value->name,'multiple-blocks-plugin/h3-heading')
+      ){
+        array_push($ret,$value->name);
+      }
+    }
+
+    array_push($ret, 'core/paragraph');
+    array_push($ret, 'core/video');
+    array_push($ret, 'core/embed');
+    array_push($ret, 'core/freeform');
+    array_push($ret, 'core/separator');
+    array_push($ret, 'core/html');
+    array_push($ret, 'core/list');
+    array_push($ret, 'core/list-item');
+    array_push($ret, 'core/post-title');
+    // array_push($ret, 'core/heading');
+    // array_push($ret, 'core/columns');
+    array_push($ret, 'core/image');
+
+    return $ret;
   }
-
-  array_push($ret, 'core/paragraph');
-  array_push($ret, 'core/video');
-  array_push($ret, 'core/embed');
-  array_push($ret, 'core/freeform');
-  array_push($ret, 'core/separator');
-  array_push($ret, 'core/html');
-  array_push($ret, 'core/list');
-  array_push($ret, 'core/list-item');
-  array_push($ret, 'core/post-title');
-  // array_push($ret, 'core/heading');
-  // array_push($ret, 'core/columns');
-  array_push($ret, 'core/image');
-
-	return $ret;
 }
 
 /* CUSTOM POST TYPES */
@@ -263,6 +289,9 @@ function custom_post_type() {
   /* ADD DEFAULT TEMPLATE TO PAGE TYPE */
 
   function set_page_template() {
+    if(isGDXThemePage())
+      return;
+
     $template = array(
       array('core/post-title', array(
         'level' => 1,
@@ -280,6 +309,9 @@ function custom_post_type() {
 
 
 function override_core_embed($block_attributes, $content, $block){
+  if(isGDXThemePage())
+      return $content;
+    
   // echo ('hello');
   return sprintf('<div react-component="ReactPlayer" url="%1$s"></div>',$block_attributes['url']);
 }
@@ -287,6 +319,9 @@ function override_core_embed($block_attributes, $content, $block){
 
 
 function override_core_image($block_attributes, $content, $block){
+  if(isGDXThemePage())
+      return $content;
+
   // todo: is there a better way of doing this?
   // unwrap image out of figure tag, add any additional classes to the image class (originally assigned to figure tag)
   // print_r($block_attributes);
@@ -341,6 +376,9 @@ function override_core_image($block_attributes, $content, $block){
 }
 
 function process_acf_short_codes($content){
+  if(isGDXThemePage())
+      return $content;
+
   // for some reason ACF shortcodes are not working in templates, so parse them out here for raw html block
   // todo: investigate why it's not working in templates
   // todo: add this feature to any block content
@@ -383,6 +421,9 @@ function process_acf_short_codes($content){
 }
 
 function override_core_html($block_attributes, $content, $block){
+  if(isGDXThemePage())
+      return $content;
+
   // echo('HTML');
   $r =process_acf_short_codes($content);
   // echo('r: '.$r);
@@ -411,10 +452,6 @@ function ret_tempate( $request_data  ) {
   return rest_ensure_response( array('content'=>$t->content) );
 
   // return $t->content;
-
-
-
-
   
   // $posts = get_posts( array(
   //   'author' => $data['id'],
@@ -479,8 +516,10 @@ add_action( 'rest_api_init', function () {
 
 function imageOnly($deprecated, $attr, $content = null) 
 {
-    echo('image only!');
-    return do_shortcode( $content );
+  if(isGDXThemePage())
+      return $content;
+
+  return do_shortcode( $content );
 }
 add_filter( 'img_caption_shortcode', 'imageOnly', 10, 3 );
 
@@ -496,6 +535,9 @@ function block_render_meta_box( $post ) {
 }
 
 function block_save_meta_box( $post_id ) {
+  if(isGDXThemePage())
+      return;
+
   if ( ! isset( $_POST['block_api_key_nonce'] ) || ! wp_verify_nonce( $_POST['block_api_key_nonce'], 'block_save_api_key' ) ) {
     return;
   }
@@ -531,15 +573,15 @@ add_action( 'save_post', 'block_save_meta_box' );
 
 
 
-function multiple_blocks_metadata_block_block_init() {
-	register_block_type(
-		__DIR__ . '/build',
-		array(
-			'render_callback' => 'multiple_blocks_metadata_block_render_callback',
-		)
-	);
-}
-add_action( 'init', 'multiple_blocks_metadata_block_block_init' );
+// function multiple_blocks_metadata_block_block_init() {
+// 	register_block_type(
+// 		__DIR__ . '/build',
+// 		array(
+// 			'render_callback' => 'multiple_blocks_metadata_block_render_callback',
+// 		)
+// 	);
+// }
+// add_action( 'init', 'multiple_blocks_metadata_block_block_init' );
 
 function multiple_blocks_metadata_block_render_callback( $attributes, $content, $block ) {
 	
@@ -606,6 +648,8 @@ add_action( 'save_post', 'multiple_blocks_save_meta_box_data' );
  * Register the custom meta fields
  */
 function multiple_blocks_register_meta() {
+    if(isGDXThemePage())
+      return;
 
     $metafields = [ '_multiple_blocks_api_key'];
 

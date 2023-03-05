@@ -5,7 +5,8 @@
 		"./digital-gov-plugin"
 	],
 	"themes": [
-		"./wordpress-v2-theme"
+		"./wordpress-v2-theme",
+		"../bcgov-wordpress-block-theme"
 	],
 	"config": {
 		"DISALLOW_FILE_MODS":false,
