@@ -31,6 +31,20 @@ add_action('init', function () {
     }
 });
 
+function retrieve_specific_blocks($blockss, $specific_block_type) {
+    $specific_blocks = array();
+    foreach ($blockss as $block) {
+        if ($block['blockName'] === $specific_block_type) {
+            $specific_blocks[] = $block;
+        }
+        if (array_key_exists('innerBlocks', $block) && count($block['innerBlocks'])>0) {
+            $inner_blocks = retrieve_specific_blocks($block['innerBlocks'], $specific_block_type);
+            $specific_blocks = array_merge($specific_blocks, $inner_blocks);
+        }
+    }
+    return $specific_blocks;
+}
+
 /**
  * Finds all instnace of our block and calls $callback on each
  *
@@ -61,19 +75,7 @@ function metablock_handler($post,$callback){
     //     }
     // }
 
-    function retrieve_specific_blocks($blockss, $specific_block_type) {
-        $specific_blocks = array();
-        foreach ($blockss as $block) {
-            if ($block['blockName'] === $specific_block_type) {
-                $specific_blocks[] = $block;
-            }
-            if (array_key_exists('innerBlocks', $block) && count($block['innerBlocks'])>0) {
-                $inner_blocks = retrieve_specific_blocks($block['innerBlocks'], $specific_block_type);
-                $specific_blocks = array_merge($specific_blocks, $inner_blocks);
-            }
-        }
-        return $specific_blocks;
-    }
+    
     
     $specific_blocks = retrieve_specific_blocks($blocks, $sbt);
 

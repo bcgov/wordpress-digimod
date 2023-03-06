@@ -32,6 +32,19 @@ add_action('init', function () {
 });
 
 
+function retrieve_specific_blocks2($blockss, $specific_block_type) {
+    $specific_blocks = array();
+    foreach ($blockss as $block) {
+        if ($block['blockName'] === $specific_block_type) {
+            $specific_blocks[] = $block;
+        }
+        if (array_key_exists('innerBlocks', $block) && count($block['innerBlocks'])>0) {
+            $inner_blocks = retrieve_specific_blocks2($block['innerBlocks'], $specific_block_type);
+            $specific_blocks = array_merge($specific_blocks, $inner_blocks);
+        }
+    }
+    return $specific_blocks;
+}
 
 /**
  * Finds all instnace of our block and calls $callback on each
@@ -40,10 +53,13 @@ add_action('init', function () {
  */
 function template_acf_wysiwyg_container_handler($post,$callback){
     //No blocks? Return early
+    
     if(is_null($post) || ! has_blocks($post->post_content) ){
         return;
     }
     
+    
+
     $sbt = 'multiple-blocks-plugin/template-acf-wysiwyg-container';
     $blocks = parse_blocks($post->post_content);
     
@@ -63,23 +79,10 @@ function template_acf_wysiwyg_container_handler($post,$callback){
 
     //     }
     // }
-
-    function retrieve_specific_blocks2($blockss, $specific_block_type) {
-        $specific_blocks = array();
-        foreach ($blockss as $block) {
-            if ($block['blockName'] === $specific_block_type) {
-                $specific_blocks[] = $block;
-            }
-            if (array_key_exists('innerBlocks', $block) && count($block['innerBlocks'])>0) {
-                $inner_blocks = retrieve_specific_blocks2($block['innerBlocks'], $specific_block_type);
-                $specific_blocks = array_merge($specific_blocks, $inner_blocks);
-            }
-        }
-        return $specific_blocks;
-    }
+    
+    
     
     $specific_blocks = retrieve_specific_blocks2($blocks, $sbt);
-
 
     foreach($specific_blocks as $block){
         $field_name = isset( $block['attrs']['field_name'])? $block['attrs']['field_name'] : null;
@@ -132,7 +135,9 @@ add_filter('block_editor_rest_api_preload_paths',function( $preload_paths, $bloc
 //     });
 // });
 
+
 add_action('save_post','save_post_callback2',10,3);
+
 function save_post_callback2($post_id,$post, $update){
     template_acf_wysiwyg_container_handler($post,function($post,$field_name,$value){
         update_field($field_name,$value,$post->ID);
