@@ -125,7 +125,7 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
 /*
 * Creating a function to create our CPT
 */
-  
+
 function custom_post_type() {
   
   // Set UI labels for Custom Post Type
@@ -149,7 +149,7 @@ function custom_post_type() {
       
       $cc_supports =  array( 'title','custom-fields');
       $cite_editor = isset($_GET['cite-editor']) ? $_GET['cite-editor'] : null;
-      if ($cite_editor=='true'){
+      if ($cite_editor=='true' or $_SERVER['REQUEST_METHOD'] === 'POST'){
         $cc_supports =  array( 'title','custom-fields','editor');  
       }
 
