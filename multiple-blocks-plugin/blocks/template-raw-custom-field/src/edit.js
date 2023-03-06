@@ -35,7 +35,7 @@ import { __ } from '@wordpress/i18n';
         <InnerBlocks></InnerBlocks>
         <InspectorControls>
 				<TextControl
-					label={__("Field Name")}
+					label="Field Name"
 					onChange={setFieldName}
 					value={attributes.field_name}
 				/>

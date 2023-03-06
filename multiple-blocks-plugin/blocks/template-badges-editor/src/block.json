@@ -1,30 +1,25 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 2,
-    "name": "multiple-blocks-plugin/meta-block",
+    "name": "multiple-blocks-plugin/template-badges-editor",
     "version": "0.1.0",
-    "title": "Meta block",
+    "title": "Template badges editor",
     "category": "widgets",
     "icon": "smiley",
     "description": "Example block scaffolded with Create Block tool.",
     "attributes": {
+      "content":{"type":"string"},
       "field_name": {
         "type": "string",
         "default": ""
       },
       "field_value": {
-          "type": "string",
-          "default": ""
+          "type": "array"
       },
-      "tag_type":{
-        "type": "string",
-         "default": "p"
-      },
-      "class_name":{
-        "type": "string",
-         "default": ""
+      "all_values":{
+        "type":"array"
       }
-    },
+  },
     "supports": {
       "html": false
     },

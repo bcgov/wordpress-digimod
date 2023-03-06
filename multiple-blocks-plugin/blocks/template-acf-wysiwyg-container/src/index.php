@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Register metablock block
+ * Register template_acf_wysiwyg_container block
  */
 add_action('init', function () {
     // echo('init');
@@ -31,19 +31,22 @@ add_action('init', function () {
     }
 });
 
+
+
 /**
  * Finds all instnace of our block and calls $callback on each
  *
  *
  */
-function metablock_handler($post,$callback){
+function template_acf_wysiwyg_container_handler($post,$callback){
     //No blocks? Return early
     if(is_null($post) || ! has_blocks($post->post_content) ){
         return;
     }
     
-    $sbt = 'multiple-blocks-plugin/meta-block';
+    $sbt = 'multiple-blocks-plugin/template-acf-wysiwyg-container';
     $blocks = parse_blocks($post->post_content);
+    
     // //Find out block
     // foreach ($blocks as $block) {
 
@@ -61,26 +64,32 @@ function metablock_handler($post,$callback){
     //     }
     // }
 
-    function retrieve_specific_blocks($blockss, $specific_block_type) {
+    function retrieve_specific_blocks2($blockss, $specific_block_type) {
         $specific_blocks = array();
         foreach ($blockss as $block) {
             if ($block['blockName'] === $specific_block_type) {
                 $specific_blocks[] = $block;
             }
             if (array_key_exists('innerBlocks', $block) && count($block['innerBlocks'])>0) {
-                $inner_blocks = retrieve_specific_blocks($block['innerBlocks'], $specific_block_type);
+                $inner_blocks = retrieve_specific_blocks2($block['innerBlocks'], $specific_block_type);
                 $specific_blocks = array_merge($specific_blocks, $inner_blocks);
             }
         }
         return $specific_blocks;
     }
     
-    $specific_blocks = retrieve_specific_blocks($blocks, $sbt);
+    $specific_blocks = retrieve_specific_blocks2($blocks, $sbt);
 
 
     foreach($specific_blocks as $block){
         $field_name = isset( $block['attrs']['field_name'])? $block['attrs']['field_name'] : null;
-        $value = isset($block['attrs']['field_value']) ? $block['attrs']['field_value'] : null;
+        // $value = isset($block['attrs']['field_value']) ? $block['attrs']['field_value'] : null;
+        $value = '';
+
+        foreach ( $block['innerBlocks'] as $innerBlock ) {
+            $value .= render_block( $innerBlock );
+        }
+
         //no value? don't update
         if( ! $field_name || ! $value ){
             continue;
@@ -98,7 +107,7 @@ function metablock_handler($post,$callback){
  */
 add_filter('block_editor_rest_api_preload_paths',function( $preload_paths, $block_editor_context){
     //Use handler to find all metablock blocks
-    metablock_handler($block_editor_context->post,function($post,$field_name,$value){
+    template_acf_wysiwyg_container_handler($block_editor_context->post,function($post,$field_name,$value){
         //Register the field for the found block
         register_meta($post->post_type, $field_name, [
             'type' => 'string',//change to integer if is_int($value) ?
@@ -117,17 +126,15 @@ add_filter('block_editor_rest_api_preload_paths',function( $preload_paths, $bloc
  * @see: https://developer.wordpress.org/reference/hooks/rest_insert_this-post_type/
  */
 // add_action('rest_insert_page', function($post){
-    
-//     // echo('save post!');
 //     //Find blocks using handler
-//     metablock_handler($post,function($post,$field_name,$value){
+//     template_acf_wysiwyg_container_handler($post,function($post,$field_name,$value){
 //         update_field($field_name,$value,$post->ID);
 //     });
 // });
 
-add_action('save_post','save_post_callback',10,3);
-function save_post_callback($post_id,$post, $update){
-    metablock_handler($post,function($post,$field_name,$value){
+add_action('save_post','save_post_callback2',10,3);
+function save_post_callback2($post_id,$post, $update){
+    template_acf_wysiwyg_container_handler($post,function($post,$field_name,$value){
         update_field($field_name,$value,$post->ID);
     });
 }

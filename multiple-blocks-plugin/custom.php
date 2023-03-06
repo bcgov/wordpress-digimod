@@ -13,7 +13,29 @@ function myguten_enqueue() {
     '1.0.0',
     true // Enqueue the script in the footer.
   );
+
+  $post_id = isset($_GET['post']) ? $_GET['post'] : null;
+  if(get_post_type($post_id)=="common-component"){
+    wp_enqueue_script(
+      'init-cite',
+      esc_url( plugins_url( '/dist-cite/init-CITE.js', __FILE__ ) ),
+      array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor','acf-input' ),
+      '1.0.0',
+      true // Enqueue the script in the footer.
+    );
+  }
+
+ 
 }
+
+
+function my_admin_scripts() {
+    $screen = get_current_screen();
+    if ( 'common-component' === get_current_screen()->post_type && $screen->base === 'edit') {
+        wp_enqueue_script( 'cc-admin', esc_url( plugins_url( '/cc-admin.js', __FILE__ ) ), array( ), '1.0.0', true );
+    }
+}
+add_action( 'admin_enqueue_scripts', 'my_admin_scripts' );
 
 
 add_action( 'enqueue_block_editor_assets', 'myguten_enqueue' );
@@ -23,15 +45,15 @@ add_action( 'enqueue_block_editor_assets', 'myguten_enqueue' );
  * Whitelist specific Gutenberg blocks (paragraph, heading, image, lists, etc.)
  *
  */
-add_filter( 'allowed_block_types_all', 'allowed_block_types', 0, 2 );
+// add_filter( 'allowed_block_types_all', 'allowed_block_types', 0, 2 );
 $digimod_v2_pages = ['616','66', '87', '77', '68', '72', '89', '74', '85', '81', '83', '79', '228', '226', '221', '9', '632', '634', '636', 
-'639', '641', '643', '645', '652', '630', '647', '654', '666', '656', '658', '660', '662', '664', '668', '670', '672', '13'];
+'639', '641', '643', '645', '652', '630', '647', '654', '666', '656', '658', '660', '662', '664', '668', '670', '672', '13']; // todo: remove 810
 
 function isGDXThemePage(){
   global $digimod_v2_pages;
   $post_id = isset($_GET['post']) ? $_GET['post'] : null;
   
-  if(!in_array($post_id, $digimod_v2_pages))
+  if(!in_array($post_id, $digimod_v2_pages) or get_post_type($post_id)=="common-component")
     return true;
   else
     return false;
@@ -103,7 +125,7 @@ function allowed_block_types( $allowed_blocks, $editor_context ) {
 /*
 * Creating a function to create our CPT
 */
-  
+
 function custom_post_type() {
   
   // Set UI labels for Custom Post Type
@@ -124,13 +146,20 @@ function custom_post_type() {
       );
         
   // Set other options for Custom Post Type
-        
+      
+      $cc_supports =  array( 'title','custom-fields');
+      $cite_editor = isset($_GET['cite-editor']) ? $_GET['cite-editor'] : null;
+      if ($cite_editor=='true' or $_SERVER['REQUEST_METHOD'] === 'POST'){
+        $cc_supports =  array( 'title','custom-fields','editor');  
+      }
+
+      
       $args = array(
           'label'               => __( 'common-components', 'twentytwentyone' ),
           'description'         => __( 'Regular common component pages', 'twentytwentyone' ),
           'labels'              => $labels,
           // Features this CPT supports in Post Editor
-          'supports'            => array( 'title','custom-fields'),
+          'supports'            =>$cc_supports,
           // 'supports'            => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'comments', 'revisions', 'custom-fields', ),
           // You can associate this CPT with a taxonomy or custom taxonomy. 
           // 'taxonomies'          => array( 'genres' ),
@@ -289,8 +318,12 @@ function custom_post_type() {
   /* ADD DEFAULT TEMPLATE TO PAGE TYPE */
 
   function set_page_template() {
+    // echo('set_page_template');
+
     if(isGDXThemePage())
       return;
+
+    // echo('setting..');
 
     $template = array(
       array('core/post-title', array(
@@ -325,6 +358,9 @@ function override_core_image($block_attributes, $content, $block){
   // todo: is there a better way of doing this?
   // unwrap image out of figure tag, add any additional classes to the image class (originally assigned to figure tag)
   // print_r($block_attributes);
+  // $media = getMediaAttributes( $block['attributes'] );
+  //   $image_url = $media['url'];
+
   $className = '';
   if (array_key_exists('className',$block_attributes))
     $className = $block_attributes['className'];
@@ -371,8 +407,11 @@ function override_core_image($block_attributes, $content, $block){
   // print_r($imgTags);
   // print_r($block);
   $img = process_acf_short_codes($img); // in case we have ACF fields in url
+
+  // get final src
+
   // echo(' processing img: '. $img);
-  return $img;//sprintf('<div react-component="ReactPlayer" url="%1$s"></div>',$block_attributes['url']);
+  return $img;
 }
 
 function process_acf_short_codes($content){
@@ -448,7 +487,10 @@ function override_core( $args, $name ) {
 
 /* CUSTOM API ENDPOINTS */
 function ret_tempate( $request_data  ) {
-  $t = get_block_template('wordpress-v2-theme//wp-custom-template-common-component');
+  // $ts = get_block_templates();
+  // print_r($ts);
+
+  $t = get_block_template('bcgov-wordpress-block-theme//single-common-component');
   return rest_ensure_response( array('content'=>$t->content) );
 
   // return $t->content;
@@ -506,7 +548,7 @@ add_action( 'rest_api_init', function () {
     'methods' => 'GET',
     'callback' => 'ret_tempate',
     'permission_callback' => function () {
-      return current_user_can( 'edit_pages' );
+      return true;//current_user_can( 'edit_pages' );
     }
   ) );
 } );

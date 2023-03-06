@@ -1,9 +1,9 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 2,
-    "name": "multiple-blocks-plugin/meta-block",
+    "name": "multiple-blocks-plugin/template-acf-wysiwyg-container",
     "version": "0.1.0",
-    "title": "Meta block",
+    "title": "Template ACF WYSIWYG Container",
     "category": "widgets",
     "icon": "smiley",
     "description": "Example block scaffolded with Create Block tool.",

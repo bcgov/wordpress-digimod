@@ -1,6 +1,6 @@
 import { TextControl } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { useBlockProps } from "@wordpress/block-editor";
+import { useBlockProps, InnerBlocks } from "@wordpress/block-editor";
 import { InspectorControls, RichText } from "@wordpress/block-editor";
 import { useSelect, useDispatch } from "@wordpress/data";
 import { useEffect } from "@wordpress/element";
@@ -8,10 +8,10 @@ import { useEffect } from "@wordpress/element";
 import "./editor.scss";
 
 export default function Edit({ attributes, setAttributes, isSelected }) {
-  // var postID = acf.get('post_id');
-  // console.log('ACF post id: ', postID);
+//   var postID = acf.get('post_id');
+//   console.log('meta block RENDER, ACF post id: ', postID);
 
-	// //Get meta value
+	//Get meta value
 	// const { meta } = acf.getFields('uid')[0].val();
 
   //useSelect((select) => ({meta: select("core/editor").getEditedPostAttribute("meta"),}));
@@ -45,7 +45,7 @@ export default function Edit({ attributes, setAttributes, isSelected }) {
 			val = acf.getFields({name:field_name})[0].val();
 			// todo: remove all fields to prevent overwriting when save function gets hit
   			// (prevents saving of ACF fields in a "normal" way - we are handling the saving through the meta blocks and PHP)
-			console.log('ACF REMOVE: ', field_name, acf.getFields({name:field_name})[0]);
+			console.log('ACF REMOVE from acf-wysiwyg: ', field_name, acf.getFields({name:field_name})[0]);
 			acf.set(field_name,val); // render function may get called repeatedly, we need to have the value saved somehwere in case it needs to be retreived later
 			acf.getFields({name:field_name})[0].remove();
 		}else if (acf.get(field_name)){
@@ -61,29 +61,6 @@ export default function Edit({ attributes, setAttributes, isSelected }) {
   
 
 	return (
-		<div {...useBlockProps()}>
-			<InspectorControls>
-				<TextControl
-					label={__("Field Name")}
-					onChange={setFieldName}
-					value={field_name}
-				/>
-				{field_name.length > 0 ? (
-					<TextControl
-						label={__("Field Value")}
-						onChange={setFieldValue}
-						value={field_value}
-					/>
-				) : null}
-			</InspectorControls>
-			{/* {field_value ? <p>{field_value}</p> : <p>No value</p>} */}
-			<RichText className={class_name}
-				tagName={tag_type}
-				value={ attributes.field_value }
-				allowedFormats={ [  ] }
-				onChange={ setFieldValue }
-				placeholder={ 'Field value..' }
-				></RichText>
-		</div>
+		<InnerBlocks></InnerBlocks>
 	);
 }
