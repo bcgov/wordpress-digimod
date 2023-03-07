@@ -16,18 +16,44 @@ export default function save({ attributes }) {
 				>
 					<div className="scrollspy_highlight"></div>
 					<ul>
-						<li><a className="active-scrollspy" href="#mission1" id="mission1_link">
+
+
+						<li className="active-scrollspy"><a href="#mission1" id="mission1_link" react-component="HrefLinkScrollTo" 
+                spy="true"
+                smooth="true"
+                offset="-120"
+				to="mission1">
 							<RichText.Content className="scrollSpyLinkContent" tagName="span" value={attributes.link1Text} />
 							</a></li>
-						<li><a href="#mission2" id="mission2_link"><span class="scrollSpyLinkContent">
+
+
+						<li><a href="#mission2" id="mission2_link" react-component="HrefLinkScrollTo" 
+                spy="true"
+                smooth="true"
+                offset="-120"
+				to="mission2"><span class="scrollSpyLinkContent" >
 						<RichText.Content className="scrollSpyLinkContent" tagName="span" value={attributes.link2Text} />
 							</span></a></li>
-						<li><a href="#mission3" id="mission3_link"><span class="scrollSpyLinkContent">
+
+
+						<li><a href="#mission3" id="mission3_link"  react-component="HrefLinkScrollTo" 
+                spy="true"
+                smooth="true"
+                offset="-120"
+				to="mission3"><span class="scrollSpyLinkContent">
 						<RichText.Content className="scrollSpyLinkContent" tagName="span" value={attributes.link3Text} />
 							</span></a></li>
-						<li><a href="#mission4" id="mission4_link"><span class="scrollSpyLinkContent">
+
+
+						<li><a href="#mission4" id="mission4_link" react-component="HrefLinkScrollTo" 
+                spy="true"
+                smooth="true"
+                offset="-120"
+				to="mission4"><span class="scrollSpyLinkContent" >
 						<RichText.Content className="scrollSpyLinkContent" tagName="span" value={attributes.link4Text} />
 							</span></a></li>
+
+
 						<li class="scrollSpyButtonWrapper"><a class="scrollSpyButton" href="#">
 						<RichText.Content className="scrollSpyLinkContent" tagName="span" value={attributes.link5Text} />
 							</a></li>
