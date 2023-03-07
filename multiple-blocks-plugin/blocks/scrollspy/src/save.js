@@ -5,7 +5,7 @@ import ScrollspyNav from "./ScrollspyNav";
 export default function save({ attributes }) {
 	return (
 	<div className='scrollspyContainer'>
-			<div className='scrollspy' role="navigation" aria-label="on this page" style={{"top":"116px"}}>
+		<div className='scrollspy' role="navigation" aria-label="on this page" style={{"top":"116px"}}>
 			<h2 className="scrollspyOnThisPage h3-heading" aria-hidden="true">On this page:</h2>
 			<div react-component="ScrollspyNav" 
 					
@@ -58,8 +58,9 @@ export default function save({ attributes }) {
 						<RichText.Content className="scrollSpyLinkContent" tagName="span" value={attributes.link5Text} />
 							</a></li>
 					</ul>
-				</div>
+			</div>
 		</div>
+		<hr style={{marginBottom:'-6px',marginTop:'27px'}} />
 	</div>
 	)
 }
