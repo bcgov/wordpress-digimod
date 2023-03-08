@@ -20,6 +20,34 @@ run `npm install` inside multipule-blocks-plugin for block creation dependencies
 ## Starting development environment
 run `wp-env start` in the root directory to start wordpress development site
 
+# Alternative development environment using localwp
+
+Export production site using WP Migrate plugin (exclude WordPress core files). And import the site into localwp.
+
+## Add symlinks (Windows)
+
+Remove digimod plugins and bc gov theme downloaded using migration tool:
+
+For example:
+
+`C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\plugins\multiple-blocks-plugin`
+
+`C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\plugins\digital-gov-plugin`
+
+`C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\themes\bcgov-wordpress-block-theme`
+
+For digimod plugins (example):
+
+`New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\plugins\digital-gov-plugin" -Target "C:\Users\ALSTRUK\GitHub\wordpress-digimod\digital-gov-plugin"`
+
+`New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\plugins\multiple-blocks-plugin" -Target "C:\Users\ALSTRUK\GitHub\wordpress-digimod\multiple-blocks-plugin"`
+
+For bc gov theme:
+
+`New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\themes\bcgov-wordpress-block-theme" -Target "C:\Users\ALSTRUK\GitHub\bcgov-wordpress-block-theme"`
+
+# Working with blocks
+
 ## making changes to an existing block
 Since blocks are written with JSX, they need to be re-built after each edit:
 
@@ -29,7 +57,7 @@ Since blocks are written with JSX, they need to be re-built after each edit:
 
 `wp-scripts build assets/js/index.js --output-path=dist`
 
-## If wordpress crashes because of an error in plugin
+# Handling production crash because of an error in plugin
 If wordpress crashes because of an error in plugin, we need to change the volume contents.
 
 Login to pod with
@@ -40,8 +68,8 @@ navigate to `wp-content/plugins/`
 
 rename crashing plugin from "plugin" to "plugin.disabled"
 
-## Tests - JavaScript
-### To run javascript tests:
+# Tests - JavaScript
+## To run javascript tests:
 
 `npx jest`
 
@@ -51,7 +79,7 @@ To check jest JS coverage:
 
 `npx jest --coverage`
 
-### To run end-to-end tests for blocks:
+## To run end-to-end tests for blocks:
 
 Start WordPress development environment:
 
