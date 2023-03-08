@@ -45,27 +45,32 @@ add_action( 'enqueue_block_editor_assets', 'myguten_enqueue' );
  * Whitelist specific Gutenberg blocks (paragraph, heading, image, lists, etc.)
  *
  */
-// add_filter( 'allowed_block_types_all', 'allowed_block_types', 0, 2 );
-$digimod_v2_pages = ['616','66', '87', '77', '68', '72', '89', '74', '85', '81', '83', '79', '228', '226', '221', '9', '632', '634', '636', 
-'639', '641', '643', '645', '652', '630', '647', '654', '666', '656', '658', '660', '662', '664', '668', '670', '672', '13']; // todo: remove 810
+add_filter( 'allowed_block_types_all', 'allowed_block_types', 0, 2 );
 
 function isGDXThemePage(){
   try{
-    global $digimod_v2_pages;
+    $digimod_v2_pages = ['616','66', '87', '77', '68', '72', '89', '74', '85', '81', '83', '79', '228', '226', '221', '9', '632', '634', '636', 
+    '639', '641', '643', '645', '652', '630', '647', '654', '666', '656', '658', '660', '662', '664', '668', '670', '672', '13'];
+
     $post_id = isset($_GET['post']) ? $_GET['post'] : null;
     
-    if(!in_array($post_id, $digimod_v2_pages) or get_post_type($post_id)=="common-component")
+    if(!in_array($post_id, $digimod_v2_pages) or get_post_type($post_id)=="common-component"){
+      // echo('is gdx');
       return true;
-    else
+    }else{
       return false;
+    }
   }catch(\Error $e){
+    // echo('except');
     return false; // for system calls etc.
   }
 }
 
 function allowed_block_types( $allowed_blocks, $editor_context ) {
   
-  if ($editor_context->name != 'core/edit-post'){
+  $citeEditor = isset($_GET['cite-editor']) ? $_GET['cite-editor'] : null;
+
+  if ($editor_context->name != 'core/edit-post' or !is_null($citeEditor)){
     return;
   }
   // echo (get_allowed_block_types($editor_context)[0]);
