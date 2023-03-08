@@ -48,6 +48,12 @@ Add symlink for bc gov theme (example):
 
 `New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\themes\bcgov-wordpress-block-theme" -Target "C:\Users\ALSTRUK\GitHub\bcgov-wordpress-block-theme"`
 
+## Add local admin
+
+Open site shell and run:
+
+`wp user create localadmin localadmin@test.com --role=administrator`
+
 # Working with blocks
 
 ## making changes to an existing block
