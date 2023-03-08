@@ -24,6 +24,8 @@ run `wp-env start` in the root directory to start wordpress development site
 
 Export production site using WP Migrate plugin (exclude WordPress core files). And import the site into localwp.
 
+Clone this repo and bc gov theme fork (https://github.com/alex-struk/bcgov-wordpress-block-theme) to a location of your choice.
+
 ## Add symlinks (Windows)
 
 Remove digimod plugins and bc gov theme downloaded using migration tool:
@@ -36,13 +38,13 @@ For example:
 
 `C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\themes\bcgov-wordpress-block-theme`
 
-For digimod plugins (example):
+Add symlinks for digimod plugins (example):
 
 `New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\plugins\digital-gov-plugin" -Target "C:\Users\ALSTRUK\GitHub\wordpress-digimod\digital-gov-plugin"`
 
 `New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\plugins\multiple-blocks-plugin" -Target "C:\Users\ALSTRUK\GitHub\wordpress-digimod\multiple-blocks-plugin"`
 
-For bc gov theme:
+Add symlink for bc gov theme (example):
 
 `New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\themes\bcgov-wordpress-block-theme" -Target "C:\Users\ALSTRUK\GitHub\bcgov-wordpress-block-theme"`
 
