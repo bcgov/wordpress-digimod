@@ -50,13 +50,17 @@ $digimod_v2_pages = ['616','66', '87', '77', '68', '72', '89', '74', '85', '81',
 '639', '641', '643', '645', '652', '630', '647', '654', '666', '656', '658', '660', '662', '664', '668', '670', '672', '13']; // todo: remove 810
 
 function isGDXThemePage(){
-  global $digimod_v2_pages;
-  $post_id = isset($_GET['post']) ? $_GET['post'] : null;
-  
-  if(!in_array($post_id, $digimod_v2_pages) or get_post_type($post_id)=="common-component")
-    return true;
-  else
-    return false;
+  try{
+    global $digimod_v2_pages;
+    $post_id = isset($_GET['post']) ? $_GET['post'] : null;
+    
+    if(!in_array($post_id, $digimod_v2_pages) or get_post_type($post_id)=="common-component")
+      return true;
+    else
+      return false;
+  }catch(\Error $e){
+    return false; // for system calls etc.
+  }
 }
 
 function allowed_block_types( $allowed_blocks, $editor_context ) {
