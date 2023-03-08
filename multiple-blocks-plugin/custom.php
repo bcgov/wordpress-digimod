@@ -48,7 +48,7 @@ add_action( 'enqueue_block_editor_assets', 'myguten_enqueue' );
 add_filter( 'allowed_block_types_all', 'allowed_block_types', 0, 2 );
 
 function isGDXThemePage(){
-  return true;
+  // return true;
   try{
     $digimod_v2_pages = ['616','66', '87', '77', '68', '72', '89', '74', '85', '81', '83', '79', '228', '226', '221', '9', '632', '634', '636', 
     '639', '641', '643', '645', '652', '630', '647', '654', '666', '656', '658', '660', '662', '664', '668', '670', '672', '13'];
