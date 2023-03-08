@@ -5,6 +5,15 @@ import ScrollspyNav from "./ScrollspyNav";
 export default function save({ attributes }) {
 	return (
 	<div className='scrollspyContainer'>
+		<style>
+			{
+				`@media only screen and (min-width: 768px){
+					.scrollSpyHr{
+						display: none;
+					}
+				}`
+			}
+		</style>
 		<div className='scrollspy' role="navigation" aria-label="on this page" style={{"top":"116px"}}>
 			<h2 className="scrollspyOnThisPage h3-heading" aria-hidden="true">On this page:</h2>
 			<div react-component="ScrollspyNav" 
@@ -60,7 +69,7 @@ export default function save({ attributes }) {
 					</ul>
 			</div>
 		</div>
-		<hr style={{marginBottom:'-6px',marginTop:'27px'}} />
+		<hr class="scrollSpyHr" style={{marginBottom:'-6px',marginTop:'27px'}} />
 	</div>
 	)
 }

@@ -2102,6 +2102,7 @@ padding-top: 20px;
 }
 
 @media only screen and (min-width: 768px){
+
   li.active-scrollspy{
     background:rgb(9 109 217 / 10%) !important;
     border-left: 5px solid #003366;
@@ -2139,6 +2140,9 @@ padding-top: 20px;
 }
 
 @media only screen and (max-width: 767px){
+  .scrollspy{
+    position:static;
+  }
   .scrollspyOnThisPage{
     display:block;
   }
