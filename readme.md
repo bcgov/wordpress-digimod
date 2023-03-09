@@ -24,7 +24,7 @@ run `wp-env start` in the root directory to start wordpress development site
 
 Export production site using WP Migrate plugin (exclude WordPress core files). Import the site into localwp using localwp's "file -> import site" feature.
 
-Clone this repo and bc gov theme fork (https://github.com/alex-struk/bcgov-wordpress-block-theme) to a location of your choice.
+Clone this repo, bc gov theme fork (https://github.com/alex-struk/bcgov-wordpress-block-theme) and child theme (https://github.com/alex-struk/bcgov-wordpress-block-theme-digimod) to a location of your choice.
 
 ## Add symlinks (Windows)
 
@@ -32,21 +32,25 @@ Remove digimod plugins and bc gov theme downloaded using migration tool:
 
 For example:
 
-`C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\plugins\multiple-blocks-plugin`
+`C:\Users\ALSTRUK\Local Sites\digital-government-30\app\public\wp-content\plugins\multiple-blocks-plugin`
 
-`C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\plugins\digital-gov-plugin`
+`C:\Users\ALSTRUK\Local Sites\digital-government-30\app\public\wp-content\plugins\digital-gov-plugin`
 
-`C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\themes\bcgov-wordpress-block-theme`
+`C:\Users\ALSTRUK\Local Sites\digital-government-30\app\public\wp-content\themes\bcgov-wordpress-block-theme`
+
+`C:\Users\ALSTRUK\Local Sites\digital-government-30\app\public\wp-content\themes\bcgov-wordpress-block-theme-digimod`
 
 Add symlinks for digimod plugins (example):
 
-`New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\plugins\digital-gov-plugin" -Target "C:\Users\ALSTRUK\GitHub\wordpress-digimod\digital-gov-plugin"`
+`New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30\app\public\wp-content\plugins\digital-gov-plugin" -Target "C:\Users\ALSTRUK\GitHub\wordpress-digimod\digital-gov-plugin"`
 
-`New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\plugins\multiple-blocks-plugin" -Target "C:\Users\ALSTRUK\GitHub\wordpress-digimod\multiple-blocks-plugin"`
+`New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30\app\public\wp-content\plugins\multiple-blocks-plugin" -Target "C:\Users\ALSTRUK\GitHub\wordpress-digimod\multiple-blocks-plugin"`
 
-Add symlink for bc gov theme (example):
+Add symlink for bc gov theme and child theme (example):
 
-`New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30_o\app\public\wp-content\themes\bcgov-wordpress-block-theme" -Target "C:\Users\ALSTRUK\GitHub\bcgov-wordpress-block-theme"`
+`New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30\app\public\wp-content\themes\bcgov-wordpress-block-theme" -Target "C:\Users\ALSTRUK\GitHub\bcgov-wordpress-block-theme"`
+
+New-Item -ItemType Junction -Path "C:\Users\ALSTRUK\Local Sites\digital-government-30-n\app\public\wp-content\themes\bcgov-wordpress-block-theme-digimod" -Target "C:\Users\ALSTRUK\GitHub\bcgov-wordpress-block-theme-digimod"
 
 ## Add local admin
 
