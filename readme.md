@@ -22,7 +22,7 @@ run `wp-env start` in the root directory to start wordpress development site
 
 # Alternative development environment using localwp
 
-Export production site using WP Migrate plugin (exclude WordPress core files). Import the site into localwp using localwp's "file -> import site" feature.
+Export production site using WP Migrate plugin (exclude WordPress core files and "other files") via Tools -> WP Migrate. Import the site into localwp using localwp's "file -> import site" feature.
 
 Clone this repo, bc gov theme fork (https://github.com/alex-struk/bcgov-wordpress-block-theme) and child theme (https://github.com/alex-struk/bcgov-wordpress-block-theme-digimod) to a location of your choice.
 
