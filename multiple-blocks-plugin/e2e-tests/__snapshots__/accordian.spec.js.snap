@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Accordion block Accordion block should be available 1`] = `
-"<!-- wp:multiple-blocks-plugin/accordian -->
-<div react-component=\\"CollapseStyled\\"><div react-component=\\"PanelStyled\\"><div react-component=\\"StyleRichText\\" assign-inner-content-to-prop=\\"htmlOrMarkdown\\"></div></div></div>
-<!-- /wp:multiple-blocks-plugin/accordian -->"
-`;

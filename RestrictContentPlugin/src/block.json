@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "digimod/restrictcontentblock",
+	"version": "0.1.0",
+	"title": "Restrict Content Block",
+	"category": "widgets",
+	"icon": "lock",
+	"attributes": {
+        "content": {
+            "type": "string",
+            "source": "html",
+            "selector": "div"
+        }
+    },
+	"description": "Replaces content with a login button when users are not authenticated.",
+	"supports": {
+		"html": false
+	},
+	"textdomain": "restrictcontentblock",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}
