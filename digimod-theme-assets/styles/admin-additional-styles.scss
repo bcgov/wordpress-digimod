@@ -1,0 +1,32 @@
+* {
+	// Shadows from https://getcssscan.com/css-box-shadow-examples
+	// #39
+	--box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+
+	&::selection {
+		background-color: $highlightblue;
+	}
+}
+
+/**
+* For general admin styles use: body.wp-admin { } 
+*/
+
+/**
+* For admin editor based styles use: html :where(.editor-styles-wrapper) { } 
+*/
+
+html :where(.editor-styles-wrapper) {
+
+	.flex-card {
+
+		box-shadow: var(--box-shadow);
+
+		&.private {
+			background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDQ0OCA1MTIiICBmaWxsPSIjOWE5YTlhIj48cGF0aCBkPSJNNDAwIDIyNGgtMjR2LTcyQzM3NiA2OC4yIDMwNy44IDAgMjI0IDBTNzIgNjguMiA3MiAxNTJ2NzJINDhjLTI2LjUgMC00OCAyMS41LTQ4IDQ4djE5MmMwIDI2LjUgMjEuNSA0OCA0OCA0OGgzNTJjMjYuNSAwIDQ4LTIxLjUgNDgtNDhWMjcyYzAtMjYuNS0yMS41LTQ4LTQ4LTQ4ek0yNjQgMzkyYzAgMjIuMS0xNy45IDQwLTQwIDQwcy00MC0xNy45LTQwLTQwdi00OGMwLTIyLjEgMTcuOS00MCA0MC00MHM0MCAxNy45IDQwIDQwdjQ4em0zMi0xNjhIMTUydi03MmMwLTM5LjcgMzIuMy03MiA3Mi03MnM3MiAzMi4zIDcyIDcydjcyeiIvPjwvc3ZnPg==');
+			background-position: calc(100% - 1.5rem) 1.5rem;
+			background-repeat: no-repeat;
+			background-size: 1rem;
+		}
+	}
+}

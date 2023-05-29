@@ -1,0 +1,46 @@
+
+
+.wp-site-blocks {
+	max-width: 100vw;
+}
+
+.wp-block-button.is-style-underline {
+	.wp-block-button__link {
+		text-align: left;
+		display: inline-flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: flex-start;
+		text-decoration: none;
+
+		&:hover {
+			font-weight: bold !important;
+			outline: 0 !important;
+		}
+
+		&::after {
+			content: attr(data-text);
+			content: attr(data-text) / "";
+			height: 0;
+			visibility: hidden;
+			overflow: hidden;
+			user-select: none;
+			pointer-events: none;
+			font-weight: bold;
+		}
+	}
+}
+
+.wp-block-post-content {
+	li {
+		margin-top: 1.0rem;
+	}
+}
+
+.wp-block-post-template {
+
+	&.is-flex-container {
+
+		gap: 1.2rem;
+	}
+}

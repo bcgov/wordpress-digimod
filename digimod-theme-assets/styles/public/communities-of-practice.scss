@@ -1,0 +1,59 @@
+
+.single-cop {
+	img {
+		width: 100%;
+		height: auto;
+	}
+
+	.cop-social-links-group {
+		max-width: 80%;
+	}
+
+	.cop-contact,
+	.cop-social-link {
+		a {
+			display: flex;
+			margin-left: 0.5rem !important;
+
+			&::before {
+				content: '';
+				background-size: contain;
+				background-repeat: no-repeat;
+				display: block;
+				height: 2rem;
+				width: 2rem;
+				margin-right: 0.5rem;
+			}
+		}
+
+		a {
+			&::before {
+				background-image: url('/wp-content/uploads/2023/03/email.png');
+			}
+		}
+
+		&.rocketchat-link a {
+			&::before {
+				background-image: url('/wp-content/uploads/2023/03/rocketChat.png');
+			}
+		}
+
+		&.msteams-link a {
+			&::before {
+				background-image: url('/wp-content/uploads/2023/03/msteams.png');
+			}
+		}
+
+		&.yammer-link a {
+			&::before {
+				background-image: url('/wp-content/uploads/2023/03/yammer.png');
+			}
+		}
+
+		&.website-link a {
+			&::before {
+				background-image: url('/wp-content/uploads/2023/03/website.png');
+			}
+		}
+	}
+}

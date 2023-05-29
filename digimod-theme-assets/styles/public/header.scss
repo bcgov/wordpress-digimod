@@ -1,0 +1,52 @@
+body:not(body.wp-admin):not(body.editor-styles-wrapper):not(body.error404) {
+	padding-top: 0 !important;
+}
+
+// General header styles.
+body.custom-digitalgov {
+	.wp-block-template-part {
+		.bcgov-header-group {
+
+			&.bcgov-site-header,
+			.bcgov-site-header {
+				&.bcgov-header-group {
+					border-bottom: 3px solid var(--wp--preset--color--tertiary);
+
+					.wp-block-columns {
+						.wp-block-site-logo {
+							img {
+								height: 100%;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+.utility-nav-container {
+
+	padding: 0;
+	position: absolute;
+	width: auto !important;
+	top: 80px;
+	left: 0;
+
+	@media (min-width: 600px) {
+		position: relative;
+		top: unset;
+		left: unset;
+	}
+
+	.utility-navigation .wp-block-navigation-item {
+		padding-left: 1rem;
+	}
+
+	.utility-navigation .wp-block-navigation-item__label::after {
+		content: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDUxMiA1MTIiPjxwYXRoIGZpbGw9IndoaXRlIiBkPSJNMzUyIDBjLTEyLjkgMC0yNC42IDcuOC0yOS42IDE5LjhzLTIuMiAyNS43IDYuOSAzNC45TDM3MC43IDk2IDIwMS40IDI2NS40Yy0xMi41IDEyLjUtMTIuNSAzMi44IDAgNDUuM3MzMi44IDEyLjUgNDUuMyAwTDQxNiAxNDEuM2w0MS40IDQxLjRjOS4yIDkuMiAyMi45IDExLjkgMzQuOSA2LjlzMTkuOC0xNi42IDE5LjgtMjkuNlYzMmMwLTE3LjctMTQuMy0zMi0zMi0zMkgzNTJ6TTgwIDMyQzM1LjggMzIgMCA2Ny44IDAgMTEyVjQzMmMwIDQ0LjIgMzUuOCA4MCA4MCA4MEg0MDBjNDQuMiAwIDgwLTM1LjggODAtODBWMzIwYzAtMTcuNy0xNC4zLTMyLTMyLTMycy0zMiAxNC4zLTMyIDMyVjQzMmMwIDguOC03LjIgMTYtMTYgMTZIODBjLTguOCAwLTE2LTcuMi0xNi0xNlYxMTJjMC04LjggNy4yLTE2IDE2LTE2SDE5MmMxNy43IDAgMzItMTQuMyAzMi0zMnMtMTQuMy0zMi0zMi0zMkg4MHoiLz48L3N2Zz4=');
+		display: inline-block;
+		width: 16px;
+		margin-left: 8px;
+	}
+}

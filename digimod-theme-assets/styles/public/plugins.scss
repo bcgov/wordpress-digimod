@@ -1,0 +1,12 @@
+.aioseo-breadcrumbs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.66rem;
+
+	.aioseo-breadcrumb {
+		white-space: nowrap;
+		a {
+			text-decoration: none;;
+		}
+	}
+}

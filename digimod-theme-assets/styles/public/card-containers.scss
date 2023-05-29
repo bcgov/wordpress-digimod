@@ -1,0 +1,226 @@
+.card-container {
+	.wp-block-post-featured-image {
+		border-radius: 1rem 1rem 0 0;
+		overflow: hidden;
+		min-height: 200px;
+	}
+
+	.wp-block-post,
+	.wp-block-column {
+		display: flex;
+
+		.wp-block-group {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+
+			>* {
+				margin-left: 0 !important;
+				margin-right: 0 !important;
+			}
+
+			.wp-block-post-featured-image {
+				margin-left: auto !important;
+				margin-right: auto !important;
+			}
+
+			.link-label,
+			.wp-block-buttons {
+				margin-top: auto;
+			}
+
+		}
+	}
+
+
+	.wp-block-post-template {
+		.get-started-group {
+			box-shadow: var(--box-shadow);
+		}
+	}
+
+
+	.common-component {
+
+		a,
+		a>* {
+			color: unset;
+			text-decoration: unset;
+		}
+
+		a {
+
+			&:hover,
+			&:focus-visible {
+				box-shadow: var(--box-shadow);
+				outline: 2px solid var(--wp--preset--color--primary-brand);
+				border-radius: 1rem;
+				cursor: pointer;
+
+				h2,
+				h3,
+				h4 {
+					text-decoration: underline;
+				}
+			}
+		}
+
+		.taxonomy-common_component_category {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.25rem;
+			justify-content: flex-start;
+			align-items: flex-start;
+
+			span.tag {
+				background-color: var(--wp--preset--color--background);
+				border: 1px solid $dustygrey;
+				border-radius: 999px;
+				height: 25px;
+				padding: 3px 8px 0;
+				font-size: 12px;
+				white-space: nowrap;
+				text-align: center;
+			}
+		}
+	}
+
+	&:not(.no-shadow) {
+
+		.wp-block-post,
+		.wp-block-column {
+			.wp-block-group {
+				box-shadow: var(--box-shadow);
+			}
+		}
+	}
+}
+
+
+.case-study-card-container,
+.cop-card-container {
+	.wp-block-post {
+		display: flex;
+
+		.case-study-group,
+		.cop-group {
+			min-height: calc(100% - 120px);
+
+			.wp-block-group {
+				box-shadow: var(--box-shadow);
+				display: flex;
+				flex-direction: column;
+				height: auto;
+				min-height: 120px;
+
+				&:nth-child(2) {
+					height: calc(100% - 120px);
+				}
+
+				>* {
+					margin-left: 0 !important;
+					margin-right: 0 !important;
+				}
+
+				.wp-block-post-featured-image {
+					margin-left: auto !important;
+					margin-right: auto !important;
+				}
+			}
+		}
+	}
+
+	a .case-study-group,
+	a .cop-group,
+	a>* {
+		color: unset;
+		text-decoration: unset;
+		height: 100%;
+	}
+
+	a {
+		color: unset;
+		text-decoration: unset;
+
+		&:hover,
+		&:focus-visible {
+			box-shadow: var(--box-shadow);
+			outline: 2px solid var(--wp--preset--color--primary-brand);
+			border-radius: 1rem;
+			cursor: pointer;
+
+			h2,
+			h3,
+			h4 {
+				text-decoration: underline;
+			}
+		}
+
+		.case-study-group,
+		.cop-group {
+			height: 100%;
+		}
+	}
+}
+
+
+
+.flex-cards {
+	.content-column {
+		.wp-block-columns {
+			gap: 2rem;
+		}
+
+		a,
+		a>* {
+			height: 100%;
+		}
+
+		a:is(.card-title-link) {
+			color: unset;
+			text-decoration: unset;
+
+			&:focus-visible {
+				box-shadow: var(--box-shadow);
+				border-radius: 1rem;
+			}
+
+			.flex-card {
+				box-shadow: var(--box-shadow);
+				height: 100%;
+
+				> * {
+					color: inherit;
+					text-decoration: inherit;
+				}
+
+				&:hover,
+				&:focus-visible {
+					box-shadow: var(--box-shadow);
+					outline: 2px solid var(--wp--preset--color--primary-brand);
+					border-radius: 1rem;
+					cursor: pointer;
+
+					h2,
+					h3,
+					h4 {
+						text-decoration: underline;
+					}
+				}
+
+				a:hover,
+				a:focus-visible {
+					background-color: var(--wp--preset--color--primary-brand);
+					color: var(--wp--preset--color--background);
+				}
+
+				&.private {
+					background-image:  url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDQ0OCA1MTIiICBmaWxsPSIjOWE5YTlhIj48cGF0aCBkPSJNNDAwIDIyNGgtMjR2LTcyQzM3NiA2OC4yIDMwNy44IDAgMjI0IDBTNzIgNjguMiA3MiAxNTJ2NzJINDhjLTI2LjUgMC00OCAyMS41LTQ4IDQ4djE5MmMwIDI2LjUgMjEuNSA0OCA0OCA0OGgzNTJjMjYuNSAwIDQ4LTIxLjUgNDgtNDhWMjcyYzAtMjYuNS0yMS41LTQ4LTQ4LTQ4ek0yNjQgMzkyYzAgMjIuMS0xNy45IDQwLTQwIDQwcy00MC0xNy45LTQwLTQwdi00OGMwLTIyLjEgMTcuOS00MCA0MC00MHM0MCAxNy45IDQwIDQwdjQ4em0zMi0xNjhIMTUydi03MmMwLTM5LjcgMzIuMy03MiA3Mi03MnM3MiAzMi4zIDcyIDcydjcyeiIvPjwvc3ZnPg==');
+					background-position: calc(100% - 1.5rem) 1.5rem;
+					background-repeat: no-repeat;
+					background-size: 1rem;
+				}
+			}
+		}
+	}
+}

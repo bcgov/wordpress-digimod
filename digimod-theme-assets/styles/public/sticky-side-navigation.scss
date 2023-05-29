@@ -1,0 +1,134 @@
+
+.sticky-nav-container {
+	position: relative;
+
+	.content-column {
+		&::before {
+			@media (min-width: 599px) {
+				// border-left: 2px solid var(--wp--preset--color--gray-40);
+			}
+
+			content: "";
+			display: block;
+			position: absolute;
+			left: calc(30% - 2rem);
+			height: 100%;
+		}
+	}
+}
+
+.sticky {
+	position: sticky;
+	top: 2rem;
+	margin-bottom: 2rem;
+
+	.in-page-nav {
+		list-style: none;
+		margin: 2rem 0 auto;
+		margin-right: 0px;
+		margin-left: 0px;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+
+		li {
+			border-right: 4px solid $menuAncestorBackground;
+			max-width: 100%;
+			margin-top: 0;
+
+			@media (min-width: 599px) {
+				max-width: calc(100% - 1.66rem);
+			}
+
+			&.active {
+
+				border-right: 4px solid $menuAncestorHighlight;
+
+				>a {
+					background-color: $menuAncestorBackground;
+					color: var(--wp--preset--color--primary-brand);
+					padding: 0.5rem calc(1rem - 4px);
+					text-decoration: none;
+					font-weight: 700;
+				}
+			}
+
+
+			a {
+				border-right: 4px solid transparent;
+				padding: 0.5rem calc(1rem - 2px);
+				display: inline-block;
+				font-size: 1rem;
+				text-decoration: none;
+				max-width: calc(100% - 1.75rem);
+				width: 100%;
+			}
+		}
+
+		ol {
+			margin: 0.5rem 0 0;
+
+			li {
+				min-width: 100%;
+
+				>* {
+					vertical-align: text-top;
+				}
+
+				&::marker {
+					color: $menuAncestorHighlight;
+					font-size: 1rem;
+					vertical-align: text-top;
+				}
+
+				a {
+					padding: 0.25rem 1rem 0.25rem;
+					width: auto;
+				}
+
+				&.active {
+					>a {
+						padding: 0.35rem calc(1rem - 4px) 0.25rem;
+					}
+				}
+			}
+		}
+
+		ul {
+			margin: 0.5rem 0 0;
+
+			li {
+				list-style: none;
+				min-width: 100%;
+
+				a {
+					padding: 0.25rem 1rem 0.25rem;
+					width: auto;
+				}
+
+				&.active {
+					>a {
+						padding: 0.35rem calc(1rem - 4px) 0.25rem;
+					}
+				}
+			}
+		}
+
+		& ul li,
+		& ol li {
+			border-right: 4px solid $menuAncestorBackground;
+
+			&.active {
+				border-color: $menuAncestorHighlight;
+
+				a {
+					border: 0;
+					padding: 0.5rem calc(1rem - 10px) 0.5rem 1.2rem;
+					width: 100%;
+				}
+			}
+		}
+
+	}
+}

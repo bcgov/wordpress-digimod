@@ -1,0 +1,16 @@
+
+.single-common-component {
+	.taxonomy-common_component_category {
+		span.tag {
+			background-color: var(--wp--preset--color--background);
+			border: 1px solid $dustygrey;
+			border-radius: 999px;
+			height: 25px;
+			padding: 3px 8px;
+			font-size: 12px;
+			margin-right: 4px;
+			white-space: nowrap;
+			text-align: center;
+		}
+	}
+}

@@ -1,0 +1,10 @@
+
+.mobile-only {
+	display: inherit;
+}
+
+@media (min-width: 782px) {
+	.mobile-only {
+		display: none;
+	}
+}
