@@ -1,5 +1,8 @@
+/* stylelint-disable no-descending-specificity */
+/* stylelint-disable selector-class-pattern */
 
 .single-cop {
+
 	img {
 		width: 100%;
 		height: auto;
@@ -11,48 +14,48 @@
 
 	.cop-contact,
 	.cop-social-link {
+
 		a {
 			display: flex;
 			margin-left: 0.5rem !important;
 
 			&::before {
-				content: '';
+				content: "";
 				background-size: contain;
 				background-repeat: no-repeat;
 				display: block;
 				height: 2rem;
 				width: 2rem;
 				margin-right: 0.5rem;
-			}
-		}
-
-		a {
-			&::before {
-				background-image: url('/wp-content/uploads/2023/03/email.png');
+				background-image: url(https://digital.gov.bc.ca/wp-content/uploads/2023/03/email.png);
 			}
 		}
 
 		&.rocketchat-link a {
+
 			&::before {
-				background-image: url('/wp-content/uploads/2023/03/rocketChat.png');
+				background-image: url(https://digital.gov.bc.ca/wp-content/uploads/2023/03/rocketChat.png);
 			}
 		}
 
 		&.msteams-link a {
+
 			&::before {
-				background-image: url('/wp-content/uploads/2023/03/msteams.png');
+				background-image: url(https://digital.gov.bc.ca/wp-content/uploads/2023/03/msteams.png);
 			}
 		}
 
 		&.yammer-link a {
+
 			&::before {
-				background-image: url('/wp-content/uploads/2023/03/yammer.png');
+				background-image: url(https://digital.gov.bc.ca/wp-content/uploads/2023/03/yammer.png);
 			}
 		}
 
 		&.website-link a {
+
 			&::before {
-				background-image: url('/wp-content/uploads/2023/03/website.png');
+				background-image: url(https://digital.gov.bc.ca/wp-content/uploads/2023/03/website.png);
 			}
 		}
 	}

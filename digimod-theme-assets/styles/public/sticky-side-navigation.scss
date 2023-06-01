@@ -1,9 +1,14 @@
+/* stylelint-disable no-descending-specificity */
+/* stylelint-disable font-weight-notation */
+/* stylelint-disable no-duplicate-selectors */
 
 .sticky-nav-container {
 	position: relative;
 
 	.content-column {
+
 		&::before {
+
 			@media (min-width: 599px) {
 				// border-left: 2px solid var(--wp--preset--color--gray-40);
 			}
@@ -25,8 +30,8 @@
 	.in-page-nav {
 		list-style: none;
 		margin: 2rem 0 auto;
-		margin-right: 0px;
-		margin-left: 0px;
+		margin-right: 0;
+		margin-left: 0;
 		padding: 0;
 		display: flex;
 		flex-direction: column;
@@ -88,6 +93,7 @@
 				}
 
 				&.active {
+
 					>a {
 						padding: 0.35rem calc(1rem - 4px) 0.25rem;
 					}
@@ -100,7 +106,9 @@
 
 			li {
 				list-style: none;
-				min-width: 100%;
+				border-left: 4px solid #f6f9fc !important;
+				margin-left: -1.66rem;
+				min-width: calc(100% + 1.45rem) !important;
 
 				a {
 					padding: 0.25rem 1rem 0.25rem;
@@ -108,15 +116,15 @@
 				}
 
 				&.active {
-					>a {
+
+					> a {
 						padding: 0.35rem calc(1rem - 4px) 0.25rem;
 					}
 				}
 			}
 		}
 
-		& ul li,
-		& ol li {
+		ol li {
 			border-right: 4px solid $menuAncestorBackground;
 
 			&.active {
@@ -125,6 +133,20 @@
 				a {
 					border: 0;
 					padding: 0.5rem calc(1rem - 10px) 0.5rem 1.2rem;
+					width: 100%;
+				}
+			}
+		}
+
+		ul li {
+			border-right: 4px solid $menuAncestorBackground;
+
+			&.active {
+				border-color: $menuAncestorHighlight;
+
+				a {
+					border: 0;
+					padding: 0.5rem calc(1rem - 10px) 0.33rem 1rem !important;
 					width: 100%;
 				}
 			}

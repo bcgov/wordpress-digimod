@@ -1,12 +1,25 @@
+/* stylelint-disable no-descending-specificity */
+/* stylelint-disable selector-class-pattern */
+/* stylelint-disable font-weight-notation */
+
 .aioseo-breadcrumbs {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.66rem;
 
+	.aioseo-breadcrumb-separator {
+		color: var(--wp--preset--color--foreground);
+	}
+
 	.aioseo-breadcrumb {
 		white-space: nowrap;
+
 		a {
-			text-decoration: none;;
+			text-decoration: none;
+		}
+
+		&:last-of-type {
+			font-weight: 700;
 		}
 	}
 }

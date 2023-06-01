@@ -1,7 +1,7 @@
 <?php
 /**
-* Plugin Name: DIGIMOD - Custom Assets
-* Description: A plugin to load custom CSS and JS files from the dist/assets directory
+* Plugin Name: DIGIMOD - Block Theme Enhancements
+* Description: A plugin to load custom CSS and JS files used to augment the default BCGov Block Theme capabilities
 * Version: 1.0.0
 * Author: Digimod
 * License: GPL-2.0+
@@ -49,6 +49,20 @@ function custom_assets_loader() {
             wp_enqueue_script('custom-admin-' . basename($file, '.js'), $file_url, [], false, true);
         }
     }
+
 }
 add_action('wp_enqueue_scripts', 'custom_assets_loader');
 add_action('admin_enqueue_scripts', 'custom_assets_loader');
+
+
+/**
+ * Load Digimod theme.json.
+ */
+function filter_theme_json_theme( $theme_json ) {
+
+    $plugin_theme_json_path = trailingslashit( plugin_dir_path( __FILE__ ) ) . 'theme/theme.json';
+    $plugin_theme_json = json_decode( file_get_contents( $plugin_theme_json_path ), true );
+
+    return $theme_json->update_with( $plugin_theme_json );
+}
+add_filter( 'wp_theme_json_data_theme', 'filter_theme_json_theme' );
