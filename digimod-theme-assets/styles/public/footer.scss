@@ -1,7 +1,12 @@
+/* stylelint-disable no-descending-specificity */
+/* stylelint-disable selector-class-pattern */
+
 footer {
+
 	nav {
+
 		a {
-			color: currentColor !important;
+			color: currentcolor !important;
 		}
 	}
 
@@ -16,15 +21,16 @@ nav.footer-nav ul {
 	display: flex;
 	gap: 1rem;
 	list-style: none;
-	margin: 0px;
+	margin: 0;
 	padding: 0;
 }
 
 body.has-ribbon-menu footer .wp-block-navigation a,
 body.has-ribbon-menu footer .footer-nav a.current-menu-ancestor {
 	background-color: transparent;
+
 	&:hover {
 		background-color: transparent;
 		text-decoration: underline;
-}
+	}
 }

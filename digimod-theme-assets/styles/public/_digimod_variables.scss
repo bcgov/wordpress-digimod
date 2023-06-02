@@ -1,0 +1,36 @@
+// General colours
+$white: #fff;
+$mineshaft: #313132;
+$scorpiongrey: #585858;
+$dovegrey: #70777c;
+$dustygrey: #9a9a9a;
+$porcelain: #f3f4f5;
+$crimsonred: #d71d24; // was: #e01f26
+
+// Government web colours
+$midnightblue: #036;
+$menuBlue: #1c2d64;
+$generallink: #1a5a96;
+$sanmarinoblue: #496ea7;
+$headeryellow: #f4bb2d;
+$curiousblue: #1e9dd3;
+
+// Digital Government
+$menuAncestorBackground: #f6f9fc;
+$menuAncestorHighlight: #324166;
+$highlightblue: #c0e6f7;
+
+
+* {
+	// Shadows from https://getcssscan.com/css-box-shadow-examples
+	// #39
+	--box-shadow: rgba(0, 0, 0, 0.1) 0 20px 25px -5px, rgba(0, 0, 0, 0.04) 0 10px 10px -5px;
+
+	&::selection {
+		background-color: $highlightblue;
+	}
+}
+
+$menu-open:  url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiBmb2N1c2FibGU9ImZhbHNlIgoJeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgoJeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDI0IDI0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+Cgk8cmVjdCB4PSIxLjMiIHk9IjEwLjkiIHdpZHRoPSIyMS4zIiBoZWlnaHQ9IjIuMiIvPgoJPHJlY3QgeD0iMS40IiB5PSIyMC41IiB3aWR0aD0iMjEuMyIgaGVpZ2h0PSIyLjIiLz4KCTxyZWN0IHg9IjEuNCIgeT0iMS4zIiB3aWR0aD0iMjEuMyIgaGVpZ2h0PSIyLjIiLz4KPC9zdmc+Cg==);
+
+$menu-close: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiBmb2N1c2FibGU9ImZhbHNlIgoJeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgoJeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDI0IDI0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+Cgk8cGF0aCBkPSJNMTMuNSwxMS43bDkuMi05LjVsLTEuNS0xLjVMMTIsMTBMMi45LDAuOEwxLjQsMi4ybDkuMSw5LjVsLTkuOCwxMGwxLjUsMS41bDkuOC05LjlsOS44LDkuOWwxLjUtMS41TDEzLjUsMTEuN3oiLz4KPC9zdmc+);

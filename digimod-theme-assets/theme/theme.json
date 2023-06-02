@@ -1,0 +1,493 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.2/theme.json",
+	"customTemplates": [
+		{
+			"name": "page-no-title",
+			"postTypes": [
+				"page"
+			],
+			"title": "Page – Content only"
+		},
+		{
+			"name": "blank",
+			"postTypes": [
+				"page"
+			],
+			"title": "Blank page or post"
+		},
+		{
+			"name": "single",
+			"postTypes": [
+				"post"
+			],
+			"title": "Single Post"
+		}
+	],
+	"patterns": [
+		"bcgov-hero-banner"
+	],
+	"settings": {
+		"appearanceTools": true,
+		"blocks": {
+			"core/column": {
+				"spacing": {
+					"padding": true
+				}
+			},
+			"core/media-text": {
+				"spacing": {
+					"margin": true,
+					"padding": true
+				}
+			}
+		},
+		"color": {
+			"gradients": [
+				{
+					"gradient": "linear-gradient(0deg, rgba(14, 52, 104,0.12) 0%, rgba(14, 52, 104,0.36) 100%)",
+					"name": "Primary (Brand) Opacity",
+					"slug": "primary-brand-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(59, 90, 148,0.12) 0%, rgba(59, 90, 148,0.36) 100%)",
+					"name": "Secondary (Brand) Opacity",
+					"slug": "secondary-brand-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(246, 185, 0,0.12) 0%, rgba(246, 185, 0,0.36) 100%)",
+					"name": "Accent (Brand) Opacity",
+					"slug": "accent-brand-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(236, 197, 29,0.12) 0%, rgba(236, 197, 29,0.36) 100%)",
+					"name": "Secondary Accent Opacity",
+					"slug": "secondary-accent-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(189, 204, 111,0.12) 0%, rgba(189, 204, 111,0.36) 100%)",
+					"name": "Tertiary Opacity",
+					"slug": "tertiary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(90, 143, 142,0.12) 0%, rgba(90, 143, 142,0.36) 100%)",
+					"name": "Quarternary Opacity",
+					"slug": "quarternary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(188, 207, 201,0.12) 0%, rgba(188, 207, 201,0.36) 100%)",
+					"name": "Quinary Opacity",
+					"slug": "quinary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(159, 160, 139,0.12) 0%, rgba(159, 160, 139,0.36) 100%)",
+					"name": "Senary Opacity",
+					"slug": "senary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(108, 95, 78,0.12) 0%, rgba(108, 95, 78,0.36) 100%)",
+					"name": "Septenary Opacity",
+					"slug": "septenary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(242, 109, 111,0.12) 0%, rgba(242, 109, 111,0.36) 100%)",
+					"name": "Octonary Opacity",
+					"slug": "octonary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(242, 164, 136,0.12) 0%, rgba(242, 164, 136,0.36) 100%)",
+					"name": "Nonary Opacity",
+					"slug": "nonary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(5, 166, 209,0.12) 0%, rgba(5, 166, 209,0.36) 100%)",
+					"name": "Denary Opacity",
+					"slug": "denary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(218, 153, 1,0.12) 0%, rgba(218, 153, 1,0.36) 100%)",
+					"name": "Ondenary Opacity",
+					"slug": "ondenary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(5, 166, 209,0.12) 0%, rgba(5, 166, 209,0.36) 100%)",
+					"name": "Duodenary Opacity",
+					"slug": "duodenary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(255, 196, 139,0.12) 0%, rgba(255, 196, 139,0.36) 100%)",
+					"name": "Tridenary Opacity",
+					"slug": "tridenary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(212, 186, 135,0.12) 0%, rgba(212, 186, 135,0.36) 100%)",
+					"name": "Quadenary Opacity",
+					"slug": "quadenary-opacity"
+				}
+			],
+			"palette": [
+				{
+					"color": "#0E3468",
+					"name": "Primary (Brand)",
+					"slug": "primary-brand"
+				},
+				{
+					"color": "#3B5A94",
+					"name": "Secondary (Brand)",
+					"slug": "secondary-brand"
+				},
+				{
+					"color": "#ffffff",
+					"name": "Accent (Brand)",
+					"slug": "accent"
+				},
+				{
+					"color": "#eaf4ff",
+					"name": "Secondary Accent",
+					"slug": "secondary-accent"
+				},
+				{
+					"color": "#0E3469",
+					"name": "Headline Colour",
+					"slug": "headline-color"
+				},
+				{
+					"color": "#111111",
+					"name": "Text Colour",
+					"slug": "text-color"
+				},
+				{
+					"color": "#fcba19",
+					"name": "Tertiary",
+					"slug": "tertiary"
+				},
+				{
+					"color": "#5A8F8E",
+					"name": "Quarternary",
+					"slug": "quarternary"
+				},
+				{
+					"color": "#BCCFC9",
+					"name": "Quinary",
+					"slug": "quinary"
+				},
+				{
+					"color": "#9FA08B",
+					"name": "Senary",
+					"slug": "senary"
+				},
+				{
+					"color": "#292929",
+					"name": "Septenary",
+					"slug": "septenary"
+				},
+				{
+					"color": "#F26D6F",
+					"name": "Octonary",
+					"slug": "octonary"
+				},
+				{
+					"color": "#F2A488",
+					"name": "Nonary",
+					"slug": "nonary"
+				},
+				{
+					"color": "#05A6D1",
+					"name": "Denary",
+					"slug": "denary"
+				},
+				{
+					"color": "#DA9901",
+					"name": "Ondenary",
+					"slug": "ondenary"
+				},
+				{
+					"color": "#2E585D",
+					"name": "Duodenary",
+					"slug": "duodenary"
+				},
+				{
+					"color": "#FFC48B",
+					"name": "Tridenary",
+					"slug": "tridenary"
+				},
+				{
+					"color": "#D4BA87",
+					"name": "Quadenary",
+					"slug": "quadenary"
+				},
+				{
+					"color": "#656565",
+					"name": "Gray 80",
+					"slug": "gray-80"
+				},
+				{
+					"color": "#A1A1A1",
+					"name": "Gray 60",
+					"slug": "gray-60"
+				},
+				{
+					"color": "#C7C7C7",
+					"name": "Gray 40",
+					"slug": "gray-40"
+				},
+				{
+					"color": "#222222",
+					"name": "Foreground",
+					"slug": "foreground"
+				},
+				{
+					"color": "#f9f9f9",
+					"name": "Background",
+					"slug": "background"
+				},
+				{
+					"color": "transparent",
+					"name": "Transparent",
+					"slug": "transparent"
+				}
+			]
+		},
+		"custom": [],
+		"layout": {
+			"contentSize": "840px",
+			"wideSize": "1056px"
+		},
+		"spacing": {
+			"blockGap": null
+		},
+		"typography": {
+			"fluid": true,
+			"fontFamilies": [],
+			"fontSizes": [
+				{
+					"fluid": {
+						"max": "1.25rem",
+						"min": "1rem"
+					},
+					"name": "Small",
+					"size": "1rem",
+					"slug": "small"
+				},
+				{
+					"fluid": {
+						"max": "1.25rem",
+						"min": "1.125rem"
+					},
+					"name": "Medium",
+					"size": "1.125rem",
+					"slug": "medium"
+				},
+				{
+					"fluid": {
+						"max": "1.5rem",
+						"min": "1.25rem"
+					},
+					"name": "Large",
+					"size": "1.25rem",
+					"slug": "large"
+				},
+				{
+					"fluid": {
+						"max": "1.75rem",
+						"min": "1.5rem"
+					},
+					"name": "Extra Large",
+					"size": "1.5rem",
+					"slug": "extra-large"
+				},
+				{
+					"fluid": {
+						"max": "2rem",
+						"min": "1.75rem"
+					},
+					"name": "Extra Extra large",
+					"size": "1.75rem",
+					"slug": "extra-extra-large"
+				}
+			]
+		}
+	},
+	"styles": {
+		"blocks": {
+			"core/group": {
+				"typography": {
+					"fontSize": "1rem",
+					"lineHeight": 1.8
+				}
+			},
+			"core/list": {
+				"typography": {
+					"fontSize": "1rem",
+					"lineHeight": 1.8
+				}
+			},
+			"core/paragraph": {
+				"typography": {
+					"fontSize": "1rem",
+					"lineHeight": 1.8
+				}
+			}
+		},
+		"color": {
+			"background": "var:preset|color|accent",
+			"text": "var(--wp--preset--color--foreground)"
+		},
+		"elements": {
+			"button": {
+				"color": {
+					"background": "var:preset|color|primary-brand",
+					"text": "var:preset|color|accent"
+				},
+				"typography": {
+					"fontSize": "clamp(1.125rem, 1.125rem + ((1vw - 0.48rem) * 0.24), 1.25rem)",
+					"lineHeight": "1.5"
+				}
+			},
+			"h1": {
+				"color": {
+					"text": "#222222"
+				},
+				"typography": {
+					"fontSize": "clamp(1.5rem, 1.5rem + ((1vw - 0.48rem) * 0.481), 1.75rem)",
+					"fontStyle": "normal",
+					"fontWeight": "400",
+					"lineHeight": "1.5"
+				}
+			},
+			"h2": {
+				"color": {
+					"text": "#222222"
+				},
+				"typography": {
+					"fontSize": "clamp(1.25rem, 1.25rem + ((1vw - 0.48rem) * 0.481), 1.5rem)",
+					"lineHeight": "1.5"
+				}
+			},
+			"h3": {
+				"color": {
+					"text": "#222222"
+				},
+				"typography": {
+					"fontSize": "clamp(1.125rem, 1.125rem + ((1vw - 0.48rem) * 0.24), 1.25rem)",
+					"lineHeight": "1.5"
+				}
+			},
+			"h4": {
+				"color": {
+					"text": "#222222"
+				},
+				"typography": {
+					"fontSize": "clamp(1rem, 1rem + ((1vw - 0.48rem) * 0.481), 1.25rem)",
+					"lineHeight": "1.5"
+				}
+			},
+			"h5": {
+				"color": {
+					"text": "#222222"
+				},
+				"typography": {
+					"fontSize": "clamp(1rem, 1rem + ((1vw - 0.48rem) * 0.481), 1.25rem)",
+					"lineHeight": "1.5"
+				}
+			},
+			"h6": {
+				"color": {
+					"text": "#222222"
+				},
+				"typography": {
+					"fontSize": "clamp(1rem, 1rem + ((1vw - 0.48rem) * 0.481), 1.25rem)",
+					"lineHeight": "1.5"
+				}
+			},
+			"heading": {
+				"color": {
+					"text": "#222222"
+				},
+				"typography": {
+					"lineHeight": "1.5"
+				}
+			},
+			"link": {
+				"color": {
+					"text": "var:preset|color|secondary-brand"
+				}
+			}
+		},
+		"spacing": {
+			"padding": {
+				"bottom": "0px",
+				"left": "0px",
+				"right": "0px",
+				"top": "0px"
+			}
+		},
+		"typography": {
+			"fontSize": "var:preset|font-size|small",
+			"lineHeight": "1.5"
+		}
+	},
+	"templateParts": [
+		{
+			"area": "header",
+			"name": "global-header-container",
+			"title": "Global Header Container"
+		},
+		{
+			"area": "header",
+			"name": "header-ribbon-polylang",
+			"title": "General Header with Polylang ribbon nav"
+		},
+		{
+			"area": "header",
+			"name": "header",
+			"title": "General Header with ribbon nav"
+		},
+		{
+			"area": "header",
+			"name": "header-takeover-nav",
+			"title": "General Header with fullscreen nav"
+		},
+		{
+			"area": "header",
+			"name": "navigation",
+			"title": "Main Menu"
+		},
+		{
+			"area": "header",
+			"name": "ribbon-navigation",
+			"title": "Ribbon Menu (Main)"
+		},
+		{
+			"area": "header",
+			"name": "takeover-navigation",
+			"title": "Takeover Menu (Main)"
+		},
+		{
+			"area": "header",
+			"name": "search-field",
+			"title": "Search Field"
+		},
+		{
+			"area": "header",
+			"name": "breadcrumb-nav",
+			"title": "Breadcrumb Nav – requires AIOSEO plugin"
+		},
+		{
+			"area": "header",
+			"name": "skip-nav",
+			"title": "Accessibility Skip Nav"
+		},
+		{
+			"area": "footer",
+			"name": "global-footer-container",
+			"title": "Global Footer Container"
+		},
+		{
+			"area": "footer",
+			"name": "footer",
+			"title": "BCGov Footer"
+		}
+	],
+	"title": "BCGov Digimod Default",
+	"version": 2
+}

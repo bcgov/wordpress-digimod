@@ -1,6 +1,11 @@
 
+/* stylelint-disable no-descending-specificity */
+/* stylelint-disable selector-class-pattern */
+
 .single-common-component {
+
 	.taxonomy-common_component_category {
+
 		span.tag {
 			background-color: var(--wp--preset--color--background);
 			border: 1px solid $dustygrey;
