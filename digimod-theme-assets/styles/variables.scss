@@ -1,3 +1,17 @@
+/* @media Breakpoints */
+$breakpoint-xxs: 0;
+$breakpoint-xs: 479px;
+$breakpoint-xs-sm: 600px;
+$breakpoint-sm: 782px;
+$breakpoint-sm-md: 840px;
+$breakpoint-wp-content-sm: $breakpoint-sm-md;
+$breakpoint-md: 991px;
+$breakpoint-md-lg: 1024px;
+$breakpoint-lg: 1199px;
+$breakpoint-xl: 1440px;
+$breakpoint-wp-content-wide: $breakpoint-xl;
+
+
 // General colours
 $white: #fff;
 $mineshaft: #313132;

@@ -4,6 +4,7 @@ import './public/communities-of-practice';
 import './public/continuous-learning';
 import './public/flex-cards';
 import './public/homepage';
+import './public/mega-menu';
 import './public/navigation';
 import './public/sticky-side-navigation';
 
