@@ -33,9 +33,29 @@ function filter_protected_blocks($block_content, $block) {
     if ($block['blockName'] === 'digimod/restrictcontentblock') {  // replace with your block name
         if (!is_user_logged_in()) {
             //not logged in, replace with a login button
-			return '<p>You must be logged in to view this content. 
-			<div class="wp-block-button has-size-regular"><a tabindex="0" class="wp-block-button__link wp-element-button" href="'.wp_login_url(get_permalink()).'" data-text="Login with IDIR">Login with IDIR</a></div></p>';
+			return '
+            <script>
+                function setRedirCookie(){
+                    let name = "my_login_redirect";
+                    let value = window.location.href;
+
+                    var date = new Date();
+                    // Set it expire in 5 minutes
+                    date.setTime(date.getTime() + (5*60*1000));
+                    var expires = "; expires=" + date.toUTCString();
+                    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+
+                    window.location = "/?option=oauthredirect&app_name=keycloak";
+                }
+            </script>
+
+            <p>You must be logged in to view this content. 
+                <div class="wp-block-button has-size-regular">
+                    <a href="/?option=oauthredirect&app_name=keycloak" onclick="setRedirCookie(); return false;" tabindex="0" class="wp-block-button__link wp-element-button" data-text="Login with IDIR">Login with IDIR</a>
+                </div>
+            </p>';
 			}
+            // href="'.wp_login_url(get_permalink()).'"
     }
 
     // // for other blocks or if user is logged in, return the original block content
