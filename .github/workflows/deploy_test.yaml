@@ -35,11 +35,11 @@ jobs:
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TEST_API_TOKEN }} --insecure-skip-tls-verify=true
     - name: Export site
       run: |
-        export NAMESPACE="c0cce6-test"
-        export OC_ENV=test
-        export OC_SITE_NAME=digital-test
-        export WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-
+        NAMESPACE="c0cce6-test"
+        OC_ENV=test
+        OC_SITE_NAME=digital-test
+        WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+        WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
         # Download wp-cli in the GitHub Actions workspace
         curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
         chmod +x wp-cli.phar
@@ -52,20 +52,13 @@ jobs:
         oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups/$LATEST_FILE ./wp-backup.wpress
         oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration ./plugins/all-in-one-wp-migration
         oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration-unlimited-extension ./plugins/all-in-one-wp-migration-unlimited-extension
-        
-        oc cp --no-preserve ./plugins/all-in-one-wp-migration -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration
-        oc cp --no-preserve ./plugins/all-in-one-wp-migration-unlimited-extension -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration-unlimited-extension
-
-        oc cp --no-preserve ./wp-backup.wpress -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups/wp-backup.wpress
-        #perform the restore
-        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar ai1wm restore wp-backup.wpress"
 
     - name: Log in to OpenShift
       run: |
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TEST_API_TOKEN }} --insecure-skip-tls-verify=true
     - name: Delete existing deployment, if it exists
       run: |
-        export NAMESPACE="c0cce6-test"
+        NAMESPACE="c0cce6-test"
         export OC_ENV=test
         export OC_SITE_NAME=digital-test
         export WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
@@ -85,9 +78,9 @@ jobs:
         ./site-builder-unix.sh
     - name: Wait for WordPress pod to be running
       run: |
-        export NAMESPACE="c0cce6-test"
-        export OC_SITE_NAME=digital-test
-        export WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+        NAMESPACE="c0cce6-test"
+        OC_SITE_NAME=digital-test
+        WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
         oc wait --for=condition=Ready pod/$WORDPRESS_POD_NAME -n $NAMESPACE --timeout=5m
         # Wait for the WordPress container to be created
         while true; do
@@ -103,10 +96,10 @@ jobs:
         sleep 30
     - name: Import site
       run: |
-        export NAMESPACE="c0cce6-test"
-        export OC_ENV=test
-        export OC_SITE_NAME=digital-test
-        export WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+        NAMESPACE="c0cce6-test"
+        OC_ENV=test
+        OC_SITE_NAME=digital-test
+        WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 
         # Download wp-cli in the GitHub Actions workspace
         curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
@@ -134,12 +127,12 @@ jobs:
 
     - name: Deploy theme
       run: |
-        export THEME_NAME="bcgov-wordpress-block-theme"
-        export NAMESPACE="c0cce6-test"
-        export OC_SITE_NAME=digital-test
-        export WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l  app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-        export WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
-        export DATE=$(date +%Y-%m-%d-%H-%M)
+        THEME_NAME="bcgov-wordpress-block-theme"
+        NAMESPACE="c0cce6-test"
+        OC_SITE_NAME=digital-test
+        WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l  app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+        WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
+        DATE=$(date +%Y-%m-%d-%H-%M)
         cd bcgov-wordpress-block-theme-digimod
         composer install
         # Check if the theme folder exists and rename it to create a backup
@@ -160,10 +153,10 @@ jobs:
 
     - name: Deploy plugins
       run: |
-        export NAMESPACE="c0cce6-test"
-        export OC_SITE_NAME=digital-test
-        export WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l  app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-        export WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
+        NAMESPACE="c0cce6-test"
+        OC_SITE_NAME=digital-test
+        WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l  app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+        WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
         tar -cf plugins.tar --exclude=./.github --exclude=node_modules --exclude=./Archive --exclude=./bcgov-wordpress-block-theme-digimod ./*/
         oc cp --no-preserve plugins.tar $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/plugins.tar -c $WORDPRESS_CONTAINER_NAME
         oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -xf /var/www/html/wp-content/plugins/plugins.tar -C /var/www/html/wp-content/plugins
