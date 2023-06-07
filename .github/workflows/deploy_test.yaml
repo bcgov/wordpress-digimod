@@ -11,8 +11,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      with: 
-        ref: experimental/digimod-digital-government
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
