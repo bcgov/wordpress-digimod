@@ -32,13 +32,13 @@ jobs:
         git clone -b development https://github.com/bcgov/bcgov-wordpress-block-theme-digimod.git
     - name: Log in to OpenShift
       run: |
-        oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TEST_API_TOKEN }} --insecure-skip-tls-verify=true
-    - name: Export site
+        oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }} --insecure-skip-tls-verify=true
+    - name: Export site from production
       run: |
-        NAMESPACE="c0cce6-test"
-        OC_ENV=test
-        OC_SITE_NAME=digital-test
-        WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+        NAMESPACE="c0cce6-prod"
+        OC_ENV=prod
+        OC_SITE_NAME=digital-wp
+        WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=nginx,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
         WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
         # Download wp-cli in the GitHub Actions workspace
         curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
@@ -52,7 +52,8 @@ jobs:
         oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups/$LATEST_FILE ./wp-backup.wpress
         oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration ./plugins/all-in-one-wp-migration
         oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration-unlimited-extension ./plugins/all-in-one-wp-migration-unlimited-extension
-
+        # log out of prod due to paranoia
+        oc logout
     - name: Log in to OpenShift
       run: |
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TEST_API_TOKEN }} --insecure-skip-tls-verify=true
