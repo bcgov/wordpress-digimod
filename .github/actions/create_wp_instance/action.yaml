@@ -29,7 +29,7 @@ runs:
       
         #Log in to OpenShift
         echo "Deploying to $INPUT_ENVIRONMENT"
-        case "${$INPUT_ENVIRONMENT}" in
+        case "$INPUT_ENVIRONMENT" in
           "dev")
             token=$INPUT_DEV_TOKEN
             ;;
@@ -42,7 +42,7 @@ runs:
             exit 1
             ;;
           *)
-            echo "Unknown environment: ${$INPUT_ENVIRONMENT}"
+            echo "Unknown environment: $INPUT_ENVIRONMENT"
             exit 1
             ;;
         esac
