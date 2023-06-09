@@ -18,17 +18,17 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v2
     - name: Create a new Wordpress Instance
-      uses: ./github/actions/create_wp_instance.yaml
+      uses: ./github/actions/create_wp_instance
       with:
         environment: "test"
         site-name: "test"
     - name: Replicate Production
-      uses: ./github/actions/create_wp_instance.yaml
+      uses: ./github/actions/replicate_prod
       with:
         environment: "test"
         site-name: "test"
     - name: Deploy theme and plugins
-      uses: ./github/actions/deploy_theme_and_plugins.yaml
+      uses: ./github/actions/deploy_theme_and_plugins
       with:
         environment: "test"
         site-name: "test"  
