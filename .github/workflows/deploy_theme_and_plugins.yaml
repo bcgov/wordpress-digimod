@@ -1,4 +1,4 @@
-name: Deploy WordPress Theme test
+name: Deploy Theme and plugins
 on:
   workflow_dispatch:
     inputs:

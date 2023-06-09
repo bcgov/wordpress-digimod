@@ -1,4 +1,4 @@
-name: Deploy WordPress Theme test
+name: Replicate Prod
 on:
   workflow_dispatch:
     inputs:
