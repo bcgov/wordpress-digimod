@@ -17,8 +17,25 @@ runs:
       
         #Log in to OpenShift
         echo "Deploying to $ENVIRONMENT"
-        token=secrets.OPENSHIFT_${ENVIRONMENT}_API_TOKEN
-        oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
+        case "${ENVIRONMENT}" in
+          "dev")
+            token=$DEV_TOKEN
+            ;;
+          "test")
+            token=$TEST_TOKEN
+            ;;
+          "prod")
+            # token=$PROD_TOKEN
+            echo "For safety reasons, we won't run this action on prod!"
+            exit 1
+            ;;
+          *)
+            echo "Unknown environment: ${ENVIRONMENT}"
+            exit 1
+            ;;
+        esac
+
+        oc login OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
         
         # Delete existing deployment, if it exists
         NAMESPACE="c0cce6-$ENVIRONMENT"
@@ -75,3 +92,10 @@ runs:
         #Perform a site install
         oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar core install --url=${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca --title="${OC_SITE_NAME}.gov.bc.ca Testing Framework" --admin_user=tester --admin_password=tester --admin_email=info@example.com
       shell: bash
+      env:
+        ENVIRONMENT: ${{ github.event.inputs.environment }}
+        SITE_NAME: ${{ github.event.inputs.site-name }}
+        OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+        DEV_TOKEN: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
+        TEST_TOKEN: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
+        PROD_TOKEN: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
