@@ -91,3 +91,10 @@ runs:
         #perform the restore
         oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar ai1wm restore wp-backup.wpress"
       shell: bash
+      env:
+        INPUT_ENVIRONMENT: ${{ inputs.environment }}
+        INPUT_SITE_NAME: ${{ inputs.site-name }}
+        INPUT_OPENSHIFT_SERVER: ${{ OPENSHIFT_SERVER }}
+        INPUT_DEV_TOKEN: ${{ OPENSHIFT_DEV_API_TOKEN }}
+        INPUT_TEST_TOKEN: ${{ OPENSHIFT_TEST_API_TOKEN }}
+        INPUT_PROD_TOKEN: ${{ OPENSHIFT_PROD_API_TOKEN }}
