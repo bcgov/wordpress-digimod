@@ -1,46 +1,40 @@
 name: Deploy Theme and plugins
-on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Deployment environment'
-        required: true
-        default: 'test'
-      site-name:
-        description: 'Site name'
-        required: true
-        default: 'test'
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    env:
-      ENVIRONMENT: ${{ github.event.inputs.environment }}
-      SITE_NAME: ${{ github.event.inputs.site-name }}
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+description: 'Deploy BC Gov Block Theme and plugins'
+inputs:
+  environment:
+    description: 'Deployment environment'
+    required: true
+    default: 'test'
+  site-name:
+    description: 'Site name'
+    required: true
+    default: 'test'
+runs:
+  using: 'composite'
+  steps:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '7.4'
         extensions: mbstring, intl, pdo_mysql
         coverage: none
-
     - name: Install Composer
       run: |
         curl -sS https://getcomposer.org/installer | php
         sudo mv composer.phar /usr/local/bin/composer
         composer --version
+      shell: bash
     - name: Clone bcgov-wordpress-block-theme-digimod repository
       run: |
         git clone -b development https://github.com/bcgov/bcgov-wordpress-block-theme-digimod.git
-    - name: Log in to OpenShift
+      shell: bash
+    - name: Deploy theme and plugins
       run: |
         echo "Deploying to $ENVIRONMENT"
         token=secrets.OPENSHIFT_${ENVIRONMENT}_API_TOKEN
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
-    - name: Deploy theme
-      run: |
+        
+        # Deploy theme
         THEME_NAME="bcgov-wordpress-block-theme"
         NAMESPACE="c0cce6-$ENVIRONMENT"
         OC_SITE_NAME=digital-$ENVIRONMENT
@@ -66,8 +60,7 @@ jobs:
         #oc cp --no-preserve . $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/themes/$THEME_NAME -c $WORDPRESS_CONTAINER_NAME
         oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar theme activate $THEME_NAME --allow-root
 
-    - name: Deploy plugins
-      run: |
+        # Deploy plugins
         NAMESPACE="c0cce6-$ENVIRONMENT"
         OC_SITE_NAME=digital-$ENVIRONMENT
         WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l  app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
@@ -81,3 +74,4 @@ jobs:
         #       oc cp --no-preserve . $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/$dir -c $WORDPRESS_CONTAINER_NAME
         #   fi
         # done 
+      shell: bash

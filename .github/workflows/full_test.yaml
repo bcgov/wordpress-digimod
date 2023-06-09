@@ -13,22 +13,21 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v2
-    - name: Create a new Wordpress Instance
-      uses: ./.github/workflows/create_wp_instance
-      with:
-        environment: "test"
-        site-name: "test"
-    - name: Replicate Production
-      uses: ./.github/workflows/replicate_prod
-      with:
-        environment: "test"
-        site-name: "test"
-    - name: Deploy theme and plugins
-      uses: ./.github/workflows/deploy_theme_and_plugins
-      with:
-        environment: "test"
-        site-name: "test"  
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Create a new Wordpress Instance
+        uses: ./.github/actions/create_wp_instance
+        with:
+          environment: ${{ github.event.inputs.environment }}
+          site-name: ${{ github.event.inputs.site-name }}
+      - name: Replicate Production
+        uses: ./.github/actions/replicate_prod
+        with:
+          environment: ${{ github.event.inputs.environment }}
+          site-name: ${{ github.event.inputs.site-name }}
+      - name: Deploy theme and plugins
+        uses: ./.github/actions/deploy_theme_and_plugins
+        with:
+          environment: ${{ github.event.inputs.environment }}
+          site-name: ${{ github.event.inputs.site-name }}

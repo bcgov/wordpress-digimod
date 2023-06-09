@@ -1,32 +1,26 @@
 name: Create Wordpress instance
-on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Deployment environment'
-        required: true
-        default: 'test'
-      site-name:
-        description: 'Site name'
-        required: true
-        default: 'test'
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    env:
-      ENVIRONMENT: ${{ github.event.inputs.environment }}
-      SITE_NAME: ${{ github.event.inputs.site-name }}
-    steps:
-    - name: Clone wordpress-deploy-digimod repository
-      run: |
+description: 'Creates a new WordPress instance'
+inputs:
+  environment:
+    description: 'Deployment environment'
+    required: true
+    default: 'test'
+  site-name:
+    description: 'Site name'
+    required: true
+    default: 'test'
+runs:
+  using: 'composite'
+  steps:
+    - run: |
         git clone -b digimod-deploy https://github.com/bcgov/wordpress-deploy-digimod.git
-    - name: Log in to OpenShift
-      run: |
+      
+        #Log in to OpenShift
         echo "Deploying to $ENVIRONMENT"
         token=secrets.OPENSHIFT_${ENVIRONMENT}_API_TOKEN
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
-    - name: Delete existing deployment, if it exists
-      run: |
+        
+        # Delete existing deployment, if it exists
         NAMESPACE="c0cce6-$ENVIRONMENT"
         export OC_ENV=$ENVIRONMENT
         export OC_SITE_NAME=digital-$SITE_NAME
@@ -37,16 +31,16 @@ jobs:
           chmod +x site-delete-unix.sh
           ./site-delete-unix.sh
         fi      
-    - name: Create new WordPress instance
-      run: |
+
+        # Create new WordPress instance
         export NAMESPACE="c0cce6-$ENVIRONMENT"
         export OC_ENV=$ENVIRONMENT
         export OC_SITE_NAME=digital-$SITE_NAME
         cd wordpress-deploy-digimod
         chmod +x site-builder-unix.sh
         ./site-builder-unix.sh
-    - name: Wait for WordPress pod to be running
-      run: |
+
+        # Wait for WordPress pod to be running
         NAMESPACE="c0cce6-$ENVIRONMENT"
         OC_SITE_NAME=digital-$SITE_NAME
         WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
@@ -63,8 +57,8 @@ jobs:
         # Add an additional sleep to ensure the container is fully initialized
         echo "Waiting for WordPress container to be fully initialized..."
         sleep 15
-    - name: Install wordpress
-      run: |
+
+        # Install wordpress
         NAMESPACE="c0cce6-$ENVIRONMENT"
         OC_ENV=$ENVIRONMENT
         OC_SITE_NAME=digital-$SITE_NAME
@@ -80,3 +74,4 @@ jobs:
         
         #Perform a site install
         oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar core install --url=${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca --title="${OC_SITE_NAME}.gov.bc.ca Testing Framework" --admin_user=tester --admin_password=tester --admin_email=info@example.com
+      shell: bash

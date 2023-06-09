@@ -1,27 +1,22 @@
 name: Replicate Prod
-on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Deployment environment'
-        required: true
-        default: 'test'
-      site-name:
-        description: 'Site name'
-        required: true
-        default: 'test'
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    env:
-      ENVIRONMENT: ${{ github.event.inputs.environment }}
-      SITE_NAME: ${{ github.event.inputs.site-name }}
-    steps:
-    - name: Log in to OpenShift
-      run: |
+description: 'Replicates the production instance on the given deployment'
+inputs:
+  environment:
+    description: 'Deployment environment'
+    required: true
+    default: 'test'
+  site-name:
+    description: 'Site name'
+    required: true
+    default: 'test'
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        # Log in to OpenShift
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }} --insecure-skip-tls-verify=true
-    - name: Export site from production
-      run: |
+        
+        # Export site from production
         NAMESPACE="c0cce6-prod"
         OC_ENV=prod
         OC_SITE_NAME=digital-wp
@@ -43,13 +38,12 @@ jobs:
         active_plugins=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin list --status=active --field=name)
         # log out of prod due to paranoia
         oc logout
-    - name: Log in to OpenShift
-      run: |
+        
+        # Log in to OpenShift
         echo "Deploying to $ENVIRONMENT"
         token=secrets.OPENSHIFT_${ENVIRONMENT}_API_TOKEN
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
-    - name: Import site
-      run: |
+        # Import site
         NAMESPACE="c0cce6-$ENVIRONMENT"
         OC_ENV=$ENVIRONMENT
         OC_SITE_NAME=digital-$ENVIRONMENT
@@ -61,10 +55,11 @@ jobs:
         oc cp --no-preserve ./plugins/all-in-one-wp-migration-unlimited-extension -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration-unlimited-extension
         
         #activate the plugins
-        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate --all
+        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate active_plugins
        
         # Copy over backup file
         oc cp --no-preserve ./wp-backup.wpress -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups/wp-backup.wpress
         
         #perform the restore
         oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar ai1wm restore wp-backup.wpress"
+      shell: bash
