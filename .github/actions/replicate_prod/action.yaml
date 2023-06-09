@@ -26,7 +26,7 @@ runs:
   steps:
     - run: |
         # Log in to OpenShift
-        oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN --insecure-skip-tls-verify=true
+        oc login $INPUT_OPENSHIFT_SERVER --token=$INPUT_PROD_TOKEN --insecure-skip-tls-verify=true
         
         # Export site from production
         NAMESPACE="c0cce6-prod"
@@ -52,29 +52,29 @@ runs:
         oc logout
         
         # Log in to OpenShift
-        echo "Deploying to $ENVIRONMENT"
-        case "${ENVIRONMENT}" in
+        echo "Deploying to $INPUT_ENVIRONMENT"
+        case "${$INPUT_ENVIRONMENT}" in
           "dev")
-            token=$DEV_TOKEN
+            token=$INPUT_DEV_TOKEN
             ;;
           "test")
-            token=$TEST_TOKEN
+            token=$INPUT_TEST_TOKEN
             ;;
           "prod")
-            # token=$PROD_TOKEN
+            # token=$INPUT_PROD_TOKEN
             echo "For safety reasons, we won't run this action on prod!"
             exit 1
             ;;
           *)
-            echo "Unknown environment: ${ENVIRONMENT}"
+            echo "Unknown environment: ${$INPUT_ENVIRONMENT}"
             exit 1
             ;;
         esac
-        oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
+        oc login $INPUT_OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
         # Import site
-        NAMESPACE="c0cce6-$ENVIRONMENT"
-        OC_ENV=$ENVIRONMENT
-        OC_SITE_NAME=digital-$ENVIRONMENT
+        NAMESPACE="c0cce6-$INPUT_ENVIRONMENT"
+        OC_ENV=$INPUT_ENVIRONMENT
+        OC_SITE_NAME=digital-$INPUT_SITE_NAME
         WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
         WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
         

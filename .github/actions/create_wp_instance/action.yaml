@@ -28,31 +28,31 @@ runs:
         git clone -b digimod-deploy https://github.com/bcgov/wordpress-deploy-digimod.git
       
         #Log in to OpenShift
-        echo "Deploying to $ENVIRONMENT"
-        case "${ENVIRONMENT}" in
+        echo "Deploying to $INPUT_ENVIRONMENT"
+        case "${$INPUT_ENVIRONMENT}" in
           "dev")
-            token=$DEV_TOKEN
+            token=$INPUT_DEV_TOKEN
             ;;
           "test")
-            token=$TEST_TOKEN
+            token=$INPUT_TEST_TOKEN
             ;;
           "prod")
-            # token=$PROD_TOKEN
+            # token=$INPUT_PROD_TOKEN
             echo "For safety reasons, we won't run this action on prod!"
             exit 1
             ;;
           *)
-            echo "Unknown environment: ${ENVIRONMENT}"
+            echo "Unknown environment: ${$INPUT_ENVIRONMENT}"
             exit 1
             ;;
         esac
 
-        oc login OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
+        oc login $INPUT_OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
         
         # Delete existing deployment, if it exists
-        NAMESPACE="c0cce6-$ENVIRONMENT"
-        export OC_ENV=$ENVIRONMENT
-        export OC_SITE_NAME=digital-$SITE_NAME
+        NAMESPACE="c0cce6-$INPUT_ENVIRONMENT"
+        export OC_ENV=$INPUT_ENVIRONMENT
+        export OC_SITE_NAME=digital-$INPUT_SITE_NAME
         export WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
         WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
         if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
@@ -62,19 +62,16 @@ runs:
         fi      
 
         # Create new WordPress instance
-        export NAMESPACE="c0cce6-$ENVIRONMENT"
-        export OC_ENV=$ENVIRONMENT
-        export OC_SITE_NAME=digital-$SITE_NAME
         cd wordpress-deploy-digimod
         chmod +x site-builder-unix.sh
         ./site-builder-unix.sh
 
         # Wait for WordPress pod to be running
-        NAMESPACE="c0cce6-$ENVIRONMENT"
-        OC_SITE_NAME=digital-$SITE_NAME
+
         WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
         oc wait --for=condition=Ready pod/$WORDPRESS_POD_NAME -n $NAMESPACE --timeout=5m
         # Wait for the WordPress container to be created
+        WORDPRESS_CONTAINER_NAME=null;
         while true; do
           WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
           if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
@@ -88,11 +85,6 @@ runs:
         sleep 15
 
         # Install wordpress
-        NAMESPACE="c0cce6-$ENVIRONMENT"
-        OC_ENV=$ENVIRONMENT
-        OC_SITE_NAME=digital-$SITE_NAME
-        WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-        WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
         # Download wp-cli in the GitHub Actions workspace
         curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
         chmod +x wp-cli.phar
