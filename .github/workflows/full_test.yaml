@@ -21,13 +21,25 @@ jobs:
         with:
           environment: ${{ github.event.inputs.environment }}
           site-name: ${{ github.event.inputs.site-name }}
+          openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
+          dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
+          test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
+          prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
       - name: Replicate Production
         uses: ./.github/actions/replicate_prod
         with:
           environment: ${{ github.event.inputs.environment }}
           site-name: ${{ github.event.inputs.site-name }}
+          openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
+          dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
+          test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
+          prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
       - name: Deploy theme and plugins
         uses: ./.github/actions/deploy_theme_and_plugins
         with:
           environment: ${{ github.event.inputs.environment }}
           site-name: ${{ github.event.inputs.site-name }}
+          openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
+          dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
+          test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
+          prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
