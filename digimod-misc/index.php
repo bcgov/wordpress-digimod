@@ -15,8 +15,11 @@ if (!defined('ABSPATH')) {
 
 // WCAG stuff
 function register_wcag_tags(){
+    // unregister_taxonomy('wcag_tag_TODO_RENAME');
+    // unregister_taxonomy('wcag_tag');
+
     register_taxonomy(
-        'wcag_tag_TODO_RENAME',
+        'wcag_tag',
         'wcag-card',
         array(
             'label' =>  __('WCAG Tag'),
@@ -32,21 +35,21 @@ function register_wcag_tags(){
     );
 
     // todo: delete this
-    register_taxonomy(
-        'wcag_tag',
-        'wcag',
-        array(
-            'label' =>  __('WCAG Tag'),
-            'show_in_rest' => true,
-            'public' => true,
-            'capabilities' => array(
-                'manage_terms' => 'manage_wcag_tags_del',
-                'edit_terms'   => 'edit_wcag_tags_del',
-                'delete_terms' => 'delete_wcag_tags_del',
-                'assign_terms' => 'assign_wcag_tags_del',
-            )
-        )
-    );
+    // register_taxonomy(
+    //     'wcag_tag_TODO_RENAME',
+    //     'wcag',
+    //     array(
+    //         'label' =>  __('WCAG Tag'),
+    //         'show_in_rest' => true,
+    //         'public' => true,
+    //         'capabilities' => array(
+    //             'manage_terms' => 'manage_wcag_tags_del',
+    //             'edit_terms'   => 'edit_wcag_tags_del',
+    //             'delete_terms' => 'delete_wcag_tags_del',
+    //             'assign_terms' => 'assign_wcag_tags_del',
+    //         )
+    //     )
+    // );
 }
 
 

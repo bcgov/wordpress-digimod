@@ -24,7 +24,7 @@
         <li v-for="post in filteredPosts" :key="post.id"
           class="wp-block-post post-5655 common-component type-common-component status-publish hentry common_component_category-active common_component_category-established common_component_category-identity common_component_category-service">
 
-          <a  :href="post.link">
+          <a  :href="post.acf.card_hyperlink.value">
             <div
               class="is-layout-constrained wp-block-group common-component-group flex-card has-white-background-color has-background"
               style="border-radius:1rem;padding-top:2rem;padding-right:2rem;padding-bottom:2rem;padding-left:2rem">
@@ -118,13 +118,14 @@
 
     methods: {
       async fetchData() {
-        const url = '/wp-json/wp/v2/wcag'; // Replace with your API URL
+        const url = '/wp-json/wp/v2/wcag-card'; // Replace with your API URL
         try {
           const response = await fetch(url);
           if (!response.ok) {
             throw new Error("An error has occurred: " + response.status);
           }
           let posts = await response.json();
+          console.log('posts: ', posts)
           
           // Get the unique URLs for fetching tags
           const tagUrls = [...new Set(posts.flatMap(post => post._links['wp:term'].map(link => link.href)))];
