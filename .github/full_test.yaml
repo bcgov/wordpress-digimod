@@ -1,0 +1,33 @@
+name: Full Test
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'test'
+      site-name:
+        description: 'Site name'
+        required: true
+        default: 'test'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Create a new Wordpress Instance
+      uses: ./github/actions/create_wp_instance.yaml
+      with:
+        environment: "test"
+        site-name: "test"
+    - name: Replicate Production
+      uses: ./github/actions/create_wp_instance.yaml
+      with:
+        environment: "test"
+        site-name: "test"
+    - name: Deploy theme and plugins
+      uses: ./github/actions/deploy_theme_and_plugins.yaml
+      with:
+        environment: "test"
+        site-name: "test"  
