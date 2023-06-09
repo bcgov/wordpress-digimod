@@ -104,10 +104,3 @@ runs:
         #Perform a site install
         oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar core install --url=${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca --title="${OC_SITE_NAME}.gov.bc.ca Testing Framework" --admin_user=tester --admin_password=tester --admin_email=info@example.com
       shell: bash
-      env:
-        ENVIRONMENT: ${{ github.event.inputs.environment }}
-        SITE_NAME: ${{ github.event.inputs.site-name }}
-        OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
-        DEV_TOKEN: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
-        TEST_TOKEN: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
-        PROD_TOKEN: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}

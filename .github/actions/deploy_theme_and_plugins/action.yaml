@@ -103,10 +103,3 @@ runs:
         #   fi
         # done 
       shell: bash
-      env:
-        ENVIRONMENT: ${{ github.event.inputs.environment }}
-        SITE_NAME: ${{ github.event.inputs.site-name }}
-        OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
-        DEV_TOKEN: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
-        TEST_TOKEN: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
-        PROD_TOKEN: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
