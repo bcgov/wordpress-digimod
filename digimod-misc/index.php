@@ -54,3 +54,48 @@ function register_wcag_tags(){
 
 
 add_action( 'init', 'register_wcag_tags', 0 );
+
+
+
+
+// CLI command to modify keycloak config (used for when the site gets imported to a different instance)
+
+
+if ( ! defined( 'ABSPATH' ) ) {
+	die( 'Kangaroos cannot jump here' );
+}
+
+if ( defined( 'WP_CLI' ) ) {
+	class Digimod_config_mo extends WP_CLI_Command {
+		public function __invoke($args) {
+
+            // [ssoprotocol] => xxx
+            // [apptype] => xxx
+            // [clientid] => xxx
+            // [clientsecret] => xxx
+            // [redirecturi] => xxx DO NOT CHANGE THIS
+            // [send_headers] => xx
+            // [send_body] => xx
+            // [send_state] => xx
+            // [show_on_login_page] => xx
+            // [appId] => xx
+            // [scope] => xxx
+            // [authorizeurl] => xxx
+            // [accesstokenurl] => xxx
+            // [resourceownerdetailsurl] => 
+            // [username_attr] => xxx
+
+            
+            $clientSecret = $args[0];
+            $appslist = get_option( 'mo_oauth_apps_list' );
+            $app = $appslist['keycloak'];
+            $newapp['clientsecret']=$clientSecret;
+            $appslist['keycloak']=$app;
+            update_option( 'mo_oauth_apps_list', $appslist );
+
+			WP_CLI::success( 'Miniorange settings reconfigured!');
+		}
+	}
+
+    WP_CLI::add_command( 'digimod-config-mo', 'Digimod_config_mo');
+}
