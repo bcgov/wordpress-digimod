@@ -27,7 +27,7 @@ runs:
     - name: Replicate Prod
       run: |
         chmod +x ./.github/actions/replicate_prod/replicate_prod.sh
-        ./.github/actions/create_wp_instance/deploy.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
+        ./.github/actions/replicate_prod/replicate_prod.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
       shell: bash
       env:
         INPUT_ENVIRONMENT: ${{ inputs.environment }}
