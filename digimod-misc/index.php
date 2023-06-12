@@ -73,7 +73,7 @@ if ( defined( 'WP_CLI' ) ) {
             // [apptype] => xxx
             // [clientid] => xxx
             // [clientsecret] => xxx
-            // [redirecturi] => xxx DO NOT CHANGE THIS
+            // [redirecturi] => xxx DO NOT CHANGE THIS - plugin hardcodes for this automatically
             // [send_headers] => xx
             // [send_body] => xx
             // [send_state] => xx
@@ -89,7 +89,14 @@ if ( defined( 'WP_CLI' ) ) {
             $clientSecret = $args[0];
             $appslist = get_option( 'mo_oauth_apps_list' );
             $app = $appslist['keycloak'];
-            $newapp['clientsecret']=$clientSecret;
+            // WP_CLI::log('clientSecret: ');
+            // WP_CLI::log($app['clientsecret']);
+            
+            //WP_CLI::log(implode(', ', $app));
+            // WP_CLI::log(implode(', ', array_keys($app)));
+            
+             
+            $app['clientsecret']=$clientSecret;//$clientSecret;
             $appslist['keycloak']=$app;
             update_option( 'mo_oauth_apps_list', $appslist );
 
