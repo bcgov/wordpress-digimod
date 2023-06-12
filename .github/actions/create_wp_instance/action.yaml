@@ -31,13 +31,13 @@ runs:
         echo "Deploying to $INPUT_ENVIRONMENT"
         case "$INPUT_ENVIRONMENT" in
           "dev")
-            token=$INPUT_DEV_TOKEN
+            token=$env:DEV_TOKEN
             ;;
           "test")
-            token=$INPUT_TEST_TOKEN
+            token=$env:TEST_TOKEN
             ;;
           "prod")
-            # token=$INPUT_PROD_TOKEN
+            # token=$env:PROD_TOKEN
             echo "For safety reasons, we won't run this action on prod!"
             exit 1
             ;;
@@ -46,10 +46,10 @@ runs:
             exit 1
             ;;
         esac
-        echo $INPUT_OPENSHIFTSERVER
+        echo $env:OPENSHIFTSERVER
         echo $INPUT_SITE_NAME
-        echo $OPENSHIFTSERVER
-        oc login $INPUT_OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
+        echo $env:OPENSHIFT_SERVER
+        oc login $env:OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
         
         # Delete existing deployment, if it exists
         NAMESPACE="c0cce6-$INPUT_ENVIRONMENT"
@@ -101,7 +101,7 @@ runs:
       env:
         INPUT_ENVIRONMENT: ${{ inputs.environment }}
         INPUT_SITE_NAME: ${{ inputs.site-name }}
-        INPUT_OPENSHIFT_SERVER: ${{ inputs.openshiftserver }}
-        INPUT_DEV_TOKEN: ${{ inputs.OPENSHIFT_DEV_API_TOKEN }}
-        INPUT_TEST_TOKEN: ${{ inputs.OPENSHIFT_TEST_API_TOKEN }}
-        INPUT_PROD_TOKEN: ${{ inputs.OPENSHIFT_PROD_API_TOKEN }}
+        OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+        DEV_TOKEN: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
+        TEST_TOKEN: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
+        PROD_TOKEN: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
