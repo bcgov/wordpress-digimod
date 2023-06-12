@@ -18,7 +18,10 @@ jobs:
         uses: actions/checkout@v2
       - name: check vars
         run: |
-          echo ${{ secrets.OPENSHIFT_SERVER }}
+          server=${{ secrets.OPENSHIFT_SERVER }}
+          echo $server
+          server=$server_
+          echo $server
       - name: Create a new Wordpress Instance
         uses: ./.github/actions/create_wp_instance
         with:

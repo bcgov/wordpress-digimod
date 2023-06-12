@@ -46,7 +46,8 @@ runs:
             exit 1
             ;;
         esac
-
+        echo $INPUT_OPENSHIFT_SERVER
+        echo $INPUT_OPENSHIFT-SERVER
         oc login $INPUT_OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
         
         # Delete existing deployment, if it exists
