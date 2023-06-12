@@ -9,7 +9,7 @@ inputs:
     description: 'Site name'
     required: true
     default: 'test'
-  openshiftserver:
+  openshift-server:
     description: 'OpenShift server'
     required: true
   dev-token:
@@ -24,84 +24,15 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - run: |
-        git clone -b digimod-deploy https://github.com/bcgov/wordpress-deploy-digimod.git
-      
-        #Log in to OpenShift
-        echo "Deploying to $INPUT_ENVIRONMENT"
-        case "$INPUT_ENVIRONMENT" in
-          "dev")
-            token=$env:DEV_TOKEN
-            ;;
-          "test")
-            token=$env:TEST_TOKEN
-            ;;
-          "prod")
-            # token=$env:PROD_TOKEN
-            echo "For safety reasons, we won't run this action on prod!"
-            exit 1
-            ;;
-          *)
-            echo "Unknown environment: $INPUT_ENVIRONMENT"
-            exit 1
-            ;;
-        esac
-        echo $env:OPENSHIFTSERVER
-        echo $INPUT_SITE_NAME
-        echo $env:OPENSHIFT_SERVER
-        oc login $env:OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
-        
-        # Delete existing deployment, if it exists
-        NAMESPACE="c0cce6-$INPUT_ENVIRONMENT"
-        export OC_ENV=$INPUT_ENVIRONMENT
-        export OC_SITE_NAME=digital-$INPUT_SITE_NAME
-        export WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-        WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
-        if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
-          cd wordpress-deploy-digimod
-          chmod +x site-delete-unix.sh
-          ./site-delete-unix.sh
-        fi      
-
-        # Create new WordPress instance
-        cd wordpress-deploy-digimod
-        chmod +x site-builder-unix.sh
-        ./site-builder-unix.sh
-
-        # Wait for WordPress pod to be running
-
-        WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-        oc wait --for=condition=Ready pod/$WORDPRESS_POD_NAME -n $NAMESPACE --timeout=5m
-        # Wait for the WordPress container to be created
-        WORDPRESS_CONTAINER_NAME=null;
-        while true; do
-          WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
-          if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
-            break
-          fi
-          echo "Waiting for WordPress container to be created..."
-          sleep 5
-        done
-        # Add an additional sleep to ensure the container is fully initialized
-        echo "Waiting for WordPress container to be fully initialized..."
-        sleep 15
-
-        # Install wordpress
-        # Download wp-cli in the GitHub Actions workspace
-        curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-        chmod +x wp-cli.phar
-        
-        # Copy wp-cli to the WordPress instance and install wordpress
-        oc cp --no-preserve wp-cli.phar $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/wp-cli.phar -c $WORDPRESS_CONTAINER_NAME
-        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
-        
-        #Perform a site install
-        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar core install --url=${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca --title="${OC_SITE_NAME}.gov.bc.ca Testing Framework" --admin_user=tester --admin_password=tester --admin_email=info@example.com
+    - name: Create the instance
+      run: |
+        chmod +x ./deploy.sh
+        ./deploy.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
       shell: bash
       env:
         INPUT_ENVIRONMENT: ${{ inputs.environment }}
         INPUT_SITE_NAME: ${{ inputs.site-name }}
-        OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
-        DEV_TOKEN: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
-        TEST_TOKEN: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
-        PROD_TOKEN: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
+        INPUT_OPENSHIFT_SERVER: ${{ inputs.OPENSHIFT_SERVER }}
+        INPUT_DEV_TOKEN: ${{ inputs.OPENSHIFT_DEV_API_TOKEN }}
+        INPUT_TEST_TOKEN: ${{ inputs.OPENSHIFT_TEST_API_TOKEN }}
+        INPUT_PROD_TOKEN: ${{ inputs.OPENSHIFT_PROD_API_TOKEN }}
