@@ -9,7 +9,7 @@ inputs:
     description: 'Site name'
     required: true
     default: 'test'
-  openshift-server:
+  openshiftserver:
     description: 'OpenShift server'
     required: true
   dev-token:
@@ -46,8 +46,9 @@ runs:
             exit 1
             ;;
         esac
-        echo $INPUT_OPENSHIFT_SERVER
-        echo $INPUT_OPENSHIFT-SERVER
+        echo $INPUT_OPENSHIFTSERVER
+        echo $INPUT_SITE_NAME
+        echo $OPENSHIFTSERVER
         oc login $INPUT_OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
         
         # Delete existing deployment, if it exists
@@ -100,7 +101,7 @@ runs:
       env:
         INPUT_ENVIRONMENT: ${{ inputs.environment }}
         INPUT_SITE_NAME: ${{ inputs.site-name }}
-        INPUT_OPENSHIFT_SERVER: ${{ inputs.OPENSHIFT_SERVER }}
+        INPUT_OPENSHIFT_SERVER: ${{ inputs.openshiftserver }}
         INPUT_DEV_TOKEN: ${{ inputs.OPENSHIFT_DEV_API_TOKEN }}
         INPUT_TEST_TOKEN: ${{ inputs.OPENSHIFT_TEST_API_TOKEN }}
         INPUT_PROD_TOKEN: ${{ inputs.OPENSHIFT_PROD_API_TOKEN }}
