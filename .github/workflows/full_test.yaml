@@ -16,6 +16,10 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
+      - name: check vars
+        run: |
+          echo ${{ secrets.OPENSHIFT_SERVER }}
+        uses: ./.github/actions/create_wp_instance
       - name: Create a new Wordpress Instance
         uses: ./.github/actions/create_wp_instance
         with:
