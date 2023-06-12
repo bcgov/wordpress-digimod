@@ -154,18 +154,18 @@ jobs:
         #oc cp --no-preserve . $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/themes/$THEME_NAME -c $WORDPRESS_CONTAINER_NAME
         oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar theme activate $THEME_NAME --allow-root
 
-    - name: Deploy plugins
-      run: |
-        NAMESPACE="c0cce6-test"
-        OC_SITE_NAME=digital-test
-        WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l  app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-        WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
-        tar -cf plugins.tar --exclude=./.github --exclude=node_modules --exclude=./Archive --exclude=./bcgov-wordpress-block-theme-digimod ./*/
-        oc cp --no-preserve plugins.tar $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/plugins.tar -c $WORDPRESS_CONTAINER_NAME
-        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -xf /var/www/html/wp-content/plugins/plugins.tar -C /var/www/html/wp-content/plugins
-        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate --all
-        # for dir in `ls -d */`; do
-        #   if [[ $dir != git* ]]; then
-        #       oc cp --no-preserve . $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/$dir -c $WORDPRESS_CONTAINER_NAME
-        #   fi
-        # done  
+    # - name: Deploy plugins
+    #   run: |
+    #     NAMESPACE="c0cce6-test"
+    #     OC_SITE_NAME=digital-test
+    #     WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l  app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+    #     WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
+    #     tar -cf plugins.tar --exclude=./.github --exclude=node_modules --exclude=./Archive --exclude=./bcgov-wordpress-block-theme-digimod ./*/
+    #     oc cp --no-preserve plugins.tar $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/plugins.tar -c $WORDPRESS_CONTAINER_NAME
+    #     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -xf /var/www/html/wp-content/plugins/plugins.tar -C /var/www/html/wp-content/plugins
+    #     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate --all
+    #     # for dir in `ls -d */`; do
+    #     #   if [[ $dir != git* ]]; then
+    #     #       oc cp --no-preserve . $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/$dir -c $WORDPRESS_CONTAINER_NAME
+    #     #   fi
+    #     # done  
