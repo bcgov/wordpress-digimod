@@ -24,13 +24,13 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: List files in current directory
-      run: ls -al
-      shell: bash
+    # - name: List files in current directory
+    #   run: ls -al
+    #   shell: bash
     - name: Create the instance
       run: |
-        chmod +x ./deploy.sh
-        ./deploy.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
+        chmod +x ./.github/actions/create_wp_instance/deploy.sh
+        ./.github/actions/create_wp_instance/deploy.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
       shell: bash
       env:
         INPUT_ENVIRONMENT: ${{ inputs.environment }}
