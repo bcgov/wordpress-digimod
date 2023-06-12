@@ -24,6 +24,9 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: List files in current directory
+      run: ls -al
+      shell: bash
     - name: Create the instance
       run: |
         chmod +x ./deploy.sh
