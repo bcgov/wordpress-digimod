@@ -19,7 +19,6 @@ jobs:
       - name: check vars
         run: |
           echo ${{ secrets.OPENSHIFT_SERVER }}
-        uses: ./.github/actions/create_wp_instance
       - name: Create a new Wordpress Instance
         uses: ./.github/actions/create_wp_instance
         with:
