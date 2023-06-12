@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Custom Redirect to Login
  * Description: A custom plugin that redirects users to the login URL when they access certain pages.
- * Version: 1.0
- * Author: Your Name
+ * Version: 1.1
+ * Author: Digimod
  * Author URI: https://yourwebsite.com
  * License: GPL2
  */
