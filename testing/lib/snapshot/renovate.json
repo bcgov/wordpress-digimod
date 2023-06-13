@@ -1,0 +1,17 @@
+{
+  "extends": ["config:base"],
+  "automerge": true,
+  "major": {
+    "automerge": false
+  },
+  "updateNotScheduled": false,
+  "timezone": "Europe/Berlin",
+  "schedule": ["every weekend"],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "separatePatchReleases": true,
+  "separateMultipleMajor": true,
+  "masterIssue": true,
+  "labels": ["type: dependencies", "renovate"]
+}

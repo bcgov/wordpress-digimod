@@ -1,0 +1,52 @@
+{
+  "name": "@datashard/snapshot",
+  "description": "Adds value / object / DOM element snapshot testing support to Cypress test runner",
+  "version": "2.2.1",
+  "author": "Joshua <data@shard.wtf>, Gleb Bahmutov <gleb@cypress.io>",
+  "bugs": "https://github.com/datashard/snapshot/issues",
+  "engines": {
+    "node": ">=6"
+  },
+  "files": [
+    "img",
+    "src/*",
+    "src/*/**",
+    "!src/*-spec.js"
+  ],
+  "homepage": "https://github.com/datashard/snapshot#readme",
+  "keywords": [
+    "cypress",
+    "cypress-io",
+    "plugin",
+    "snapshot",
+    "testing"
+  ],
+  "license": "MIT",
+  "main": "src/index.js",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/datashard/snapshot.git"
+  },
+  "scripts": {
+    "size": "t=\"$(npm pack .)\"; wc -c \"${t}\"; tar tvf \"${t}\"; rm \"${t}\";",
+    "unused-deps": "dependency-check --unused --no-dev . --entry src/index.js",
+    "semantic-release": "semantic-release",
+    "cypress:open": "cypress open",
+    "cypress:update": "cypress run --env SNAPSHOT_UPDATE=true",
+    "cypress:run": "cypress run"
+  },
+  "devDependencies": {
+    "cypress": "10.6.0",
+    "debug": "3.2.7",
+    "dependency-check": "2.10.1"
+  },
+  "dependencies": {
+    "@wildpeaks/snapshot-dom": "1.6.0",
+    "check-more-types": "2.24.0",
+    "js-beautify": "1.13.13",
+    "lazy-ass": "1.6.0",
+    "snap-shot-compare": "3.0.0",
+    "snap-shot-store": "1.2.3"
+  }
+}
