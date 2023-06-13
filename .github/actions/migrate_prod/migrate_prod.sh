@@ -6,6 +6,7 @@ OPENSHIFT_SERVER=$3
 DEV_TOKEN=$4
 TEST_TOKEN=$5
 PROD_TOKEN=$6
+KEYCLOAK_PROD_CLIENT_SECRET=$7
 # Log in to OpenShift
 oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN --insecure-skip-tls-verify=true
 
@@ -54,4 +55,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
     #perform the restore
     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar ai1wm restore wp-backup.wpress"
+
+    #run command to change miniorange plugin variables
+oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $KEYCLOAK_PROD_CLIENT_SECRET $OC_SITE_NAME"
 fi

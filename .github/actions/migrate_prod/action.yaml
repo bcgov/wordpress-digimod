@@ -21,6 +21,9 @@ inputs:
   prod-token:
     description: 'Prod token'
     required: true
+  keycloak-prod-client-secret:
+    description: 'Keycloak client secret'
+    required: true
 runs:
   using: 'composite'
   steps:
@@ -31,5 +34,5 @@ runs:
       shell: bash
     - name: Modify SSO
       run: |
-        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $KEYCLOAK_TEST_CLIENT_SECRET"
+        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo ${{ inputs.keycloak-prod-client-secret }} ${{ inputs.site-name }}"
       shell: bash

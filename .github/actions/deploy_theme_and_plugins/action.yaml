@@ -22,7 +22,7 @@ inputs:
     description: 'Prod token'
     required: true  
   keycloak-test-client-secret:
-    description: 'Prod token'
+    description: 'Keycloak client secret'
     required: true
 runs:
   using: 'composite'
