@@ -7,30 +7,30 @@ DEV_TOKEN=$4
 TEST_TOKEN=$5
 PROD_TOKEN=$6
 
-echo "Deploying to $INPUT_ENVIRONMENT"
-case "$INPUT_ENVIRONMENT" in
+echo "Deploying to $ENVIRONMENT"
+case "$ENVIRONMENT" in
     "dev")
-    token=$INPUT_DEV_TOKEN
+    token=$DEV_TOKEN
     ;;
     "test")
-    token=$INPUT_TEST_TOKEN
+    token=$TEST_TOKEN
     ;;
     "prod")
-    # token=$INPUT_PROD_TOKEN
+    # token=$PROD_TOKEN
     echo "For safety reasons, we won't run this action on prod!"
     exit 1
     ;;
     *)
-    echo "Unknown environment: $INPUT_ENVIRONMENT"
+    echo "Unknown environment: $ENVIRONMENT"
     exit 1
     ;;
 esac
-oc login $INPUT_OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
+oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
 
 # Deploy theme
 THEME_NAME="bcgov-wordpress-block-theme"
-NAMESPACE="c0cce6-$INPUT_ENVIRONMENT"
-OC_SITE_NAME=digital-$INPUT_SITE_NAME
+NAMESPACE="c0cce6-$ENVIRONMENT"
+OC_SITE_NAME=digital-$SITE_NAME
 WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l  app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 DATE=$(date +%Y-%m-%d-%H-%M)
@@ -54,8 +54,8 @@ oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -x
 oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar theme activate $THEME_NAME --allow-root
 
 # Deploy plugins
-NAMESPACE="c0cce6-$INPUT_ENVIRONMENT"
-OC_SITE_NAME=digital-$INPUT_SITE_NAME
+NAMESPACE="c0cce6-$ENVIRONMENT"
+OC_SITE_NAME=digital-$SITE_NAME
 WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l  app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 tar -cf plugins.tar --exclude=./.github --exclude=node_modules --exclude=./Archive --exclude=./bcgov-wordpress-block-theme-digimod ./*/
