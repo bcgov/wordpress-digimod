@@ -105,7 +105,7 @@ if ( defined( 'WP_CLI' ) ) {
             }
             
             
-            $ssoURI = 'https://'$ssoURI'loginproxy.gov.bc.ca/auth';
+            $ssoURI = 'https://'.$ssoURI.'loginproxy.gov.bc.ca/auth';
             $appslist = get_option( 'mo_oauth_apps_list' );
             $app = $appslist['keycloak'];
             // WP_CLI::log('clientSecret: ');
