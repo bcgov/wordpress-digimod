@@ -80,13 +80,31 @@ if ( defined( 'WP_CLI' ) ) {
             // [show_on_login_page] => xx
             // [appId] => xx
             // [scope] => xxx
-            // [authorizeurl] => xxx
+            // [authorizeurl] => "auth-server-url": "https://test.loginproxy.gov.bc.ca/auth"
             // [accesstokenurl] => xxx
             // [resourceownerdetailsurl] => 
             // [username_attr] => xxx
 
             
             $clientSecret = $args[0];
+            $ssoURI='n/a';
+            case "$args[1]" in
+                "test")
+                $ssoURI='dev.'
+                ;;
+                "stage")
+                $ssoURI='test.'
+                ;;
+                "prod")
+                $ssoURI=''
+                ;;
+                *)
+                echo "No SSO integration set up for $args[1]"
+                exit 1
+                ;;
+            esac
+            
+            $ssoURI = 'https://'$ssoURI'loginproxy.gov.bc.ca/auth';
             $appslist = get_option( 'mo_oauth_apps_list' );
             $app = $appslist['keycloak'];
             // WP_CLI::log('clientSecret: ');
@@ -97,6 +115,8 @@ if ( defined( 'WP_CLI' ) ) {
             
              
             $app['clientsecret']=$clientSecret;//$clientSecret;
+            $app['authorizeurl']=$ssoURI'/realms/standard/protocol/openid-connect/auth';
+            $app['accesstokenurl']=$ssoURI'/realms/standard/protocol/openid-connect/token';
             $appslist['keycloak']=$app;
             update_option( 'mo_oauth_apps_list', $appslist );
 

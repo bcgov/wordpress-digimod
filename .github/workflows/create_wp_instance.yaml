@@ -1,4 +1,4 @@
-name: Migrate to Production
+name: Create Wordpress Instance
 on:
   workflow_dispatch:
     inputs:
@@ -16,8 +16,11 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
-      - name: Deploy theme and plugins
-        uses: ./.github/actions/migrate_prod
+      # - name: Log in to OpenShift
+      #   run: |
+      #     oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TEST_API_TOKEN }} --insecure-skip-tls-verify=true
+      - name: Create a new Wordpress Instance
+        uses: ./.github/actions/create_wp_instance
         with:
           environment: ${{ github.event.inputs.environment }}
           site-name: ${{ github.event.inputs.site-name }}
@@ -25,4 +28,3 @@ jobs:
           dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
           test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
           prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
-          keycloak-test-client-secret: ${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET }}

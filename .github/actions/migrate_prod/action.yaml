@@ -1,0 +1,35 @@
+name: Migrate to Production
+description: 'Exports the site from a given instance and imports to production'
+inputs:
+  environment:
+    description: 'Export environment'
+    required: true
+    default: 'test'
+  site-name:
+    description: 'Export Site name'
+    required: true
+    default: 'test'
+  openshift-server:
+    description: 'OpenShift server'
+    required: true
+  dev-token:
+    description: 'Dev token'
+    required: true
+  test-token:
+    description: 'Test token'
+    required: true
+  prod-token:
+    description: 'Prod token'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Replicate Prod
+      run: |
+        chmod +x ./.github/actions/migrate_prod/migrate_prod.sh
+        ./.github/actions/migrate_prod/migrate_prod.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
+      shell: bash
+    - name: Modify SSO
+      run: |
+        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $KEYCLOAK_TEST_CLIENT_SECRET"
+      shell: bash
