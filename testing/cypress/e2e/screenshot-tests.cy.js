@@ -105,7 +105,7 @@ const urlSlug = require('url-slug');
             
         })
 
-        if (i>10){
+        if (i>1){
             return false;
         }
         return true;

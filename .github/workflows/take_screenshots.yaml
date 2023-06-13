@@ -27,7 +27,7 @@ jobs:
         # if: failure()
         with:
           name: cypress-screenshots
-          path: /home/runner/work/cypress-gha-digimod/cypress-gha-digimod/testing/cypress/e2e/mobile-screenshots-for-https-digital-test-apps-silver-devops-gov-bc-ca
+          path: /home/runner/work/cypress-gha-digimod/cypress-gha-digimod/testing/cypress/e2e/screenshots-for-https-digital-test-apps-silver-devops-gov-bc-ca
           if-no-files-found: error # 'warn' or 'error' are also available, defaults to `warn`, also `ignore`
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v3
