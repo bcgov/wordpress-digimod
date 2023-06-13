@@ -29,10 +29,3 @@ runs:
         chmod +x ./.github/actions/replicate_prod/replicate_prod.sh
         ./.github/actions/replicate_prod/replicate_prod.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
       shell: bash
-      env:
-        INPUT_ENVIRONMENT: ${{ inputs.environment }}
-        INPUT_SITE_NAME: ${{ inputs.site-name }}
-        INPUT_OPENSHIFT_SERVER: ${{ inputs.OPENSHIFT_SERVER }}
-        INPUT_DEV_TOKEN: ${{ inputs.OPENSHIFT_DEV_API_TOKEN }}
-        INPUT_TEST_TOKEN: ${{ inputs.OPENSHIFT_TEST_API_TOKEN }}
-        INPUT_PROD_TOKEN: ${{ inputs.OPENSHIFT_PROD_API_TOKEN }}

@@ -6,6 +6,7 @@ OPENSHIFT_SERVER=$3
 DEV_TOKEN=$4
 TEST_TOKEN=$5
 PROD_TOKEN=$6
+KEYCLOAK_TEST_CLIENT_SECRET=$7
 
 echo "Deploying to $ENVIRONMENT"
 case "$ENVIRONMENT" in
@@ -62,6 +63,9 @@ tar -cf plugins.tar --exclude=./.github --exclude=node_modules --exclude=./Archi
 oc cp --no-preserve plugins.tar $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/plugins.tar -c $WORDPRESS_CONTAINER_NAME
 oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -xf /var/www/html/wp-content/plugins/plugins.tar -C /var/www/html/wp-content/plugins
 oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate --all
+
+#run command to change miniorange plugin variables
+oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $KEYCLOAK_TEST_CLIENT_SECRET"
 # for dir in `ls -d */`; do
 #   if [[ $dir != git* ]]; then
 #       oc cp --no-preserve . $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/$dir -c $WORDPRESS_CONTAINER_NAME

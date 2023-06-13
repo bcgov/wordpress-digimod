@@ -12,7 +12,15 @@ inputs:
   openshift-server:
     description: 'OpenShift server'
     required: true
-
+  dev-token:
+    description: 'Dev token'
+    required: true
+  test-token:
+    description: 'Test token'
+    required: true
+  prod-token:
+    description: 'Prod token'
+    required: true
 runs:
   using: 'composite'
   steps:
@@ -24,10 +32,3 @@ runs:
         chmod +x ./.github/actions/create_wp_instance/deploy.sh
         ./.github/actions/create_wp_instance/deploy.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
       shell: bash
-      env:
-        INPUT_ENVIRONMENT: ${{ inputs.environment }}
-        INPUT_SITE_NAME: ${{ inputs.site-name }}
-        INPUT_OPENSHIFT_SERVER: ${{ inputs.OPENSHIFT_SERVER }}
-        INPUT_DEV_TOKEN: ${{ inputs.OPENSHIFT_DEV_API_TOKEN }}
-        INPUT_TEST_TOKEN: ${{ inputs.OPENSHIFT_TEST_API_TOKEN }}
-        INPUT_PROD_TOKEN: ${{ inputs.OPENSHIFT_PROD_API_TOKEN }}
