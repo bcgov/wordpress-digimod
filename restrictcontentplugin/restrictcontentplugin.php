@@ -68,7 +68,8 @@ function my_login_init() {
     if(isset($_REQUEST['redirect_to'])){
         $redirect_url = $_REQUEST['redirect_to'];
 		#echo 'The login init filter fired. setting cookie';
-        setcookie( 'my_login_redirect', $redirect_url, time() + ( DAY_IN_SECONDS * 60 ), COOKIEPATH, COOKIE_DOMAIN );
+        #set the cookie duration for 5 minutes
+        setcookie( 'my_login_redirect', $redirect_url, time() + ( 5 * 60 ), COOKIEPATH, COOKIE_DOMAIN );
     }
 	if ( $_SERVER['REQUEST_URI'] == wp_login_url() || $_SERVER['REQUEST_URI'] == site_url( '/wp-login.php', 'login' ) ) {
         #echo 'login page - redirecting';
