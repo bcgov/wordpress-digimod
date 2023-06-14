@@ -16,7 +16,7 @@ const urlSlug = require('url-slug');
        
 
         it('screenshot test for '+url, ()=>{
-
+            cy.viewport(1280, 900);
              // // remove all js scripts
             // cy.intercept('*', (req) => {
             //     req.continue((res) => {
