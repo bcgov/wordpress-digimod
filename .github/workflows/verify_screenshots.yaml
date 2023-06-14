@@ -27,7 +27,7 @@ jobs:
         id: screenshots
         # Continue the build in case of an error, as we need to set the
         # commit status in the next step, both in case of success and failure
-        continue-on-error: true
+        continue-on-error: false
         with:
         # No recording of results in the cloud
           record: false
