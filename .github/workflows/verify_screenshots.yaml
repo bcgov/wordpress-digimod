@@ -13,7 +13,7 @@ jobs:
           mkdir -p /home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-test-apps-silver-devops-gov-bc-ca
       - uses: dawidd6/action-download-artifact@v2
         with:
-          workflow: homepage-screenshot.yaml
+          workflow: take_screenshots.yaml
            # Optional, a directory where to extract artifact(s), defaults to the current directory
           path: /home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-test-apps-silver-devops-gov-bc-ca
       - shell: bash
