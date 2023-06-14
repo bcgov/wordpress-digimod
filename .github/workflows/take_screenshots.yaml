@@ -7,9 +7,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Front page smoke tests
+      - name: Sitemap Screenshots
         uses: cypress-io/github-action@v5
-        id: homepage-screenshot
+        id: screenshots
         # Continue the build in case of an error, as we need to set the
         # commit status in the next step, both in case of success and failure
         continue-on-error: false
