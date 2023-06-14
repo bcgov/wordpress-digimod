@@ -85,6 +85,17 @@ const urlSlug = require('url-slug');
                         $img.removeAttribute('loading');
                     });
                 }
+
+                // Find all images with decoding="async" attribute using jQuery
+                const asyncImgs = doc.querySelectorAll('img[decoding="async"]');
+
+                // If there are images with the "lazy" attribute
+                if (asyncImgs.length) {
+                    // Remove the attribute from each image
+                    asyncImgs.forEach(($img) => {
+                        $img.removeAttribute('decoding');
+                    });
+                }
               
 
                 // Perform additional checks or actions after all images have loaded
