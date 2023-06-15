@@ -118,6 +118,7 @@ if ( defined( 'WP_CLI' ) ) {
             $app['clientsecret']=$clientSecret;//$clientSecret;
             $app['authorizeurl']=$ssoURI.'/realms/standard/protocol/openid-connect/auth';
             $app['accesstokenurl']=$ssoURI.'/realms/standard/protocol/openid-connect/token';
+            $app['redirecturi']=$siteURL;
             $appslist['keycloak']=$app;
             update_option( 'mo_oauth_apps_list', $appslist );
 

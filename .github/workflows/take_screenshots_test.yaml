@@ -1,0 +1,12 @@
+name: Take screenshots test
+on:
+  workflow_dispatch:
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Sitemap Screenshots
+        uses: ./.github/actions/take_screenshots
+        continue-on-error: false

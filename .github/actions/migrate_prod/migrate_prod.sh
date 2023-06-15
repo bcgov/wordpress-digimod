@@ -57,5 +57,5 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar ai1wm restore wp-backup.wpress"
 
     #run command to change miniorange plugin variables
-oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $KEYCLOAK_PROD_CLIENT_SECRET $SITE_NAME"
+oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $KEYCLOAK_PROD_CLIENT_SECRET $SITE_NAME ${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca"
 fi
