@@ -13,7 +13,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// TODO: refactor code into individual modules instead of a single file
 // VUE APP
 
 // Register block to load the Vue.js app
@@ -82,3 +81,15 @@ function vuejs_app_block_init() {
     ] );
 }
 add_action( 'init', 'vuejs_app_block_init' );
+
+
+
+// modify api response
+
+// function modify_wcag_card_response($response, $post, $request) {
+//     // echo($post->ID);
+//     $tags = wp_get_post_tags($post->ID, array('fields' => 'all', 'taxonomy'=>'wcag_tag'));
+//     $response->data['tagss'] = $tags;
+//     return $response;
+// }
+// add_filter('rest_prepare_wcag-card', 'modify_wcag_card_response', 10, 3);

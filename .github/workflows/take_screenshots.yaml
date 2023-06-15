@@ -1,6 +1,11 @@
 name: Take screenshots
 on:
   workflow_dispatch:
+  inputs:
+      wordpressSiteUrl:
+        description: 'Site'
+        required: true
+        default: 'test'
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
@@ -10,6 +15,8 @@ jobs:
       - name: Sitemap Screenshots
         uses: cypress-io/github-action@v5
         id: screenshots
+        env: 
+          SITE: ${{ github.event.inputs.wordpressSiteUrl }}
         # Continue the build in case of an error, as we need to set the
         # commit status in the next step, both in case of success and failure
         continue-on-error: false

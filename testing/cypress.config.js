@@ -31,7 +31,17 @@ module.exports = defineConfig({
       })
 
       // let wordpressSiteUrl ='https://digital-dev.apps.silver.devops.gov.bc.ca/';
-      let wordpressSiteUrl = config.env.url || 'https://digital-test.apps.silver.devops.gov.bc.ca/';
+      let envUrl = process.env.WORDPRESS_SITE_URL || config.env.url;
+      let wordpressSiteUrl;
+
+      if (envUrl === "prod") {
+          wordpressSiteUrl = "https://digital.gov.bc.ca";
+      } else {
+          wordpressSiteUrl = `https://digital-${envUrl}.apps.silver.devops.gov.bc.ca/`;
+      }
+
+      wordpressSiteUrl = wordpressSiteUrl || 'https://digital-test.apps.silver.devops.gov.bc.ca/';
+
       // let wordpressSiteUrl ='https://wodpress-version-bump.apps.silver.devops.gov.bc.ca/';
 
       let urlsFilePath = './urls_for_'+urlSlug.convert(wordpressSiteUrl)+'.json';

@@ -22,7 +22,7 @@
       <ul class="is-layout-flow is-flex-container wp-block-post-template" :class="`columns-${this.columns}`">
 
         <li v-for="post in filteredPosts" :key="post.id"
-          class="wp-block-post post-5655 common-component type-common-component status-publish hentry common_component_category-active common_component_category-established common_component_category-identity common_component_category-service">
+          class="post-5655 common-component type-common-component status-publish hentry common_component_category-active common_component_category-established common_component_category-identity common_component_category-service">
 
           <a  :href="post.acf.card_hyperlink.value">
             <div
@@ -118,7 +118,7 @@
 
     methods: {
       async fetchData() {
-        const url = '/wp-json/wp/v2/wcag-card'; // Replace with your API URL
+        const url = '/wp-json/wp/v2/wcag-card?_embed'; // Replace with your API URL
         try {
           const response = await fetch(url);
           if (!response.ok) {
@@ -128,29 +128,30 @@
           console.log('posts: ', posts)
           
           // Get the unique URLs for fetching tags
-          const tagUrls = [...new Set(posts.flatMap(post => post._links['wp:term'].map(link => link.href)))];
+          // const tagUrls = [...new Set(posts.flatMap(post => post._links['wp:term'].map(link => link.href)))];
 
-          console.log('tagUrls: ', tagUrls);
+          // console.log('tagUrls: ', tagUrls);
 
-          // Fetch tags from each unique URL and store the response
-          let tags = {};
-          for (const tagUrl of tagUrls) {
-            const tagResponse = await fetch(tagUrl);
-            if (tagResponse.ok) {
-              const tagData = await tagResponse.json();
-              // Map each tag id to its name
-              tagData.forEach(tag => {
-                tags[tag.id] = tag.name
-              });
-            }
-          }
+          // // Fetch tags from each unique URL and store the response
+          // let tags = {};
+          // for (const tagUrl of tagUrls) {
+          //   const tagResponse = await fetch(tagUrl);
+          //   if (tagResponse.ok) {
+          //     const tagData = await tagResponse.json();
+          //     // Map each tag id to its name
+          //     tagData.forEach(tag => {
+          //       tags[tag.id] = tag.name
+          //     });
+          //   }
+          // }
           
-          console.log('tags: ', tags);
+          // console.log('tags: ', tags);
 
           // Replace tag ids with tag names in posts
           posts.forEach(post => {
               console.log('processing post/post.wcag_tag: ', post, post.wcag_tag)
-              post.wcag_tag = post.wcag_tag ? post.wcag_tag.map(tagId => tags[tagId] || tagId) : [];
+              // post.wcag_tag = post.wcag_tag ? post.wcag_tag.map(tagId => tags[tagId] || tagId) : [];
+              post.wcag_tag = post._embedded["wp:term"] ?  post._embedded["wp:term"].flatMap(term => term.map(t => t.name)) : [];
           });
 
           this.posts = posts;
