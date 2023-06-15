@@ -13,6 +13,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - shell: bash
+        env: 
+          SITE: ${{ github.event.inputs.wordpressSiteUrl }}
         # make sure directory for screenshots exists - we'll extract existing screenshots there that will be used for verification
         run: |
             if [[ "${{ env.SITE }}" == "prod" ]]; then
@@ -21,11 +23,15 @@ jobs:
               mkdir -p /home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-${{ env.SITE }}-apps-silver-devops-gov-bc-ca
             fi
       - uses: dawidd6/action-download-artifact@v2
+        env: 
+          SITE: ${{ github.event.inputs.wordpressSiteUrl }}
         with:
           workflow: take_screenshots.yaml
            # Optional, a directory where to extract artifact(s), defaults to the current directory
           path: ${{ env.SITE == 'prod' && '/home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-gov-bc-ca' || '/home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-' + env.WORDPRESS_SITE_URL + '-apps-silver-devops-gov-bc-ca' }}
       - shell: bash
+        env: 
+          SITE: ${{ github.event.inputs.wordpressSiteUrl }}
         # files get extracted into "cypress-screnshots" folder, move them out of it into parent directory and delete that folder
         run: |
           if [[ "${{ env.SITE }}" == "prod" ]]; then
@@ -54,11 +60,13 @@ jobs:
           spec: cypress/e2e/screenshot-tests.cy.js
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
+        env: 
+          SITE: ${{ github.event.inputs.wordpressSiteUrl }}
         # add the line below to store screenshots only on failures
         if: failure()
         with:
           name: cypress-screenshots-failed
-          path: ${{ env.SITE == 'prod' && '/home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-gov-bc-ca' || '/home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-' + env.WORDPRESS_SITE_URL + '-apps-silver-devops-gov-bc-ca' }}
+          path: ${{ env.SITE == 'prod' && '/home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-gov-bc-ca' || format('/home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-{0}-apps-silver-devops-gov-bc-ca', env.SITE) }}
           if-no-files-found: error # 'warn' or 'error' are also available, defaults to `warn`, also `ignore`
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v3
