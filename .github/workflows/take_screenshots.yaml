@@ -30,6 +30,8 @@ jobs:
           spec: cypress/e2e/screenshot-tests.cy.js
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
+        env: 
+          SITE: ${{ github.event.inputs.wordpressSiteUrl }}
         # add the line below to store screenshots only on failures
         # if: failure()
         with:
