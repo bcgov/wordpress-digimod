@@ -1,0 +1,29 @@
+name: 'Take screenshots'
+description: 'Takes screenshots using cypress'
+runs:
+  using: 'composite'
+  steps:
+      - name: Sitemap Screenshots
+        uses: cypress-io/github-action@v5
+        id: screenshots
+        # Continue the build in case of an error, as we need to set the
+        # commit status in the next step, both in case of success and failure
+        continue-on-error: false
+        with:
+        # No recording of results in the cloud
+          record: false
+        # We need to force the install due to version checking  
+          install-command: npm ci -f
+          working-directory: testing
+          browser: firefox
+          spec: cypress/e2e/screenshot-tests.cy.js
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        # add the line below to store screenshots only on failures
+        # if: failure()
+        with:
+          name: cypress-screenshots
+          path: /home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-test-apps-silver-devops-gov-bc-ca
+          if-no-files-found: error # 'warn' or 'error' are also available, defaults to `warn`, also `ignore`
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v3
