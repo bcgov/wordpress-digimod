@@ -34,7 +34,7 @@ jobs:
         # if: failure()
         with:
           name: cypress-screenshots
-          path: ${{ env.SITE == 'prod' && '/home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-gov-bc-ca' || '/home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-' + env.WORDPRESS_SITE_URL + '-apps-silver-devops-gov-bc-ca' }}
+          path: ${{ env.WORDPRESS_SITE_URL == 'prod' && '/home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-gov-bc-ca' || format('/home/runner/work/wordpress-digimod/wordpress-digimod/testing/cypress/e2e/screenshots-for-https-digital-{0}-apps-silver-devops-gov-bc-ca', env.WORDPRESS_SITE_URL) }}
           if-no-files-found: error # 'warn' or 'error' are also available, defaults to `warn`, also `ignore`
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v3
