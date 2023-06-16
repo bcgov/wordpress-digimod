@@ -26,7 +26,7 @@
 
           <a  :href="post.acf.card_hyperlink.value">
             <div
-              class="is-layout-constrained wp-block-group common-component-group flex-card has-white-background-color has-background"
+              class="wcag-card-content is-layout-constrained wp-block-group common-component-group flex-card has-white-background-color has-background"
               style="border-radius:1rem;padding-top:2rem;padding-right:2rem;padding-bottom:2rem;padding-left:2rem">
               
 
@@ -39,7 +39,9 @@
 
               <p style="font-size:1rem;"
                 class="wp-elements-ebf6029de9e8cfc5d6fe4a760bc46921 is-acf-field wp-block-mfb-meta-field-block"><span
-                  class="value">{{ post.acf.description.value }}</span></p>
+                  class="value">
+                  {{ post.acf.description.value }}
+                </span></p>
 
               <div v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms wcag-card-tags">
                 <span v-for="tag in post.wcag_tag" :key="tag" class="tag">{{ tag }}</span>
@@ -167,6 +169,58 @@
 </script>
 
 <style>
+/* wp-block-post-template-inline-css */
+   .wp-block-post-template {
+        margin-top: 0;
+        margin-bottom: 0;
+        max-width: 100%;
+        list-style: none;
+        padding: 0
+    }
+
+    .wp-block-post-template.wp-block-post-template {
+        background: none
+    }
+
+    .wp-block-post-template.is-flex-container {
+        flex-direction: row;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.25em
+    }
+
+    .wp-block-post-template.is-flex-container li {
+        margin: 0;
+        width: 100%
+    }
+
+    @media (min-width: 600px) {
+        .wp-block-post-template.is-flex-container.is-flex-container.columns-2>li {
+            width:calc(50% - .625em)
+        }
+
+        .wp-block-post-template.is-flex-container.is-flex-container.columns-3>li {
+            width: calc(33.33333% - .83333em)
+        }
+
+        .wp-block-post-template.is-flex-container.is-flex-container.columns-4>li {
+            width: calc(25% - .9375em)
+        }
+
+        .wp-block-post-template.is-flex-container.is-flex-container.columns-5>li {
+            width: calc(20% - 1em)
+        }
+
+        .wp-block-post-template.is-flex-container.is-flex-container.columns-6>li {
+            width: calc(16.66667% - 1.04167em)
+        }
+    }
+/* End wp-block-post-template-inline-css */
+
+   .wcag-card-content{
+    height:100%;
+   }
+   
   .card-container {
     display: flex;
     flex-wrap: wrap;
