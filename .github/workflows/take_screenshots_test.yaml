@@ -1,6 +1,11 @@
 name: Take screenshots test
 on:
   workflow_dispatch:
+    inputs:
+      site:
+        description: 'Site name'
+        required: true
+        default: 'test'
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
@@ -10,3 +15,5 @@ jobs:
       - name: Sitemap Screenshots
         uses: ./.github/actions/take_screenshots
         continue-on-error: false
+        with:
+          site: ${{ github.event.inputs.site }}
