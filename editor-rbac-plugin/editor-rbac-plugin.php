@@ -244,15 +244,29 @@ class RoleBasedPageRestriction {
         if (!isset($_GET['post'])) {
             return;
         }
-
+    
         $post = get_post($_GET['post']);
-        $role = wp_get_current_user()->roles[0];
-        $allowed = isset($this->allowed_pages[$role]) ? $this->allowed_pages[$role] : [];
+        $roles = wp_get_current_user()->roles;
+        $is_allowed = false;
 
-        if (!in_array($post->ID, $allowed)) {
+        #administrators do not follow these restrictions
+        if (in_array('administrator', $roles)) {
+            $is_allowed = true;
+            return;
+        }
+        foreach ($roles as $role) {
+            $allowed = isset($this->allowed_pages[$role]) ? $this->allowed_pages[$role] : [];
+            if (in_array($post->ID, $allowed)) {
+                $is_allowed = true;
+                break;
+            }
+        }
+    
+        if (!$is_allowed) {
             wp_die('You are not allowed to edit this page.', 403);
         }
     }
+    
     public function save_quick_edit_data() {
         error_log(print_r('role_based_page_restriction', true));
         check_ajax_referer('role_based_page_restriction', 'role_based_page_restriction_nonce');
@@ -437,44 +451,64 @@ function modify_admin_pages_query($query) {
         $query->set('post__in', [0]);
     }
 }
-add_action('save_post', 'my_custom_duplicate_post_add_to_allowed_pages', 15, 3);
+add_action('save_post', 'add_to_allowed_pages', 15, 3);
+add_action('rest_after_insert_post', 'add_to_allowed_pages', 10, 3);
 
-function my_custom_duplicate_post_add_to_allowed_pages($post_id, $post, $update) {
-    error_log('Checks Duplicate post');
-    //error_log(print_r(get_metadata('post',9060)));
-    // Check if this is a new post
-    if ($update) return;
-    // error_log('Checks if rewrite post');
-    // error_log(print_r(get_metadata('post',9071)));
-    // error_log(print_r(get_metadata('post',9071, '_dp_is_rewrite_republish_copy', true)));
-    // error_log(print_r(get_metadata('post',$post_id)));
-    // error_log(print_r(get_metadata('post',$post_id, '_dp_is_rewrite_republish_copy', true)));
-    // $original_post_id=get_metadata('post',$post_id, '_dp_is_rewrite_republish_copy', true);
-    // error_log(var_dump($original_post_id));
-    // error_log($original_post_id);
-    // // Check if this is a rewrite & republish post
-    // $original_post_id = print_r(get_metadata('post',$post_id, '_dp_is_rewrite_republish_copy', true));
-    // error_log($original_post_id);
-    // if (!$original_post_id) return;
-
-    error_log('Duplicate post');
+// We assume if a post is being saved, it should be allow to be edited.
+// this captures when new posts are being created.
+function add_to_allowed_pages($post_id, $post, $update) {
+    error_log('Add to allowed posts');
 
     // Retrieve the allowed_pages option from the database
     $allowed_pages = get_option('role_based_page_restriction_allowed_pages', []);
 
-    // Retrieve all roles
-    $roles = wp_roles()->role_objects;
+    // Get the current user
+    $user = wp_get_current_user();
+    // Determine which roles are attributed to the user
+    $user_roles = $user->roles;
 
-    foreach ($roles as $role) {
-        // If the role has the capability to edit the original page and the original page ID is in the role's allowed pages
-        if (isset($allowed_pages[$role->name]) && in_array($original_post_id, $allowed_pages[$role->name])) {
-            // Add the clone page's ID to the role's allowed pages
-            $allowed_pages[$role->name][] = $post_id;
-        }
+    foreach ($user_roles as $role) {
+        $allowed_pages[$role][] = $post_id;
     }
 
     // Update the allowed_pages option in the database
     update_option('role_based_page_restriction_allowed_pages', $allowed_pages);
 }
 
+// function my_custom_duplicate_post_add_to_allowed_pages($post_id, $post, $update) {
+//     error_log('Checks Duplicate post');
+//     //error_log(print_r(get_metadata('post',9060)));
+//     // Check if this is a new post
+//     if ($update) return;
+//     // error_log('Checks if rewrite post');
+//     // error_log(print_r(get_metadata('post',9071)));
+//     // error_log(print_r(get_metadata('post',9071, '_dp_is_rewrite_republish_copy', true)));
+//     // error_log(print_r(get_metadata('post',$post_id)));
+//     // error_log(print_r(get_metadata('post',$post_id, '_dp_is_rewrite_republish_copy', true)));
+//     // $original_post_id=get_metadata('post',$post_id, '_dp_is_rewrite_republish_copy', true);
+//     // error_log(var_dump($original_post_id));
+//     // error_log($original_post_id);
+//     // // Check if this is a rewrite & republish post
+//     // $original_post_id = print_r(get_metadata('post',$post_id, '_dp_is_rewrite_republish_copy', true));
+//     // error_log($original_post_id);
+//     // if (!$original_post_id) return;
 
+//     error_log('Duplicate post');
+
+//     // Retrieve the allowed_pages option from the database
+//     $allowed_pages = get_option('role_based_page_restriction_allowed_pages', []);
+
+//     // Retrieve all roles
+//     $roles = wp_roles()->role_objects;
+
+//     foreach ($roles as $role) {
+//         // If the role has the capability to edit the original page and the original page ID is in the role's allowed pages
+//         if (isset($allowed_pages[$role->name]) && in_array($original_post_id, $allowed_pages[$role->name])) {
+//             // Add the clone page's ID to the role's allowed pages
+//             $allowed_pages[$role->name][] = $post_id;
+//         }
+//     }
+
+//     // Update the allowed_pages option in the database
+//     update_option('role_based_page_restriction_allowed_pages', $allowed_pages);
+// }
