@@ -1,0 +1,4 @@
+/* If user is not in admin role, hide publish button */
+.editor-post-publish-button__button{
+    display:none !important;
+}
