@@ -1,11 +1,18 @@
 
+// alert('publish-to-qa');
 
 function waitUntilElementLoad(selector,  delay, callback) {
+    // wait until relevant dom elements are present on the page to perform necessary dom manipulations to augment the UI
+    // todo: this is not the most optimal way to perform this function
+
+
     // console.log('waitUntilElementLoad: ', selector,  delay, callback)
     if(document.querySelector(selector) != null){
         // element found; do something
-        // console.log('callback: ', callback);
-        callback()
+        console.log('doing callback.. ');
+
+        setTimeout(callback(), 5000);
+        
     } else {
         setTimeout(()=>waitUntilElementLoad(selector, delay, callback), delay);
     }
@@ -23,6 +30,52 @@ function update(){
     var id = url.searchParams.get("post");
     
 
+    // this reloads the page when the page was published (to renew the UI)
+    let wasSavingPost =false;//wp.data.select('core/editor').isSavingPost();
+    let wasPublishingPost =false;// wp.data.select('core/editor').isPublishingPost();
+
+    wp.data.subscribe(() => {
+        const isSavingPost = wp.data.select('core/editor').isSavingPost();
+        const isPublishingPost = wp.data.select('core/editor').isPublishingPost();
+
+        if (wasSavingPost && !isSavingPost && wasPublishingPost && !isPublishingPost) {
+            // Post was being saved and published, but is no longer being saved or published.
+            // Thus, the post was just published.
+            console.log('Post has been published');
+            // don't reload if user clicked "republish" - it will redirect to original page
+            if(!jQuery('.editor-post-publish-button__button').html()=='Republish')
+                location.reload();
+        }
+
+        if(!wasSavingPost)
+            wasSavingPost = isSavingPost;
+        if (!wasPublishingPost)
+        wasPublishingPost = isPublishingPost;
+        // console.log('wasSavingPost && !isSavingPost && wasPublishingPost && !isPublishingPost', wasSavingPost, isSavingPost, wasPublishingPost,isPublishingPost);
+    });
+
+    // this reloads the page when page gets switched to draft (to renew the UI)
+    wp.data.subscribe(() => {
+        const isSavingPost = wp.data.select('core/editor').isSavingPost();
+        const isAutosavingPost = wp.data.select('core/editor').isAutosavingPost();
+        const isEditedPostDirty = wp.data.select('core/editor').isEditedPostDirty();
+
+        if (wasSavingPost && !isSavingPost && !isAutosavingPost && !isEditedPostDirty) {
+            const postStatus = wp.data.select('core/editor').getCurrentPost().status;
+
+            if (postStatus === 'draft') {
+                // Post was being saved but is no longer being saved,
+                // and it was not an autosave or there are no unsaved changes remaining.
+                // Thus, the post was just switched to draft.
+                location.reload();
+                console.log('Post has been switched to draft');
+            }
+        }
+
+        console.log('wasSavingPost && !isSavingPost && !isAutosavingPost && !isEditedPostDirty', wasSavingPost, isSavingPost, isAutosavingPost, isEditedPostDirty);
+        if(!wasSavingPost)
+            wasSavingPost = isSavingPost;
+    });
 
     
     jQuery.ajax({
@@ -115,10 +168,43 @@ function update(){
             }
 
             // if the post is published and not in QA, don't let anyone publish to QA - need to go through rewrite and republish for that
-            console.log('postStatus/status: ', postStatus,status);
+            console.log('debug postStatus/status/role: ', postStatus,status, role);
             if ((postStatus=='publish' && !status) || isRewriteAndRepublish){  // if it's a rewrite and republish page it's already on QA, hide publish to qa button
             }else{
                 jQuery('.edit-post-header__settings').prepend(`<button id="publish-to-qa-button" type="button" class="components-button is-tertiary">${buttonText}</button>`);
+            }
+
+            if (postStatus=='publish' && status && role=='administrator'){
+                // if it's in QA and it's an admin, show a "publish" button that will just make the page unrestricted
+                console.log('inserting publish button..', jQuery('.interface-pinned-items').length);
+                jQuery(`<button id="remove-qa-lock-button" type="button" class="components-button is-primary">Publish</button>`).insertBefore('.interface-pinned-items');
+                jQuery("#remove-qa-lock-button").on( "click", function() {
+                    console.log('remove qa lock button click');
+    
+                    // make sure we save the post first
+                    wp.data.dispatch( 'core/editor' ).savePost().then(function(){
+                        const url_string = window.location.href;
+                        var url = new URL(url_string);
+                        var id = url.searchParams.get("post")
+
+                        jQuery.ajax({
+                            url:  '/wp-json/publish-to-qa/v1/remove-lock',
+                            method: 'POST',
+                            beforeSend: function ( xhr ) {
+                                xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+                            },
+                            data:{
+                                postId: id,
+                            }
+                        }).done(function(response) {
+                            // Handle response here
+                            // let buttonText = response.status ? 'Unpublish from QA' : 'Publish to QA';
+                            // jQuery("#publish-to-qa-button").html(buttonText);
+                            location.reload();
+                            // console.log('remove-lock ajax response: ', response);
+                        });
+                    })
+                })
             }
 
             jQuery("#publish-to-qa-button").on( "click", function() {
@@ -156,5 +242,5 @@ function update(){
    
 
 }
-update();
+//update();
 waitUntilElementLoad('.edit-post-header__settings',100,update)
