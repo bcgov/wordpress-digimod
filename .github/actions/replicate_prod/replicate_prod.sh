@@ -25,7 +25,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     # perform the backup
 
     echo "Running backup on prod.."
-    
+
     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar ai1wm backup
     LATEST_FILE=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c 'ls -t /var/www/html/wp-content/ai1wm-backups | head -n 1 ')
     oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups/$LATEST_FILE ./wp-backup.wpress
@@ -49,9 +49,9 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
         token=$TEST_TOKEN
         ;;
         "prod")
-        # token=$PROD_TOKEN
-        echo "For safety reasons, we won't run this action on prod!"
-        exit 1
+        token=$PROD_TOKEN
+        # echo "For safety reasons, we won't run this action on prod!"
+        # exit 1
         ;;
         *)
         echo "Unknown environment: $ENVIRONMENT"
