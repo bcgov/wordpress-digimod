@@ -12,19 +12,15 @@ if (!defined('ABSPATH')) {
 
 class RoleBasedPageRestriction {
     private $allowed_pages;
-    private $all_pages;
 
     public function __construct() {
         $this->allowed_pages = get_option('role_based_page_restriction_allowed_pages', []);
-        $this->$all_pages = get_pages(['future','private','auto-draft','draft','pending','publish']);
 
         add_action('admin_menu', [$this, 'admin_menu']);
         add_action('load-page-new.php', [$this, 'restrict_pages']);
         add_action('load-page.php', [$this, 'restrict_pages']);
         add_action('wp_ajax_quick_edit_data', [$this, 'save_quick_edit_data']);
         add_action('wp_ajax_role_based_page_restriction_update_settings', [$this, 'update_settings']);
-
-
     }
 
     public function admin_menu() {
@@ -37,13 +33,16 @@ class RoleBasedPageRestriction {
         );
     }
 
- 
+    // Settings page content
+
+    // 1. Load all roles and pages
+    // 2. If it's a POST request, process form submission
+    // 3. Then render the settings form
     public function settings_page() {
         wp_enqueue_script('jquery-ui-draggable');
         wp_enqueue_script('jquery-ui-droppable');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            check_admin_referer('role_based_page_restriction_update_settings');
-    
+            check_admin_referer('role_based_page_restriction_update_settings');   
             $this->allowed_pages = [];
             foreach ($_POST['allowed_pages'] as $role => $pages) {
                 $this->allowed_pages[$role] = array_map('absint', $pages);
@@ -239,7 +238,12 @@ class RoleBasedPageRestriction {
     
     
 
+    // This is called before rendering the "Add New Page" or "Edit Page" screen
+    // It checks whether the user has the required role to access the page
 
+    // 1. If there's no 'post' query var, return immediately
+    // 2. Otherwise, check if the current user's role(s) allow them to access the page
+    // 3. If not, terminate the request with a 403 status
     public function restrict_pages() {
         if (!isset($_GET['post'])) {
             return;
@@ -266,7 +270,11 @@ class RoleBasedPageRestriction {
             wp_die('You are not allowed to edit this page.', 403);
         }
     }
-    
+
+    // This is an AJAX callback for saving Quick Edit data
+    // 1. Verify the nonce
+    // 2. If the request includes post IDs and selected roles, update the 'allowed_pages' option
+    // 3. Then send a JSON success response    
     public function save_quick_edit_data() {
         error_log(print_r('role_based_page_restriction', true));
         check_ajax_referer('role_based_page_restriction', 'role_based_page_restriction_nonce');
@@ -300,7 +308,7 @@ class RoleBasedPageRestriction {
     }
     
 }
-
+// Initialize the class immediately
 new RoleBasedPageRestriction();
 
 function intercept_quick_edit($post_id) {
@@ -331,52 +339,65 @@ function intercept_quick_edit($post_id) {
     }
 }
 
+// Attaches 'intercept_quick_edit' function to 'save_post' WordPress action. This function is triggered when a post is saved
 add_action('save_post', 'intercept_quick_edit', 10, 1);
 
+
+// Adds a new column in the admin pages list
 function role_add_custom_column($columns) {
+    // The content of this column will be generated in the 'role_display_custom_column' function
     $columns['role_quick_edit'] = '';
     return $columns;
 }
 add_filter('manage_pages_columns', 'role_add_custom_column');
 
+// Displays the roles for which the page is available in the 'role_quick_edit' column
 function role_display_custom_column($column_name, $post_id) {
     if ('role_quick_edit' !== $column_name) {
         return;
     }
-
+    // Retrieves the option holding the allowed pages for each role
     $allowed_pages = get_option('role_based_page_restriction_allowed_pages', []);
     $roles = [];
-
+    // Iterates over each role and checks if the current page is in the list of allowed pages for this role
     foreach ($allowed_pages as $role => $pages) {
         if (in_array($post_id, $pages)) {
             $roles[] = $role;
         }
     }
-
+    // Prints the roles list in the 'role_quick_edit' column
     echo '<div class="hidden allowed_roles" data-allowed_roles="' . esc_attr(implode(',', $roles)) . '"></div>';
 }
 
 add_action('manage_pages_custom_column', 'role_display_custom_column', 10, 2);
 
+// Adds a select dropdown in the Quick Edit menu to select the roles for which the page will be available
 function role_quickedit_custom_box($column_name, $post_type) {
-    error_log(print_r('test error log', true));
-    echo 'this is printing';
+    // Get the current user
+    $user = wp_get_current_user();
+
+    // If user is administrator, return and don't modify the quick edit
+    if(!in_array('administrator', $user->roles)) {
+        return;
+    }
+    
+    // Ignore non-page post types and non-'role_quick_edit' columns
     if ($post_type != 'page' || $column_name != 'role_quick_edit') {
-        echo 'this is return';
         return;
     }
 
+    // Print the nonce field once only
     static $printNonce = TRUE;
     if ($printNonce) {
-        echo 'this is once';
         $printNonce = FALSE;
         wp_nonce_field('role_based_page_restriction', 'role_based_page_restriction_nonce');
     }
-    echo 'this is it';
     ?>
+    
     <fieldset class="inline-edit-col-right inline-edit-book">
         <div class="inline-edit-col column-<?php echo $column_name; ?>">
             <label class="inline-edit-group">
+            <span class="title">Permitted Roles</span>
                 <?php
                 $default_roles = array(
                     'administrator' => 'Administrator',
@@ -474,41 +495,3 @@ function add_to_allowed_pages($post_id, $post, $update) {
     // Update the allowed_pages option in the database
     update_option('role_based_page_restriction_allowed_pages', $allowed_pages);
 }
-
-// function my_custom_duplicate_post_add_to_allowed_pages($post_id, $post, $update) {
-//     error_log('Checks Duplicate post');
-//     //error_log(print_r(get_metadata('post',9060)));
-//     // Check if this is a new post
-//     if ($update) return;
-//     // error_log('Checks if rewrite post');
-//     // error_log(print_r(get_metadata('post',9071)));
-//     // error_log(print_r(get_metadata('post',9071, '_dp_is_rewrite_republish_copy', true)));
-//     // error_log(print_r(get_metadata('post',$post_id)));
-//     // error_log(print_r(get_metadata('post',$post_id, '_dp_is_rewrite_republish_copy', true)));
-//     // $original_post_id=get_metadata('post',$post_id, '_dp_is_rewrite_republish_copy', true);
-//     // error_log(var_dump($original_post_id));
-//     // error_log($original_post_id);
-//     // // Check if this is a rewrite & republish post
-//     // $original_post_id = print_r(get_metadata('post',$post_id, '_dp_is_rewrite_republish_copy', true));
-//     // error_log($original_post_id);
-//     // if (!$original_post_id) return;
-
-//     error_log('Duplicate post');
-
-//     // Retrieve the allowed_pages option from the database
-//     $allowed_pages = get_option('role_based_page_restriction_allowed_pages', []);
-
-//     // Retrieve all roles
-//     $roles = wp_roles()->role_objects;
-
-//     foreach ($roles as $role) {
-//         // If the role has the capability to edit the original page and the original page ID is in the role's allowed pages
-//         if (isset($allowed_pages[$role->name]) && in_array($original_post_id, $allowed_pages[$role->name])) {
-//             // Add the clone page's ID to the role's allowed pages
-//             $allowed_pages[$role->name][] = $post_id;
-//         }
-//     }
-
-//     // Update the allowed_pages option in the database
-//     update_option('role_based_page_restriction_allowed_pages', $allowed_pages);
-// }

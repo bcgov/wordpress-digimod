@@ -60,7 +60,8 @@ cd ..
 tar -cf plugins.tar --exclude=./.github --exclude=node_modules --exclude=./Archive --exclude=./bcgov-wordpress-block-theme-digimod ./*/
 oc cp --no-preserve plugins.tar $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/plugins.tar -c $WORDPRESS_CONTAINER_NAME
 oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -xf /var/www/html/wp-content/plugins/plugins.tar -C /var/www/html/wp-content/plugins
-oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate --all
+# We won't activate any plugins - this can be done manually
+#oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate --all
 
 #run command to change miniorange plugin variables
 oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $KEYCLOAK_TEST_CLIENT_SECRET $SITE_NAME ${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca"
