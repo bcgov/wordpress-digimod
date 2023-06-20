@@ -1,6 +1,6 @@
 # Manual started workflow
 # This is the simplest for of running the Cypress tests in Github actions
-name: broken-links-checker
+name: Backup
 on:
   workflow_dispatch:
   # schedule:
