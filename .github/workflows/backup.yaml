@@ -1,0 +1,42 @@
+# Manual started workflow
+# This is the simplest for of running the Cypress tests in Github actions
+name: broken-links-checker
+on:
+  workflow_dispatch:
+  # schedule:
+  #   # * is a special character in YAML so you have to quote this string
+  #   - cron: '0 2 * * *'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      # - name: Log in to OpenShift
+      #   run: |
+      #     oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TEST_API_TOKEN }} --insecure-skip-tls-verify=true
+      - name: Replicate Production
+        uses: ./.github/actions/replicate_prod
+        with:
+          environment: prod
+          site-name: backup
+          openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
+          dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
+          test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
+          prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
+      # - name: Log in to OpenShift
+      # run: |
+      #   oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }} --insecure-skip-tls-verify=true
+      # # save the backup and delete one oldest backup
+      # - name: Update backup files
+      #   run: |
+      #     NAMESPACE="c0cce6-prod"
+      #     OC_ENV=prod
+      #     OC_SITE_NAME=digital-backup
+      #     WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=nginx,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+      #     WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
+
+      #     cd .github/workflows
+      #     oc cp backup.sh $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/backup.sh -c $WORDPRESS_CONTAINER_NAME
+      #     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/backup.sh
+      #     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- /bin/sh /tmp/backup.sh
