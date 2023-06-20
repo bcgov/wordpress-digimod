@@ -17,6 +17,6 @@ runs:
   steps:
     - name: Update Wordpress Image
       run: |
-        chmod +x ./.github/actions/replicate_prod/replicate_prod.sh
-        ./.github/actions/replicate_prod/replicate_prod.sh "${{ inputs.github_token }}" "${{ inputs.tools_token }}" "${{ inputs.tools_token }}" "${{ inputs.openshift-server}}"
+        chmod +x ./.github/actions/update_wordpress/update_wordpress.sh
+        ./.github/actions/update_wordpress/update_wordpress.sh "${{ inputs.github_token }}" "${{ inputs.tools_token }}" "${{ inputs.tools_token }}" "${{ inputs.openshift-server}}"
       shell: bash
