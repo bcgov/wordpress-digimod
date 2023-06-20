@@ -12,7 +12,7 @@ oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN --insecure-skip-tls-verify=true
 # Export site from production
 NAMESPACE="c0cce6-prod"
 OC_ENV=prod
-OC_SITE_NAME=digital-wp
+OC_SITE_NAME=digital
 WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
