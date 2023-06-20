@@ -1,0 +1,22 @@
+name: Update Wordpress Image
+description: 'Updates the wordpress image based on the latest version in dockerhub'
+inputs:
+  github_token:
+    description: 'Deployment environment'
+    required: true
+    default: ''
+  tools_token:
+    description: 'Deployment token for the tools namespace'
+    required: true
+    default: ''
+  openshift-server:
+    description: 'OpenShift server'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Update Wordpress Image
+      run: |
+        chmod +x ./.github/actions/replicate_prod/replicate_prod.sh
+        ./.github/actions/replicate_prod/replicate_prod.sh "${{ inputs.github_token }}" "${{ inputs.tools_token }}" "${{ inputs.tools_token }}" "${{ inputs.openshift-server}}"
+      shell: bash

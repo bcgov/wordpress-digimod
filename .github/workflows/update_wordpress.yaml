@@ -1,0 +1,19 @@
+name: Check for new WordPress Docker image
+
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron:  '0 0 * * *' # runs every day at midnight
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Deploy theme and plugins
+        uses: ./.github/actions/update_wordpress
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TOOLS_TOKEN: ${{ secrets.TOOLS_TOKEN }}
+          openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
