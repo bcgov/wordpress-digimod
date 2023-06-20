@@ -25,8 +25,8 @@ jobs:
       #     test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
       #     prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
       - name: Log in to OpenShift
-      run: |
-        oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }} --insecure-skip-tls-verify=true
+        run: |
+          oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }} --insecure-skip-tls-verify=true
       # save the backup and delete one oldest backup
       - name: Update backup files
         run: |
