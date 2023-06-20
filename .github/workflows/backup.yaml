@@ -37,6 +37,6 @@ jobs:
           WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
           cd .github/workflows
-          oc cp ./github/workflows/backup.sh $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/backup.sh -c $WORDPRESS_CONTAINER_NAME
+          oc cp ./.github/workflows/backup.sh $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/backup.sh -c $WORDPRESS_CONTAINER_NAME
           oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/backup.sh
           oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- /bin/sh /tmp/backup.sh
