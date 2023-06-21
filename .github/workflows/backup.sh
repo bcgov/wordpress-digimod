@@ -31,8 +31,8 @@ else
     echo "No .wpress file to rename in $dir"
 fi
 
-if [ "$num_files" -lt 2 ]; then
-    echo "There are less than 2 .wpress files in $dir. Exiting..."
+if [ "$num_files" -lt 5 ]; then
+    echo "There are less than 5 .wpress files in $dir. Exiting..."
     exit 0
 fi
 
