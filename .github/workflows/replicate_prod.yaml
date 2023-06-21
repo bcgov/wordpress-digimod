@@ -1,0 +1,25 @@
+name: Site Export from Production
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'test'
+      site-name:
+        description: 'Import site name'
+        required: true
+        default: 'test'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Replicate Production
+        uses: ./.github/actions/replicate_prod
+        with:
+          environment: ${{ github.event.inputs.environment }}
+          site-name: ${{ github.event.inputs.site-name }}
+          openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
+          dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
+          test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
+          prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
