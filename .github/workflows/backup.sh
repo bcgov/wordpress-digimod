@@ -33,7 +33,7 @@ fi
 
 if [ "$num_files" -lt 2 ]; then
     echo "There are less than 2 .wpress files in $dir. Exiting..."
-    exit 1
+    exit 0
 fi
 
 # Delete the oldest .wpress file
