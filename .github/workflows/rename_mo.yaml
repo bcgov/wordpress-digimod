@@ -17,12 +17,27 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Log in to OpenShift
-      run: |
-        oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_DEV_API_TOKEN }} --insecure-skip-tls-verify=true
-   
     - name: Rename Miniorange plugin variables
       run: |
+        echo "Deploying to $ENVIRONMENT"
+        case "$ENVIRONMENT" in
+            "dev")
+            token=${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
+            ;;
+            "test")
+            token=${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
+            ;;
+            "prod")
+            # token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
+            echo "For safety reasons, we won't run this action on prod!"
+            exit 1
+            ;;
+            *)
+            echo "Unknown environment: $ENVIRONMENT"
+            exit 1
+            ;;
+        esac
+        oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
         NAMESPACE="c0cce6-${{ github.event.inputs.ENVIRONMENT }}"
         OC_ENV=${{ github.event.inputs.ENVIRONMENT }}
         OC_SITE_NAME=digital-${{ github.event.inputs.SITE-NAME }}
