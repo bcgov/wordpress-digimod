@@ -1,14 +1,25 @@
 #!/bin/bash
 
 # Set directory
-dir="/var/www/html/wp-content/ai1wm-backups"
+sourceDir="/var/www/html/wp-content/ai1wm-backups"
+dir="/var/www/html/wp-content/ai1wm-backups-history"
 
-# Check if the directory exists
+# Check if the new directory exists
 if [ ! -d "$dir" ]
 then
-    echo "Directory $dir DOES NOT exist." >&2
+    mkdir -p "$dir"
+    echo "Directory $dir created."
+fi
+
+# Check if the directory exists
+if [ ! -d "$sourceDir" ]
+then
+    echo "Directory $sourceDir DOES NOT exist." >&2
     exit 1
 fi
+
+# Copy .wpress files to the new directory
+cp "$sourceDir"/*.wpress "$dir"
 
 # Count the number of .wpress files
 num_files=$(ls -1 "$dir"/*.wpress 2>/dev/null | wc -l)
