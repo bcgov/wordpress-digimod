@@ -1,6 +1,15 @@
 name: Rename miniorange plugin contents
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'test'
+      site-name:
+        description: 'Site name'
+        required: true
+        default: 'test'
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -61,12 +70,12 @@ jobs:
    
     - name: Rename Miniorange plugin variables
       run: |
-        NAMESPACE="c0cce6-dev"
-        OC_ENV=dev
-        OC_SITE_NAME=digital-test2
+        NAMESPACE="c0cce6-$ENVIRONMENT"
+        OC_ENV=$ENVIRONMENT
+        OC_SITE_NAME=digital-$SITE_NAME
         WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
         WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
 
         #run command to change miniorange plugin variables
-        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo ${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET }}"
+        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $KEYCLOAK_TEST_CLIENT_SECRET $SITE_NAME ${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca"
