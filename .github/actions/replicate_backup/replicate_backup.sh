@@ -28,7 +28,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     echo "Running copy of backup.."
 
     # oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar ai1wm backup
-    LATEST_FILE=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c 'ls -t /var/www/html/wp-content/ai1wm-backups-history | head -n '"$BACKUP_NUMBER")
+    LATEST_FILE=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c 'ls -t /var/www/html/wp-content/ai1wm-backups-history | sed -n '"$BACKUP_NUMBER"'p')
     echo "Restoring from $LATEST_FILE"
 
     oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups-history/$LATEST_FILE ./wp-backup.wpress
