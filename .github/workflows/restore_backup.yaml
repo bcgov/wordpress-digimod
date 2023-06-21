@@ -3,11 +3,11 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment'
+        description: 'Deployment environment ("prod" for prod)'
         required: true
         default: 'test'
       site-name:
-        description: 'Site name'
+        description: 'Site name ("digital" for prod)'
         required: true
         default: 'test'
 jobs:
@@ -19,16 +19,7 @@ jobs:
       # - name: Log in to OpenShift
       #   run: |
       #     oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TEST_API_TOKEN }} --insecure-skip-tls-verify=true
-      - name: Create a new Wordpress Instance
-        uses: ./.github/actions/create_wp_instance
-        with:
-          environment: ${{ github.event.inputs.environment }}
-          site-name: ${{ github.event.inputs.site-name }}
-          openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
-          dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
-          test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
-          prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
-      - name: Replicate Production
+      - name: Replicate Backup
         uses: ./.github/actions/replicate_prod
         with:
           environment: ${{ github.event.inputs.environment }}
@@ -37,13 +28,3 @@ jobs:
           dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
           test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
           prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
-      - name: Deploy theme and plugins
-        uses: ./.github/actions/deploy_theme_and_plugins
-        with:
-          environment: ${{ github.event.inputs.environment }}
-          site-name: ${{ github.event.inputs.site-name }}
-          openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
-          dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
-          test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
-          prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
-          keycloak-test-client-secret: ${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET }}
