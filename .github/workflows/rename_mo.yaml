@@ -38,7 +38,7 @@ jobs:
             exit 1
             ;;
         esac
-        oc login $ENVIRONMENT --token=$token --insecure-skip-tls-verify=true
+        oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
         NAMESPACE="c0cce6-$ENVIRONMENT"
         OC_ENV=$ENVIRONMENT
         OC_SITE_NAME=digital-${{ github.event.inputs.SITE-NAME }}
