@@ -23,9 +23,9 @@ jobs:
    
     - name: Rename Miniorange plugin variables
       run: |
-        NAMESPACE="c0cce6-${{ env.ENVIROMENT }}"
-        OC_ENV=${{ env.ENVIROMENT }}
-        OC_SITE_NAME=digital-${{ env.SITE-NAME }}
+        NAMESPACE="c0cce6-${{ github.event.inputs.ENVIROMENT }}"
+        OC_ENV=${{ github.event.inputs.ENVIROMENT }}
+        OC_SITE_NAME=digital-${{ github.event.inputs.SITE-NAME }}
         WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
         WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
