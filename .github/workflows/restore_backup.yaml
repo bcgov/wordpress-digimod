@@ -10,6 +10,10 @@ on:
         description: 'Site name ("digital" for prod)'
         required: true
         default: 'test'
+      backup-number:
+        description: 'Backup number (1 for latest, 2 for yesterday, etc..)'
+        required: true
+        default: '1'
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -20,7 +24,7 @@ jobs:
       #   run: |
       #     oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TEST_API_TOKEN }} --insecure-skip-tls-verify=true
       - name: Replicate Backup
-        uses: ./.github/actions/replicate_prod
+        uses: ./.github/actions/replicate_backup
         with:
           environment: ${{ github.event.inputs.environment }}
           site-name: ${{ github.event.inputs.site-name }}
@@ -28,3 +32,4 @@ jobs:
           dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
           test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
           prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
+          backup-number: ${{ github.event.inputs.backup-number }}

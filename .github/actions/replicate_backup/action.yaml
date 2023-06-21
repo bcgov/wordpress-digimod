@@ -1,0 +1,31 @@
+name: Replicate Backup
+description: 'Replicates the backup instance on the given deployment'
+inputs:
+  environment:
+    description: 'Deployment environment'
+    required: true
+    default: 'test'
+  site-name:
+    description: 'Site name'
+    required: true
+    default: 'test'
+  openshift-server:
+    description: 'OpenShift server'
+    required: true
+  dev-token:
+    description: 'Dev token'
+    required: true
+  test-token:
+    description: 'Test token'
+    required: true
+  prod-token:
+    description: 'Prod token'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Replicate Backup
+      run: |
+        chmod +x ./.github/actions/replicate_backup/replicate_backup.sh
+        ./.github/actions/replicate_backup/replicate_backup.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
+      shell: bash

@@ -6,13 +6,14 @@ OPENSHIFT_SERVER=$3
 DEV_TOKEN=$4
 TEST_TOKEN=$5
 PROD_TOKEN=$6
+BACKUP_NUMBER=$7
 # Log in to OpenShift
 oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN --insecure-skip-tls-verify=true
 
 # Export site from production
 NAMESPACE="c0cce6-prod"
 OC_ENV=prod
-OC_SITE_NAME=digital
+OC_SITE_NAME=digital-backup
 WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
@@ -24,10 +25,12 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
     # perform the backup
 
-    echo "Running backup on prod.."
+    echo "Running copy of backup.."
 
-    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar ai1wm backup
-    LATEST_FILE=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c 'ls -t /var/www/html/wp-content/ai1wm-backups | head -n 1 ')
+    # oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar ai1wm backup
+    LATEST_FILE=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c 'ls -t /var/www/html/wp-content/ai1wm-backups-history | head -n '"$NUM_FILES")
+    echo "Restoring from $LATEST_FILE"
+
     oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups/$LATEST_FILE ./wp-backup.wpress
     oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration ./plugins/all-in-one-wp-migration
     oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration-unlimited-extension ./plugins/all-in-one-wp-migration-unlimited-extension
@@ -35,7 +38,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     active_plugins=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin list --status=active --field=name)
     # log out of prod due to paranoia
     
-    echo "Backup on prod finished"
+    echo "Copy of backup finished"
 
     oc logout
 
@@ -91,5 +94,5 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     #activate the plugins
     # oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate $active_plugins
 
-    echo "Replicate production finished"
+    echo "Replicate backup finished"
 fi
