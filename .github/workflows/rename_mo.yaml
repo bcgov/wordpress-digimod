@@ -17,6 +17,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+    - name: Install OC CLI
+      run: |
+        curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz
+        tar xvzf openshift-client-linux.tar.gz
+        sudo mv oc kubectl /usr/local/bin/
     - name: Rename Miniorange plugin variables
       run: |
         ENVIRONMENT=${{ github.event.inputs.ENVIRONMENT }}
@@ -47,4 +52,4 @@ jobs:
 
 
         #run command to change miniorange plugin variables
-        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $KEYCLOAK_TEST_CLIENT_SECRET $SITE_NAME ${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca"
+        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo ${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}} $SITE_NAME ${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca"
