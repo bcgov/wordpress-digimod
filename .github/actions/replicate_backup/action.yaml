@@ -21,11 +21,14 @@ inputs:
   prod-token:
     description: 'Prod token'
     required: true
+  backup-number:
+    description: 'Backup number'
+    required: true
 runs:
   using: 'composite'
   steps:
     - name: Replicate Backup
       run: |
         chmod +x ./.github/actions/replicate_backup/replicate_backup.sh
-        ./.github/actions/replicate_backup/replicate_backup.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
+        ./.github/actions/replicate_backup/replicate_backup.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.backup-number }}"
       shell: bash
