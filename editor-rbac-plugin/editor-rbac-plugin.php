@@ -95,8 +95,8 @@ class RoleBasedPageRestriction {
             $allowed_page_names = array_map(function ($page_id) {
                 $status = get_post_status($page_id);
                 $is_rewrite = get_metadata('post',$post_id, 'dp_is_rewrite_republish_copy', true);
-                error_log(print_r('Rewrite and Republish',true));
-                error_log(print_r($is_rewrite, true));
+                // error_log(print_r('Rewrite and Republish',true));
+                // error_log(print_r($is_rewrite, true));
                 $is_rewrite = $is_rewrite == null ? '' : ' - Rewrite and Republish';
                 $status = $status == 'publish' ? null : ' - ' . $status;
                 $status = $status . $is_rewrite;
@@ -138,7 +138,7 @@ class RoleBasedPageRestriction {
             
             echo '<div style="flex: 0.8; display:none" class="not_allowed_pages pages_wrapper" id="' . esc_attr($role) . '_not_allowed_container">';
             echo '<h3>' . esc_html($name) . ' - Not Allowed Pages</h3>';
-            echo '<table id="' . esc_attr($role) . '_not_allowed" class="allowed_pages" style="display: none;">';
+            echo '<table id="' . esc_attr($role) . '_not_allowed" class="not_allowed_pages" style="display: none;">';
             foreach ($not_allowed_pages as $page) {
                 echo '<tr class="draggable" data-pageid="' . esc_attr($page['ID']) . '"><td>' . esc_html($page['post_title']) . '</td></tr>';
             }
@@ -215,7 +215,7 @@ class RoleBasedPageRestriction {
                     accept: ".draggable",
                     drop: function(event, ui) {
                         var droppedItem = $(ui.draggable).clone();
-                        var droppedOn = $(this).attr("class");
+                        var droppedOn = $(this).attr("class").split(" ");
                         var role = $("#role_select").val();
                         if (droppedOn.includes("allowed_pages")) {
                             droppedItem.append("<input type=\'hidden\' name=\'allowed_pages[" + role + "][]\' value=\'" + droppedItem.data("pageid") + "\'/>");
@@ -318,22 +318,22 @@ function intercept_quick_edit($post_id) {
     if (defined('DOING_AJAX') && DOING_AJAX && isset($_POST['action']) && $_POST['action'] === 'inline-save') {
         check_admin_referer('role_based_page_restriction', 'role_based_page_restriction_nonce');
         $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : null;
-        error_log(print_r($allowed_roles, true));
+        // error_log(print_r($allowed_roles, true));
         if (!empty($allowed_roles) && is_array($allowed_roles)) {
             $allowed_pages = get_option('role_based_page_restriction_allowed_pages', []);
             foreach ($allowed_roles as $role) {
                 if (!isset($allowed_pages[$role])) {
                     $allowed_pages[$role] = [];
                 }
-                error_log(print_r($allowed_pages, true));
-                error_log(print_r('postId'.$post_id, true));
+                // error_log(print_r($allowed_pages, true));
+                // error_log(print_r('postId'.$post_id, true));
                 if (!in_array($post_id, $allowed_pages[$role])) {
                     error_log(print_r('not here - adding'.$post_id, true));
                     $allowed_pages[$role][] = absint($post_id);
                 }
             }
-            error_log(print_r('updating... ', true));
-            error_log(print_r($allowed_pages, true));
+            // error_log(print_r('updating... ', true));
+            // error_log(print_r($allowed_pages, true));
             update_option('role_based_page_restriction_allowed_pages', $allowed_pages);
         }
     }
@@ -476,10 +476,11 @@ add_action('save_post', 'add_to_allowed_pages', 15, 3);
 add_action('rest_after_insert_post', 'add_to_allowed_pages', 10, 3);
 
 // We assume if a post is being saved, it should be allow to be edited.
-// this captures when new posts are being created.
+// this captures when new pages are being created.
 function add_to_allowed_pages($post_id, $post, $update) {
+    if(!is_page($post_id)) return;
     error_log('Add to allowed posts');
-
+    
     // Retrieve the allowed_pages option from the database
     $allowed_pages = get_option('role_based_page_restriction_allowed_pages', []);
 
