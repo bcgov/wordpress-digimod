@@ -15,6 +15,10 @@ if (!defined('ABSPATH')) {
 
 function qa_runOnClient(){
     global $post;
+    if ( !isset( $post ) ) { // global post object is not set - do not run qa functionality on this page (for example 404)
+        return false;
+    }
+
     $current_url = get_permalink($post->ID);
     $path = parse_url($current_url, PHP_URL_PATH);
     
@@ -30,17 +34,23 @@ function qa_runOnAdmin(){
 
     // Make sure we're on an admin page and it's the post editor
     if (is_admin() && get_current_screen()->base == 'post') {
-        $post_type = get_post_type($post->ID);
-
-        $current_url = get_permalink($post->ID);
-        $path = parse_url($current_url, PHP_URL_PATH);
-        
-        if ($post_type == 'wcag' || get_the_title($post->ID)=="Web content accessibility guidelines (WCAG)") {
-            // This is a 'wcag' post type
-            // Perform your actions here
-            return true;
-        }
+        return qa_runOnAdmin_checkPostID($post->ID);
     }
+    return false;
+}
+
+function qa_runOnAdmin_checkPostID($postId){
+    $post_type = get_post_type($postId);
+
+    $current_url = get_permalink($postId);
+    $path = parse_url($current_url, PHP_URL_PATH);
+    
+    if ($post_type == 'wcag' || get_the_title($postId)=="Web content accessibility guidelines (WCAG)") {
+        // This is a 'wcag' post type
+        // Perform your actions here
+        return true;
+    }
+
     return false;
 }
 
@@ -141,6 +151,11 @@ function digimod_qa_toggle( $request ) {
 
     $postId = $data['postId'];
     $post = get_post( $postId );
+
+    $post_type = get_post_type_object( $post->post_type );
+    if ( !current_user_can( $post_type->cap->publish_posts ) ) {
+        return;
+    }
 
     // Check if the post exists and is published
     $unpublish = false;
@@ -342,6 +357,8 @@ add_action( 'rest_api_init', function () {
 
 function digimod_qa_get_status($request) {
     global $post;
+
+
     $data =  $request->get_body_params();
 
     $current_url = get_permalink($data['postId']);
@@ -625,3 +642,53 @@ function qa_display_custom_state($states) {
     return $states;
 }
 add_filter( 'display_post_states', 'qa_display_custom_state' );
+
+
+// detect a change in permalink - if user changed the permalink, make sure we delete old entry and add new permalink
+add_action( 'post_updated', 'qa_detect_permalink_change', 10, 3 );
+
+function qa_detect_permalink_change( $post_ID, $post_after, $post_before ) {
+    try{
+        if (!qa_runOnAdmin_checkPostID($post_ID)){
+            return;
+        }
+
+        if ($post_before->post_status == 'draft' && $post_after->post_status == 'publish') {
+            // The post has just been published for the first time
+            return;
+        }
+
+        // Get old and new permalinks
+        $old_permalink = get_permalink($post_before);
+        $new_permalink = get_permalink($post_after);
+
+        // Parse the paths from the permalinks
+        $old_path = parse_url($old_permalink, PHP_URL_PATH);
+        $new_path = parse_url($new_permalink, PHP_URL_PATH);
+
+        
+        // Compare the old and new paths
+        if ($old_path != $new_path) {
+                // Get the restricted URLs from the saved settings
+                $restricted_urls = get_option('custom_qa_restricted_urls', '');
+
+                // Convert the saved URLs to an array
+                $restricted_page_urls = array_filter(array_map('trim', explode(PHP_EOL, $restricted_urls)));
+                // echo("before: ");
+                // print_r($restricted_page_urls);
+
+                $restricted_page_urls[] = $new_path;
+            
+                $url_index = array_search($old_path, $restricted_page_urls);
+                unset($restricted_page_urls[$url_index]);
+                
+                $restricted_urls = implode(PHP_EOL, $restricted_page_urls);
+
+                // Save the updated list of URLs
+                update_option('custom_qa_restricted_urls', $restricted_urls);
+                
+        }
+    } catch (Exception $e) {
+        // just in case, otherwise will tell users that it failed to save the post, would rather fail silently (but shouldn't)
+    }
+}
