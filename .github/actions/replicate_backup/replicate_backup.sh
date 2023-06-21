@@ -65,7 +65,11 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     # Import site
     NAMESPACE="c0cce6-$ENVIRONMENT"
     OC_ENV=$ENVIRONMENT
-    OC_SITE_NAME=digital-$SITE_NAME
+    if [ "$SITE_NAME" = "digital" ]; then
+        OC_SITE_NAME="digital"
+    else
+        OC_SITE_NAME="digital-$SITE_NAME"
+    fi
     WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
     WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
