@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
-      - name: Deploy theme and plugins
+      - name: Check for new WordPress Docker image
         uses: ./.github/actions/update_wordpress
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

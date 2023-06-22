@@ -87,7 +87,7 @@ if ( defined( 'WP_CLI' ) ) {
 
             
             $clientSecret = $args[0];
-            $siteURL =  $args[1];
+            $siteURL =  'https://'.$args[2];
             $ssoURI='n/a';
             switch ($args[1]) {
                 case 'test':

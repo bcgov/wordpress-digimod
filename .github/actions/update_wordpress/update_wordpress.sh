@@ -3,11 +3,6 @@
 # GITHUB_TOKEN=$1
 # TOOLS_TOKEN=$2
 # OPENSHIFT_SERVER=$3
-# DEV_TOKEN=$4
-# TEST_TOKEN=$5
-# PROD_TOKEN=$6
-# # Log in to OpenShift
-# oc login $OPENSHIFT_SERVER --token=$TOOLS_TOKEN --insecure-skip-tls-verify=true
 
 # Define the environment variables
 GITHUB_TOKEN=${GITHUB_TOKEN}
@@ -39,16 +34,9 @@ if [[ "$current_version" != "$latest_version" ]]; then
 
     echo "latest "$latest_version
     # Update the Dockerfile on GitHub
-    # curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
-    # -d "{\"message\":\"Update to latest WordPress version\",\"content\":\"$updated_base64_dockerfile_content\",\"sha\":\"$current_sha\"}" \
-    # $GITHUB_API_URL
-
-    # Update the image on openshift
-    # oc process -f https://github.com/repos/bcgov/wordpress-deploy-digimod/contents/deployments/kustomize/overlays/openshift/images/image-builds | oc apply -f -
+    curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
+    -d "{\"message\":\"Update to latest WordPress version\",\"content\":\"$updated_base64_dockerfile_content\",\"sha\":\"$current_sha\"}" \
+    $GITHUB_API_URL
 fi
-# Trigger the WordPress Build workflow
-# GITHUB_WORKFLOW_API_URL="https://api.github.com/repos/bcgov/wordpress-deploy-digimod/actions/workflows/wordpress-build.yaml/dispatches"
 
-# curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
-#     -d '{"ref":"main"}' \
-#     $GITHUB_WORKFLOW_API_URL
+
