@@ -93,6 +93,10 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
     #perform the restore
     echo "Running restore"
+    echo $NAMESPACE
+    echo $WORDPRESS_CONTAINER_NAME
+    echo $WORDPRESS_POD_NAME
+    
     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar ai1wm restore wp-backup.wpress"
 
     #activate the plugins

@@ -191,7 +191,7 @@ function digimod_qa_toggle( $request ) {
     // Check if the URL is not in the array
     $added = false;
     $url_to_add = $path;
-    if (!in_array($url_to_add, $restricted_page_urls)) {
+    if (!in_array($url_to_add, $restricted_page_urls) && $url_to_add!="/") {
         // If it's not in the array, add it
         $added=true;
         $restricted_page_urls[] = $url_to_add;
