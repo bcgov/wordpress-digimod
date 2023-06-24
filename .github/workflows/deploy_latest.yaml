@@ -34,9 +34,10 @@ jobs:
           NAMESPACE="c0cce6-dev"
           OC_ENV=dev
           OC_SITE_NAME=digital-latest
-          WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-          WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
-          if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
+          pods=oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME}
+          if [ -n "$pods" ]; then
+              WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+              WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
               oc delete secrets ${OC_SITE_NAME}-wordpress-secrets -n $NAMESPACE  
               oc delete -k ./deployments/kustomize/overlays/digital-latest
           fi   
