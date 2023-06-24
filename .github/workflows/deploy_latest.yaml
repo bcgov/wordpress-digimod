@@ -24,8 +24,6 @@ jobs:
           else
               echo "{status}={failure}" >> $GITHUB_OUTPUT
           fi
-      - name: print status
-        run:  echo ${{ steps.check_status.outputs.status }}
       - name: Deploy to latest
         if:  ${{ steps.check_status.outputs.status }} == 'success'
         run: |
@@ -35,7 +33,7 @@ jobs:
           # Delete existing deployment, if it exists
           NAMESPACE="c0cce6-dev"
           OC_ENV=dev
-          OC_SITE_NAME=digital-dev
+          OC_SITE_NAME=digital-latest
           WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
           WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
           if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
