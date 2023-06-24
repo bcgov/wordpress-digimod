@@ -24,9 +24,10 @@ jobs:
           else
               echo "{status}={failure}" >> $GITHUB_OUTPUT
           fi
-          
+      - name: print status
+        run:  echo ${{ steps.check_status.outputs.status }}
       - name: Deploy to latest
-        if: steps.check_status.outputs.status == 'success'
+        if:  ${{ steps.check_status.outputs.status }} == 'success'
         run: |
           oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_DEV_API_TOKEN }} --insecure-skip-tls-verify=true
 
@@ -76,7 +77,7 @@ jobs:
           #Perform a site install
           oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar core install --url=${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca --title="${OC_SITE_NAME}.gov.bc.ca Testing Framework" --admin_user=tester --admin_password=tester --admin_email=info@example.com
       - name: Replicate Production
-        if: steps.check_status.outputs.status == 'success'
+        if:  ${{ steps.check_status.outputs.status }} == 'success'
         uses: ./.github/actions/replicate_prod
         with:
           environment: dev
