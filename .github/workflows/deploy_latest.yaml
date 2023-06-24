@@ -44,7 +44,7 @@ jobs:
 
           # Create new WordPress instance
           
-          oc process -p ENV_NAME=dev -p SITE_NAME=latest -f openshift/templates/secrets/wordpress-secrets.yaml | oc apply -f -
+          oc process -p ENV_NAME=dev -p SITE_NAME=$OC_SITE_NAME -f openshift/templates/secrets/wordpress-secrets.yaml | oc apply -f -
           oc apply -k ./deployments/kustomize/overlays/digital-latest
 
           # Wait for WordPress pod to be running
