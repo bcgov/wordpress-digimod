@@ -9,6 +9,8 @@ jobs:
   poll:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Check workflow status
         id: check_status
         run: |
