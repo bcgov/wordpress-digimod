@@ -17,6 +17,7 @@ jobs:
           # Get the status of the latest run of workflow from the other repo
           status=$(curl --location --request GET 'https://api.github.com/repos/bcgov/wordpress-deploy-digimod/actions/workflows/46272733/runs' | jq '.workflow_runs[0].conclusion' )
 
+          echo "Last build run: "$status
           # Check if the workflow was successful
           if [ "$status" == "success" ]; then
               echo "{status}={success}" >> $GITHUB_OUTPUT
