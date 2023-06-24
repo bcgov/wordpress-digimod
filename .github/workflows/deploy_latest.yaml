@@ -30,7 +30,7 @@ jobs:
         if:  ${{ steps.check_status.outputs.status }} == 'success'
         run: |
           oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_DEV_API_TOKEN }} --insecure-skip-tls-verify=true
-
+          cd wordpress-deploy-digimod
           # Delete existing deployment, if it exists
           NAMESPACE="c0cce6-dev"
           OC_ENV=dev
@@ -43,7 +43,7 @@ jobs:
           fi   
 
           # Create new WordPress instance
-          cd wordpress-deploy-digimod
+          
           oc process -p ENV_NAME=dev -p SITE_NAME=latest -f openshift/templates/secrets/wordpress-secrets.yaml | oc apply -f -
           oc apply -k ./deployments/kustomize/overlays/digital-latest
 
