@@ -30,6 +30,7 @@ jobs:
         if:  ${{ steps.check_status.outputs.status }} == 'success'
         run: |
           oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_DEV_API_TOKEN }} --insecure-skip-tls-verify=true
+          git clone -b digimod-deploy https://github.com/bcgov/wordpress-deploy-digimod.git
           cd wordpress-deploy-digimod
           # Delete existing deployment, if it exists
           NAMESPACE="c0cce6-dev"
