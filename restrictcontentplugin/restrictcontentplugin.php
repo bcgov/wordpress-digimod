@@ -81,20 +81,21 @@ add_action( 'login_init', 'my_login_init' );
 
 function my_homepage_redirect() {
     // Check if user is on the home page
-	#echo 'The login_redirect filter fired. checking cookie';
     if ( is_front_page()) {
-		#echo 'The my_homepage_redirect filter fired. is home';
         // Check if the my_login_redirect cookie is set
         if ( isset( $_COOKIE['my_login_redirect'] ) ) {
             // Get the URL from the cookie
-			#echo 'The my_homepage_redirect filter fired. Redirecting user.';
             $redirect_url = $_COOKIE['my_login_redirect'];
 			// Delete the my_login_redirect cookie
             unset( $_COOKIE['my_login_redirect'] );
             setcookie( 'my_login_redirect', '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN );
-            // Redirect to the URL
-            wp_redirect( $redirect_url );
-            exit;
+            # we only want to actually redirect if being referred by SSO
+            # referer only exists if navigating by link - redirect gives no referer
+            if(empty(wp_get_referer())) {
+                error_log(print_r( 'is empty', true));
+                wp_redirect( $redirect_url );
+                exit;
+            }         
         }
     }
 }
