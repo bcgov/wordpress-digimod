@@ -13,6 +13,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Beta testing - run only on specific pages
 function qa_runOnClient(){
     global $post;
     if ( !isset( $post ) ) { // global post object is not set - do not run qa functionality on this page (for example 404)
@@ -29,6 +30,7 @@ function qa_runOnClient(){
     }
 }
 
+// Beta testing - run only on specific pages
 function qa_runOnAdmin(){
     global $post;
 
@@ -38,6 +40,40 @@ function qa_runOnAdmin(){
     }
     return false;
 }
+
+function qa_enqueue_admin_script($hook) {
+    global $typenow;
+
+    // Don't load for the block editor (Gutenberg)
+    if ($hook === 'post.php' || $hook === 'post-new.php') {
+        return;
+    }
+    
+    if ($typenow=="wcag"){ // todo: remove this once out of beta
+        // If user has "restrict_publish_to_qa_only" capability, then enqeue the script that modifies the admin interface
+        // Will hide published posts from view and only leave rewrite-republish posts (if exists)
+        // if they don't exist, then will replace the edit button to act as a rewrite and republish button
+        $current_user = wp_get_current_user();
+        $role = $current_user->roles[0]; 
+        if (current_user_can('restrict_publish_to_qa_only') && $role!='administrator'){
+            wp_enqueue_script( 'qa_admin', plugin_dir_url( __FILE__ ) . 'qa-admin.js', array( 'jquery' ), '1.0', true );
+        }
+        
+    }
+}
+
+// Hook into the 'admin_enqueue_scripts' action
+add_action('admin_enqueue_scripts', 'qa_enqueue_admin_script');
+
+
+function qa_enqueue_admin_script_all() {
+    global $typenow;
+    if ($typenow=="wcag"){ // todo: remove this once out of beta
+        wp_enqueue_script( 'qa-admin-all', plugin_dir_url( __FILE__ ) . 'qa-admin-all.js', array( 'jquery', 'wp-edit-post' ), '1.0', true );
+    }
+}
+add_action( 'admin_enqueue_scripts', 'qa_enqueue_admin_script_all' );
+
 
 function qa_runOnAdmin_checkPostID($postId){
     $post_type = get_post_type($postId);
@@ -83,22 +119,36 @@ function user_can_publish_any() {
 }
 
 // this will remove "clone" and "new draft" buttons for non-admin users (while leaving "rewrite and republish")
-function my_admin_style() {
+function qa_my_admin_style($hook) {
+    global $typenow;
     global $post;
     $current_user = wp_get_current_user();
     $role = null;
-    if ( !empty( $current_user->roles ) ) {
-        // The user has roles, so we'll get the first one (users can have multiple roles)
-        $role = $current_user->roles[0]; 
-        if ($role!='administrator'){
-            // not admin - hide publish button
-            // wp_enqueue_style('my-admin-style', get_template_directory_uri() . '/css/remove-clone-and-new-draft.css');
-            wp_enqueue_style( 'hide-clone-and-new-draft',plugin_dir_url( __FILE__ ) . 'remove-clone-and-new-draft.css', false, '1.0', 'all' );
-        }
-    }
+    // if ( !empty( $current_user->roles ) ) {
+    //     // The user has roles, so we'll get the first one (users can have multiple roles)
+    //     $role = $current_user->roles[0]; 
+    //     if ($role!='administrator'){
+    //         // not admin - hide publish button
+    //         // wp_enqueue_style('my-admin-style', get_template_directory_uri() . '/css/remove-clone-and-new-draft.css');
+
+            if ($hook === 'post.php' || $hook === 'post-new.php') {
+                return;
+            }
+            
+            if ($typenow=="wcag"){ // todo: remove this once out of beta
+                wp_enqueue_style( 'hide-clone-and-new-draft',plugin_dir_url( __FILE__ ) . 'remove-clone-and-new-draft.css', false, '1.0', 'all' );
+                $current_user = wp_get_current_user();
+                $role = $current_user->roles[0]; 
+                if (current_user_can('restrict_publish_to_qa_only') && $role!='administrator'){ // hide rewrite and republish option for contributors
+                    wp_enqueue_style( 'hide-rewrite-republish',plugin_dir_url( __FILE__ ) . 'remove-rewrite-republish.css', false, '1.0', 'all' );
+                }
+
+            }
+    //     }
+    // }
     
 }
-add_action('admin_enqueue_scripts', 'my_admin_style');
+add_action('admin_enqueue_scripts', 'qa_my_admin_style');
 
 // Add editor style
 function qa_enqueue_block_editor_styles() {
@@ -146,9 +196,7 @@ add_action( 'enqueue_block_editor_assets', 'qa_enqueue_block_editor_styles' );
 // API endpoint for toggling QA publish status
 
 function digimod_qa_toggle( $request ) {
-    // global $post;
     $data =  $request->get_body_params();
-
     $postId = $data['postId'];
     $post = get_post( $postId );
 
@@ -157,65 +205,64 @@ function digimod_qa_toggle( $request ) {
         return;
     }
 
-    // Check if the post exists and is published
     $unpublish = false;
     if ( 'publish' !== get_post_status( $postId ) ) {
-        // echo('published\r\n');
-        // wp_publish_post( $post );
         $updated_post = array(
             'ID' => $postId,
             'post_status' => 'publish',
         );
     
-        wp_update_post( $updated_post, true );
+         // Temporarily remove the action
+         remove_action('transition_post_status', 'qa_restrict_publish_to_qa_only', 10);
+        
+         try{
+            wp_update_post( $updated_post, true );
+         }catch(Exception $e){}
+         
+         // Add the action back
+         add_action('transition_post_status', 'qa_restrict_publish_to_qa_only', 10, 3);
 
     }else{
         $unpublish = true;
     }
 
-    $current_url = get_permalink($postId);
+    // Get the restricted post IDs from the saved settings
+    $restricted_posts = get_option('custom_qa_restricted_urls', '');
 
-    // echo('postId: '.$postId.'\r\n');
-    // echo('permalink: '. $current_url.'\r\n');
+    // Convert the saved IDs to an array
+    $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
 
-    $path = parse_url($current_url, PHP_URL_PATH);
-
-    // Get the restricted URLs from the saved settings
-    $restricted_urls = get_option('custom_qa_restricted_urls', '');
-
-    // Convert the saved URLs to an array
-    $restricted_page_urls = array_filter(array_map('trim', explode(PHP_EOL, $restricted_urls)));
-    // echo("before: ");
-    // print_r($restricted_page_urls);
-
-    // Check if the URL is not in the array
+    // Check if the ID is not in the array
     $added = false;
-    $url_to_add = $path;
-    if (!in_array($url_to_add, $restricted_page_urls) && $url_to_add!="/") {
+    $removed = false;
+    if (!in_array($postId, $restricted_post_ids)) {
         // If it's not in the array, add it
         $added=true;
-        $restricted_page_urls[] = $url_to_add;
+        $restricted_post_ids[] = $postId;
     }else{
         // If it's in the array, remove it
-        
-        $url_index = array_search($url_to_add, $restricted_page_urls);
-        // echo('$url_to_add: '.$url_to_add);
-        // echo('unsetting: '. $url_index);
-        unset($restricted_page_urls[$url_index]);
+        $removed = true;
+        $post_index = array_search($postId, $restricted_post_ids);
+        unset($restricted_post_ids[$post_index]);
     }
 
-    // Convert the array back into a string, with each URL on a new line
-    // echo('after: ');
-    // print_r($restricted_page_urls);
-    $restricted_urls = implode(PHP_EOL, $restricted_page_urls);
+    // Convert the array back into a string, with each ID on a new line
+    $restricted_posts = implode(PHP_EOL, $restricted_post_ids);
 
-    // Save the updated list of URLs
-    update_option('custom_qa_restricted_urls', $restricted_urls);
+    // Save the updated list of post IDs
+    update_option('custom_qa_restricted_urls', $restricted_posts);
 
+    // echo('unpublish is: ');
+    // echo($unpublish?'true':'false');
     if ($unpublish){
         // Unpublish the post
         $post->post_status = 'draft';
         wp_update_post($post);
+    }
+
+    if (!$unpublish && $removed){
+        // this should not happen, but may because of js race condition or the like:
+        // we removed the entry from the plugin, but we are not unpublishing??
     }
 
     // Return a response
@@ -242,47 +289,35 @@ function digimod_qa_remove_qa_lock( $request ) {
         // The user has roles, so we'll get the first one (users can have multiple roles)
         $role = $current_user->roles[0]; 
         if ($role=='administrator'){
-            // global $post;
             $data =  $request->get_body_params();
 
             $postId = $data['postId'];
             $post = get_post( $postId );
 
+            // Get the restricted post IDs from the saved settings
+            $restricted_posts = get_option('custom_qa_restricted_urls', '');
 
-            $current_url = get_permalink($postId);
-            $path = parse_url($current_url, PHP_URL_PATH);
+            // Convert the saved IDs to an array
+            $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
 
-            // Get the restricted URLs from the saved settings
-            $restricted_urls = get_option('custom_qa_restricted_urls', '');
-
-            // Convert the saved URLs to an array
-            $restricted_page_urls = array_filter(array_map('trim', explode(PHP_EOL, $restricted_urls)));
-
-            $url_to_add = $path;
-            if (!in_array($url_to_add, $restricted_page_urls)) {
+            if (!in_array($postId, $restricted_post_ids)) {
 
             }else{
                 // If it's in the array, remove it
-                
-                $url_index = array_search($url_to_add, $restricted_page_urls);
-                // echo('$url_to_add: '.$url_to_add);
-                // echo('unsetting: '. $url_index);
-                unset($restricted_page_urls[$url_index]);
+                $post_index = array_search($postId, $restricted_post_ids);
+                unset($restricted_post_ids[$post_index]);
             }
 
-            // Convert the array back into a string, with each URL on a new line
-            // echo('after: ');
-            // print_r($restricted_page_urls);
-            $restricted_urls = implode(PHP_EOL, $restricted_page_urls);
+            // Convert the array back into a string, with each ID on a new line
+            $restricted_posts = implode(PHP_EOL, $restricted_post_ids);
 
-            // Save the updated list of URLs
-            update_option('custom_qa_restricted_urls', $restricted_urls);
+            // Save the updated list of post IDs
+            update_option('custom_qa_restricted_urls', $restricted_posts);
 
             // Return a response
             return new WP_REST_Response( array(
                 'status' => 'ok',
             ), 200 );
-            
         }
     }
 }
@@ -358,28 +393,23 @@ add_action( 'rest_api_init', function () {
 function digimod_qa_get_status($request) {
     global $post;
 
-
     $data =  $request->get_body_params();
+    $postId = $data['postId'];
 
-    $current_url = get_permalink($data['postId']);
-    $path = parse_url($current_url, PHP_URL_PATH);
-
-    
     // get post status, e.g. "publish"
-    $postStatus = get_post_status( $data['postId'] );
+    $postStatus = get_post_status( $postId );
 
     // check if the post is a "rewrite and republish" post
-    $is_rewrite_and_republish = !empty(get_post_meta( $data['postId'], '_dp_original', true ));
+    $is_rewrite_and_republish = !empty(get_post_meta( $postId, '_dp_original', true ));
 
-    // Get the restricted URLs from the saved settings
-    $restricted_urls = get_option('custom_qa_restricted_urls', '');
+    // Get the restricted post IDs from the saved settings
+    $restricted_posts = get_option('custom_qa_restricted_urls', '');
 
-    // Convert the saved URLs to an array
-    $restricted_page_urls = array_filter(array_map('trim', explode(PHP_EOL, $restricted_urls)));
+    // Convert the saved IDs to an array
+    $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
 
-    // Check if the URL is not in the array
-    $url_to_add = $path;
-    if (!in_array($url_to_add, $restricted_page_urls)) {
+    // Check if the post ID is not in the array
+    if (!in_array($postId, $restricted_post_ids)) {
         // it's not in the array
         return new WP_REST_Response( array(
             'status' => false,
@@ -396,35 +426,14 @@ function digimod_qa_get_status($request) {
         ), 200 );
     }
 
-    // Convert the array back into a string, with each URL on a new line
-    $restricted_urls = implode(PHP_EOL, $restricted_page_urls);
+    // Convert the array back into a string, with each ID on a new line
+    $restricted_posts = implode(PHP_EOL, $restricted_post_ids);
 
-    // Save the updated list of URLs
-    update_option('custom_qa_restricted_urls', $restricted_urls);
+    // Save the updated list of post IDs
+    update_option('custom_qa_restricted_urls', $restricted_posts);
 
-    // Make sure user is logged in
-    // if ( ! is_user_logged_in() ) {
-    //     return new WP_Error( 'not_logged_in', 'You must be logged in to access this endpoint.', array( 'status' => 401 ) );
-    // }
-    
-    // Make sure user has the 'editor' role. Replace 'editor' with the role you want to check for.
-    // $user = wp_get_current_user();
-    // if ( ! in_array( 'editor', (array) $user->roles ) ) {
-    //     return new WP_Error( 'not_authorized', 'You do not have access to this endpoint.', array( 'status' => 403 ) );
-    // }
-
-    // $post_id = ... // The ID of the post or page you want to check
-
-    // if ( current_user_can( 'edit_post', $post_id ) ) {
-    //     // The user can edit the post or page
-    // } else {
-    //     // The user cannot edit the post or page
-    // }
-
-
-    // Handle the request here. $request contains the data sent in the request.
-    // For example, to get JSON data sent in the request, you could do:
-    // $data = json_decode($request->get_body());
+    // The rest of the commented code can stay as is, 
+    // as it seems unrelated to the switch from URLs to post IDs.
 }
 
 add_action( 'rest_api_init', function () {
@@ -455,8 +464,8 @@ function serve_rewrite_and_republish_version($post_object) {
         }
 
         // Get the post types for which the "rewrite & republish" feature is enabled
+        $bannerShown = false;
         $enabled_post_types = get_option( 'duplicate_post_types_enabled', array() );
-
         if ( in_array( $post_object->post_type, $enabled_post_types ) ) {
             // Check if there is a "rewrite & republish" version of the current post
             $republished_posts = get_posts( array(
@@ -468,9 +477,10 @@ function serve_rewrite_and_republish_version($post_object) {
             ) );
 
             if ( !empty( $republished_posts ) ) {
+                $bannerShown=true;
                 // There is a "rewrite & republish" version of the post, so serve it instead
                 $post_object = $republished_posts[0];
-                add_action( 'wp_enqueue_scripts', 'enqueue_custom_js' );
+                add_action( 'wp_enqueue_scripts', 'qa_enqueue_custom_js' );
                 $post_object->post_content = '<div style="
                     display:none;
                     text-align: center;
@@ -483,13 +493,72 @@ function serve_rewrite_and_republish_version($post_object) {
                 setup_postdata( $post_object );
             }
         }
+
+        // if(!$bannerShown){
+        //     // check if this is a regular QA post - also include banner
+        //     $postId = $post_object->ID;
+
+        //     // Get the restricted post IDs from the saved settings
+        //     $restricted_posts = get_option('custom_qa_restricted_urls', '');
+        
+        //     // Convert the saved IDs to an array
+        //     $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
+        
+        //     // Check if the post ID is not in the array
+        //     if (in_array($postId, $restricted_post_ids)) {
+        //         add_action( 'wp_enqueue_scripts', 'qa_enqueue_custom_js' );
+        //         $post_object->post_content = '<div style="
+        //             display:none;
+        //             text-align: center;
+        //             background: #ff6200;
+        //             z-index: 999;
+        //             position: relative;
+        //             font-weight: bold;
+        //             color: white;
+        //             padding: 10px;" id="qa-notification">You are viewing a QA version of the page</div>' . $post_object->post_content; // Prepend custom HTML
+        //         setup_postdata( $post_object );
+        //     }
+        // }
     }
     
     return $post_object;
 }
 add_action( 'the_post', 'serve_rewrite_and_republish_version' );
 
-function enqueue_custom_js() {
+
+function add_custom_html_to_content($content) {
+    global $post;
+    $postId = $post->ID;
+
+    // Get the restricted post IDs from the saved settings
+    $restricted_posts = get_option('custom_qa_restricted_urls', '');
+
+    // Convert the saved IDs to an array
+    $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
+
+    // Check if the post ID is not in the array
+    if (in_array($postId, $restricted_post_ids)) {
+
+        add_action( 'wp_enqueue_scripts', 'qa_enqueue_custom_js' );
+        $custom_html = '<div style="
+                        display:none;
+                        text-align: center;
+                        background: #ff6200;
+                        z-index: 999;
+                        position: relative;
+                        font-weight: bold;
+                        color: white;
+                        padding: 10px;" id="qa-notification">You are viewing a QA version of the page</div>';
+        
+        // Only add custom HTML for single posts.
+        $content = $custom_html . $content;
+    }
+
+    return $content;
+}
+add_filter('the_content', 'add_custom_html_to_content');
+
+function qa_enqueue_custom_js() {
     wp_register_script('custom_js', false);
     wp_enqueue_script('custom_js');
     wp_add_inline_script('custom_js', '
@@ -565,25 +634,25 @@ function qa_custom_redirect_to_login() {
         return;
     }
 
-    // Get the restricted URLs from the saved settings
-    $restricted_urls = get_option('custom_qa_restricted_urls', '');
+    // Get the restricted post IDs from the saved settings
+    $restricted_posts = get_option('custom_qa_restricted_urls', '');
 
-    // Convert the saved URLs to an array
-    $restricted_page_urls = array_filter(array_map('trim', explode(PHP_EOL, $restricted_urls)));
+    // Convert the saved IDs to an array
+    $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
 
-    // Get the current page URL path
-    $current_page_url = strtok($_SERVER["REQUEST_URI"], '?');
+    // Get the current page post ID
+    $current_page_id = get_queried_object_id();
 
-    if (!current_user_can('view_qa') && in_array($current_page_url, $restricted_page_urls) && is_user_logged_in() ) {
+    if (!current_user_can('view_qa') && in_array($current_page_id, $restricted_post_ids) && is_user_logged_in() ) {
         // user is logged in, but can't view_qa, means this is a regular user, so redirect to home
         wp_redirect('/');
         exit;
     }
 
     // Check if the current page is restricted and the user is not logged in
-    if (in_array($current_page_url, $restricted_page_urls) && !is_user_logged_in()) {
+    if (in_array($current_page_id, $restricted_post_ids) && !is_user_logged_in()) {
         // Get the login URL
-        $login_url = wp_login_url(home_url($current_page_url));
+        $login_url = wp_login_url(get_permalink($current_page_id));
 
         // Redirect the user to the login URL
         wp_redirect($login_url);
@@ -612,83 +681,85 @@ function qa_display_custom_state($states) {
 
     $postId = $post->ID;
 
-    $current_url = get_permalink($postId);
+    // Get the restricted post IDs from the saved settings
+    $restricted_posts = get_option('custom_qa_restricted_urls', '');
 
-    // echo('postId: '.$postId.'\r\n');
-    // echo('permalink: '. $current_url.'\r\n');
+    // Convert the saved IDs to an array
+    $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
 
-    $path = parse_url($current_url, PHP_URL_PATH);
-
-    // Get the restricted URLs from the saved settings
-    $restricted_urls = get_option('custom_qa_restricted_urls', '');
-
-    // Convert the saved URLs to an array
-    $restricted_page_urls = array_filter(array_map('trim', explode(PHP_EOL, $restricted_urls)));
-    // echo("before: ");
-    // print_r($restricted_page_urls);
-
-    // Check if the URL is not in the array
-    $url_to_add = $path;
-    if (in_array($url_to_add, $restricted_page_urls)) {
+    // Check if the post ID is in the array
+    if (in_array($postId, $restricted_post_ids)) {
         return array('QA');
     }
-    // $arg = get_query_var( 'post_status' );
-    
-    // if($arg !== 'qa'){
-    //     if($post->post_status == 'qa'){
-    //         return array('QA');
-    //     }
-    // }
+
     return $states;
 }
 add_filter( 'display_post_states', 'qa_display_custom_state' );
 
 
 // detect a change in permalink - if user changed the permalink, make sure we delete old entry and add new permalink
-add_action( 'post_updated', 'qa_detect_permalink_change', 10, 3 );
+// add_action( 'post_updated', 'qa_detect_permalink_change', 10, 3 );
 
-function qa_detect_permalink_change( $post_ID, $post_after, $post_before ) {
-    try{
-        if (!qa_runOnAdmin_checkPostID($post_ID)){
-            return;
-        }
+// function qa_detect_permalink_change( $post_ID, $post_after, $post_before ) {
+//     try{
+//         if (!qa_runOnAdmin_checkPostID($post_ID)){
+//             return;
+//         }
 
-        if ($post_before->post_status == 'draft' && $post_after->post_status == 'publish') {
-            // The post has just been published for the first time
-            return;
-        }
+//         if ($post_before->post_status == 'draft' && $post_after->post_status == 'publish') {
+//             // The post has just been published for the first time
+//             return;
+//         }
 
-        // Get old and new permalinks
-        $old_permalink = get_permalink($post_before);
-        $new_permalink = get_permalink($post_after);
+//         // Get old and new permalinks
+//         $old_permalink = get_permalink($post_before);
+//         $new_permalink = get_permalink($post_after);
 
-        // Parse the paths from the permalinks
-        $old_path = parse_url($old_permalink, PHP_URL_PATH);
-        $new_path = parse_url($new_permalink, PHP_URL_PATH);
+//         // Parse the paths from the permalinks
+//         $old_path = parse_url($old_permalink, PHP_URL_PATH);
+//         $new_path = parse_url($new_permalink, PHP_URL_PATH);
 
         
-        // Compare the old and new paths
-        if ($old_path != $new_path) {
-                // Get the restricted URLs from the saved settings
-                $restricted_urls = get_option('custom_qa_restricted_urls', '');
+//         // Compare the old and new paths
+//         if ($old_path != $new_path && $new_path!="/") {
+//                 // Get the restricted URLs from the saved settings
+//                 $restricted_urls = get_option('custom_qa_restricted_urls', '');
 
-                // Convert the saved URLs to an array
-                $restricted_page_urls = array_filter(array_map('trim', explode(PHP_EOL, $restricted_urls)));
-                // echo("before: ");
-                // print_r($restricted_page_urls);
+//                 // Convert the saved URLs to an array
+//                 $restricted_page_urls = array_filter(array_map('trim', explode(PHP_EOL, $restricted_urls)));
+//                 // echo("before: ");
+//                 // print_r($restricted_page_urls);
 
-                $restricted_page_urls[] = $new_path;
+//                 $restricted_page_urls[] = $new_path;
             
-                $url_index = array_search($old_path, $restricted_page_urls);
-                unset($restricted_page_urls[$url_index]);
+//                 $url_index = array_search($old_path, $restricted_page_urls);
+//                 unset($restricted_page_urls[$url_index]);
                 
-                $restricted_urls = implode(PHP_EOL, $restricted_page_urls);
+//                 $restricted_urls = implode(PHP_EOL, $restricted_page_urls);
 
-                // Save the updated list of URLs
-                update_option('custom_qa_restricted_urls', $restricted_urls);
+//                 // Save the updated list of URLs
+//                 update_option('custom_qa_restricted_urls', $restricted_urls);
                 
+//         }
+//     } catch (Exception $e) {
+//         // just in case, otherwise will tell users that it failed to save the post, would rather fail silently (but shouldn't)
+//     }
+// }
+
+
+// Prevent users that have publishing ability for the purposes of qa, but were assigned restrict_publish_to_qa_only from publishing to production
+// the only publishing that should happen for these users is via the digimod_qa_toggle function
+function qa_restrict_publish_to_qa_only($new_status, $old_status, $post) {
+    if ($new_status == 'publish' && $old_status  !=  $new_status) {
+        $user = wp_get_current_user();
+
+        // If the user has the 'restrict_publish_to_qa_only' capability and they're not an administrator
+        if (in_array('restrict_publish_to_qa_only', (array) $user->allcaps) && !in_array('administrator', (array) $user->roles)) {
+            // Prevent the user from publishing the page
+            $post->post_status = $old_status;  // Change the post status to $old_status
+            wp_update_post($post);
+            wp_die('QA Plugin - Sorry, you are not allowed to publish pages on this site.'); // Stop the script
         }
-    } catch (Exception $e) {
-        // just in case, otherwise will tell users that it failed to save the post, would rather fail silently (but shouldn't)
     }
 }
+add_action('transition_post_status', 'qa_restrict_publish_to_qa_only', 10, 3);
