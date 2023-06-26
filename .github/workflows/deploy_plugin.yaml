@@ -22,17 +22,17 @@ jobs:
         uses: actions/checkout@v2
       - name: Deploy plugin
         run: |
-          ENVIRONMENT = ${{ github.event.inputs.environment }}
+          ENVIRONMENT=${{ github.event.inputs.environment }}
           echo "Deploying to $ENVIRONMENT"
           case "$ENVIRONMENT" in
               "dev")
-              token=$DEV_TOKEN
+              token=${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
               ;;
               "test")
-              token=$TEST_TOKEN
+              token=${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
               ;;
               "prod")
-              # token=$PROD_TOKEN
+              # token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
               echo "For safety reasons, we won't run this action on prod!"
               exit 1
               ;;
@@ -42,7 +42,7 @@ jobs:
               ;;
           esac
           oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
-          plugin = ${{ github.event.inputs.plugin }}
+          plugin=${{ github.event.inputs.plugin }}
           if [ -d "$plugin" ]; then
             NAMESPACE="c0cce6-$ENVIRONMENT"
             OC_SITE_NAME=digital-${{ github.event.inputs.site-name }}
