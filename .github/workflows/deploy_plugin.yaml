@@ -52,8 +52,6 @@ jobs:
             WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
             cd $plugin
-            if [ -f package.json ]; then
-
             tar -cf $plugin.tar --exclude=./.github --exclude=node_modules ./*/
             oc cp --no-preserve $plugin.tar $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/$plugin.tar -c $WORDPRESS_CONTAINER_NAME
             oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -xf /var/www/html/wp-content/plugins/$plugin.tar -C /var/www/html/wp-content/plugins
