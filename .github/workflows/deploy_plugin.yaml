@@ -43,6 +43,8 @@ jobs:
           esac
           oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
           plugin=${{ github.event.inputs.plugin }}
+          echo #plugin
+          ls
           if [ -d "$plugin" ]; then
             NAMESPACE="c0cce6-$ENVIRONMENT"
             OC_SITE_NAME=digital-${{ github.event.inputs.site-name }}
