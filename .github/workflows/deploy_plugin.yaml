@@ -32,9 +32,7 @@ jobs:
               token=${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
               ;;
               "prod")
-              # token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
-              echo "For safety reasons, we won't run this action on prod!"
-              exit 1
+              token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
               ;;
               *)
               echo "Unknown environment: $ENVIRONMENT"
@@ -43,9 +41,9 @@ jobs:
           esac
           oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
           plugin=${{ github.event.inputs.plugin }}
-          echo #plugin
-          ls
+
           if [ -d "$plugin" ]; then
+            echo deploying $plugin
             NAMESPACE="c0cce6-$ENVIRONMENT"
             OC_SITE_NAME=digital-${{ github.event.inputs.site-name }}
             WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l  app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
@@ -55,6 +53,7 @@ jobs:
             tar -cf $plugin.tar --exclude=./.github --exclude=node_modules ./*
             oc cp --no-preserve $plugin.tar $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/$plugin.tar -c $WORDPRESS_CONTAINER_NAME
             oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -xf /var/www/html/wp-content/plugins/$plugin.tar -C /var/www/html/wp-content/plugins/$plugin
+            echo $plugin deployed successfully.
           else  
             echo "plugin $plugin does not exist."
             exit 1
