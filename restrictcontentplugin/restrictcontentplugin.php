@@ -64,20 +64,20 @@ function filter_protected_blocks($block_content, $block) {
 
 add_filter('render_block', 'filter_protected_blocks', 10, 2);
 
-function my_login_init() {
-    if(isset($_REQUEST['redirect_to'])){
-        $redirect_url = $_REQUEST['redirect_to'];
-		#echo 'The login init filter fired. setting cookie';
-        #set the cookie duration for 5 minutes
-        setcookie( 'my_login_redirect', $redirect_url, time() + ( 5 * 60 ), COOKIEPATH, COOKIE_DOMAIN );
-    }
-	if ( $_SERVER['REQUEST_URI'] == wp_login_url() || $_SERVER['REQUEST_URI'] == site_url( '/wp-login.php', 'login' ) ) {
-        #echo 'login page - redirecting';
-		wp_redirect( site_url( '/?option=oauthredirect&app_name=keycloak' ) );
-        exit();
-    }
-}
-add_action( 'login_init', 'my_login_init' );
+// function my_login_init() {
+//     if(isset($_REQUEST['redirect_to'])){
+//         $redirect_url = $_REQUEST['redirect_to'];
+// 		#echo 'The login init filter fired. setting cookie';
+//         #set the cookie duration for 5 minutes
+//         setcookie( 'my_login_redirect', $redirect_url, time() + ( 5 * 60 ), COOKIEPATH, COOKIE_DOMAIN );
+//     }
+// 	if ( $_SERVER['REQUEST_URI'] == wp_login_url() || $_SERVER['REQUEST_URI'] == site_url( '/wp-login.php', 'login' ) ) {
+//         #echo 'login page - redirecting';
+// 		wp_redirect( site_url( '/?option=oauthredirect&app_name=keycloak' ) );
+//         exit();
+//     }
+// }
+// add_action( 'login_init', 'my_login_init' );
 
 function my_homepage_redirect() {
     // Check if user is on the home page
