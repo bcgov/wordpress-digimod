@@ -102,11 +102,11 @@ function my_homepage_redirect() {
 add_action( 'template_redirect', 'my_homepage_redirect' );
 
 /*hide the login fields so users must use Keycloak*/
-function custom_login_styles() {
-    echo '<style>
-        .user-pass-wrap, #user_login,.login label[for="user_login"], .forgetmenot, .submit, #nav {
-            display: none;
-        }
-    </style>';
-}
-add_action( 'login_enqueue_scripts', 'custom_login_styles' );
+// function custom_login_styles() {
+//     echo '<style>
+//         .user-pass-wrap, #user_login,.login label[for="user_login"], .forgetmenot, .submit, #nav {
+//             display: none;
+//         }
+//     </style>';
+// }
+// add_action( 'login_enqueue_scripts', 'custom_login_styles' );
