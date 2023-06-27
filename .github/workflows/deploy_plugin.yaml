@@ -23,6 +23,8 @@ jobs:
       - name: Deploy plugin
         run: |
           ENVIRONMENT=${{ github.event.inputs.environment }}
+          NAMESPACE="c0cce6-$ENVIRONMENT"
+          OC_SITE_NAME=digital-${{ github.event.inputs.site-name }}
           echo "Deploying to $ENVIRONMENT"
           case "$ENVIRONMENT" in
               "dev")
@@ -33,6 +35,7 @@ jobs:
               ;;
               "prod")
               token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
+              OC_SITE_NAME=digital
               ;;
               *)
               echo "Unknown environment: $ENVIRONMENT"
@@ -44,8 +47,7 @@ jobs:
 
           if [ -d "$plugin" ]; then
             echo deploying $plugin
-            NAMESPACE="c0cce6-$ENVIRONMENT"
-            OC_SITE_NAME=digital-${{ github.event.inputs.site-name }}
+
             WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l  app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
             WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
