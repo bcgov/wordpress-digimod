@@ -1,4 +1,4 @@
-name: Rename miniorange plugin contents
+name: Reconfigure SSO
 on:
   workflow_dispatch:
     inputs:
@@ -25,6 +25,8 @@ jobs:
     - name: Rename Miniorange plugin variables
       run: |
         ENVIRONMENT=${{ github.event.inputs.ENVIRONMENT }}
+        SITE_NAME=${{ github.event.inputs.environment }}
+        OC_SITE_NAME=digital-$SITE_NAME
         echo "Deploying to $ENVIRONMENT"
         case "$ENVIRONMENT" in
             "dev")
@@ -50,11 +52,11 @@ jobs:
         WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
         WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
-        $1
+
         siteURL=https://${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca
         ssoURI=''
 
-        case $2 in
+        case $SITE_NAME in
           'dev')
             ssoURI='dev.'
             clientSecret=${{ secrets.KEYCLOAK_DEV_CLIENT_SECRET}}
@@ -76,7 +78,7 @@ jobs:
             clientSecret=${{ secrets.KEYCLOAK_PROD_CLIENT_SECRET}}
             ;;
           *)
-            echo "No SSO integration set up for $2"
+            echo "No SSO integration set up for $SITE_NAME"
             exit 1
             ;;
         esac
