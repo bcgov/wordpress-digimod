@@ -56,6 +56,10 @@ const urlSlug = require('url-slug');
 
 
             cy.document().then((doc) => {
+                // Remove all images todo: for some reason lazy images are still loading in lazy fashion even with attribute removed, causing inconsistent screenshots
+                const imgElements = doc.querySelectorAll('img');
+                imgElements.forEach((element) => element.remove());
+
                 // Remove all elements with class 'is-type-video'
                 const videoElements = doc.querySelectorAll('.is-type-video');
                 videoElements.forEach((element) => element.remove());
