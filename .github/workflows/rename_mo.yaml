@@ -50,6 +50,36 @@ jobs:
         WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
         WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
+        $1
+        siteURL=https://${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca
+        ssoURI=''
+
+        case $2 in
+          'dev')
+            ssoURI='dev.'
+            clientSecret=${{ secrets.KEYCLOAK_DEV_CLIENT_SECRET}}
+            ;;
+          'latest')
+            ssoURI='dev.'
+            clientSecret=${{ secrets.KEYCLOAK_LATEST_CLIENT_SECRET}}
+            ;;
+          'test')
+            ssoURI='test.'
+            clientSecret=${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}}
+            ;;
+          'stage')
+            ssoURI='test.'
+            clientSecret=${{ secrets.KEYCLOAK_STAGE_CLIENT_SECRET}}
+            ;;
+          'prod')
+            ssoURI=''
+            clientSecret=${{ secrets.KEYCLOAK_PROD_CLIENT_SECRET}}
+            ;;
+          *)
+            echo "No SSO integration set up for $2"
+            exit 1
+            ;;
+        esac
 
         #run command to change miniorange plugin variables
-        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo ${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}} ${{ github.event.inputs.SITE-NAME }} ${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca"
+        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo  ${{ github.event.inputs.SITE-NAME }} "

@@ -1,5 +1,5 @@
-name: Deploy Theme and plugins
-description: 'Deploy BC Gov Block Theme and plugins'
+name: Deploy Theme
+description: 'Deploy BC Gov Block Theme'
 inputs:
   environment:
     description: 'Deployment environment'
@@ -45,6 +45,6 @@ runs:
       shell: bash
     - name: Deploy theme and plugins
       run: |
-        chmod +x ./.github/actions/deploy_theme_and_plugins/deploy_theme_and_plugins.sh
-        ./.github/actions/deploy_theme_and_plugins/deploy_theme_and_plugins.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.keycloak-test-client-secret }}"
+        chmod +x ./.github/actions/deploy_theme_and_plugins/deploy_theme.sh
+        ./.github/actions/deploy_theme_and_plugins/deploy_theme.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.keycloak-test-client-secret }}"
       shell: bash

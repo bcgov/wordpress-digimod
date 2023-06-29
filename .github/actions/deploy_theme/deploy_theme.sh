@@ -54,7 +54,6 @@ oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -x
 #oc cp --no-preserve . $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/themes/$THEME_NAME -c $WORDPRESS_CONTAINER_NAME
 oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar theme activate $THEME_NAME --allow-root
 
-# Deploy plugins
 #go back to root of repository 
 cd ..
 tar -cf plugins.tar --exclude=./.github --exclude=node_modules --exclude=./Archive --exclude=./bcgov-wordpress-block-theme-digimod ./*/
