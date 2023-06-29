@@ -31,7 +31,8 @@ module.exports = defineConfig({
       })
 
       // let wordpressSiteUrl ='https://digital-dev.apps.silver.devops.gov.bc.ca/';
-      let envUrl = process.env.SITE || config.env.url;
+      // let envUrl = process.env.SITE || config.env.url;
+      let envUrl = (process && process.env && process.env.SITE) || (config && config.env && config.env.url) || 'prod';
       let wordpressSiteUrl;
 
       if (envUrl === "prod") {
