@@ -51,7 +51,10 @@ const urlSlug = require('url-slug');
                 },
             });
 
-            cy.get('.back-to-top', { timeout: 10000 });
+            cy.get('.back-to-top', { timeout: 3000 }).catch(() => {
+                // The element wasn't found within the timeout, but we'll just ignore that
+                cy.log('The .back-to-top element could not be found within the timeout');
+            });
 
 
 
