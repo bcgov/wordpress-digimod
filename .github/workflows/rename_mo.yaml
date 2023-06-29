@@ -27,7 +27,7 @@ jobs:
         ENVIRONMENT=${{ github.event.inputs.ENVIRONMENT }}
         SITE_NAME=${{ github.event.inputs.environment }}
         OC_SITE_NAME=digital-$SITE_NAME
-        echo "Deploying to $ENVIRONMENT"
+        echo "Deploying to the site $OC_SITE_NAME in $ENVIRONMENT"
         case "$ENVIRONMENT" in
             "dev")
             token=${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
