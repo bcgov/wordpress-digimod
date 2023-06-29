@@ -51,10 +51,14 @@ const urlSlug = require('url-slug');
                 },
             });
 
-            cy.get('.back-to-top', { timeout: 3000 }).catch(() => {
-                // The element wasn't found within the timeout, but we'll just ignore that
-                cy.log('The .back-to-top element could not be found within the timeout');
-            });
+            cy.get('form[name="loginform"]').then(($form) => {
+                // We're on login form - return because we were redirected (maybe it's a protected page)
+                if ($form.length) {
+                  return true;
+                }
+              });
+
+            cy.get('.back-to-top', { timeout: 10000 });
 
 
 
@@ -123,9 +127,9 @@ const urlSlug = require('url-slug');
             
         })
 
-        if (i>1){
-            return false;
-        }
+        // if (i>1){
+        //     return false;
+        // }
         return true;
     });
 }
