@@ -46,7 +46,7 @@ module.exports = defineConfig({
 
       // wordpressSiteUrl = wordpressSiteUrl || 'https://digital-test.apps.silver.devops.gov.bc.ca/';
 
-      let wordpressSiteUrl ='https://digital-test.apps.silver.devops.gov.bc.ca/';
+      let wordpressSiteUrl ='https://digital-dev.apps.silver.devops.gov.bc.ca/';
 
       let urlsFilePath = './urls_for_'+urlSlug.convert(wordpressSiteUrl)+'.json';
       let urls = await getUpdatedUrls(wordpressSiteUrl,urlsFilePath);
