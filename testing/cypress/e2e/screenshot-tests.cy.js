@@ -130,9 +130,9 @@ const urlSlug = require('url-slug');
 
         })
 
-        if (i>1){
-            return false;
-        }
+        // if (i>1){
+        //     return false;
+        // }
         return true;
     });
 }
