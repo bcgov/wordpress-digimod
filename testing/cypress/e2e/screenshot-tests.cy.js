@@ -56,7 +56,7 @@ const urlSlug = require('url-slug');
                 const formExists = Cypress.$('form[name="loginform"]', doc).length > 0;
 
                 if (formExists){
-                    cy.log("Login form present, skipping test..");
+                    // cy.log("Login form present, skipping test..");
                     return true;
                 }
 
