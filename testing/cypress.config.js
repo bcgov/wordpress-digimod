@@ -35,18 +35,18 @@ module.exports = defineConfig({
 
 
       // Todo: enable parameterization - this doesn't work for some reason sometimes
-      // let envUrl = (process && process.env && process.env.SITE) || (config && config.env && config.env.url) || 'prod';
-      // let wordpressSiteUrl;
+      let envUrl = (process && process.env && process.env.SITE) || (config && config.env && config.env.url) || 'prod';
+      let wordpressSiteUrl;
 
-      // if (envUrl === "prod") {
-      //     wordpressSiteUrl = "https://digital.gov.bc.ca";
-      // } else {
-      //     wordpressSiteUrl = `https://digital-${envUrl}.apps.silver.devops.gov.bc.ca/`;
-      // }
+      if (envUrl === "prod") {
+          wordpressSiteUrl = "https://digital.gov.bc.ca";
+      } else {
+          wordpressSiteUrl = `https://digital-${envUrl}.apps.silver.devops.gov.bc.ca/`;
+      }
 
-      // wordpressSiteUrl = wordpressSiteUrl || 'https://digital-test.apps.silver.devops.gov.bc.ca/';
+      wordpressSiteUrl = wordpressSiteUrl || 'https://digital-test.apps.silver.devops.gov.bc.ca/';
 
-      let wordpressSiteUrl ='https://digital-dev.apps.silver.devops.gov.bc.ca/';
+      // let wordpressSiteUrl ='https://digital-dev.apps.silver.devops.gov.bc.ca/';
 
       let urlsFilePath = './urls_for_'+urlSlug.convert(wordpressSiteUrl)+'.json';
       let urls = await getUpdatedUrls(wordpressSiteUrl,urlsFilePath);
