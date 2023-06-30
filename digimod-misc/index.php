@@ -86,24 +86,7 @@ if ( defined( 'WP_CLI' ) ) {
             // [username_attr] => xxx
 
             
-            $clientSecret = $args[0];
-            $siteURL =  'https://'.$args[2];
-            $ssoURI='n/a';
-            switch ($args[1]) {
-                case 'test':
-                    $ssoURI = 'dev.';
-                    break;
-                case 'stage':
-                    $ssoURI = 'test.';
-                    break;
-                case 'prod':
-                    $ssoURI = '';
-                    break;
-                default:
-                    echo "No SSO integration set up for $args[1]";
-                    exit(1);
-                    break;
-            }
+
             
             
             $ssoURI = 'https://'.$ssoURI.'loginproxy.gov.bc.ca/auth';
