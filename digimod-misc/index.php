@@ -85,6 +85,11 @@ if ( defined( 'WP_CLI' ) ) {
             // [resourceownerdetailsurl] => 
             // [username_attr] => xxx
 
+            
+            $clientSecret = $args[0];
+            $ssoURI = $args[1];
+            $siteURL = $args[2];
+            
             $appslist = get_option( 'mo_oauth_apps_list' );
             $app = $appslist['keycloak'];
             // WP_CLI::log('clientSecret: ');
