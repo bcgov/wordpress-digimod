@@ -49,87 +49,90 @@ const urlSlug = require('url-slug');
                     styleElement.innerHTML = 'html { scroll-behavior: auto !important; }';
                     win.document.head.appendChild(styleElement);
                 },
-            });
+                onLoad(win){
+                    let doc = win.document;
 
-            cy.get('form[name="loginform"]').then(($form) => {
-                // We're on login form - return because we were redirected (maybe it's a protected page)
-                if ($form.length) {
-                  return true;
+                
+                const formExists = Cypress.$('form[name="loginform"]', doc).length > 0;
+
+                if (formExists){
+                    cy.log("Login form present, skipping test..");
+                    return true;
                 }
-              });
 
-            cy.get('.back-to-top', { timeout: 10000 });
+                cy.get('.back-to-top', { timeout: 10000 });
 
+                cy.document().then((doc) => {
 
+                    // Remove all images todo: for some reason lazy images are still loading in lazy fashion even with attribute removed, causing inconsistent screenshots
+                    const imgElements = doc.querySelectorAll('img');
+                    imgElements.forEach((element) => element.remove());
 
-            cy.document().then((doc) => {
-                // Remove all images todo: for some reason lazy images are still loading in lazy fashion even with attribute removed, causing inconsistent screenshots
-                const imgElements = doc.querySelectorAll('img');
-                imgElements.forEach((element) => element.remove());
+                    // Remove all elements with class 'is-type-video'
+                    const videoElements = doc.querySelectorAll('.is-type-video');
+                    videoElements.forEach((element) => element.remove());
 
-                // Remove all elements with class 'is-type-video'
-                const videoElements = doc.querySelectorAll('.is-type-video');
-                videoElements.forEach((element) => element.remove());
+                    // remove back to top button since it appears to crop up in inconsistent spots
+                    
+                    const backToTop = doc.querySelectorAll('.back-to-top');
+                    backToTop.forEach((element) => element.remove());
+                    
 
-                // remove back to top button since it appears to crop up in inconsistent spots
+                    cy.wait(100) // for some reason needed to prevent js error on host page crashing the test..
+
+                    // Find all images with loading="lazy" attribute and remove the attribute
+                    // otherwise images may not load properly on screenshots
+                    // cy.get('img[loading="lazy"]').each(($img) => {
+                    //     // Use the 'invoke' command to manipulate the DOM element
+                    //     cy.wrap($img).invoke('removeAttr', 'loading');
+                    // });
+
+                    // Find all images with loading="lazy" attribute using jQuery
+                    const lazyImgs = doc.querySelectorAll('img[loading="lazy"]');
+
+                    // If there are images with the "lazy" attribute
+                    if (lazyImgs.length) {
+                        // Remove the attribute from each image
+                        lazyImgs.forEach(($img) => {
+                            $img.removeAttribute('loading');
+                        });
+                    }
+
+                    // Find all images with decoding="async" attribute using jQuery
+                    const asyncImgs = doc.querySelectorAll('img[decoding="async"]');
+
+                    // If there are images with the "lazy" attribute
+                    if (asyncImgs.length) {
+                        // Remove the attribute from each image
+                        asyncImgs.forEach(($img) => {
+                            $img.removeAttribute('decoding');
+                        });
+                    }
                 
-                const backToTop = doc.querySelectorAll('.back-to-top');
-                backToTop.forEach((element) => element.remove());
-                
 
-                cy.wait(100) // for some reason needed to prevent js error on host page crashing the test..
-
-                // Find all images with loading="lazy" attribute and remove the attribute
-                // otherwise images may not load properly on screenshots
-                // cy.get('img[loading="lazy"]').each(($img) => {
-                //     // Use the 'invoke' command to manipulate the DOM element
-                //     cy.wrap($img).invoke('removeAttr', 'loading');
-                // });
-
-                // Find all images with loading="lazy" attribute using jQuery
-                const lazyImgs = doc.querySelectorAll('img[loading="lazy"]');
-
-                // If there are images with the "lazy" attribute
-                if (lazyImgs.length) {
-                    // Remove the attribute from each image
-                    lazyImgs.forEach(($img) => {
-                        $img.removeAttribute('loading');
+                    // Perform additional checks or actions after all images have loaded
+                    cy.log('All images have loaded successfully.');
+                    
+                    cy.matchImage({
+                        // screenshotConfig: {
+                        //     blackout: ['img']
+                        // },
+                        maxDiffThreshold: 0.0,
+                        title: urlSlug.convert(url),
+                        imagesPath: screenshotPath
                     });
-                }
 
-                // Find all images with decoding="async" attribute using jQuery
-                const asyncImgs = doc.querySelectorAll('img[decoding="async"]');
-
-                // If there are images with the "lazy" attribute
-                if (asyncImgs.length) {
-                    // Remove the attribute from each image
-                    asyncImgs.forEach(($img) => {
-                        $img.removeAttribute('decoding');
-                    });
-                }
-              
-
-                // Perform additional checks or actions after all images have loaded
-                cy.log('All images have loaded successfully.');
+                    
                 
-                cy.matchImage({
-                    // screenshotConfig: {
-                    //     blackout: ['img']
-                    // },
-                    maxDiffThreshold: 0.0,
-                    title: urlSlug.convert(url),
-                    imagesPath: screenshotPath
                 });
+        }
+    });
 
-                  
-               
-            });
-            
         })
 
-        // if (i>1){
-        //     return false;
-        // }
+        if (i>1){
+            return false;
+        }
         return true;
     });
 }
