@@ -53,7 +53,7 @@ jobs:
         WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
 
-        siteURL=https://${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca
+        siteURL=${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca
         ssoURI=''
 
         case $SITE_NAME in
