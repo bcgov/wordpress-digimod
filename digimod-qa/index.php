@@ -14,8 +14,12 @@ if (!defined('ABSPATH')) {
 }
 
 // Beta testing - run only on specific pages
+$qa_ids = array(9158,9174,9179,11108,9493,9675,9721,9750,9772,10089,10125,10107,10796,10232,10513,10535,10568,10553,10348,10590,10622,10633,10650,10671,10678,10711,10734,10744,10772,10777,10017);
+
 function qa_runOnClient(){
     global $post;
+    global $qa_ids;
+    
     if ( !isset( $post ) ) { // global post object is not set - do not run qa functionality on this page (for example 404)
         return false;
     }
@@ -23,7 +27,7 @@ function qa_runOnClient(){
     $current_url = get_permalink($post->ID);
     $path = parse_url($current_url, PHP_URL_PATH);
     
-    if ( is_singular( 'wcag' ) || get_the_title($post->ID)=="Web content accessibility guidelines (WCAG)" ) {
+    if ( is_singular( 'wcag' ) || in_array($post->ID,$qa_ids)) {
         return true;
     }else{
         return false;
@@ -53,11 +57,12 @@ function qa_enqueue_admin_script($hook) {
         // If user has "restrict_publish_to_qa_only" capability, then enqeue the script that modifies the admin interface
         // Will hide published posts from view and only leave rewrite-republish posts (if exists)
         // if they don't exist, then will replace the edit button to act as a rewrite and republish button
+        // NEW: do this for all users instead of just restrict_publish_to_qa_only users
         $current_user = wp_get_current_user();
         $role = $current_user->roles[0]; 
-        if (current_user_can('restrict_publish_to_qa_only') && $role!='administrator'){
+        // if (current_user_can('restrict_publish_to_qa_only') && $role!='administrator'){
             wp_enqueue_script( 'qa_admin', plugin_dir_url( __FILE__ ) . 'qa-admin.js', array( 'jquery' ), '1.0', true );
-        }
+        // }
         
     }
 }
@@ -76,15 +81,25 @@ add_action( 'admin_enqueue_scripts', 'qa_enqueue_admin_script_all' );
 
 
 function qa_runOnAdmin_checkPostID($postId){
+    global $qa_ids;
+
     $post_type = get_post_type($postId);
 
     $current_url = get_permalink($postId);
     $path = parse_url($current_url, PHP_URL_PATH);
     
-    if ($post_type == 'wcag' || get_the_title($postId)=="Web content accessibility guidelines (WCAG)") {
+    if ($post_type == 'wcag' || in_array($postId,$qa_ids)) {
         // This is a 'wcag' post type
         // Perform your actions here
         return true;
+    }else{
+        // check if it's a rewrite and republish post, and if the original is in the allowed list, run admin scripts
+        $origId = qa_get_orig_id_from_rewrite_and_republish_id($postId);
+        if($origId){
+            if(in_array($origId,$qa_ids)){
+                return true;
+            }
+        }
     }
 
     return false;
@@ -175,6 +190,8 @@ function qa_enqueue_block_editor_styles() {
             }
         }
     }
+
+    wp_enqueue_style( 'qa-editor-global',plugin_dir_url( __FILE__ ) . 'editor-global.css', false, '1.0', 'all' );
 }
 add_action( 'enqueue_block_editor_assets', 'qa_enqueue_block_editor_styles' );
 
@@ -282,8 +299,10 @@ add_action( 'rest_api_init', function () {
 });
 
 // API endpoint to remove QA lock (used for "publish" feature for admin)
+$duplicatingPost = false;
 function digimod_qa_remove_qa_lock( $request ) {
     $current_user = wp_get_current_user();
+    global $duplicatingPost;
     $role = null;
     if ( !empty( $current_user->roles ) ) {
         // The user has roles, so we'll get the first one (users can have multiple roles)
@@ -292,7 +311,7 @@ function digimod_qa_remove_qa_lock( $request ) {
             $data =  $request->get_body_params();
 
             $postId = $data['postId'];
-            $post = get_post( $postId );
+            
 
             // Get the restricted post IDs from the saved settings
             $restricted_posts = get_option('custom_qa_restricted_urls', '');
@@ -314,12 +333,24 @@ function digimod_qa_remove_qa_lock( $request ) {
             // Save the updated list of post IDs
             update_option('custom_qa_restricted_urls', $restricted_posts);
 
+            // Post is now published - setup a rewrite and republish clone
+            $new_id = qa_create_rewrite_and_republish_post($postId);
+
             // Return a response
             return new WP_REST_Response( array(
-                'status' => 'ok',
+                'redirectTo' => $new_id,
             ), 200 );
         }
     }
+}
+
+function qa_create_rewrite_and_republish_post($postId){
+    $post = get_post( $postId );
+    require_once(WP_PLUGIN_DIR . '/duplicate-post/src/post-duplicator.php');
+    $duplicatingPost = true;
+    $post_duplicator= new \Yoast\WP\Duplicate_Post\Post_Duplicator();
+    $new_id = $post_duplicator->create_duplicate_for_rewrite_and_republish( $post );
+    return $new_id;
 }
 
 add_action( 'rest_api_init', function () {
@@ -331,6 +362,72 @@ add_action( 'rest_api_init', function () {
           }
     ) );
 });
+
+
+// API endpoint to add QA lock - this is used for "unpublish" feature
+function digimod_qa_add_qa_lock( $request ) {
+    $current_user = wp_get_current_user();
+    $role = null;
+    if ( !empty( $current_user->roles ) ) {
+        // The user has roles, so we'll get the first one (users can have multiple roles)
+        $role = $current_user->roles[0]; 
+        if ($role=='administrator'){
+            $data =  $request->get_body_params();
+
+            $postId = $data['postId'];
+            $post = get_post( $postId );
+
+            $post_meta = get_post_meta( $postId, '_dp_original', true );
+            $is_rewrite_and_republish = !empty($post_meta );
+
+            if ($is_rewrite_and_republish){
+                // delete this rewrite and republish post
+                wp_delete_post($postId, true);
+                // get the original post id, and set that back to qa
+                $postId = $post_meta ;
+            }
+
+            // Get the restricted post IDs from the saved settings
+            $restricted_posts = get_option('custom_qa_restricted_urls', '');
+
+            // Convert the saved IDs to an array
+            $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
+
+            if (!in_array($postId, $restricted_post_ids)) {
+                $added=true;
+                $restricted_post_ids[] = $postId;
+            }
+
+            // Convert the array back into a string, with each ID on a new line
+            $restricted_posts = implode(PHP_EOL, $restricted_post_ids);
+
+            // Save the updated list of post IDs
+            update_option('custom_qa_restricted_urls', $restricted_posts);
+
+            // Return a response
+            if(!$is_rewrite_and_republish){
+                return new WP_REST_Response( array(
+                    'status' => 'ok',
+                ), 200 );
+            }else{
+                return new WP_REST_Response( array(
+                    'redirectTo' => $postId,
+                ), 200 );
+            }
+        }
+    }
+}
+
+add_action( 'rest_api_init', function () {
+    register_rest_route( 'publish-to-qa/v1', '/add-lock', array(
+        'methods' => 'POST',
+        'callback' => 'digimod_qa_add_qa_lock',
+        'permission_callback' => function () {
+            return  is_user_logged_in();
+          }
+    ) );
+});
+
 
 // API endpoint for getting uer role
 
@@ -525,7 +622,7 @@ function serve_rewrite_and_republish_version($post_object) {
 }
 add_action( 'the_post', 'serve_rewrite_and_republish_version' );
 
-
+// Add orange banner indicating users are on the QA page
 function add_custom_html_to_content($content) {
     global $post;
     $postId = $post->ID;
@@ -573,9 +670,7 @@ function qa_enqueue_custom_js() {
 }
 
 
-// UI
-
-
+// Admin UI
 
 function custom_qa_restricted_urls_menu() {
     add_options_page(
@@ -676,6 +771,7 @@ add_action('template_redirect', 'qa_custom_redirect_to_login');
 // }
 // add_action('init', 'qa_my_custom_post_status');
 
+// Display "QA" status when viewing the list of pages for pages that are in QA
 function qa_display_custom_state($states) {
     global $post;
 
@@ -689,7 +785,8 @@ function qa_display_custom_state($states) {
 
     // Check if the post ID is in the array
     if (in_array($postId, $restricted_post_ids)) {
-        return array('QA');
+        // Add the 'QA' state to the existing states
+        $states[] = 'QA';
     }
 
     return $states;
@@ -748,18 +845,207 @@ add_filter( 'display_post_states', 'qa_display_custom_state' );
 
 
 // Prevent users that have publishing ability for the purposes of qa, but were assigned restrict_publish_to_qa_only from publishing to production
-// the only publishing that should happen for these users is via the digimod_qa_toggle function
+// the only publishing that should happen for these users is via the digimod_qa_toggle function and when we automatically put new pages into QA
+$qa_except_publish = false; // Initialize your global variable
+
 function qa_restrict_publish_to_qa_only($new_status, $old_status, $post) {
+    global $qa_except_publish; // Use your global variable here
+
     if ($new_status == 'publish' && $old_status  !=  $new_status) {
         $user = wp_get_current_user();
 
         // If the user has the 'restrict_publish_to_qa_only' capability and they're not an administrator
-        if (in_array('restrict_publish_to_qa_only', (array) $user->allcaps) && !in_array('administrator', (array) $user->roles)) {
+        if ((in_array('restrict_publish_to_qa_only', (array) $user->allcaps) && !in_array('administrator', (array) $user->roles)) && !$qa_except_publish ) {
             // Prevent the user from publishing the page
             $post->post_status = $old_status;  // Change the post status to $old_status
             wp_update_post($post);
             wp_die('QA Plugin - Sorry, you are not allowed to publish pages on this site.'); // Stop the script
         }
     }
+    $qa_except_publish = false; // Reset the global variable after use
 }
 add_action('transition_post_status', 'qa_restrict_publish_to_qa_only', 10, 3);
+
+// put new pages into published state as soon as they are created
+function qa_change_default_post_status( $data, $postarr ) {
+    global $duplicatingPost;
+    global $qa_except_publish; // Use your global variable here
+    $qa_except_publish = true; // Set it to true as we are creating a post
+
+    if ( !isset( $postarr['post_type'] ) || $postarr['post_type'] !== 'wcag' ) { // todo: remove once out of beta
+        return $data;
+    }
+
+    // Check for the 'duplicate_post_rewrite' action in the URL.
+    $is_rewrite_and_republish = isset($_GET['action']) && $_GET['action'] === 'duplicate_post_rewrite';
+
+    // second flag is if we are duplicating the post programmatically, for example in case of "Publish" action
+    // this is so after publish we can redirect users to the clone of the document instead of showing the published copy
+    if($is_rewrite_and_republish || $duplicatingPost) 
+        return $data;
+
+    if( $data['post_status'] == 'auto-draft' ) { //  || $data['post_status'] == 'draft'
+        $data['post_status'] = 'publish';
+    }
+    if( $data['post_title'] == 'Auto Draft' ) {
+        $data['post_title'] = 'Untitled';
+    }
+    return $data;
+}
+add_filter( 'wp_insert_post_data', 'qa_change_default_post_status', 10, 2 );
+
+
+// When a new post is being created, we have transitioned it automatically to QA (so it's in "published" state)
+// now that it's in published state, add it to the QA restricted list and redirect user to the proper url
+function qa_notify_new_published_post( $post_ID, $post, $update ) {
+    global $pagenow;
+
+    if (!qa_runOnAdmin_checkPostID($post_ID)) { // todo: remove once out of beta
+        return;
+    }
+
+    if ( $post->post_status == 'publish' && !$update ) {  // Check if the post is being published and it is not an update
+        // $is_rewrite_and_republish = !empty(get_post_meta( $postId, '_dp_original', true ));
+        // if ($is_rewrite_and_republish)
+        // {
+        //     return;
+        // }
+
+        // Do something with $post_ID and $post here
+        // Get the restricted post IDs from the saved settings
+        $restricted_posts = get_option('custom_qa_restricted_urls', '');
+
+        // Convert the saved IDs to an array
+        $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
+
+        $restricted_post_ids[] = $post_ID;
+        
+        // Convert the array back into a string, with each ID on a new line
+        $restricted_posts = implode(PHP_EOL, $restricted_post_ids);
+
+        // Save the updated list of post IDs
+        update_option('custom_qa_restricted_urls', $restricted_posts);
+
+        // echo('set transient');
+        // set_transient( 'qa_redirect_after_creation', $post_ID, 30 );
+        wp_redirect( admin_url("post.php?post=$post_ID&action=edit") );
+    }
+}
+add_action( 'save_post', 'qa_notify_new_published_post', 10, 3 );
+
+
+// function that returns false if rewrite and republish of a post doesn't exist, otherwise return rewrite and republish id for a given post
+function qa_get_rewrite_and_republish_id( $original_post_id ) {
+    $args = array(
+        'post_type'  => 'any',
+        'post_status' => 'draft',
+        'meta_query' => array(
+            array(
+                'key'   => '_dp_original',
+                'value' => $original_post_id,
+            ),
+        ),
+    );
+    $query = new WP_Query( $args );
+    if ( $query->have_posts() ) {
+        // Reset post data to ensure we're getting the first post in the query
+        wp_reset_postdata();
+        // Return the ID of the rewrite version
+        return $query->posts[0]->ID;
+    } else {
+        return false;
+    }
+}
+
+// check if a given postId is listed in the QA plugin
+function qa_is_in_qa($postId){
+    $restricted_posts = get_option('custom_qa_restricted_urls', '');
+
+    // Convert the saved IDs to an array
+    $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
+
+    // Check if the ID is not in the array
+    if (!in_array($postId, $restricted_post_ids)) {
+        return false;
+    }
+    return true;
+}
+
+// function that checks if a given postId is the production version of the page
+// must be "published" and not listed int he qa plugin
+function qa_is_production_page($postId){
+    $postStatus = get_post_status($postId); 
+    if ($postStatus=='publish' && !qa_is_in_qa($postId)){
+        return true;
+    }
+    return false;
+}
+
+function qa_get_orig_id_from_rewrite_and_republish_id($postId){
+    $post_meta = get_post_meta( $postId, '_dp_original', true );
+    $is_rewrite_and_republish = !empty($post_meta );
+    if (!$is_rewrite_and_republish)
+    {
+        return false;
+    }else{
+        return $post_meta;
+    }
+}
+
+// When user tries to load a production version of the page into the editor (for example after clicking "Republish")
+// Redirect users to a rewrite and republish version of the page, as we don't want them accessing regular published page unless it's necessary
+function qa_redirect_to_rewrite_and_republish() {
+    
+
+    global $pagenow;
+
+    // Check if we're on a post edit screen
+    if ( $pagenow === 'post.php' && isset( $_GET['post'] ) && isset( $_GET['action'] ) && $_GET['action'] === 'edit' ) {
+        
+        $original_post_id = $_GET['post'];
+
+        if (!qa_runOnAdmin_checkPostID($original_post_id)) { // todo: remove once out of beta
+            return;
+        }
+
+        if (!qa_is_production_page($original_post_id)){ // this is not a production page
+            return;
+        }
+        
+        $rewrite_id = qa_get_rewrite_and_republish_id( $original_post_id );
+        
+        if ( $rewrite_id ) {
+            // Redirect to the rewrite and republish version of the post
+            wp_redirect( admin_url( "post.php?post=$rewrite_id&action=edit" ) );
+            exit;
+        }else{
+            // rewrite and republish doesn't exist - create one and redirect users to that 
+            $rewrite_id=qa_create_rewrite_and_republish_post($original_post_id);
+            wp_redirect( admin_url( "post.php?post=$rewrite_id&action=edit" ) );
+            exit;
+        }
+    }
+}
+add_action( 'admin_init', 'qa_redirect_to_rewrite_and_republish' );
+
+
+// if user is deleteing a rewrite and republish post, also delete the original post as well
+function qa_delete_original_on_rewrite_and_republish_delete( $post_id ) {
+    if (!qa_runOnAdmin_checkPostID($post_id)) { // todo: remove once out of beta
+        return;
+    }
+    // Check if the post being deleted is a "Rewrite and Republish" version
+
+    remove_action( 'wp_trash_post', 'qa_delete_original_on_rewrite_and_republish_delete' );
+
+    $original_post_id = get_post_meta( $post_id, '_dp_original', true );
+    if ( $original_post_id ) {
+        // The post is a "Rewrite and Republish" version, so delete the original post
+        // Use wp_delete_post with force delete true to bypass trash
+        wp_trash_post( $original_post_id );
+    }
+
+      // Add the action back
+      add_action( 'wp_trash_post', 'qa_delete_original_on_rewrite_and_republish_delete' );
+}
+add_action( 'wp_trash_post', 'qa_delete_original_on_rewrite_and_republish_delete' );

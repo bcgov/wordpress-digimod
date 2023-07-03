@@ -34,6 +34,12 @@ function update(){
     let wasSavingPost =false;//wp.data.select('core/editor').isSavingPost();
     let wasPublishingPost =false;// wp.data.select('core/editor').isPublishingPost();
 
+    // if we have "republish" button, rename it into just "publish"
+    if(jQuery('.editor-post-publish-button__button').html()=='Republish'){
+        jQuery('.editor-post-publish-button__button').html('Publish');
+        jQuery('.editor-post-publish-button__button').addClass('wasRepublish');
+    }
+
     wp.data.subscribe(() => {
         const isSavingPost = wp.data.select('core/editor').isSavingPost();
         const isPublishingPost = wp.data.select('core/editor').isPublishingPost();
@@ -43,7 +49,7 @@ function update(){
             // Post was being saved and published, but is no longer being saved or published.
             // Thus, the post was just published.
             // don't reload if user clicked "republish" - it will redirect to original page
-            if(!jQuery('.editor-post-publish-button__button').html()=='Republish'){
+            if(!jQuery('.editor-post-publish-button__button').hasClass('wasRepublish')){
                 if (!reloadHandled)
                     console.log('Post has been published, would reload');
 
@@ -57,7 +63,7 @@ function update(){
             wasSavingPost = isSavingPost;
         if (!wasPublishingPost)
         wasPublishingPost = isPublishingPost;
-        console.log('CHECK IF POST PUBLISHED: wasSavingPost && !isSavingPost && wasPublishingPost && !isPublishingPost', wasSavingPost, isSavingPost, wasPublishingPost,isPublishingPost);
+        // console.log('CHECK IF POST PUBLISHED: wasSavingPost && !isSavingPost && wasPublishingPost && !isPublishingPost', wasSavingPost, isSavingPost, wasPublishingPost,isPublishingPost);
     });
 
     // this reloads the page when page gets switched to draft (to renew the UI)
@@ -73,13 +79,15 @@ function update(){
 
         if (wasSavingPost2 && !isSavingPost && !isAutosavingPost && !isEditedPostDirty) {
             if (postStatusChanged) {
-                console.log('Post status have been changed, would reload..');
-                // Post was being saved but is no longer being saved,
-                // and it was not an autosave or there are no unsaved changes remaining.
-                // Thus, the post was just switched to draft.
-                setTimeout(function() { // timeout because sometimes page reloads before server updated the state
-                    location.reload();
-                }, 500);
+                if(!jQuery('.editor-post-publish-button__button').hasClass('wasRepublish')){
+                    console.log('Post status have been changed, would reload..');
+                    // Post was being saved but is no longer being saved,
+                    // and it was not an autosave or there are no unsaved changes remaining.
+                    // Thus, the post was just switched to draft.
+                    setTimeout(function() { // timeout because sometimes page reloads before server updated the state
+                        location.reload();
+                    }, 500);
+                }
             }
         }
 
@@ -187,7 +195,7 @@ function update(){
             console.log('debug postStatus/status/role: ', postStatus,status, role);
             if ((postStatus=='publish' && !status) || isRewriteAndRepublish){  // if it's a rewrite and republish page it's already on QA, hide publish to qa button
             }else{
-                jQuery('.edit-post-header__settings').prepend(`<button id="publish-to-qa-button" type="button" class="components-button is-tertiary">${buttonText}</button>`);
+                jQuery('.edit-post-header__settings').prepend(`<button id="publish-to-qa-button" type="button" class="components-button is-tertiary" style="display:none">${buttonText}</button>`);
             }
 
             if (postStatus=='publish' && status && role=='administrator'){
@@ -218,6 +226,9 @@ function update(){
                                 // Handle response here
                                 // let buttonText = response.status ? 'Unpublish from QA' : 'Publish to QA';
                                 // jQuery("#publish-to-qa-button").html(buttonText);
+                                if (response.redirectTo){
+                                    history.replaceState({}, '', "/wp-admin/post.php?action=edit&post="+response.redirectTo);
+                                }
                                 location.reload();
                                 // console.log('remove-lock ajax response: ', response);
                             });
@@ -226,40 +237,98 @@ function update(){
                 })
             }
 
-            jQuery("#publish-to-qa-button").on( "click", function() {
-                console.log('qa button click');
+            // if we are on republish page, make "save draft" button (that now says "Save") styled same as "Publish button" (solid blue)
+            // and place it into standard position
+            if (isRewriteAndRepublish && role=='administrator'){
+                var saveButton = jQuery('.editor-post-save-draft');
+                // var previewButton = jQuery('.block-editor-post-preview__button-toggle.components-dropdown-menu__toggle.is-tertiary');
+                
+                // // Copy styling from "Publish" button to "Save" button
+                // saveButton.removeClass('is-tertiary');
+                // saveButton.addClass('is-primary');
+            
+                // Move "Save" button after "Preview" button
+                saveButton.detach().insertAfter('.block-editor-post-preview__dropdown');
+            }
 
-                // make sure we save the post first
-                reloadHandled = true;
-                // BAD: this still causes race condition: save post request goes out, then toggle request. 
-                // Toggle removes it from qa and unpublishes, then publish request comes in and puts into prod..
-                wp.data.dispatch( 'core/editor' ).savePost().then(function(){ 
-                    // return;
-                    setTimeout(function(){
-                        const url_string = window.location.href;
-                        var url = new URL(url_string);
-                        var id = url.searchParams.get("post"); // re-get id in case this was a new page, so it would have been just assigned
 
-                        jQuery.ajax({
-                            url:  '/wp-json/publish-to-qa/v1/endpoint',
-                            method: 'POST',
-                            beforeSend: function ( xhr ) {
-                                xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-                            },
-                            data:{
-                                postId: id 
-                            }
-                        }).done(function(response) {
-                            // Handle response here
-                            // let buttonText = response.status ? 'Unpublish from QA' : 'Publish to QA';
-                            // jQuery("#publish-to-qa-button").html(buttonText);
-                            location.reload();
-                            console.log('toggle ajax response: ', response);
-                        });
-                    },1000)
-                });
-            });
+            // if status is published, and it's not in QA, and it's administrator, show "unpublish" button that will put it back into QA
+            // or if it's a rewrite and republish page (should be able to unpublish original from that too - it will just delete rewrite and republish + put original into qa)
+            if ((postStatus=='publish' && !status && role=='administrator') || (isRewriteAndRepublish && role=='administrator')){
+                jQuery('.editor-post-publish-button__button').addClass('qa-regular-text');
+                jQuery(`<button id="add-qa-lock-button" type="button" class="components-button is-primary" style="background: #cc0000;">Unpublish</button>`).insertBefore('.interface-pinned-items');
+                jQuery("#add-qa-lock-button").on( "click", function() {
+                    console.log('add qa lock button click');
+    
+                    // make sure we save the post first
+                    // setTimeout(function(){
+                        reloadHandled = true;
+                        // wp.data.dispatch( 'core/editor' ).savePost().then(function(){
+                            const url_string = window.location.href;
+                            var url = new URL(url_string);
+                            var id = url.searchParams.get("post")
+
+                            jQuery.ajax({
+                                url:  '/wp-json/publish-to-qa/v1/add-lock',
+                                method: 'POST',
+                                beforeSend: function ( xhr ) {
+                                    xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+                                },
+                                data:{
+                                    postId: id,
+                                }
+                            }).done(function(response) {
+                                // Handle response here
+                                // let buttonText = response.status ? 'Unpublish from QA' : 'Publish to QA';
+                                // jQuery("#publish-to-qa-button").html(buttonText);
+                                if (response.redirectTo){
+                                    history.replaceState({}, '', "/wp-admin/post.php?action=edit&post="+response.redirectTo);
+                                }
+                                location.reload();
+                                console.log('add-lock ajax response: ', response);
+                            });
+                        // })
+                    // },1000);
+                })
+            }
+
+            // jQuery("#publish-to-qa-button").on( "click", function() {
+            //     console.log('qa button click');
+
+            //     // make sure we save the post first
+            //     reloadHandled = true;
+            //     // BAD: this still causes race condition: save post request goes out, then toggle request. 
+            //     // Toggle removes it from qa and unpublishes, then publish request comes in and puts into prod..
+            //     wp.data.dispatch( 'core/editor' ).savePost().then(function(){ 
+            //         // return;
+            //         setTimeout(function(){
+            //             const url_string = window.location.href;
+            //             var url = new URL(url_string);
+            //             var id = url.searchParams.get("post"); // re-get id in case this was a new page, so it would have been just assigned
+
+            //             jQuery.ajax({
+            //                 url:  '/wp-json/publish-to-qa/v1/endpoint',
+            //                 method: 'POST',
+            //                 beforeSend: function ( xhr ) {
+            //                     xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+            //                 },
+            //                 data:{
+            //                     postId: id 
+            //                 }
+            //             }).done(function(response) {
+            //                 // Handle response here
+            //                 // let buttonText = response.status ? 'Unpublish from QA' : 'Publish to QA';
+            //                 // jQuery("#publish-to-qa-button").html(buttonText);
+            //                 location.reload();
+            //                 console.log('toggle ajax response: ', response);
+            //             });
+            //         },1000)
+            //     });
+            // });
+
+        jQuery('.edit-post-header__settings').attr('style','display:inherit');
     });
+    
 } );
 
    
