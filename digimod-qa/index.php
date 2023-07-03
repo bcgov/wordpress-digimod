@@ -1,8 +1,8 @@
 <?php
 /**
 * Plugin Name: DIGIMOD - QA functionality
-* Description: Adds "Publish to QA" button to the block editor
-* Version: 1.0.0
+* Description: Changes WordPress workflow to include QA functionality through IDIR protection
+* Version: 2.0.0
 * Author: Digimod
 * License: GPL-2.0+
 * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -586,7 +586,27 @@ function serve_rewrite_and_republish_version($post_object) {
                     position: relative;
                     font-weight: bold;
                     color: white;
-                    padding: 10px;" id="qa-notification">You are viewing a QA version of the page</div>' . $post_object->post_content; // Prepend custom HTML
+                    padding: 10px;" id="qa-notification">You are viewing a QA version of the page. <span style="text-decoration:underline; cursor:pointer; display:none;" id="qa-exit-button">Exit</span></div>
+                    <script>
+                        window.onload = function() {
+                            // Check if cookie exists
+                            var cookieName = "qa_guid"; // Replace with your actual cookie name
+                            if (document.cookie.split(";").some((item) => item.trim().startsWith(cookieName + "="))) {
+                                // If cookie exists, show the button
+                                document.getElementById("qa-exit-button").style.display = "inline";
+                            }
+                            
+                            // Add event listener to the Exit button
+                            document.getElementById("qa-exit-button").addEventListener("click", function() {
+                                // Delete the cookie by setting its expiration date to a past date
+                                document.cookie = cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                                
+                                // Optionally, you can reload the page or redirect the user
+                                window.location.replace("/");
+                            });
+                        };
+                    </script>
+                ' . $post_object->post_content; // Prepend custom HTML
                 setup_postdata( $post_object );
             }
         }
@@ -638,14 +658,34 @@ function add_custom_html_to_content($content) {
 
         add_action( 'wp_enqueue_scripts', 'qa_enqueue_custom_js' );
         $custom_html = '<div style="
-                        display:none;
-                        text-align: center;
-                        background: #ff6200;
-                        z-index: 999;
-                        position: relative;
-                        font-weight: bold;
-                        color: white;
-                        padding: 10px;" id="qa-notification">You are viewing a QA version of the page</div>';
+        display:none;
+        text-align: center;
+        background: #ff6200;
+        z-index: 999;
+        position: relative;
+        font-weight: bold;
+        color: white;
+        padding: 10px;" id="qa-notification">You are viewing a QA version of the page. <span style="text-decoration:underline; cursor:pointer; display:none;" id="qa-exit-button">Exit</span></div>
+        <script>
+            window.onload = function() {
+                // Check if cookie exists
+                var cookieName = "qa_guid"; // Replace with your actual cookie name
+                if (document.cookie.split(";").some((item) => item.trim().startsWith(cookieName + "="))) {
+                    // If cookie exists, show the button
+                    document.getElementById("qa-exit-button").style.display = "inline";
+                }
+                
+                // Add event listener to the Exit button
+                document.getElementById("qa-exit-button").addEventListener("click", function() {
+                    // Delete the cookie by setting its expiration date to a past date
+                    document.cookie = cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    
+                    // Optionally, you can reload the page or redirect the user
+                    window.location.replace("/");
+                });
+            };
+        </script>
+        ';
         
         // Only add custom HTML for single posts.
         $content = $custom_html . $content;
@@ -737,6 +777,47 @@ function qa_custom_redirect_to_login() {
 
     // Get the current page post ID
     $current_page_id = get_queried_object_id();
+
+
+
+    // PASSWORD/COOKIE ACCESS CHECK
+
+    // Name of your transient
+    $transient_name = 'qa_guid';
+
+    // Get the stored settings
+    $options = get_option('qa_plugin_settings');
+
+    if ($options){
+        // Password saved in the plugin
+        $saved_password = $options['password']; // Get the saved password
+
+        // Check if password is sent in GET parameters and it matches the saved password
+        if ( isset($_GET['password']) && $_GET['password'] === $saved_password ) {
+
+            // Check if the GUID is not already saved or it's expired
+            if ( false === ($guid = get_transient($transient_name)) ) {
+                // Generate a new GUID
+                $guid = wp_generate_uuid4();
+
+                // Save the GUID in a transient that expires in 24 hours
+                set_transient($transient_name, $guid, DAY_IN_SECONDS);
+            }
+
+            // Set the guid cookie - this will maintain the QA session
+            setcookie('qa_guid', $guid, time() + DAY_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl());
+            return;
+        }
+
+        // Check if GUID is present in cookie and it matches the stored GUID
+        if ( isset($_COOKIE['qa_guid']) && $_COOKIE['qa_guid'] === get_transient($transient_name) ) {
+            return;
+        }
+    }
+
+    // FINISH PASSWORD/COOKIE CHECK
+
+
 
     if (!current_user_can('view_qa') && in_array($current_page_id, $restricted_post_ids) && is_user_logged_in() ) {
         // user is logged in, but can't view_qa, means this is a regular user, so redirect to home
@@ -1049,3 +1130,63 @@ function qa_delete_original_on_rewrite_and_republish_delete( $post_id ) {
       add_action( 'wp_trash_post', 'qa_delete_original_on_rewrite_and_republish_delete' );
 }
 add_action( 'wp_trash_post', 'qa_delete_original_on_rewrite_and_republish_delete' );
+
+
+// QA PASSWORD UI
+// Create an admin menu item and page
+function qa_plugin_add_admin_menu() {
+    add_options_page(
+        'QA Password Settings',
+        'QA Password Settings',
+        'manage_options',
+        'qa_plugin-settings',
+        'qa_plugin_settings_page'
+    );
+}
+add_action('admin_menu', 'qa_plugin_add_admin_menu');
+
+// QA PASSWORD UI-Initialize settings
+function qa_plugin_settings_init() {
+    register_setting('qa_plugin', 'qa_plugin_settings');
+
+    add_settings_section(
+        'qa_plugin_section',
+        __('QA Password Settings', 'qa_plugin'),
+        '',
+        'qa_plugin'
+    );
+
+    add_settings_field(
+        'password',
+        __('Password', 'qa_plugin'),
+        'qa_plugin_password_render',
+        'qa_plugin',
+        'qa_plugin_section'
+    );
+}
+add_action('admin_init', 'qa_plugin_settings_init');
+
+// QA PASSWORD UI-Render the password input field
+function qa_plugin_password_render() {
+    $options = get_option('qa_plugin_settings');
+    $pass = "";
+    if ($options){
+        $pass = $options['password'];
+    }
+    ?>
+    <input type='text' name='qa_plugin_settings[password]' value='<?php echo $pass; ?>'>
+    <?php
+}
+
+// QA PASSWORD UI-Render the settings page
+function qa_plugin_settings_page() {
+    ?>
+    <form action='options.php' method='post'>
+        <?php
+        settings_fields('qa_plugin');
+        do_settings_sections('qa_plugin');
+        submit_button();
+        ?>
+    </form>
+    <?php
+}
