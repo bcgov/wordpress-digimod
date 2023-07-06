@@ -56,22 +56,14 @@ jobs:
         siteURL=https://${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca
         ssoURI=''
 
-        case $SITE_NAME in
+        case $OC_ENV in
           'dev')
-            ssoURI='dev.'
-            clientSecret=${{ secrets.KEYCLOAK_DEV_CLIENT_SECRET}}
-            ;;
-          'latest')
-            ssoURI='dev.'
-            clientSecret=${{ secrets.KEYCLOAK_LATEST_CLIENT_SECRET}}
-            ;;
-          'test')
-            ssoURI='test.'
+            ssoURI='https://test.loginproxy.gov.bc.ca/auth'
             clientSecret=${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}}
             ;;
-          'stage')
-            ssoURI='test.'
-            clientSecret=${{ secrets.KEYCLOAK_STAGE_CLIENT_SECRET}}
+          'test')
+            ssoURI='https://test.loginproxy.gov.bc.ca/auth'
+            clientSecret=${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}}
             ;;
           'prod')
             ssoURI=''
@@ -82,8 +74,6 @@ jobs:
             exit 1
             ;;
         esac
-
-        ssoURI='https://'$ssoURI'loginproxy.gov.bc.ca/auth'
 
         #run command to change miniorange plugin variables
         oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $clientSecret $ssoURI $siteURL "
