@@ -2,8 +2,8 @@ name: Deploy Latest Wordpress
 
 on:
   workflow_dispatch:
-  schedule:
-     - cron:  '0 2 * * 1' # runs every Monday at 2:00 AM
+  # schedule:
+  #    - cron:  '0 2 * * 1' # runs every Monday at 2:00 AM
 
 jobs:
   poll:
@@ -86,3 +86,5 @@ jobs:
           dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
           test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
           prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
+
+          
