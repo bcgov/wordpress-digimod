@@ -12,14 +12,15 @@ echo "Deploying to $ENVIRONMENT"
 case "$ENVIRONMENT" in
     "dev")
     token=$DEV_TOKEN
+    OC_SITE_NAME=digital-$SITE_NAME
     ;;
     "test")
     token=$TEST_TOKEN
+    OC_SITE_NAME=digital-$SITE_NAME
     ;;
     "prod")
-    # token=$PROD_TOKEN
-    echo "For safety reasons, we won't run this action on prod!"
-    exit 1
+    token=$PROD_TOKEN
+    OC_SITE_NAME=digital
     ;;
     *)
     echo "Unknown environment: $ENVIRONMENT"
