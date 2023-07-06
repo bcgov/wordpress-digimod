@@ -548,99 +548,143 @@ add_action( 'rest_api_init', function () {
 // Serve QA pages instead of regular pages if user is logged in and there's a rewrite and republish page published to QA
 
 function serve_rewrite_and_republish_version($post_object) {
-    if ( is_user_logged_in() ) {
-        if (!qa_runOnClient()){
-            return;
-        }
-
-        // only serve qa pages to users with appropriate role
-        global $current_user;
-        // print_r( $current_user->roles);
-        if (!in_array('qa', $current_user->roles)  && !in_array('administrator', $current_user->roles)) {
-            return;
-        }
-
-        // Get the post types for which the "rewrite & republish" feature is enabled
-        $bannerShown = false;
-        $enabled_post_types = get_option( 'duplicate_post_types_enabled', array() );
-        if ( in_array( $post_object->post_type, $enabled_post_types ) ) {
-            // Check if there is a "rewrite & republish" version of the current post
-            $republished_posts = get_posts( array(
-                'post_type'      => $post_object->post_type,
-                'post_status'    => 'draft', // You might need to adjust this depending on how your site handles "rewrite & republish" posts
-                'posts_per_page' => 1,
-                'meta_key'       => '_dp_original',
-                'meta_value'     => $post_object->ID,
-            ) );
-
-            if ( !empty( $republished_posts ) ) {
-                $bannerShown=true;
-                // There is a "rewrite & republish" version of the post, so serve it instead
-                $post_object = $republished_posts[0];
-                add_action( 'wp_enqueue_scripts', 'qa_enqueue_custom_js' );
-                $post_object->post_content = '<div style="
-                    display:none;
-                    text-align: center;
-                    background: #ff6200;
-                    z-index: 999;
-                    position: relative;
-                    font-weight: bold;
-                    color: white;
-                    padding: 10px;" id="qa-notification">You are viewing a QA version of the page. <span style="text-decoration:underline; cursor:pointer; display:none;" id="qa-exit-button">Exit</span></div>
-                    <script>
-                        window.onload = function() {
-                            // Check if cookie exists
-                            var cookieName = "qa_guid"; // Replace with your actual cookie name
-                            if (document.cookie.split(";").some((item) => item.trim().startsWith(cookieName + "="))) {
-                                // If cookie exists, show the button
-                                document.getElementById("qa-exit-button").style.display = "inline";
-                            }
-                            
-                            // Add event listener to the Exit button
-                            document.getElementById("qa-exit-button").addEventListener("click", function() {
-                                // Delete the cookie by setting its expiration date to a past date
-                                document.cookie = cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                                
-                                // Optionally, you can reload the page or redirect the user
-                                window.location.replace("/");
-                            });
-                        };
-                    </script>
-                ' . $post_object->post_content; // Prepend custom HTML
-                setup_postdata( $post_object );
-            }
-        }
-
-        // if(!$bannerShown){
-        //     // check if this is a regular QA post - also include banner
-        //     $postId = $post_object->ID;
-
-        //     // Get the restricted post IDs from the saved settings
-        //     $restricted_posts = get_option('custom_qa_restricted_urls', '');
-        
-        //     // Convert the saved IDs to an array
-        //     $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
-        
-        //     // Check if the post ID is not in the array
-        //     if (in_array($postId, $restricted_post_ids)) {
-        //         add_action( 'wp_enqueue_scripts', 'qa_enqueue_custom_js' );
-        //         $post_object->post_content = '<div style="
-        //             display:none;
-        //             text-align: center;
-        //             background: #ff6200;
-        //             z-index: 999;
-        //             position: relative;
-        //             font-weight: bold;
-        //             color: white;
-        //             padding: 10px;" id="qa-notification">You are viewing a QA version of the page</div>' . $post_object->post_content; // Prepend custom HTML
-        //         setup_postdata( $post_object );
-        //     }
-        // }
+    if (!qa_runOnClient()){
+        return;
     }
+
+    // only serve qa pages to users with appropriate role
+    global $current_user;
+    // print_r( $current_user->roles);
+
+    // to access QA pages user should be in QA role OR be and administrator OR have a password
+    if ((is_user_logged_in() && in_array('qa', $current_user->roles))  || (is_user_logged_in() && !in_array('administrator', $current_user->roles)) || passwordCheck()) {
+        
+    }else{
+        return;
+    }
+
+    // Get the post types for which the "rewrite & republish" feature is enabled
+    $bannerShown = false;
+    $enabled_post_types = get_option( 'duplicate_post_types_enabled', array() );
+    if ( in_array( $post_object->post_type, $enabled_post_types ) ) {
+        // Check if there is a "rewrite & republish" version of the current post
+        $republished_posts = get_posts( array(
+            'post_type'      => $post_object->post_type,
+            'post_status'    => 'draft', // You might need to adjust this depending on how your site handles "rewrite & republish" posts
+            'posts_per_page' => 1,
+            'meta_key'       => '_dp_original',
+            'meta_value'     => $post_object->ID,
+        ) );
+
+        if ( !empty( $republished_posts ) ) {
+            $bannerShown=true;
+            // There is a "rewrite & republish" version of the post, so serve it instead
+            $post_object = $republished_posts[0];
+            add_action( 'wp_enqueue_scripts', 'qa_enqueue_custom_js' );
+            $post_object->post_content = '<div style="
+                display:none;
+                text-align: center;
+                background: #ff6200;
+                z-index: 999;
+                position: relative;
+                font-weight: bold;
+                color: white;
+                padding: 10px;" id="qa-notification">You are viewing a QA version of the page. <span style="text-decoration:underline; cursor:pointer; display:none;" id="qa-exit-button">Exit</span></div>
+                <script>
+                    window.onload = function() {
+                        // Check if cookie exists
+                        var cookieName = "qa_guid"; // Replace with your actual cookie name
+                        if (document.cookie.split(";").some((item) => item.trim().startsWith(cookieName + "="))) {
+                            // If cookie exists, show the button
+                            document.getElementById("qa-exit-button").style.display = "inline";
+                        }
+                        
+                        // Add event listener to the Exit button
+                        document.getElementById("qa-exit-button").addEventListener("click", function() {
+                            // Delete the cookie by setting its expiration date to a past date
+                            document.cookie = cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                            
+                            // Optionally, you can reload the page or redirect the user
+                            window.location.replace("/");
+                        });
+                    };
+                </script>
+            ' . $post_object->post_content; // Prepend custom HTML
+            setup_postdata( $post_object );
+        }
+    }
+
+    // if(!$bannerShown){
+    //     // check if this is a regular QA post - also include banner
+    //     $postId = $post_object->ID;
+
+    //     // Get the restricted post IDs from the saved settings
+    //     $restricted_posts = get_option('custom_qa_restricted_urls', '');
+    
+    //     // Convert the saved IDs to an array
+    //     $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
+    
+    //     // Check if the post ID is not in the array
+    //     if (in_array($postId, $restricted_post_ids)) {
+    //         add_action( 'wp_enqueue_scripts', 'qa_enqueue_custom_js' );
+    //         $post_object->post_content = '<div style="
+    //             display:none;
+    //             text-align: center;
+    //             background: #ff6200;
+    //             z-index: 999;
+    //             position: relative;
+    //             font-weight: bold;
+    //             color: white;
+    //             padding: 10px;" id="qa-notification">You are viewing a QA version of the page</div>' . $post_object->post_content; // Prepend custom HTML
+    //         setup_postdata( $post_object );
+    //     }
+    // }
+    
     
     return $post_object;
 }
 add_action( 'the_post', 'serve_rewrite_and_republish_version' );
+
+// this function checks if there was ?password=... get request
+// if so, it checks if the password matches password set in the plugin
+// if password matches, a cookie with current guid gets issues
+// this guid gets reset every 24 hours and when present in a cookie it gets compared to the current guid
+// if guid in cookie matches, user can access QA pages
+function passwordCheck(){
+    // Name of your transient
+    $transient_name = 'qa_guid';
+
+    // Get the stored settings
+    $options = get_option('qa_plugin_settings');
+
+    if ($options){
+        // Password saved in the plugin
+        $saved_password = $options['password']; // Get the saved password
+
+        // Check if password is sent in GET parameters and it matches the saved password
+        if ( isset($_GET['password']) && $_GET['password'] === $saved_password ) {
+
+            // Check if the GUID is not already saved or it's expired
+            if ( false === ($guid = get_transient($transient_name)) ) {
+                // Generate a new GUID
+                $guid = wp_generate_uuid4();
+
+                // Save the GUID in a transient that expires in 24 hours
+                set_transient($transient_name, $guid, DAY_IN_SECONDS);
+            }
+
+            // Set the guid cookie - this will maintain the QA session
+            setcookie('qa_guid', $guid, time() + DAY_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl());
+            return true;
+        }
+
+        // Check if GUID is present in cookie and it matches the stored GUID
+        if ( isset($_COOKIE['qa_guid']) && $_COOKIE['qa_guid'] === get_transient($transient_name) ) {
+            return true;
+        }
+    }
+    return false;
+}
 
 // Add orange banner indicating users are on the QA page
 function add_custom_html_to_content($content) {
@@ -780,42 +824,9 @@ function qa_custom_redirect_to_login() {
 
 
 
-    // PASSWORD/COOKIE ACCESS CHECK
-
-    // Name of your transient
-    $transient_name = 'qa_guid';
-
-    // Get the stored settings
-    $options = get_option('qa_plugin_settings');
-
-    if ($options){
-        // Password saved in the plugin
-        $saved_password = $options['password']; // Get the saved password
-
-        // Check if password is sent in GET parameters and it matches the saved password
-        if ( isset($_GET['password']) && $_GET['password'] === $saved_password ) {
-
-            // Check if the GUID is not already saved or it's expired
-            if ( false === ($guid = get_transient($transient_name)) ) {
-                // Generate a new GUID
-                $guid = wp_generate_uuid4();
-
-                // Save the GUID in a transient that expires in 24 hours
-                set_transient($transient_name, $guid, DAY_IN_SECONDS);
-            }
-
-            // Set the guid cookie - this will maintain the QA session
-            setcookie('qa_guid', $guid, time() + DAY_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl());
-            return;
-        }
-
-        // Check if GUID is present in cookie and it matches the stored GUID
-        if ( isset($_COOKIE['qa_guid']) && $_COOKIE['qa_guid'] === get_transient($transient_name) ) {
-            return;
-        }
+    if(passwordCheck()){
+        return;
     }
-
-    // FINISH PASSWORD/COOKIE CHECK
 
 
 
