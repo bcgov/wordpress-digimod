@@ -153,7 +153,7 @@
           posts.forEach(post => {
               console.log('processing post/post.wcag_tag: ', post, post.wcag_tag)
               // post.wcag_tag = post.wcag_tag ? post.wcag_tag.map(tagId => tags[tagId] || tagId) : [];
-              post.wcag_tag = post._embedded["wp:term"] ?  post._embedded["wp:term"].flatMap(term => term.map(t => t.name)) : [];
+              post.wcag_tag = (post._embedded && post._embedded["wp:term"]) ? post._embedded["wp:term"].flatMap(term => term.map(t => t.name)) : [];
           });
 
           this.posts = posts;
