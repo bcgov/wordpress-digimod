@@ -1,15 +1,13 @@
 {
-  "name": "digimod-block-theme-supplemental",
-  "author": "Nate King",
+  "name": "wcag-app",
+  "version": "0.0.0",
   "private": true,
-  "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
-    "build:watch": "vite build --watch",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "format": "prettier --write src/"
   },
   "dependencies": {
     "vue": "^3.3.2"
@@ -20,11 +18,7 @@
     "@vue/eslint-config-prettier": "^7.1.0",
     "eslint": "^8.39.0",
     "eslint-plugin-vue": "^9.11.0",
-    "jsdom": "^21.1.0",
     "prettier": "^2.8.8",
-    "sass": "^1.58.3",
-    "terser": "^5.18.2",
-    "vite": "^4.3.5",
-    "vitest": "^0.29.2"
+    "vite": "^4.3.5"
   }
 }
