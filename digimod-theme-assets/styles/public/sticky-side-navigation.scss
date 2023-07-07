@@ -73,18 +73,27 @@
 
 		ol {
 			margin: 0.5rem 0 0;
+			list-style: none;
+			counter-reset: list-number;
 
 			li {
 				min-width: 100%;
+				position: relative;
 
 				>* {
 					vertical-align: text-top;
 				}
 
-				&::marker {
-					color: $menuAncestorHighlight;
+				&::before {
+					color: var(--wp--preset--color--primary-brand);
 					font-size: 1rem;
-					vertical-align: text-top;
+					counter-increment: list-number;
+					content: counter(list-number)".";
+					display: inline-flex;
+					border-radius: 50%;
+					position: absolute;
+					left: -1rem;
+					top: 0.33rem;
 				}
 
 				a {
@@ -97,6 +106,11 @@
 					>a {
 						padding: 0.35rem calc(1rem - 4px) 0.25rem;
 					}
+					&::before {
+						top: 0.66rem;
+						font-weight: 700;
+					}
+
 				}
 			}
 		}
@@ -117,7 +131,7 @@
 
 				&.active {
 
-					> a {
+					>a {
 						padding: 0.35rem calc(1rem - 4px) 0.25rem;
 					}
 				}
