@@ -136,7 +136,7 @@ export default {
 
   methods: {
     async fetchData() {
-      const url = '/wp-json/wp/v2/wcag-card?_embed'; // Replace with your API URL
+      const url = '/wp-json/wp/v2/wcag-card?_embed&per_page=200'; // More than enough for the WCAG guidelines
       try {
         const response = await fetch(url);
         if (!response.ok) {
