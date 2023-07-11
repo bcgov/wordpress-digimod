@@ -3,7 +3,8 @@
     <div class="taxonomy-common_component_category wp-block-post-terms" style="float:left;">
       <div v-for="tag, index in uniqueTags" :key="tag" class="tag-checkbox">
         <input type="checkbox" :id="'tag-' + index" :value="tag" v-model="selectedTags" class="tag-input" />
-        <label :for="tag" class="tag-label tag" tabindex='0' @click="checkTag(index)" @keydown.enter.prevent="checkTag(index)">{{ tag }}</label>
+        <label :for="tag" class="tag-label tag" tabindex='0' @click="checkTag(index)"
+          @keydown.enter.prevent="checkTag(index)">{{ tag }}</label>
       </div>
     </div>
 
@@ -43,10 +44,10 @@
 </template>
 
 <style scoped>
-
 .tag-filter-container {
   margin: 2rem 0;
 }
+
 .tag.tag-label {
   padding: 0.33rem 0.66rem;
 }
@@ -55,7 +56,8 @@
 .tag.tag-label:hover {
   outline: 2px solid var(--wp--preset--color--primary-brand);
 }
-.tag-input:checked + .tag {
+
+.tag-input:checked+.tag {
   background-color: var(--wp--preset--color--gray-40);
 }
 
@@ -63,6 +65,7 @@
   outline: 0 !important;
   border-radius: 1rem !important;
 }
+
 .card-title-link:hover .wcag-card-content {
   outline: 2px solid var(--wp--preset--color--primary-brand);
 }
@@ -78,9 +81,11 @@
   overflow: hidden;
   font-size: 1rem;
 }
+
 .clear-filters:focus-visible {
   outline: 2px solid var(--wp--preset--color--primary-brand);
 }
+
 .filter-card {
   border-radius: 1rem;
 }
@@ -136,28 +141,27 @@ export default {
 
   methods: {
     async fetchData() {
-      const url = '/wp-json/wp/v2/wcag-card?_embed&per_page=200'; // More than enough for the WCAG guidelines
+      const url = `/wp-json/wp/v2/wcag-card?_embed&per_page=100`; // More than enough for the WCAG guidelines
       try {
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error("An error has occurred: " + response.status);
         }
         let posts = await response.json();
-        console.log('posts: ', posts)
+        //console.log('posts: ', posts)
 
         // Replace tag ids with tag names in posts
         posts.forEach(post => {
-          console.log('processing post/post.wcag_tag: ', post, post.wcag_tag)
-          // post.wcag_tag = post.wcag_tag ? post.wcag_tag.map(tagId => tags[tagId] || tagId) : [];
+          //console.log('processing post/post.wcag_tag: ', post, post.wcag_tag)
           post.wcag_tag = (post._embedded && post._embedded["wp:term"]) ? post._embedded["wp:term"].flatMap(term => term.map(t => t.name)) : [];
         });
 
         this.posts = posts;
 
-        console.log('setting this.posts: ', this.posts);
+        //console.log('setting this.posts: ', this.posts);
 
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     },
     checkTag(index) {
