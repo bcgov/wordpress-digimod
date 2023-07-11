@@ -54,6 +54,7 @@ jobs:
             cd $plugin
             tar -cf $plugin.tar --exclude=./.github --exclude=node_modules ./*
             oc cp --no-preserve $plugin.tar $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/$plugin.tar -c $WORDPRESS_CONTAINER_NAME
+            oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- rm -rf /var/www/html/wp-content/plugins/$plugin  # This removes the old plugin directory
             oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- mkdir -p /var/www/html/wp-content/plugins/$plugin
             oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -xf /var/www/html/wp-content/plugins/$plugin.tar -C /var/www/html/wp-content/plugins/$plugin
             oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- rm /var/www/html/wp-content/plugins/$plugin.tar
