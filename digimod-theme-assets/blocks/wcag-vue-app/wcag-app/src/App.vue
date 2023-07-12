@@ -43,7 +43,7 @@
     </div>
   </div>
 
-  <p v-else class="no-results" v-show="showMessage" aria-live='polite'>Oops, no WCAG results found. <a href="#" @click="clearFilters"
+  <p v-else class="no-results" v-show="showMessage" aria-live='polite'>Oops, no WCAG results found. <a href="#" @click.prevent="clearFilters"
       @keydown.enter.prevent='clearFilters'>Try resetting your filters</a> and refining your selections.</p>
 </template>
 
