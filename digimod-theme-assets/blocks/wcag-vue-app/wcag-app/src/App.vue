@@ -105,10 +105,18 @@
 
 .wcag-card-content {
   border-radius: 1rem !important;
-  padding-top: 2rem;
-  padding-right: 2rem;
-  padding-bottom: 2rem;
-  padding-left: 2rem
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.wcag-card-content > * {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.wcag-card-tags {
+  margin-top: auto;
 }
 </style>
 
