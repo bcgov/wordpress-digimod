@@ -25,11 +25,10 @@
               class="wcag-card-content is-layout-constrained wp-block-group common-component-group flex-card has-white-background-color has-background">
 
               <h3 style="margin-bottom:0;margin-top:var(--wp--preset--spacing--20);"
-                class="has-text-color has-secondary-brand-color is-style-_ h1-heading is-style-default wp-block-post-title card-title">
+                class="has-text-color has-secondary-brand-color is-style-default wp-block-post-title card-title">
                 {{ post.title.rendered }}</h3>
 
-              <p style="font-size:1rem;"
-                class="wp-elements-ebf6029de9e8cfc5d6fe4a760bc46921 is-acf-field wp-block-mfb-meta-field-block"><span
+              <p style="font-size:1rem;"><span
                   class="value">
                   {{ post.acf.description.value }}
                 </span></p>
@@ -126,6 +125,7 @@
 .tag.tag-label:focus-visible,
 .tag.tag-label:hover {
   outline: 2px solid var(--wp--preset--color--primary-brand);
+  outline-offset: 0px;
 }
 
 .tag-input:checked+.tag {
@@ -152,9 +152,11 @@
   overflow: hidden;
   font-size: 1rem;
 }
-
+.clear-filters:hover,
 .clear-filters:focus-visible {
-  outline: 2px solid var(--wp--preset--color--primary-brand);
+  outline: 2px solid var(--wp--preset--color--gray-80);
+  outline-offset: 0px;
+  background-color: #fcfcfc;
 }
 
 .filter-card {
@@ -167,11 +169,12 @@
 }
 
 .no-results a {
-  color: darkred;
+  color: #8b0000;
 }
 
 .num-available {
   color: #666;
+  font-size: 0.9rem;
 }
 
 .wcag-card-content {
