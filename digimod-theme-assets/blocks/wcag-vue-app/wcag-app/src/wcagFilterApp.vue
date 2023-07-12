@@ -11,11 +11,12 @@
       </div>
     </div>
     <button class="clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters'>Reset filters</button>
+    <span class='num-available'>{{ filteredPosts.length }} of {{ posts.length }} showing</span>
   </div>
 
   <div v-if="filteredPosts.length > 0" class="alignfull wp-block-columns card-container">
     <div class="wp-block-query wcag-card-container">
-      <ul class="is-flex-container wp-block-post-template" :class="`columns-${this.columns}`">
+      <ul class="is-flex-container wp-block-post-template" :class="`columns-${columns}`">
 
         <li v-for="post in filteredPosts" :key="post.id" class="filter-card common-component">
 
@@ -43,13 +44,79 @@
     </div>
   </div>
 
-  <p v-else class="no-results" v-show="showMessage" aria-live='polite'>Oops, no WCAG results found. <a href="#" @click.prevent="clearFilters"
-      @keydown.enter.prevent='clearFilters'>Try resetting your filters</a> and refining your selections.</p>
+  <p v-else-if="showMessage" class="no-results" v-show="showMessage" aria-live='polite'>Oops, no WCAG results found. <a href="#" @click.prevent="clearFilters" @keydown.enter.prevent='clearFilters'>Try resetting your filters</a> and refining your selections.</p>
 </template>
+
+<script setup>
+  import { ref, onMounted, computed } from 'vue';
+
+  const posts = ref([]);
+  const selectedTags = ref([]);
+  const cssClass = ref('');
+  const columns = ref(3);
+  const showMessage = ref(false);
+
+  const fetchData = async () => {
+    const url = `/wp-json/wp/v2/wcag-card?_embed&per_page=100`;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('An error has occurred: ' + response.status);
+      }
+      const postsData = await response.json();
+      posts.value = postsData.map((post) => ({
+        ...post,
+        wcag_tag: post._embedded?.['wp:term']?.flatMap((term) => term.map((t) => t.name)) || [],
+      }));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const checkTag = (index) => {
+    const tag = uniqueTags.value[index];
+    if (selectedTags.value.includes(tag)) {
+      selectedTags.value = selectedTags.value.filter((selectedTag) => selectedTag !== tag);
+    } else {
+      selectedTags.value.push(tag);
+    }
+  };
+
+  const getTagAriaLabel = (tag) => {
+    return `${tag} filter ${selectedTags.value.includes(tag) ? 'selected' : 'deselected'}`;
+  };
+
+  const clearFilters = () => {
+    selectedTags.value = [];
+  };
+
+  const uniqueTags = computed(() => [...new Set(posts.value.flatMap((post) => post.wcag_tag || []))]);
+  const filteredPosts = computed(() => {
+    if (!selectedTags.value.length) {
+      return posts.value;
+    } else {
+      return posts.value.filter((post) =>
+        post.wcag_tag && post.wcag_tag.length && selectedTags.value.every((tag) => post.wcag_tag.includes(tag))
+      );
+    }
+  });
+
+  onMounted(() => {
+    fetchData();
+
+    const appElement = document.getElementById('app');
+    cssClass.value = appElement.getAttribute('class');
+    columns.value = parseInt(appElement.getAttribute('data-columns'));
+
+    setTimeout(() => {
+      showMessage.value = true;
+    }, 3000);
+  });
+</script>
 
 <style scoped>
 .tag-filter-container {
-  margin: 2rem 0;
+  margin: 2rem 0.33rem 2rem 0;
 }
 
 .tag.tag-label {
@@ -103,6 +170,10 @@
   color: darkred;
 }
 
+.num-available {
+  color: #666;
+}
+
 .wcag-card-content {
   border-radius: 1rem !important;
   display: flex;
@@ -119,92 +190,3 @@
   margin-top: auto;
 }
 </style>
-
-<script>
-export default {
-  data() {
-    return {
-      posts: [], // API response goes here
-      selectedTags: [],
-      cssClass: '',
-      columns: 3,
-      showMessage: false
-    };
-  },
-  computed: {
-    uniqueTags() {
-      let uniqueT = [...new Set(this.posts.flatMap(post => post.wcag_tag || []))];
-      console.log('uniqueTags: ', uniqueT);
-      return uniqueT;
-    },
-
-    filteredPosts() {
-
-      // return posts;
-      if (!this.selectedTags.length) {
-        return this.posts;
-      } else {
-        return this.posts.filter(post => {
-          return post.wcag_tag && post.wcag_tag.length && this.selectedTags.every(tag => post.wcag_tag.includes(tag));
-        });
-      }
-    },
-  },
-
-  created() {
-    // Fetch data from API when component is created
-    this.fetchData();
-
-    const appElement = document.getElementById('app');
-    this.cssClass = appElement.getAttribute('class');
-    this.columns = parseInt(appElement.getAttribute('data-columns'));
-    console.log('created: ', this.columns, this.cssClass);
-  },
-
-  methods: {
-    async fetchData() {
-      const url = `/wp-json/wp/v2/wcag-card?_embed&per_page=100`; // More than enough for the WCAG guidelines
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error("An error has occurred: " + response.status);
-        }
-        let posts = await response.json();
-        //console.log('posts: ', posts)
-
-        // Replace tag ids with tag names in posts
-        posts.forEach(post => {
-          //console.log('processing post/post.wcag_tag: ', post, post.wcag_tag)
-          post.wcag_tag = (post._embedded && post._embedded["wp:term"]) ? post._embedded["wp:term"].flatMap(term => term.map(t => t.name)) : [];
-        });
-
-        this.posts = posts;
-
-        //console.log('setting this.posts: ', this.posts);
-
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    checkTag(index) {
-      // Toggle the selected state of the tag
-      this.selectedTags.includes(this.uniqueTags[index])
-        ? this.selectedTags.splice(this.selectedTags.indexOf(this.uniqueTags[index]), 1)
-        : this.selectedTags.push(this.uniqueTags[index]);
-    },
-    getTagAriaLabel(tag) {
-      // Return the ARIA label based on the selected state of the tag
-      return `${tag} filter ${this.selectedTags.includes(tag) ? 'selected' : 'deselected'}`;
-    },
-    clearFilters() {
-      this.selectedTags = [];
-    },
-  },
-
-  mounted() {
-    setTimeout(() => {
-      this.showMessage = true;
-    }, 1500);
-  },
-};
-</script>

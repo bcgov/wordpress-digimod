@@ -32,12 +32,7 @@ class VueAppEditorComponent extends wp.element.Component {
                 null,
                 createElement(
                     PanelBody,
-                    { title: 'Vue.js App Settings', initialOpen: true },
-                    // createElement(TextControl, {
-                    //     label: 'CSS Class',
-                    //     value: cssClass,
-                    //     onChange: (newClass) => setAttributes({ cssClass: newClass }),
-                    // }),
+                    { title: 'WCAG Filtering App Settings', initialOpen: true },
                     createElement(__experimentalNumberControl, {
                         label: 'Columns',
                         value: columns,
@@ -45,13 +40,13 @@ class VueAppEditorComponent extends wp.element.Component {
                     })
                 )
             ),
-            createElement('div', { id: 'app', class: className, 'data-columns': columns }, 'Loading Vue.js app...')
+            createElement('div', { id: 'app', class: className, 'data-columns': columns }, 'WCAG Filtering App Placeholder')
         );
     }
 }
 
 registerBlockType('my-plugin/vuejs-wordpress-block', {
-    title: 'Vue.js App',
+    title: 'WCAG Filtering App',
     icon: 'format-image',
     category: 'common',
     attributes: {
@@ -67,6 +62,6 @@ registerBlockType('my-plugin/vuejs-wordpress-block', {
     edit: VueAppEditorComponent,
     save: ({ attributes }) => {
         const { className, columns } = attributes;
-        return createElement('div', { id: 'app', class: className, 'data-columns': columns }, 'Loading Vue.js app...');
+        return createElement('div', { id: 'app', class: className, 'data-columns': columns }, 'Loading WCAG Filtering App...');
     },
 });
