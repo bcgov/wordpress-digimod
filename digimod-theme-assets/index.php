@@ -83,7 +83,7 @@ add_filter( 'wp_theme_json_data_theme', 'filter_theme_json_theme' );
 function vuejs_wordpress_block() {
     wp_enqueue_script(
         'vuejs-wordpress-block',
-        plugin_dir_url(__FILE__) . 'blocks/wcag-vue-app/block.js',
+        plugin_dir_url(__FILE__) . 'blocks/wcag-vue-app/wcag-block.js',
         array( 'wp-blocks', 'wp-element', 'wp-editor' )
     );
 }
@@ -146,4 +146,5 @@ function vuejs_app_block_init() {
         'render_callback' => 'vuejs_app_dynamic_block',
     ] );
 }
+
 add_action( 'init', 'vuejs_app_block_init' );
