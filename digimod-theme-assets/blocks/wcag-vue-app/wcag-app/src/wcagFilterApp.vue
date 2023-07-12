@@ -124,12 +124,17 @@
 
 .tag.tag-label:focus-visible,
 .tag.tag-label:hover {
+  background-color: #fcfcfc;
+  color: var(--wp--preset--color--primary-brand);
   outline: 2px solid var(--wp--preset--color--primary-brand);
   outline-offset: 0px;
 }
 
 .tag-input:checked+.tag {
-  background-color: var(--wp--preset--color--gray-40);
+  background-color: #dfe7ed;
+  color: #000;
+  outline: 2px solid var(--wp--preset--color--primary-brand);
+  outline-offset: -1px;
 }
 
 .card-title-link:hover {
