@@ -1,18 +1,19 @@
 <template>
-  <div class='tag-filter-container'>
+  <div v-if="uniqueTags.length > 1" class='tag-filter-container'>
     <div class="taxonomy-common_component_category wp-block-post-terms" style="float:left;">
       <div v-for="tag, index in uniqueTags" :key="tag" class="tag-checkbox">
         <input type="checkbox" :id="'tag-' + index" :value="tag" v-model="selectedTags" class="tag-input" />
-        <label :for="tag" class="tag-label tag" tabindex='0' @click="checkTag(index)"
-          @keydown.enter.prevent="checkTag(index)">{{ tag }}</label>
+        <label :for="tag" class="tag-label tag" tabindex="0" @click="checkTag(index)"
+          @keydown.enter.prevent="checkTag(index)" role="button" :aria-label="getTagAriaLabel(tag)">
+          {{ tag }}
+        </label>
+
       </div>
     </div>
-
     <button class="clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters'>Reset filters</button>
-
   </div>
 
-  <div class="alignfull wp-block-columns card-container">
+  <div v-if="filteredPosts.length > 0" class="alignfull wp-block-columns card-container">
     <div class="wp-block-query wcag-card-container">
       <ul class="is-flex-container wp-block-post-template" :class="`columns-${this.columns}`">
 
@@ -41,6 +42,9 @@
       </ul>
     </div>
   </div>
+
+  <p v-else class="no-results" v-show="showMessage" aria-live='polite'>Oops, no WCAG results found. <a href="#" @click="clearFilters"
+      @keydown.enter.prevent='clearFilters'>Try resetting your filters</a> and refining your selections.</p>
 </template>
 
 <style scoped>
@@ -90,6 +94,15 @@
   border-radius: 1rem;
 }
 
+.no-results {
+  color: var(--wp--preset--color--primary-brand);
+  padding: 0.66rem;
+}
+
+.no-results a {
+  color: darkred;
+}
+
 .wcag-card-content {
   border-radius: 1rem !important;
   padding-top: 2rem;
@@ -107,6 +120,7 @@ export default {
       selectedTags: [],
       cssClass: '',
       columns: 3,
+      showMessage: false
     };
   },
   computed: {
@@ -165,17 +179,24 @@ export default {
       }
     },
     checkTag(index) {
-      const tag = this.uniqueTags[index];
-      const indexOfTag = this.selectedTags.indexOf(tag);
-      if (indexOfTag > -1) {
-        this.selectedTags.splice(indexOfTag, 1);
-      } else {
-        this.selectedTags.push(tag);
-      }
+      // Toggle the selected state of the tag
+      this.selectedTags.includes(this.uniqueTags[index])
+        ? this.selectedTags.splice(this.selectedTags.indexOf(this.uniqueTags[index]), 1)
+        : this.selectedTags.push(this.uniqueTags[index]);
+    },
+    getTagAriaLabel(tag) {
+      // Return the ARIA label based on the selected state of the tag
+      return `${tag} filter ${this.selectedTags.includes(tag) ? 'selected' : 'deselected'}`;
     },
     clearFilters() {
       this.selectedTags = [];
     },
+  },
+
+  mounted() {
+    setTimeout(() => {
+      this.showMessage = true;
+    }, 1500);
   },
 };
 </script>
