@@ -102,7 +102,7 @@ body:not(body.wp-admin):not(body.editor-styles-wrapper):not(body.error404) {
 
 .mobile-only {
 	display: block;
-	@media (min-width: 601px) {
+	@media (min-width: 782px) {
 		display: none;
 	}
 }
@@ -116,7 +116,7 @@ body:not(body.wp-admin):not(body.editor-styles-wrapper):not(body.error404) {
 
 .tablet-plus {
 	display: none;
-	@media (min-width: 601px) {
+	@media (min-width: 782px) {
 		display: block;
 	}
 }

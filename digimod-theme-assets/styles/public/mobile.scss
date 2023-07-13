@@ -1,16 +1,6 @@
 /* stylelint-disable no-descending-specificity */
 /* stylelint-disable selector-class-pattern */
 
-.mobile-only {
-	display: inherit;
-}
-
-@media (min-width: $breakpoint-lg) {
-
-	.mobile-only {
-		display: none;
-	}
-}
 
 .mm-menu {
 	height: 100vh;

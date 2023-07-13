@@ -21,6 +21,10 @@
 	
 			.wp-block-group {
 				width: 100%;
+
+				.wp-block-heading.mobile-only {
+					margin: 0;
+				}
 				ul, ol {
 					padding-left: 1rem;
 				}
