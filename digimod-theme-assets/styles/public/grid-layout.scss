@@ -1,0 +1,30 @@
+.grid-layout {
+	
+	.wp-block-columns {
+		margin-bottom: 1rem;
+		@media (min-width: 782px) {
+			margin-bottom: 0;
+		}
+		&.grid-header {
+			box-shadow: var(--box-shadow);
+			display: none;
+			@media (min-width: 782px) {
+				display: flex;
+				margin-bottom: 1rem;
+			}
+		}
+		.wp-block-column {
+			padding: 0;
+			@media (min-width: 782px) {
+				padding:0 0 2rem 0;
+			}
+	
+			.wp-block-group {
+				width: 100%;
+				ul, ol {
+					padding-left: 1rem;
+				}
+			}
+		}
+	}
+}
