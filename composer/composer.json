@@ -1,0 +1,31 @@
+{
+    "name": "digimod/digital-gov",
+    "description": "digital.gov.bc.ca",
+    "repositories":[
+        {
+            "type":"composer",
+            "url":"https://wpackagist.org",
+            "only": [
+                "wpackagist-plugin/*"
+            ]
+        },
+        {
+            "type":"composer",
+            "url":"https://apps.itsm.gov.bc.ca/satis/"
+        }
+        
+    ],
+    "require": {
+        "wpackagist-plugin/advanced-custom-fields":"dev-trunk",
+        "wpackagist-plugin/all-in-one-seo-pack":"dev-trunk",
+        "wpackagist-plugin/custom-post-type-ui":"dev-trunk",
+        "wpackagist-plugin/display-a-meta-field-as-block":"dev-trunk",
+        "wpackagist-plugin/miniorange-login-with-eve-online-google-facebook":"dev-trunk",
+        "wpackagist-plugin/public-post-preview":"dev-trunk",
+        "wpackagist-plugin/safe-redirect-manager":"dev-trunk",
+        "wpackagist-plugin/user-role-editor":"dev-trunk",
+        "wpackagist-plugin/wordpress-importer":"dev-trunk",
+        "wpackagist-plugin/duplicate-post":"dev-trunk",
+        "bcgov-plugin/bcgov-looker-snowplow":"dev-trunk"
+    }
+}
