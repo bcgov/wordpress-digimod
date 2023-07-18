@@ -2,7 +2,7 @@
 /**
 * Plugin Name: DIGIMOD - QA functionality
 * Description: Changes WordPress workflow to include QA functionality through IDIR protection
-* Version: 2.0.1
+* Version: 2.0.2
 * Author: Digimod
 * License: GPL-2.0+
 * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Beta testing - run only on specific pages
-$qa_ids = array(9158,9174,9179,11108,9493,9675,9721,9750,9772,10089,10125,10107,10796,10232,10513,10535,10568,10553,10348,10590,10622,10633,10650,10017);
+$qa_ids = array(9158,9174,9179,11108,9493,9675,9721,9750,9772,10089,10125,10107,10796,10232,10513,10535,10568,10553,10348,10590,10622,10633,10650,10017,7686,13102,10138,13125,13009,13072,13148);
 
 function qa_runOnClient(){
     global $post;
