@@ -1,0 +1,32 @@
+name: Rename latest WordPress tag
+on:
+  workflow_dispatch:
+    inputs:
+      rename-target:
+        description: 'Rename "latest" tag to'
+        required: true
+        default: 'test'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Install OC CLI
+      run: |
+        curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz
+        tar xvzf openshift-client-linux.tar.gz
+        sudo mv oc kubectl /usr/local/bin/
+    - name: Rename latest WordPress tag
+      run: |
+        ENVIRONMENT=tools
+        RENAME_TARGET=${{ github.event.inputs.rename-target }}
+        token=${{ secrets.TOOLS_TOKEN  }}
+        oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
+        NAMESPACE="c0cce6-$ENVIRONMENT"
+        OC_ENV=$ENVIRONMENT
+
+
+        #run command to change miniorange plugin variables
+        oc exec -n $NAMESPACE tag wordpress-wordpress-run:latest wordpress-wordpress-run:${RENAME_TARGET}"
