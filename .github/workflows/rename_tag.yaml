@@ -25,7 +25,6 @@ jobs:
         token=${{ secrets.OPENSHIFT_TOOLS_API_TOKEN  }}
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
         NAMESPACE="c0cce6-$ENVIRONMENT"
-        OC_ENV=$ENVIRONMENT
 
         #run command to change miniorange plugin variables
-        oc -n $NAMESPACE tag wordpress-wordpress-run:latest wordpress-wordpress-run:${RENAME_TARGET}"
+        oc -n $NAMESPACE tag wordpress-wordpress-run:latest wordpress-wordpress-run:$RENAME_TARGET "
