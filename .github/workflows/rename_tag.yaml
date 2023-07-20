@@ -27,4 +27,4 @@ jobs:
         NAMESPACE="c0cce6-$ENVIRONMENT"
 
         #run command to change miniorange plugin variables
-        oc -n $NAMESPACE tag wordpress-wordpress-run:latest wordpress-wordpress-run:$RENAME_TARGET "
+        oc -n $NAMESPACE tag wordpress-wordpress-run:latest wordpress-wordpress-run:$RENAME_TARGET
