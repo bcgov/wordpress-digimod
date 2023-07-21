@@ -37,8 +37,11 @@ jobs:
           dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
           test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
           prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
-      - name: Deploy theme and plugins
-        uses: ./.github/actions/deploy_theme_and_plugins
+      - name: Sitemap Screenshots
+        uses: ./.github/actions/take_screenshots
+        continue-on-error: false
+      - name: Deploy theme
+        uses: ./.github/actions/deploy_theme
         with:
           environment: ${{ github.event.inputs.environment }}
           site-name: ${{ github.event.inputs.site-name }}
@@ -47,3 +50,16 @@ jobs:
           test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
           prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
           keycloak-test-client-secret: ${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET }}
+      - name: Deploy plugins
+        uses: ./.github/actions/deploy_plugins
+        with:
+          environment: ${{ github.event.inputs.environment }}
+          site-name: ${{ github.event.inputs.site-name }}
+          openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
+          dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
+          test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
+          prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
+          keycloak-test-client-secret: ${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET }}
+      - name: Verify Screenshots
+        uses: ./.github/actions/verify_screenshots
+        continue-on-error: false
