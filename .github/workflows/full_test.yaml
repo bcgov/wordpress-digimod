@@ -37,6 +37,13 @@ jobs:
           dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
           test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
           prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
+  take_screenshots:
+    uses: ./.github/workflows/take_screenshots.yaml
+    with:
+      wordpressSiteUrl: test
+  deploy_and_validate:
+    runs-on: ubuntu-latest
+    steps:
       - name: Sitemap Screenshots
         uses: ./.github/workflows/take_screenshots.yaml@main
         with:
