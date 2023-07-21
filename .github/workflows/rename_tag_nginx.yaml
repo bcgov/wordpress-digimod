@@ -1,0 +1,30 @@
+name: Rename latest nginx tag
+on:
+  workflow_dispatch:
+    inputs:
+      rename-target:
+        description: 'Rename "latest" tag to'
+        required: true
+        default: 'test'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Install OC CLI
+      run: |
+        curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz
+        tar xvzf openshift-client-linux.tar.gz
+        sudo mv oc kubectl /usr/local/bin/
+    - name: Rename latest nginx tag
+      run: |
+        ENVIRONMENT=tools
+        RENAME_TARGET=${{ github.event.inputs.rename-target }}
+        token=${{ secrets.OPENSHIFT_TOOLS_API_TOKEN  }}
+        oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
+        NAMESPACE="c0cce6-$ENVIRONMENT"
+
+        #run command to change miniorange plugin variables
+        oc -n $NAMESPACE tag wordpress-nginx-run:latest wordpress-nginx-run:$RENAME_TARGET
