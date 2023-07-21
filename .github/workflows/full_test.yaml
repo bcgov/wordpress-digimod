@@ -38,8 +38,9 @@ jobs:
           test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
           prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
       - name: Sitemap Screenshots
-        uses: ./.github/actions/take_screenshots
-        continue-on-error: false
+        uses: ./.github/workflows/take_screenshots.yaml@main
+        with:
+          wordpressSiteUrl: test
       - name: Deploy theme
         uses: ./.github/actions/deploy_theme
         with:

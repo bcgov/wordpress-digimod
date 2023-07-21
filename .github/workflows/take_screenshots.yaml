@@ -6,6 +6,14 @@ on:
           description: 'Site'
           required: true
           default: 'test'
+  workflow_call:
+    inputs:
+      wordpressSiteUrl:
+        description: 'Site'
+        required: true
+        default: 'test'
+        type: string
+  
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
