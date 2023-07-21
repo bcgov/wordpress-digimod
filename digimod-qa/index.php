@@ -14,11 +14,20 @@ if (!defined('ABSPATH')) {
 }
 
 // Beta testing - run only on specific pages
-$qa_ids = array(9158,9174,9179,11108,9493,9675,9721,9750,9772,10089,10125,10107,10796,10232,10513,10535,10568,10553,10348,10590,10622,10633,10650,10017,7686,13102,10138,13125,13009,13072,13148);
+// array(9158,9174,9179,11108,9493,9675,9721,9750,9772,10089,10125,10107,10796,10232,10513,10535,10568,10553,10348,10590,10622,10633,10650,10017,7686,13102,10138,13125,13009,13072,13148);
+
+function get_qa_ids(){
+    // Get the restricted post IDs from the saved settings
+    $restricted_posts = get_option('custom_qa_restricted_urls_enabled', '');
+
+    // Convert the saved IDs to an array
+    $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
+    return $restricted_post_ids;
+}
 
 function qa_runOnClient(){
     global $post;
-    global $qa_ids;
+    $qa_ids=get_qa_ids();
     
     if ( !isset( $post ) ) { // global post object is not set - do not run qa functionality on this page (for example 404)
         return false;
@@ -81,7 +90,7 @@ add_action( 'admin_enqueue_scripts', 'qa_enqueue_admin_script_all' );
 
 
 function qa_runOnAdmin_checkPostID($postId){
-    global $qa_ids;
+    $qa_ids=get_qa_ids();
 
     $post_type = get_post_type($postId);
 
@@ -692,7 +701,7 @@ function add_custom_html_to_content($content) {
     $postId = $post->ID;
 
     // Get the restricted post IDs from the saved settings
-    $restricted_posts = get_option('custom_qa_restricted_urls', '');
+    $restricted_posts = get_option('custom_qa_restricted_urls_enabled', '');
 
     // Convert the saved IDs to an array
     $restricted_post_ids = array_filter(array_map('trim', explode(PHP_EOL, $restricted_posts)));
@@ -756,45 +765,45 @@ function qa_enqueue_custom_js() {
 
 // Admin UI
 
-function custom_qa_restricted_urls_menu() {
+function custom_qa_restricted_urls_enabled_menu() {
     add_options_page(
-        'Restricted QA URLs',
-        'Restricted QA URLs',
+        'QA Enabled Pages',
+        'QA Enabled Pages',
         'manage_options',
-        'custom-qa-restricted-urls',
-        'custom_qa_restricted_urls_settings_page'
+        'custom-qa-restricted-urls-enabled',
+        'custom_qa_restricted_urls_enabled_settings_page'
     );
 }
 
-add_action('admin_menu', 'custom_qa_restricted_urls_menu');
+add_action('admin_menu', 'custom_qa_restricted_urls_enabled_menu');
 
-function custom_qa_restricted_urls_settings_page() {
+function custom_qa_restricted_urls_enabled_settings_page() {
     // Check user capabilities
     if (!current_user_can('manage_options')) {
         return;
     }
 
     // Save settings
-    if (isset($_POST['submit']) && check_admin_referer('custom_qa_restricted_urls_settings')) {
-        update_option('custom_qa_restricted_urls', sanitize_textarea_field($_POST['custom_qa_restricted_urls']));
+    if (isset($_POST['submit']) && check_admin_referer('custom_qa_restricted_urls_enabled_settings')) {
+        update_option('custom_qa_restricted_urls_enabled', sanitize_textarea_field($_POST['custom_qa_restricted_urls_enabled']));
     }
 
     // Load existing settings
-    $restricted_urls = get_option('custom_qa_restricted_urls', '');
+    $restricted_urls = get_option('custom_qa_restricted_urls_enabled', '');
 
     ?>
     <div class="wrap">
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
         <form method="post" action="">
-            <?php wp_nonce_field('custom_qa_restricted_urls_settings'); ?>
+            <?php wp_nonce_field('custom_qa_restricted_urls_enabled_settings'); ?>
             <table class="form-table">
                 <tr>
                     <th scope="row">
-                        <label for="custom_qa_restricted_urls">Restricted URLs</label>
+                        <label for="custom_qa_restricted_urls_enabled">QA Enabled Pages</label>
                     </th>
                     <td>
-                        <textarea id="custom_qa_restricted_urls" name="custom_qa_restricted_urls" rows="10" cols="50" class="large-text code"><?php echo esc_textarea($restricted_urls); ?></textarea>
-                        <p class="description">Enter one URL per line. URLs should be relative to your site's domain (e.g., /restricted-page-1/).</p>
+                        <textarea id="custom_qa_restricted_urls_enabled" name="custom_qa_restricted_urls_enabled" rows="10" cols="50" class="large-text code"><?php echo esc_textarea($restricted_urls); ?></textarea>
+                        <p class="description">Enter one page ID per line.</p>
                     </td>
                 </tr>
             </table>
@@ -1122,25 +1131,25 @@ add_action( 'admin_init', 'qa_redirect_to_rewrite_and_republish' );
 
 
 // if user is deleteing a rewrite and republish post, also delete the original post as well
-function qa_delete_original_on_rewrite_and_republish_delete( $post_id ) {
-    if (!qa_runOnAdmin_checkPostID($post_id)) { // todo: remove once out of beta
-        return;
-    }
-    // Check if the post being deleted is a "Rewrite and Republish" version
+// function qa_delete_original_on_rewrite_and_republish_delete( $post_id ) {
+//     if (!qa_runOnAdmin_checkPostID($post_id)) { // todo: remove once out of beta
+//         return;
+//     }
+//     // Check if the post being deleted is a "Rewrite and Republish" version
 
-    remove_action( 'wp_trash_post', 'qa_delete_original_on_rewrite_and_republish_delete' );
+//     remove_action( 'wp_trash_post', 'qa_delete_original_on_rewrite_and_republish_delete' );
 
-    $original_post_id = get_post_meta( $post_id, '_dp_original', true );
-    if ( $original_post_id ) {
-        // The post is a "Rewrite and Republish" version, so delete the original post
-        // Use wp_delete_post with force delete true to bypass trash
-        wp_trash_post( $original_post_id );
-    }
+//     $original_post_id = get_post_meta( $post_id, '_dp_original', true );
+//     if ( $original_post_id ) {
+//         // The post is a "Rewrite and Republish" version, so delete the original post
+//         // Use wp_delete_post with force delete true to bypass trash
+//         wp_trash_post( $original_post_id );
+//     }
 
-      // Add the action back
-      add_action( 'wp_trash_post', 'qa_delete_original_on_rewrite_and_republish_delete' );
-}
-add_action( 'wp_trash_post', 'qa_delete_original_on_rewrite_and_republish_delete' );
+//       // Add the action back
+//       add_action( 'wp_trash_post', 'qa_delete_original_on_rewrite_and_republish_delete' );
+// }
+// add_action( 'wp_trash_post', 'qa_delete_original_on_rewrite_and_republish_delete' );
 
 
 // QA PASSWORD UI
