@@ -19,6 +19,14 @@ function custom_redirect_to_login() {
 
     // Check if the current page is restricted and the user is not logged in
     if (in_array($current_page_url, $restricted_page_urls) && !is_user_logged_in()) {
+        
+        // Set the cookie for redirection after login
+        $name = "my_login_redirect";
+        $value = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"; // Get the full URL
+
+        $expire_time = time() + (5 * 60); // 5 minutes from now
+        setcookie($name, $value, $expire_time, '/'); // Setting the cookie
+
         // Get the login URL
         $login_url = wp_login_url(home_url($current_page_url));
 
@@ -27,6 +35,7 @@ function custom_redirect_to_login() {
         exit;
     }
 }
+ 
 
 add_action('template_redirect', 'custom_redirect_to_login');
 
