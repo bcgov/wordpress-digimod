@@ -15,7 +15,7 @@ const bcgovDigiModPlugin = {
              * Aggregation: Card setup – generate links from URL.
              */
 
-            const isTrainingPage = document.querySelector('body.training');
+            const isTrainingPage = document.querySelector('.post-content.training');
 
             if (isTrainingPage) {
 
