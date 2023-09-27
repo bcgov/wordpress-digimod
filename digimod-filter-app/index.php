@@ -29,7 +29,7 @@ add_action( 'enqueue_block_editor_assets', 'vuejs_wordpress_block' );
 // this loads vue app assets onto the client: todo: this happens for all pages, not just when the block is used
 function vuejs_app() {
     $plugin_dir = plugin_dir_path(__FILE__);
-    $assets_dir = $plugin_dir . 'blocks/wcag-vue-app/wcag-app/dist/assets/';
+    $assets_dir = $plugin_dir . 'blocks/custom-vue-app/custom-app/dist/assets/';
     $public_js_files = glob($assets_dir . 'index-*.js');
     $public_css_files = glob($assets_dir . 'index-*.css');
 
@@ -51,7 +51,7 @@ add_action( 'enqueue_block_editor_assets', 'vuejs_app' );
 // load vue app assets, only when the block is used on the page
 function vuejs_app_dynamic_block( $attributes ) {
     $plugin_dir = plugin_dir_path( __FILE__ );
-    $assets_dir = $plugin_dir . 'blocks/wcag-vue-app/wcag-app/dist/assets/';
+    $assets_dir = $plugin_dir . 'blocks/custom-vue-app/custom-app/dist/assets/';
     $public_js_files = glob($assets_dir . 'index-*.js');
     $public_css_files = glob($assets_dir . 'index-*.css');
 
@@ -92,4 +92,4 @@ add_action( 'init', 'vuejs_app_block_init' );
 //     $response->data['tagss'] = $tags;
 //     return $response;
 // }
-// add_filter('rest_prepare_wcag-card', 'modify_wcag_card_response', 10, 3);
+// add_filter('rest_prepare_custom-card', 'modify_wcag_card_response', 10, 3);

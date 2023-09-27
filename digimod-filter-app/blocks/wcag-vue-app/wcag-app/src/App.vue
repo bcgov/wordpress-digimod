@@ -9,7 +9,7 @@
       </div>
 
       <!-- <div class="wp-block-button has-size-regular has-custom-font-size has-small-font-size">
-        <button @click="clearFilters" tabindex="0" class="wp-block-button__link wp-element-button wcag-reset-button">Clear All Filters</button>
+        <button @click="clearFilters" tabindex="0" class="wp-block-button__link wp-element-button custom-reset-button">Clear All Filters</button>
       </div> -->
 
       <h3 class="clearFilters" @click="clearFilters" style="color: var(--wp--preset--color--secondary-brand); cursor: pointer; padding-left: 10px; overflow: hidden; font-size: 1rem; padding-top: 3px;">Clear All Filters</h3>
@@ -18,7 +18,7 @@
 
   <div class="is-layout-constrained wp-container-38 wp-block-group alignfull card-container"
     style="padding-top:0;padding-bottom:var(--wp--preset--spacing--50);">
-    <div class="is-layout-flow wp-block-query wcag-card-container">
+    <div class="is-layout-flow wp-block-query custom-card-container">
       <ul class="is-layout-flow is-flex-container wp-block-post-template" :class="`columns-${this.columns}`">
 
         <li v-for="post in filteredPosts" :key="post.id"
@@ -26,7 +26,7 @@
 
           <a  :href="post.acf.card_hyperlink.value">
             <div
-              class="wcag-card-content is-layout-constrained wp-block-group common-component-group flex-card has-white-background-color has-background"
+              class="custom-card-content is-layout-constrained wp-block-group common-component-group flex-card has-white-background-color has-background"
               style="border-radius:1rem;padding-top:2rem;padding-right:2rem;padding-bottom:2rem;padding-left:2rem">
               
 
@@ -43,7 +43,7 @@
                   {{ post.acf.description.value }}
                 </span></p>
 
-              <div v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms wcag-card-tags">
+              <div v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms custom-card-tags">
                 <span v-for="tag in post.wcag_tag" :key="tag" class="tag">{{ tag }}</span>
               </div>
             </div>
@@ -120,7 +120,7 @@
 
     methods: {
       async fetchData() {
-        const url = '/wp-json/wp/v2/wcag-card?_embed'; // Replace with your API URL
+        const url = '/wp-json/wp/v2/custom-card?_embed'; // Replace with your API URL
         try {
           const response = await fetch(url);
           if (!response.ok) {
@@ -217,7 +217,7 @@
     }
 /* End wp-block-post-template-inline-css */
 
-   .wcag-card-content{
+   .custom-card-content{
     height:100%;
    }
    
@@ -258,7 +258,7 @@
   }
 
   /* Custom styles */
-  .wcag-card-tags .tag{
+  .custom-card-tags .tag{
     border: none !important;
   }
 
@@ -274,7 +274,7 @@
     justify-content: flex-start;
   }
 
-  .wcag-card-container{
+  .custom-card-container{
     width: 100%;
   }
 
@@ -293,7 +293,7 @@
     font-size: 1rem;
   }
 
-  .wcag-reset-button{
+  .custom-reset-button{
     font-size: 1rem;
     padding: 11px;
     margin-top: -7px;

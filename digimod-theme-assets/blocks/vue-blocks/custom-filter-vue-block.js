@@ -1,7 +1,7 @@
 const { registerBlockType } = wp.blocks;
 const { createElement, Fragment } = wp.element;
 const { InspectorControls } = wp.blockEditor;
-const { PanelBody, TextControl, __experimentalNumberControl } = wp.components;
+const { PanelBody, TextControl, __experimentalNumberControl, SelectControl, ToggleControl, FontSizePicker } = wp.components;
 
 
 class VueAppEditorComponent extends wp.element.Component {
@@ -32,7 +32,7 @@ class VueAppEditorComponent extends wp.element.Component {
                 null,
                 createElement(
                     PanelBody,
-                    { title: 'WCAG Filtering App Settings', initialOpen: true },
+                    { title: 'custom Filtering App Settings', initialOpen: true },
                     createElement(__experimentalNumberControl, {
                         label: 'Columns',
                         value: columns,
@@ -40,15 +40,15 @@ class VueAppEditorComponent extends wp.element.Component {
                     })
                 )
             ),
-            createElement('div', { id: 'app', class: className, 'data-columns': columns }, 'WCAG Filtering App Placeholder')
+            createElement('div', { id: 'app', class: className, 'data-columns': columns }, 'Custom Filtering App Placeholder')
         );
     }
 }
 
-registerBlockType('my-plugin/vuejs-wordpress-block', {
-    title: 'WCAG Filtering App',
-    icon: 'format-image',
-    category: 'common',
+registerBlockType('digimod-plugin/custom-filter-block', {
+    title: 'Custom Cards Filter',
+    icon: 'filter',
+    category: 'plugin',
     attributes: {
         className: {
             type: 'string',
@@ -62,6 +62,6 @@ registerBlockType('my-plugin/vuejs-wordpress-block', {
     edit: VueAppEditorComponent,
     save: ({ attributes }) => {
         const { className, columns } = attributes;
-        return createElement('div', { id: 'app', class: className, 'data-columns': columns }, 'Loading WCAG Filtering App...');
+        return createElement('div', { id: 'app', class: className, 'data-columns': columns }, 'Loading Custom Filtering App...');
     },
 });

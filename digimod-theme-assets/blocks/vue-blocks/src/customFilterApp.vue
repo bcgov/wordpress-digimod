@@ -15,14 +15,14 @@
   </div>
 
   <div v-if="filteredPosts.length > 0" class="alignfull wp-block-columns card-container">
-    <div class="wp-block-query wcag-card-container">
+    <div class="wp-block-query custom-card-container">
       <ul class="is-flex-container wp-block-post-template" :class="`columns-${columns}`">
 
         <li v-for="post in filteredPosts" :key="post.id" class="filter-card common-component">
 
           <a :href="post.acf.card_hyperlink.value" class="card-title-link">
             <div
-              class="wcag-card-content is-layout-constrained wp-block-group common-component-group flex-card has-white-background-color has-background">
+              class="custom-card-content is-layout-constrained wp-block-group common-component-group flex-card has-white-background-color has-background">
 
               <h3 style="margin-bottom:0;margin-top:var(--wp--preset--spacing--20);"
                 class="has-text-color has-secondary-brand-color is-style-default wp-block-post-title card-title">
@@ -33,7 +33,7 @@
                   {{ post.acf.description.value }}
                 </span></p>
 
-              <div v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms wcag-card-tags">
+              <div v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms custom-card-tags">
                 <span v-for="tag in post.wcag_tag" :key="tag" class="tag">{{ tag }}</span>
               </div>
             </div>
@@ -103,7 +103,7 @@
   onMounted(() => {
     fetchData();
 
-    const appElement = document.getElementById('app');
+    const appElement = document.getElementById('customFilterApp');
     cssClass.value = appElement.getAttribute('class');
     columns.value = parseInt(appElement.getAttribute('data-columns'));
 
@@ -113,7 +113,7 @@
   });
 </script>
 
-<style scoped>
+<style>
 .tag-filter-container {
   margin: 2rem 0.33rem 2rem 0;
 }
@@ -142,7 +142,7 @@
   border-radius: 1rem !important;
 }
 
-.card-title-link:hover .wcag-card-content {
+.card-title-link:hover .custom-card-content {
   outline: 2px solid var(--wp--preset--color--primary-brand);
 }
 
@@ -182,19 +182,19 @@
   font-size: 0.9rem;
 }
 
-.wcag-card-content {
+.custom-card-content {
   border-radius: 1rem !important;
   display: flex;
   flex-direction: column;
   padding: 2rem;
 }
 
-.wcag-card-content > * {
+.custom-card-content > * {
   margin-left: 0 !important;
   margin-right: 0 !important;
 }
 
-.wcag-card-tags {
+.custom-card-tags {
   margin-top: auto;
 }
 </style>

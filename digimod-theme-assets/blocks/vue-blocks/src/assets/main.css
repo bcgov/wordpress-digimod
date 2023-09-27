@@ -50,7 +50,7 @@
     }
 /* End wp-block-post-template-inline-css */
 
-   .wcag-card-content{
+   .custom-card-content{
     height:100%;
    }
    
@@ -91,7 +91,7 @@
   }
 
   /* Custom styles */
-  .wcag-card-tags .tag{
+  .custom-card-tags .tag{
     border: none !important;
   }
 
@@ -107,7 +107,7 @@
     justify-content: flex-start;
   }
 
-  .wcag-card-container{
+  .custom-card-container{
     width: 100%;
   }
 
@@ -126,7 +126,7 @@
     font-size: 1rem;
   }
 
-  .wcag-reset-button{
+  .custom-reset-button{
     font-size: 1rem;
     padding: 11px;
     margin-top: -7px;
