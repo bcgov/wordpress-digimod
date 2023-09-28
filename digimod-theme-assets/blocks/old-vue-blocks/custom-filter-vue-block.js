@@ -1,7 +1,7 @@
 const { registerBlockType } = wp.blocks;
 const { createElement, Fragment } = wp.element;
 const { InspectorControls } = wp.blockEditor;
-const { PanelBody, TextControl, __experimentalNumberControl } = wp.components;
+const { PanelBody, TextControl, __experimentalNumberControl, SelectControl, ToggleControl, FontSizePicker } = wp.components;
 
 
 class VueAppEditorComponent extends wp.element.Component {
@@ -17,8 +17,7 @@ class VueAppEditorComponent extends wp.element.Component {
 
     initVueApp() {
         // Assuming 'initVueApp' is a function in your Vue JavaScript that starts the Vue app
-        window.initVueApp('#app'); //this.props.attributes
-        // console.log('initVueApp');
+        // window.initVueApp('#app');
     }
 
     render() {
@@ -33,12 +32,7 @@ class VueAppEditorComponent extends wp.element.Component {
                 null,
                 createElement(
                     PanelBody,
-                    { title: 'Vue.js App Settings', initialOpen: true },
-                    // createElement(TextControl, {
-                    //     label: 'CSS Class',
-                    //     value: cssClass,
-                    //     onChange: (newClass) => setAttributes({ cssClass: newClass }),
-                    // }),
+                    { title: 'custom Filtering App Settings', initialOpen: true },
                     createElement(__experimentalNumberControl, {
                         label: 'Columns',
                         value: columns,
@@ -46,15 +40,15 @@ class VueAppEditorComponent extends wp.element.Component {
                     })
                 )
             ),
-            createElement('div', { id: 'app', class: className, 'data-columns': columns }, 'Loading Vue.js app...')
+            createElement('div', { id: 'app', class: className, 'data-columns': columns, style: { padding: '2rem'} }, 'Custom Filtering App Placeholder')
         );
     }
 }
 
-registerBlockType('my-plugin/vuejs-wordpress-block', {
-    title: 'Vue.js App',
-    icon: 'format-image',
-    category: 'common',
+registerBlockType('digimod-plugin/custom-filter-block', {
+    title: 'Custom Cards Filter',
+    icon: 'filter',
+    category: 'plugin',
     attributes: {
         className: {
             type: 'string',
@@ -68,6 +62,6 @@ registerBlockType('my-plugin/vuejs-wordpress-block', {
     edit: VueAppEditorComponent,
     save: ({ attributes }) => {
         const { className, columns } = attributes;
-        return createElement('div', { id: 'app', class: className, 'data-columns': columns }, 'Loading Vue.js app...');
+        return createElement('div', { id: 'app', class: className, 'data-columns': columns }, 'Loading Custom Filtering App...');
     },
 });

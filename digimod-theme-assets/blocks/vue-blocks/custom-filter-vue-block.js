@@ -1,8 +1,7 @@
 const { registerBlockType } = wp.blocks;
 const { createElement, Fragment } = wp.element;
 const { InspectorControls } = wp.blockEditor;
-const { PanelBody, TextControl, __experimentalNumberControl, SelectControl, ToggleControl, FontSizePicker } = wp.components;
-
+const { PanelBody, TextControl, SelectControl } = wp.components;
 
 class VueAppEditorComponent extends wp.element.Component {
     componentDidMount() {
@@ -21,8 +20,14 @@ class VueAppEditorComponent extends wp.element.Component {
     }
 
     render() {
-        // todo: make this into jsx and introduce build process for the block
-        const { className, columns } = this.props.attributes;
+        const { className, columns, postType, postTypeLabel } = this.props.attributes;
+        const postTypes = [
+            { label: 'WCAG', value: 'wcag-card' },
+            { label: 'Training', value: 'training-card' },
+        ];
+        const postTypeOptions = postTypes.map((type) => ({ label: type.label, value: type.value }));
+
+        const selectedOption = postTypes.find((type) => type.value === postType);
 
         return createElement(
             Fragment,
@@ -32,36 +37,57 @@ class VueAppEditorComponent extends wp.element.Component {
                 null,
                 createElement(
                     PanelBody,
-                    { title: 'custom Filtering App Settings', initialOpen: true },
-                    createElement(__experimentalNumberControl, {
+                    { title: 'Block Settings', initialOpen: true },
+                    createElement(SelectControl, {
+                        label: 'Card Type',
+                        value: postType,
+                        options: postTypeOptions,
+                        onChange: (newPostType) => {
+                            const selectedPostType = postTypes.find((type) => type.value === newPostType);
+                            const newPostTypeLabel = selectedPostType ? selectedPostType.label : postTypeLabel;
+                            this.props.setAttributes({
+                                postType: newPostType,
+                                postTypeLabel: newPostTypeLabel,
+                            });
+                        },
+                    }),
+                    createElement(TextControl, {
                         label: 'Columns',
                         value: columns,
                         onChange: (newColumns) => this.props.setAttributes({ columns: newColumns }),
                     })
                 )
             ),
-            createElement('div', { id: 'app', class: className, 'data-columns': columns }, 'Custom Filtering App Placeholder')
+            createElement('div', { id: 'app', className: `${className} has-text-align-center has-gray-40-background-color has-background`, 'data-columns': columns, 'data-post-type': postType, style: { padding: "2rem" }}, `${selectedOption ? selectedOption.label : ''} Card Filtering App Placeholder`)
         );
     }
 }
 
 registerBlockType('digimod-plugin/custom-filter-block', {
-    title: 'Custom Cards Filter',
+    title: 'Card Filtering App',
     icon: 'filter',
-    category: 'plugin',
+    category: 'common',
     attributes: {
         className: {
             type: 'string',
-            default: '',
+            default: 'card-filter',
         },
         columns: {
             type: 'number',
             default: 3,
         },
+        postType: {
+            type: 'string',
+            default: 'wcag-card', // Set a default option
+        },
+        postTypeLabel: {
+            type: 'string',
+            default: 'WCAG', // Default label
+        },
     },
     edit: VueAppEditorComponent,
     save: ({ attributes }) => {
-        const { className, columns } = attributes;
-        return createElement('div', { id: 'app', class: className, 'data-columns': columns }, 'Loading Custom Filtering App...');
+        const { className, columns, postType } = attributes; // Access postType from attributes
+        return createElement('div', { id: 'app', className, 'data-columns': columns, 'data-post-type': postType }, 'Loading Card Filtering App...');
     },
 });
