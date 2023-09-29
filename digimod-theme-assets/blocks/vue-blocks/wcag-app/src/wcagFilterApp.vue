@@ -43,13 +43,14 @@
     </div>
   </div>
 
-  <p v-else-if="showMessage" class="no-results" v-show="showMessage" aria-live='polite'>Oops, no {{ postType }} results found. <a href="#" @click.prevent="clearFilters" @keydown.enter.prevent='clearFilters'>Try resetting your filters</a> and refining your selections.</p>
+  <p v-else-if="showMessage" class="no-results" v-show="showMessage" aria-live='polite'>Oops, <strong>no {{ postTypeLabel }} results found</strong>. <a href="#" @click.prevent="clearFilters" @keydown.enter.prevent='clearFilters'>Try resetting your filters</a> and refining your selections.</p>
 </template>
 
 <script setup>
   import { ref, onMounted, computed } from 'vue';
 
   const postType = ref('');
+  const postTypeLabel = ref('');
   const posts = ref([]);
   const selectedTags = ref([]);
   const cssClass = ref('');
@@ -108,6 +109,7 @@
     cssClass.value = appElement.getAttribute('class');
     columns.value = parseInt(appElement.getAttribute('data-columns'));
     postType.value = appElement.getAttribute('data-post-type');
+    postTypeLabel.value = appElement.getAttribute('data-post-type-label');
 
     fetchData();
 

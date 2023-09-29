@@ -133,7 +133,7 @@ function vuejs_post_filter_app_dynamic_block_plugin($attributes) {
         $file_url = plugins_url(str_replace($plugin_dir, '', $file), __FILE__);
         wp_enqueue_script('vue-app-' . basename($file, '.js'), $file_url, ['bcgov-block-theme-public'], false, true); // Sets the dependency to Block Theme to enqueue after
     }
-die(print_r('foreach run'));
+
     // Set up the attributes passed to the Vue frontend, with defaults
     $columns = isset($attributes['columns']) ? $attributes['columns'] : 3;  // Fallback to '3' if not set
     $className = isset($attributes['className']) ? $attributes['className'] : '';
@@ -168,14 +168,14 @@ function vuejs_custom_app_dynamic_block_plugin( $attributes ) {
      // Access the 'columns' attribute
      $columns = isset( $attributes['columns'] ) ? $attributes['columns'] : 3;  // Fallback to '3' if not set
 
-     // Access the 'className' attribute
      $postType = isset( $attributes['postType'] ) ? $attributes['postType'] : 'wcag-card'; 
 
-    // Access the 'className' attribute
-    $className = isset( $attributes['className'] ) ? $attributes['className'] : ''; 
+     $postTypeLabel = isset($attributes['postTypeLabel']) ? $attributes['postTypeLabel'] : 'WCAG card';
+     
+     $className = isset( $attributes['className'] ) ? $attributes['className'] : ''; 
 
      // Add the 'data-columns' attribute to the output div
-     return '<div id="app" class="' . esc_attr( $className ) . '" data-columns="' . esc_attr( $columns ) . '"  data-post-type="' . esc_attr( $postType ) . '">Loading...</div>';
+     return '<div id="app" class="' . esc_attr( $className ) . '" data-columns="' . esc_attr( $columns ) . '"  data-post-type="' . esc_attr( $postType ) . '" data-post-type-label="' . esc_attr($postTypeLabel) . '">Loading...</div>';
 }
 
 function vuejs_app_plugin_block_init() {

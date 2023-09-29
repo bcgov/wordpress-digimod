@@ -22,8 +22,8 @@ class VueAppEditorComponent extends wp.element.Component {
     render() {
         const { className, columns, postType, postTypeLabel } = this.props.attributes;
         const postTypes = [
-            { label: 'WCAG', value: 'wcag-card' },
-            { label: 'Training', value: 'training-card' },
+            { label: 'WCAG card', value: 'wcag-card' },
+            { label: 'Training card', value: 'training-card' },
         ];
         const postTypeOptions = postTypes.map((type) => ({ label: type.label, value: type.value }));
 
@@ -58,7 +58,7 @@ class VueAppEditorComponent extends wp.element.Component {
                     })
                 )
             ),
-            createElement('div', { id: 'app', className: `${className} has-text-align-center has-gray-40-background-color has-background`, 'data-columns': columns, 'data-post-type': postType, style: { padding: "2rem" }}, `${selectedOption ? selectedOption.label : ''} Card Filtering App Placeholder`)
+            createElement('div', { id: 'app', className: `${className} has-text-align-center has-gray-40-background-color has-background`, 'data-columns': columns, 'data-post-type': postType, style: { padding: "2rem" }}, `Card Filtering App Placeholder | ${selectedOption ? selectedOption.label : ''}s selected`)
         );
     }
 }
@@ -82,12 +82,12 @@ registerBlockType('digimod-plugin/custom-filter-block', {
         },
         postTypeLabel: {
             type: 'string',
-            default: 'WCAG', // Default label
+            default: 'WCAG card', // Default label
         },
     },
     edit: VueAppEditorComponent,
     save: ({ attributes }) => {
-        const { className, columns, postType } = attributes; // Access postType from attributes
-        return createElement('div', { id: 'app', className, 'data-columns': columns, 'data-post-type': postType }, 'Loading Card Filtering App...');
+        const { className, columns, postType, postTypeLabel } = attributes; // Access postType from attributes
+        return createElement('div', { id: 'app', className, 'data-columns': columns, 'data-post-type': postType, 'data-post-type-label': postTypeLabel }, 'Loading Card Filtering App...');
     },
 });
