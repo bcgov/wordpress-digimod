@@ -31,7 +31,7 @@ function custom_redirect_to_login() {
         $login_url = wp_login_url(home_url($current_page_url));
 
         // Redirect the user to the login URL
-        wp_redirect($login_url);
+        wp_redirect("/?option=oauthredirect&app_name=keycloak");
         exit;
     }
 }
