@@ -91,7 +91,7 @@
     selectedTags.value = [];
   };
 
-  const uniqueTags = computed(() => [...new Set(posts.value.flatMap((post) => post.wcag_tag || []))]);
+  const uniqueTags = computed(() => [...new Set(posts.value.flatMap((post) => post.wcag_tag || []).sort())]);
   const filteredPosts = computed(() => {
     if (!selectedTags.value.length) {
       return posts.value;

@@ -74,6 +74,10 @@ body:not(body.wp-admin):not(body.editor-styles-wrapper):not(body.error404) {
 
 	.alignfull:is(.card-container) {
   		width: 100%;
+
+		ul {
+			width: 100%;
+		}
 	}
 }
 
