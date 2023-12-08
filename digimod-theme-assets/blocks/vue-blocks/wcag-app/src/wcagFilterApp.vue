@@ -25,8 +25,8 @@
               class="wcag-card-content is-layout-constrained wp-block-group common-component-group flex-card has-white-background-color has-background">
 
               <h3 style="margin-bottom:0;margin-top:var(--wp--preset--spacing--20);"
-                class="has-text-color has-secondary-brand-color is-style-default wp-block-post-title card-title">
-                {{ post.title.rendered }}</h3>
+                class="has-text-color has-secondary-brand-color is-style-default wp-block-post-title card-title"
+                v-html="post.title.rendered"></h3>
 
               <p style="font-size:1rem;"><span
                   class="value">
@@ -68,7 +68,9 @@
       posts.value = postsData.map((post) => ({
         ...post,
         wcag_tag: post._embedded?.['wp:term']?.flatMap((term) => term.map((t) => t.name)) || [],
-      }));
+      })) 
+      .slice()
+      .sort((a, b) => (a.title.rendered > b.title.rendered) ? 1 : -1);;
     } catch (error) {
       console.error(error);
     }
@@ -96,14 +98,16 @@
     if (!selectedTags.value.length) {
       return posts.value;
     } else {
-      return posts.value.filter((post) =>
+      return posts.value
+      .filter((post) =>
         post.wcag_tag && post.wcag_tag.length && selectedTags.value.every((tag) => post.wcag_tag.includes(tag))
-      );
+      ) 
+      .slice()
+      .sort((a, b) => (a.title.rendered > b.title.rendered) ? 1 : -1);
     }
   });
 
   onMounted(() => {
-
 
     const appElement = document.getElementById('app');
     cssClass.value = appElement.getAttribute('class');
