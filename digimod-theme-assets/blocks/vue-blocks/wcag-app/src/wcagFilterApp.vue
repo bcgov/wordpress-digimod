@@ -16,7 +16,7 @@
 
   <div v-if="filteredPosts.length > 0" class="alignfull wp-block-columns card-container">
     <div class="wp-block-query wcag-card-container">
-      <ul class="is-flex-container wp-block-post-template" :class="`columns-${columns}`">
+      <ul class="is-flex-container wp-block-post-template" :class="`columns-${columns}`" style="padding: 2rem;">
 
         <li v-for="post in filteredPosts" :key="post.id" class="filter-card common-component">
 
