@@ -70,6 +70,7 @@ body:not(body.wp-admin):not(body.editor-styles-wrapper):not(body.error404) {
 	.alignfull {
 		margin-inline: -2rem;
   		width: 100vw;
+		padding-inline: 2rem;
 	}
 
 	.alignfull:is(.card-container) {

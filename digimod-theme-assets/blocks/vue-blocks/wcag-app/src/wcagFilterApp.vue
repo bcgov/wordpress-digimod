@@ -14,23 +14,25 @@
     </div>
   </div>
 
-  <div v-if="filteredPosts.length > 0" class="alignfull wp-block-columns card-container">
+  <div v-if="filteredPosts.length > 0" class="wp-block-columns card-container">
     <div class="wp-block-query wcag-card-container">
-      <ul class="is-flex-container wp-block-post-template" :class="`columns-${columns}`" style="padding: 2rem;">
+      <ul class="is-flex-container wp-block-post-template" :class="`columns-${columns}`">
 
         <li v-for="post in filteredPosts" :key="post.id" class="filter-card common-component">
 
-          <a :href="post.acf.card_hyperlink.value" class="card-title-link">
+          <a :href="post.acf.card_hyperlink ? post.acf.card_hyperlink.value : post.link" class="card-title-link">
             <div
               class="wcag-card-content is-layout-constrained wp-block-group common-component-group flex-card has-white-background-color has-background">
 
               <h3 style="margin-bottom:0;margin-top:var(--wp--preset--spacing--20);"
                 class="has-text-color has-secondary-brand-color is-style-default wp-block-post-title card-title"
                 v-html="post.title.rendered"></h3>
+              
+                <p v-if="post.acf.team_name_ministry" style="margin-top:0;">{{ post.acf.team_name_ministry.value_formated }}</p>
 
               <p style="font-size:1rem;"><span
                   class="value">
-                  {{ post.acf.description.value }}
+                  {{ post.acf.short_description ? post.acf.short_description.value_formated : post.acf.description.value }}
                 </span></p>
 
               <div v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms wcag-card-tags">
@@ -98,6 +100,7 @@
     if (!selectedTags.value.length) {
       return posts.value;
     } else {
+      console.log('posts:', posts);
       return posts.value
       .filter((post) =>
         post.wcag_tag && post.wcag_tag.length && selectedTags.value.every((tag) => post.wcag_tag.includes(tag))
