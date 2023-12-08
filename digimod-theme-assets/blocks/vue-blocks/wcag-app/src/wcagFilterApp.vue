@@ -9,9 +9,9 @@
         </label>
 
       </div>
+      <button class="clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters'>Reset filters</button>
+      <span class='num-available'>{{ filteredPosts.length }} of {{ posts.length }} showing</span>
     </div>
-    <button class="clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters'>Reset filters</button>
-    <span class='num-available'>{{ filteredPosts.length }} of {{ posts.length }} showing</span>
   </div>
 
   <div v-if="filteredPosts.length > 0" class="alignfull wp-block-columns card-container">
@@ -122,6 +122,11 @@
 <style scoped>
 .tag-filter-container {
   margin: 2rem 0.33rem 2rem 0;
+  display: flex;
+}
+
+.tag-checkbox {
+  margin-bottom: .25rem;
 }
 
 .tag.tag-label {

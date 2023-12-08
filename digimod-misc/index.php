@@ -20,7 +20,7 @@ function register_wcag_tags(){
 
     register_taxonomy(
         'wcag_tag',
-        'custom-card',
+        'wcag-card',
         array(
             'label' =>  __('WCAG Tag'),
             'show_in_rest' => true,
