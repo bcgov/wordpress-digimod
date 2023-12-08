@@ -65,6 +65,13 @@ body:not(body.wp-admin):not(body.editor-styles-wrapper):not(body.error404) {
 
 #post-content {
 	isolation: isolate;
+	padding-inline: 2rem !important;
+
+	.alignfull,
+	.align-full {
+		margin-inline: -2rem;
+  		width: 100vw;
+	}
 }
 
 .sr-only {
