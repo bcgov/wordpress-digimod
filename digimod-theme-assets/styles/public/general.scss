@@ -67,8 +67,7 @@ body:not(body.wp-admin):not(body.editor-styles-wrapper):not(body.error404) {
 	isolation: isolate;
 	padding-inline: 2rem !important;
 
-	.alignfull,
-	.align-full {
+	.alignfull:not(.card-container) {
 		margin-inline: -2rem;
   		width: 100vw;
 	}
