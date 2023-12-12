@@ -29,11 +29,11 @@
                 class="has-text-color has-secondary-brand-color is-style-default wp-block-post-title card-title"
                 v-html="post.title.rendered"></h3>
 
-              <p v-if="post.acf.team_name_ministry" style="margin-top:0;">{{ post.acf.team_name_ministry.value_formated }}
+              <p v-if="post.acf.team_name_ministry" style="margin-top:0;">{{ post.acf.team_name_ministry.value }}
               </p>
 
               <p style="font-size:1rem;"><span class="value">
-                  {{ post.acf.short_description ? post.acf.short_description.value_formated : post.acf.description.value
+                  {{ post.acf.short_description ? post.acf.short_description.value : post.acf.description.value
                   }}
                 </span></p>
               <div v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms wcag-card-tags">
