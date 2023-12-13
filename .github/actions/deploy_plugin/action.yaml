@@ -1,0 +1,37 @@
+name: Deployplugin
+description: 'Deployplugin'
+inputs:
+  environment:
+    description: 'Deployment environment'
+    required: true
+    default: 'test'
+  site-name:
+    description: 'Site name'
+    required: true
+    default: 'test'
+  openshift-server:
+    description: 'OpenShift server'
+    required: true
+  dev-token:
+    description: 'Dev token'
+    required: true
+  test-token:
+    description: 'Test token'
+    required: true
+  prod-token:
+    description: 'Prod token'
+    required: true  
+  keycloak-test-client-secret:
+    description: 'Keycloak client secret'
+    required: true
+  plugin:
+    description: 'Plugin name'
+    required: true  
+runs:
+  using: 'composite'
+  steps:
+    - name: Deploy plugin
+      run: |
+        chmod +x ./.github/actions/deploy_plugin/deploy_plugin.sh
+        ./.github/actions/deploy_plugin/deploy_plugin.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.keycloak-test-client-secret }}" "${{ inputs.plugin }}"
+      shell: bash
