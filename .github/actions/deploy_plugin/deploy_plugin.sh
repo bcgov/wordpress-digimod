@@ -34,22 +34,22 @@ esac
 oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
 
 
-if [ -d "$plugin" ]; then
-	echo deploying $plugin
+if [ -d "$PLUGIN" ]; then
+	echo deploying $PLUGIN
 
 	WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 	WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
-	cd $plugin
-	tar -cf $plugin.tar --exclude=./.github --exclude=node_modules ./*
-	oc cp --no-preserve $plugin.tar $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/$plugin.tar -c $WORDPRESS_CONTAINER_NAME
-	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- rm -rf /var/www/html/wp-content/plugins/$plugin  # This removes the old plugin directory
-	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- mkdir -p /var/www/html/wp-content/plugins/$plugin
-	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -xf /var/www/html/wp-content/plugins/$plugin.tar -C /var/www/html/wp-content/plugins/$plugin
-	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- rm /var/www/html/wp-content/plugins/$plugin.tar
-	echo $plugin deployed successfully.
-	
+	cd $PLUGIN
+	tar -cf $PLUGIN.tar --exclude=./.github --exclude=node_modules ./*
+	oc cp --no-preserve $PLUGIN.tar $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/$PLUGIN.tar -c $WORDPRESS_CONTAINER_NAME
+	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- rm -rf /var/www/html/wp-content/plugins/$PLUGIN  # This removes the old plugin directory
+	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- mkdir -p /var/www/html/wp-content/plugins/$PLUGIN
+	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -xf /var/www/html/wp-content/plugins/$PLUGIN.tar -C /var/www/html/wp-content/plugins/$PLUGIN
+	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- rm /var/www/html/wp-content/plugins/$PLUGIN.tar
+	echo $PLUGIN deployed successfully.
+
 else  
-	echo "plugin $plugin does not exist."
+	echo "plugin $PLUGIN does not exist."
 	exit 1
 fi
