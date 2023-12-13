@@ -7,7 +7,8 @@ DEV_TOKEN=$4
 TEST_TOKEN=$5
 PROD_TOKEN=$6
 
-git clone -b digimod-deploy https://github.com/bcgov/wordpress-deploy-digimod.git
+#NG. no longer grabbing the branch    -b digimod-deploy
+git clone  https://github.com/bcgov/wordpress-deploy-digimod.git
       
 #Log in to OpenShift
 echo "Deploying to $ENVIRONMENT"

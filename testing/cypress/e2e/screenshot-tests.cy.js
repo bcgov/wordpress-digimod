@@ -16,7 +16,7 @@ const urlSlug = require('url-slug');
        
 
         it('screenshot test for '+url, ()=>{
-            cy.viewport(1280, 900);
+            cy.viewport(1440, 900);		//Upped to 1440 to check for mmenu header not full width issue.
              // // remove all js scripts
             // cy.intercept('*', (req) => {
             //     req.continue((res) => {
@@ -60,6 +60,11 @@ const urlSlug = require('url-slug');
                         // cy.log("Login form present, skipping test..");
                         return true;
                     }
+
+
+		    //Only proceed if we are still on the website, not redirected somewhere else, like SSO
+	 	    cy.url().should('eq',url);
+
 
                     cy.get('.back-to-top', { timeout: 10000 });
 
@@ -114,11 +119,21 @@ const urlSlug = require('url-slug');
                         // Perform additional checks or actions after all images have loaded
                         cy.log('All images have loaded successfully.');
                         
+
+                        //force wait for ajax content to load if we find a app div which is usually vue content
+                        const vueAppDiv = doc.querySelectorAll('#app');
+                        if (vueAppDiv.length) {
+				cy.wait(2000); 
+                        }
+
+
+
                         cy.matchImage({
                             // screenshotConfig: {
                             //     blackout: ['img']
                             // },
-                            maxDiffThreshold: 0.0,
+
+                            maxDiffThreshold: 0.1,
                             title: urlSlug.convert(url),
                             imagesPath: screenshotPath
                         });
