@@ -4,9 +4,9 @@
 
 body.custom-digitalgov {
 
-	nav > ul {
+	nav>ul {
 
-		> li {
+		>li {
 
 			&:focus,
 			&:hover {
@@ -27,7 +27,7 @@ body.custom-digitalgov {
 			}
 		}
 
-		> .current-menu-item {
+		>.current-menu-item {
 			background-color: hsla(0, 0%, 7%, 0.05) !important;
 
 			&.has-secondary-accent-background-color {
@@ -89,7 +89,7 @@ body.custom-digitalgov {
 				width: calc(100% - 2rem);
 			}
 
-			.has-modal-open .wp-block-navigation__container > .wp-block-navigation-item {
+			.has-modal-open .wp-block-navigation__container>.wp-block-navigation-item {
 				flex: 1;
 				margin: 0;
 				min-height: 1rem;
@@ -109,8 +109,15 @@ body.custom-digitalgov {
 
 
 	.wp-block-navigation {
+
 		justify-content: flex-end !important;
 		padding: 0.75rem !important;
+		width: 100%;
+
+		&.footer-nav {
+			justify-content: space-between !important;
+			padding: 0.15rem 0 0 !important;
+		}
 
 		@media (min-width: 860px) {
 			padding: 0 !important;
@@ -131,6 +138,7 @@ body.custom-digitalgov {
 		&__submenu-icon {
 			background-color: transparent;
 		}
+
 	}
 }
 
@@ -152,7 +160,7 @@ body.home {
 		display: none;
 	}
 
-	#post-content > div:first-of-type {
+	#post-content>div:first-of-type {
 		border-top-width: 0 !important;
 	}
 }

@@ -65,6 +65,28 @@ body:not(body.wp-admin):not(body.editor-styles-wrapper):not(body.error404) {
 
 #post-content {
 	isolation: isolate;
+	padding-inline: 2rem !important;
+
+	.alignfull {
+		margin-inline: -2rem;
+		width: 100vw;
+		padding-inline: 2rem;
+	}
+
+	.sticky-nav-container {
+		.alignfull {
+			margin-inline: auto;
+			width: auto;
+		}
+	}
+
+	.alignfull:is(.card-container):not(body.home .card-container) {
+  		width: 100%;
+
+		ul {
+			width: 100%;
+		}
+	}
 }
 
 .sr-only {
