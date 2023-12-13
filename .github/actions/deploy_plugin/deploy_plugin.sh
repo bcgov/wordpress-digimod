@@ -35,10 +35,24 @@ oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
 
 
 if [ -d "$PLUGIN" ]; then
-	echo deploying $PLUGIN
+	echo "Deploying $PLUGIN"
 
 	WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 	WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
+
+	# Download wp-cli in the GitHub Actions workspace
+	curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+	chmod +x wp-cli.phar
+
+	# Copy wp-cli to the WordPress instance and install wordpress
+	oc cp --no-preserve wp-cli.phar $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/wp-cli.phar -c $WORDPRESS_CONTAINER_NAME
+	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
+
+
+	#Get installed version
+	echo "Existing installed plugin version:"
+	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get $PLUGIN --field=version
+
 
 	cd $PLUGIN
 	tar -cf $PLUGIN.tar --exclude=./.github --exclude=node_modules ./*
@@ -49,18 +63,11 @@ if [ -d "$PLUGIN" ]; then
 	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- rm /var/www/html/wp-content/plugins/$PLUGIN.tar
 
 
+	echo "Newly installed plugin version:"
+	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get $PLUGIN --field=version
+
 
 	echo "Clearing W3TC Cache"
-
-	# Download wp-cli in the GitHub Actions workspace
-	curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-	chmod +x wp-cli.phar
-
-	# Copy wp-cli to the WordPress instance and install wordpress
-	oc cp --no-preserve wp-cli.phar $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/wp-cli.phar -c $WORDPRESS_CONTAINER_NAME
-	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
-
-	#Perform the clear
 	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar w3-total-cache flush all
 
 
