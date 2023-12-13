@@ -47,6 +47,23 @@ if [ -d "$PLUGIN" ]; then
 	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- mkdir -p /var/www/html/wp-content/plugins/$PLUGIN
 	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -xf /var/www/html/wp-content/plugins/$PLUGIN.tar -C /var/www/html/wp-content/plugins/$PLUGIN
 	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- rm /var/www/html/wp-content/plugins/$PLUGIN.tar
+
+
+
+	echo "Clearing W3TC Cache"
+
+	# Download wp-cli in the GitHub Actions workspace
+	curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+	chmod +x wp-cli.phar
+
+	# Copy wp-cli to the WordPress instance and install wordpress
+	oc cp --no-preserve wp-cli.phar $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/wp-cli.phar -c $WORDPRESS_CONTAINER_NAME
+	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
+
+	#Perform the clear
+	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar w3-total-cache flush all
+
+
 	echo $PLUGIN deployed successfully.
 
 else  
