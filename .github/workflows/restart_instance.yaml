@@ -27,7 +27,6 @@ jobs:
         ENVIRONMENT=${{ github.event.inputs.ENVIRONMENT }}
         SITE_NAME=${{ github.event.inputs.environment }}
         OC_SITE_NAME=digital-${{ github.event.inputs.site-name }}
-        echo "Deploying to the site $OC_SITE_NAME in $ENVIRONMENT"
         case "$ENVIRONMENT" in
             "dev")
             token=${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
@@ -37,13 +36,16 @@ jobs:
             ;;
             "prod")
             token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
-            OC_SITE_NAME=digital
+            if [ $SITE_NAME == "prod" ]; then
+              OC_SITE_NAME=digital
+            fi
             ;;
             *)
             echo "Unknown environment: $ENVIRONMENT"
             exit 1
             ;;
         esac
+        echo "Deploying to the site $OC_SITE_NAME in $ENVIRONMENT"
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
         NAMESPACE="c0cce6-$ENVIRONMENT"
         OC_ENV=$ENVIRONMENT
