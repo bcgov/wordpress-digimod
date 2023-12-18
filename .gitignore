@@ -109,3 +109,6 @@ multiple-blocks-plugin/artifacts/
 vendor/
 
 .vs/
+
+#Misc Mac meta files
+.DS_Store
