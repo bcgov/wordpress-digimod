@@ -25,7 +25,7 @@ jobs:
     - name: Restart instance
       run: |
         ENVIRONMENT=${{ github.event.inputs.ENVIRONMENT }}
-        SITE_NAME=${{ github.event.inputs.environment }}
+        SITE_NAME=${{ github.event.inputs.site-name }}
         OC_SITE_NAME=digital-${{ github.event.inputs.site-name }}
         case "$ENVIRONMENT" in
             "dev")
