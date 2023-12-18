@@ -1,17 +1,63 @@
 <?php
 /**
 * Plugin Name: DIGIMOD - miscellaneous
-* Description: Defines WCAG Tag taxonomy
-* Version: 1.0.0
+* Description: Miscellaneous features for DigitalGov; Defines WCAG Tag taxonomy, CLI Keycloak SSO/Miniorange adjuster.
+* Version: 1.1.0
 * Author: Digimod
 * License: GPL-2.0+
 * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
+* Plugin URI: https://github.com/bcgov/wordpress-digimod/tree/main/digimod-misc
+* Update URI: https://raw.githubusercontent.com/bcgov/wordpress-digimod/main/digimod-misc/index.php
+*/
+
+/* 
+Changelog
+
+1.0.0 - Initial release.
+
+1.1.0 - Added plugin check version against github
+      - Added shortcode for 'Better Notifications for WP' to grab the logged in user
 */
 
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
     exit;
 }
+
+
+
+
+// Begin shortcode for notifications 
+
+//BNFW grabs the post edited by user via the posts' lock meta. If this is not properly updated by WP, the notification will have the wrong author.
+//  Lets add a new shortcode that actually grabs the logged in user.
+//  Based on https://betternotificationsforwp.com/documentation/adding-custom-shortcodes/
+function digimod_misc_bnfw_shortcode_logged_in_user() {
+    $user = wp_get_current_user();
+
+    return $user->user_login;
+}
+add_shortcode( 'digimod_logged_in_username', 'digimod_misc_bnfw_shortcode_logged_in_user', 1, 1 );
+    
+
+// end notification feature shortcode
+
+
+
+
+
+// Begin function to check for updates to plugin
+require_once "digimod-update-check.php";
+
+add_action( 'init', 'digimod_misc_update_check_init' );
+function digimod_misc_update_check_init(){
+    if(class_exists('digimod_plugin_update_check')){
+        new digimod_plugin_update_check(__FILE__, plugin_basename(__FILE__) );
+    }
+}
+//End update check code.
+
+
 
 // WCAG stuff
 function register_wcag_tags(){
@@ -55,16 +101,18 @@ function register_wcag_tags(){
 
 add_action( 'init', 'register_wcag_tags', 0 );
 
+//End WCAG Stuff
+
+
+
+
+
+
+
 
 
 
 // CLI command to modify keycloak config (used for when the site gets imported to a different instance)
-
-
-if ( ! defined( 'ABSPATH' ) ) {
-	die( 'Kangaroos cannot jump here' );
-}
-
 if ( defined( 'WP_CLI' ) ) {
 	class Digimod_config_mo extends WP_CLI_Command {
 		public function __invoke($args) {

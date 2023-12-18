@@ -2,11 +2,13 @@
 /**
 * Plugin Name: DIGIMOD - Block Theme Frontend Enhancements
 * Description: A plugin to load custom scripts, styles and theme settings to augment the default BCGov Block Theme capabilities
-* Version: 1.1.3
+* Version: 1.1.4
 * Author: Digimod
 * License: GPL-2.0+
 * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 * Repository: https://github.com/bcgov/wordpress-digimod/tree/main/digimod-theme-assets
+* Plugin URI: https://github.com/bcgov/wordpress-digimod/tree/main/digimod-theme-assets
+* Update URI: https://raw.githubusercontent.com/bcgov/wordpress-digimod/main/digimod-theme-assets/index.php
 */
 
 // Exit if accessed directly
@@ -251,3 +253,20 @@ function custom_api_posts_routes() {
 
 // add_action('rest_api_init', 'custom_api_posts_routes');
 
+
+
+
+
+
+
+
+// Begin function to check for updates to plugin
+require_once "digimod-update-check.php";
+
+add_action( 'init', 'digimod_theme_assets_update_check_init' );
+function digimod_theme_assets_update_check_init(){
+    if(class_exists('digimod_plugin_update_check')){
+        new digimod_plugin_update_check(__FILE__, plugin_basename(__FILE__) );
+    }
+}
+//End update check code.
