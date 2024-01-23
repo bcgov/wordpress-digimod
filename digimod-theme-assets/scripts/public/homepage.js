@@ -11,6 +11,13 @@ const domReady = () => {
      */
     setTimeout(function () {
         /**
+         * Hook into Gravity Forms post render function to rewrite Newsletter Subscription error.
+         */
+        jQuery(document).on('gform_post_render', function(event, form_id, current_page){
+			document.querySelector('.gform_validation_errors').innerHTML = "<h2 class='error-info'>The email address entered is invalid, please check the formatting (e.g. email@domain.com)</h2>"
+		});
+
+        /**
          * Breadcrumb removal.
          * Card setup.
          */

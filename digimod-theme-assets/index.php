@@ -3,7 +3,7 @@
 /**
  * Plugin Name: DIGIMOD - Block Theme Frontend Enhancements
  * Description: A plugin to load custom scripts, styles and theme settings to augment the default BCGov Block Theme capabilities
- * Version: 1.1.5
+ * Version: 1.1.4
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -125,8 +125,26 @@ function digimod_plugin_modify_block_patterns($block_patterns)
     return $block_patterns;
 }
 
-// Hook into the BCGov Block Theme's pattern filter
 add_filter('bcgov_blocks_theme_block_patterns', 'digimod_plugin_modify_block_patterns');
+
+/* 
+ * Remove Block Theme categories if patterns still exist. 
+ * Causes uncategorised patterns to be displayed.
+ */
+function digimod_plugin_modify_block_pattern_categories($block_pattern_categories)
+{
+    // Modify or remove elements from $block_patterns as needed
+    unset($block_pattern_categories['bcgov-blocks-theme-general']);
+    unset($block_pattern_categories['bcgov-blocks-theme-header-footer']);
+    unset($block_pattern_categories['bcgov-blocks-theme-page-layouts']);
+    unset($block_pattern_categories['bcgov-blocks-theme-query']);
+
+    // Return the modified block patterns
+    return $block_pattern_categories;
+}
+
+// add_filter('bcgov_blocks_theme_block_pattern_categories', 'digimod_plugin_modify_block_pattern_categories');
+
 
 
 /**
