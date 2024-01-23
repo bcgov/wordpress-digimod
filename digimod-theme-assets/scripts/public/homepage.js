@@ -18,7 +18,7 @@ const domReady = () => {
         const isHome = document.querySelector('body.home');
 
         if (isHome) {
-            
+
             const breadcrumbs = document.querySelector(
                 '.breadcrumb-navigation-container'
             );
@@ -58,13 +58,6 @@ const domReady = () => {
                     }
                 });
             }
-            console.log('About to load jQuery newsletter subscription listener');
-            setTimeout(function() {
-                jQuery(document).on('gform_post_render', function(event, form_id, current_page) {
-                    jQuery('.gform_validation_errors').html("<h2 class='error-info'>The email address entered is invalid, please check the formatting (e.g. email@domain.com)</h2>");
-                    console.log('Loaded jQuery newsletter subscription listener');
-                });
-            }, 3000);
         }
     }, 0);
 };
@@ -73,4 +66,21 @@ if ('complete' === document.readyState) {
     domReady();
 } else {
     document.addEventListener('DOMContentLoaded', domReady);
+}
+
+if (jQuery && jQuery('body.home').length) {
+    
+    jQuery(document).ready(function () {
+    
+        console.log('About to load jQuery newsletter subscription listener');
+    
+        jQuery(document).on('gform_post_render', function () {
+            
+            jQuery('.gform_validation_errors').html("<h2 class='error-info'>The email address entered is invalid, please check the formatting (e.g. email@domain.com)</h2>");
+            
+            console.log('Executed jQuery newsletter subscription listener');
+        });
+    });
+} else if (!jQuery) {
+    console.error('jQuery is unavailable');
 }
