@@ -14,18 +14,11 @@ const domReady = () => {
          * Hook into Gravity Forms post render function to rewrite Newsletter Subscription error.
          * Breadcrumb removal.
          * Card setup.
-         */
+        */
         const isHome = document.querySelector('body.home');
 
         if (isHome) {
-
-            jQuery(document).on('gform_post_render', function(event, form_id, current_page) {
-                setTimeout(function() {
-                    jQuery('.gform_validation_errors').html("<h2 class='error-info'>The email address entered is invalid, please check the formatting (e.g. email@domain.com)</h2>");
-                }, 50);
-            });
             
-
             const breadcrumbs = document.querySelector(
                 '.breadcrumb-navigation-container'
             );
@@ -65,6 +58,13 @@ const domReady = () => {
                     }
                 });
             }
+            console.log('About to load jQuery newsletter subscription listener');
+            setTimeout(function() {
+                jQuery(document).on('gform_post_render', function(event, form_id, current_page) {
+                    jQuery('.gform_validation_errors').html("<h2 class='error-info'>The email address entered is invalid, please check the formatting (e.g. email@domain.com)</h2>");
+                    console.log('Loaded jQuery newsletter subscription listener');
+                });
+            }, 3000);
         }
     }, 0);
 };
