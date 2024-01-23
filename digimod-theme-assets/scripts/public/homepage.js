@@ -72,13 +72,9 @@ if (jQuery && jQuery('body.home').length) {
     
     jQuery(document).ready(function () {
     
-        console.log('About to load jQuery newsletter subscription listener');
-    
         jQuery(document).on('gform_post_render', function () {
             
             jQuery('.gform_validation_errors').html("<h2 class='error-info'>The email address entered is invalid, please check the formatting (e.g. email@domain.com)</h2>");
-            
-            console.log('Executed jQuery newsletter subscription listener');
         });
     });
 } else if (!jQuery) {

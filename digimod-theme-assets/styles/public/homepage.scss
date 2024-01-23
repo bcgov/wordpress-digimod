@@ -6,4 +6,84 @@ body.home {
 	.wp-block-post-featured-image {
 		width: 100% !important;
 	}
+
+	.home-newsletter {
+
+		img {
+			scale: 0.8;
+
+			&.checkmark {
+				float: left;
+				scale: 0.66;
+				position: relative;
+				top: 0;
+				margin-right: 7px;
+				padding: 0;
+				width: 36px;
+			}
+		}
+
+		input[type="email"]:focus-visible {
+			outline-offset: -1px;
+			outline: 1px solid var(--wp--preset--color--primary-brand);
+		}
+
+		.gform_wrapper.gravity-theme {
+
+			.gform_fields {
+				gap: 0;
+				position: relative;
+				
+				.gfield_validation_message,
+				.gform-field-label {
+					border: 0 !important;
+					clip: rect(1px, 1px, 1px, 1px) !important;
+					clip-path: inset(50%) !important;
+					height: 1px !important;
+					margin: -1px !important;
+					overflow: hidden !important;
+					padding: 0 !important;
+					position: absolute !important;
+					width: 1px !important;
+					white-space: nowrap !important;
+
+					span {
+						display: none;
+					}
+				}
+			}
+			
+			#field_submit {
+			   position: relative;
+			   top: 0;
+			   right: 0;
+		   }
+
+		   .gfield input.large {
+				width: 100%;
+				padding: calc(0.8rem + 2.5px);
+				border: 0;
+			}
+		}
+
+		.gform-button {
+			background-color: var(--wp--preset--color--primary-brand);
+			border-radius: 0 .33rem .33rem 0;
+			border: 0;
+			color: var(--wp--preset--color--white);
+			cursor: pointer;
+			font-size: 1rem;
+			line-height: 1.5;
+			padding: calc(0.667rem + 2px) calc(1.333rem + 2px);
+		}
+
+		.gform_validation_errors {
+			padding: 1rem 1rem 0.5rem;
+
+			.error-info {
+				font-size: 1.15rem;
+  				line-height: 1.5;
+			}
+		}
+	}
 }
