@@ -184,17 +184,21 @@ onMounted(() => {
   border-radius: 0.5rem;
   color: var(--wp--preset--color--secondary-brand);
   cursor: pointer;
-  padding: 0.33rem 0.66rem;
+  padding: 0.33rem 0.66rem 0.5rem;
   margin: 0 0.33rem;
   overflow: hidden;
   font-size: 1rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  position: relative;
+  top: -2px;
 }
 
 .clear-filters:hover,
 .clear-filters:focus-visible {
-  outline: 2px solid var(--wp--preset--color--gray-80);
-  outline-offset: 0px;
-  background-color: #fcfcfc;
+  background-color: var(--wp--preset--color--primary-brand);
+  color: var(--wp--preset--color--white);
 }
 
 .filter-card {
