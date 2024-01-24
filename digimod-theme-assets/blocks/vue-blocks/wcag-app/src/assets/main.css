@@ -135,10 +135,11 @@
     content: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOSIgaGVpZ2h0PSI3IiB2aWV3Qm94PSIwIDAgOSA3IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik03LjkyMiAwLjk2ODc1TDMuMjE0NCA1LjY3NjM1TDAuOTA2NzM4IDMuMzY4NjkiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS41Ii8+PC9zdmc+Cg==);
     display: inline-block;
     position: relative;
-    top: -0.3rem;
+    top: -0.15rem;
     left: -0.25rem;
     scale: 1.75;
     width: 1rem;
+    font-size: 0;
   }
 
   .wcag-reset-button{
