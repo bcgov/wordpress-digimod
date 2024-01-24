@@ -81,8 +81,8 @@
   /* todo: this should pull from wordpress styling - currently specific to cards */
   .tag{
     background-color: var(--wp--preset--color--background);
-    border: none;
-    border-radius: 999px;
+    border: 1px solid  var(--wp--preset--color--primary-brand);
+    border-radius: 0.5rem;
     font-size: 12px;
     height: 25px;
     padding: 3px 8px 0;
@@ -103,7 +103,7 @@
     align-items: flex-start;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem;
+    gap: 0.33rem;
     justify-content: flex-start;
   }
 
@@ -112,18 +112,32 @@
   }
 
   .tag-checkbox label{
-    background: var(--wp--preset--color--secondary-brand);
-    color: white;
+    color: var(--wp--preset--color--secondary-brand);
+    background-color: #4A81E71A;
     padding-bottom: 4px;
+    font-weight: 700;
   }
 
-  .tag-checkbox label:hover{
-    background-color: var(--wp--preset--color--background);
+  .tag-checkbox label:hover,
+  .tag-checkbox label:focus-visible{
+    background-color: var(--wp--preset--color--primary-brand);
     color: #313132;
+    outline: 1px solid #fff;
+    outline-offset: -2px;
   }
 
   .tag-checkbox .tag{
     font-size: 1rem;
+  }
+
+  .tag-input:checked+.tag::before {
+    content: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOSIgaGVpZ2h0PSI3IiB2aWV3Qm94PSIwIDAgOSA3IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik03LjkyMiAwLjk2ODc1TDMuMjE0NCA1LjY3NjM1TDAuOTA2NzM4IDMuMzY4NjkiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS41Ii8+PC9zdmc+Cg==);
+    display: inline-block;
+    position: relative;
+    top: -0.3rem;
+    left: -0.25rem;
+    scale: 1.75;
+    width: 1rem;
   }
 
   .wcag-reset-button{

@@ -11,10 +11,9 @@
         </template>
       </div>
       <button class="clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters'>Reset filters</button>
-      <span class='num-available'>{{ filteredPosts.length }} of {{ posts.length }} showing</span>
     </div>
   </div>
-
+  <div v-if="filteredPosts.length > 0" class='num-available'>{{ filteredPosts.length }} of {{ posts.length }} results showing</div>
   <div v-if="filteredPosts.length > 0" class="wp-block-columns card-container">
     <div class="wp-block-query wcag-card-container">
       <ul class="is-flex-container wp-block-post-template" :class="`columns-${columns}`">
@@ -133,13 +132,20 @@ onMounted(() => {
 
 <style scoped>
 .tag-filter-container {
-  margin: 2rem 0.33rem 2rem 0;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 2rem 0.33rem 0.5rem 0;
   width: 100%;
 }
 
+.tag-filter-container > span {
+  position: relative;
+  right: 0;
+}
+
 .tag-checkbox {
-  margin-bottom: .25rem;
+  margin-bottom: .33rem;
 }
 
 .tag.tag-label {
@@ -147,16 +153,18 @@ onMounted(() => {
 }
 
 .tag.tag-label:focus-visible,
-.tag.tag-label:hover {
-  background-color: #fcfcfc;
-  color: var(--wp--preset--color--primary-brand);
-  outline: 2px solid var(--wp--preset--color--primary-brand);
-  outline-offset: 0px;
+.tag.tag-label:hover,
+.tag-input:checked+.tag:focus-visible,
+.tag-input:checked+.tag:hover {
+  background-color: var(--wp--preset--color--primary-brand);
+  color: #dfe7ed;
+  outline: 2px solid var(--wp--preset--color--white);
+  outline-offset: -4px;
 }
 
 .tag-input:checked+.tag {
-  background-color: #dfe7ed;
-  color: #000;
+  color: #dfe7ed;
+  background-color: var(--wp--preset--color--secondary-brand);
   outline: 2px solid var(--wp--preset--color--primary-brand);
   outline-offset: -1px;
 }
@@ -173,7 +181,7 @@ onMounted(() => {
 .clear-filters {
   background: unset;
   border: unset;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   color: var(--wp--preset--color--secondary-brand);
   cursor: pointer;
   padding: 0.33rem 0.66rem;
@@ -205,6 +213,9 @@ onMounted(() => {
 .num-available {
   color: #666;
   font-size: 0.9rem;
+  width: auto;
+  text-align: right;
+  padding: 0 1rem 0.5rem;
 }
 
 .wcag-card-content {

@@ -339,11 +339,11 @@ onMounted(() => {
 .tag-checkbox {
 
   display: flex;
-  gap: 0.25rem;
+  gap: 0.33rem;
 
   label {
-    background: var(--wp--preset--color--primary-brand);
-    color: white;
+    color: var(--wp--preset--color--primary-brand);
+    background-color: #dfe7ed;;
     padding-bottom: 4px;
 
     &:focus-visible,
