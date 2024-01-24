@@ -213,9 +213,9 @@ onMounted(() => {
 .num-available {
   color: #666;
   font-size: 0.9rem;
-  width: auto;
   text-align: right;
   padding: 0 1rem 0.5rem;
+  width: 96%;
 }
 
 .wcag-card-content {
