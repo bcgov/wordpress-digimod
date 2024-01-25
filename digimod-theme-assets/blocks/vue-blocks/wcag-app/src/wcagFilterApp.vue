@@ -165,8 +165,8 @@ onMounted(() => {
 .tag-input:checked+.tag {
   color: #dfe7ed;
   background-color: var(--wp--preset--color--secondary-brand);
-  outline: 2px solid var(--wp--preset--color--primary-brand);
-  outline-offset: -1px;
+  border: 2px solid var(--wp--preset--color--primary-brand);
+  padding: calc(0.33rem - 1px) calc(0.66rem - 1px);
 }
 
 .card-title-link:hover {
