@@ -1,15 +1,15 @@
 <template>
-  <div v-if="uniqueTags.length > 1" class='tag-filter-container'>
+  <div v-if="uniqueTags.length > 0" class='tag-filter-container'>
     <div class="taxonomy-common_component_category wp-block-post-terms" style="float:left;">
-      <div v-for="tag, index in uniqueTags" :key="tag" class="tag-checkbox">
-        <template v-if='tag !== "Active"'>
+      <template v-for="tag, index in uniqueTags">
+      <div v-if='tag !== "Active"' :key="tag" class="tag-checkbox">
           <input type="checkbox" :id="'tag-' + index" :value="tag" v-model="selectedTags" class="tag-input" />
           <label :for="tag" class="tag-label tag" tabindex="0" @click="checkTag(index)"
             @keydown.enter.prevent="checkTag(index)" role="button" :aria-label="getTagAriaLabel(tag)">
             {{ tag }}
           </label>
-        </template>
       </div>
+      </template>
       <button class="clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters'>Reset filters</button>
     </div>
   </div>
@@ -82,6 +82,7 @@ const fetchData = async () => {
 
 const checkTag = (index) => {
   const tag = uniqueTags.value[index];
+  console.log('tag:', tag);
   if (selectedTags.value.includes(tag)) {
     selectedTags.value = selectedTags.value.filter((selectedTag) => selectedTag !== tag);
   } else {
