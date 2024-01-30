@@ -204,8 +204,8 @@ onMounted(() => {
 }
 
 .no-results {
-  color: var(--wp--preset--color--primary-brand);
-  padding: 0.66rem;
+  color: var(--wp--preset--color--foreground);
+  padding: 3rem 0.66rem 0;
   text-align: center;
 }
 .no-results::before {
