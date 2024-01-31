@@ -74,7 +74,7 @@ if (jQuery && jQuery('body.home').length) {
     
         jQuery(document).on('gform_post_render', function () {
             
-            jQuery('.gform_validation_errors').html("<h2 class='error-info'>The email address entered is invalid, please check the formatting (e.g. email@domain.com)</h2>");
+            jQuery('.gform_validation_errors').html("<h2 class='error-info'>The email address entered is invalid</h2>");
         });
     });
 } else if (!jQuery) {

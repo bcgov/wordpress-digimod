@@ -90,6 +90,25 @@ const checkTag = (index) => {
   }
 };
 
+// const checkTag = (index) => {
+//   const tag = uniqueTags.value[index];
+//   console.log('tag:', tag);
+  
+//   // Check if all selected tags are present
+//   const allSelectedTagsPresent = selectedTags.value.every(selectedTag => uniqueTags.value.includes(selectedTag));
+
+//   // Toggle the selection based on "and" condition
+//   if (allSelectedTagsPresent) {
+//     // Remove the tag if all selected tags are already present
+//     selectedTags.value = selectedTags.value.filter((selectedTag) => selectedTag !== tag);
+//   } else {
+//     // Add the tag if it ensures all selected tags are present
+//     selectedTags.value.push(tag);
+//   }
+// };
+
+
+
 const getTagAriaLabel = (tag) => {
   return `${tag} filter ${selectedTags.value.includes(tag) ? 'selected' : 'deselected'}`;
 };
