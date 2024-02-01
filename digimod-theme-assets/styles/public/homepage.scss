@@ -9,8 +9,15 @@ body.home {
 
 	.home-newsletter {
 
+		.wp-block-media-text__media {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding-block: 2rem;
+		}
+
 		img {
-			scale: 0.6;
+			width: 320px;
 
 			&.checkmark {
 				float: left;
