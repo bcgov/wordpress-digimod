@@ -71,13 +71,14 @@ body.home {
 			
 			#field_submit {
 			   position: relative;
-			   top: 0;
+			   top: -2px;
 			   right: 0;
+			   padding: 2px 0;
 		   }
 
 		   .gfield input.large {
 				width: 100%;
-				padding: calc(0.8rem + 2.5px);
+				padding: calc(0.8rem + 3px);
 				border: 0;
 			}
 		}
