@@ -15,9 +15,11 @@ body.home {
 			align-items: center;
 			padding-block: 2rem;
 			
+			img {
+				width: 320px;
+			}
 		}
 		img {
-			width: 320px;
 
 			&.checkmark {
 				float: left;
@@ -31,9 +33,15 @@ body.home {
 		}
 
 
-		input[type="email"]:focus-visible {
+		input[type="email"] {
+			border-radius: .33rem 0 0 .33rem;
 			outline-offset: -1px;
-			outline: 1px solid var(--wp--preset--color--primary-brand);
+			outline: 1px solid var(--wp--preset--color--white);
+
+			&:focus-visible {
+				outline-offset: -1px;
+				outline: 1px solid var(--wp--preset--color--primary-brand);
+			}
 		}
 
 		.gform_wrapper.gravity-theme {
