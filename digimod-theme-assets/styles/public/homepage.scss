@@ -15,18 +15,18 @@ body.home {
 			align-items: center;
 			padding-block: 2rem;
 			
-			img {
-				width: 320px;
-	
-				&.checkmark {
-					float: left;
-					scale: 0.66;
-					position: relative;
-					top: 0;
-					margin-right: 7px;
-					padding: 0;
-					width: 36px;
-				}
+		}
+		img {
+			width: 320px;
+
+			&.checkmark {
+				float: left;
+				scale: 0.66;
+				position: relative;
+				top: 0;
+				margin-right: 7px;
+				padding: 0;
+				width: 36px;
 			}
 		}
 
@@ -107,10 +107,10 @@ body.home {
 
 			p {
 				margin: 0.5rem;
-
+	
 				span {
 					top: -0.25rem;
-  					position: relative;
+					  position: relative;
 				}
 			}
 		}
