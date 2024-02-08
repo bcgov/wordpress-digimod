@@ -348,9 +348,83 @@ function custom_api_posts_routes()
 // add_action('rest_api_init', 'custom_api_posts_routes');
 
 
+/**
+ * Protect the excerpt for protected pages on search results
+ */
+function digimod_theme_assets_protect_excerpt( $excerpt, $post ) {
+    if(is_search()){
+        $post_excerpt = $post->post_excerpt ?
+            $excerpt :
+            wp_trim_excerpt('', $post);
+        $post_is_restricted = custom_redirect_to_login_check_if_url_in_list(get_permalink($post));
+
+        $result_content = '';
+        if($post_is_restricted){
+            if( is_user_logged_in() ){
+                $result_content .= $post_excerpt;
+            }else{
+                $result_content .= ' <p>' . __('There is no excerpt because this is a protected post. ') . '</p>';
+            }
+
+        }else{
+            $result_content .= $post_excerpt;         
+        }  
+        return $result_content;
+    }
+
+    return $excerpt;
+}
+add_filter( 'get_the_excerpt', 'digimod_theme_assets_protect_excerpt', 10,2);
 
 
 
+/**
+ *  Override the filter so that it looks for the search results template inside of our plugin folder
+ */
+function portfolio_page_template(){
+    return plugin_dir_path(__FILE__) .'theme/templates/search-results.php';
+}
+add_filter( 'searchwp_live_search_results_template', 'portfolio_page_template', 99 );
+
+
+/** 
+ * Provide for the ability to change block html content.
+ *  Used to add attributes to the search results post content.
+ */
+function digimod_theme_assets_render_block(string $block_content, array $block): string {
+    if(is_search()){
+        if ( isset( $block['blockName'] )){
+            if($block['blockName'] === 'core/post-title'){
+
+                $html = str_replace(
+                    [
+                        'class="wp-block-post-title"',
+                    ],
+                    [
+                        'class="wp-block-post-title" title="private"'
+                    ],
+                    $block_content
+                );
+                return $html;
+
+            }elseif($block['blockName'] === 'core/post-excerpt'){
+                $html = str_replace(
+                    [
+                        'class="wp-block-post-excerpt"',
+                    ],
+                    [
+                        'class="wp-block-post-excerpt" title="private"'
+                    ],
+                    $block_content
+                );
+                return $html;
+            }
+        }
+    }
+
+    return $block_content;
+}
+add_filter('render_block', 'digimod_theme_assets_render_block', null, 2);
 
 
 
