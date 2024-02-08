@@ -348,6 +348,8 @@ function custom_api_posts_routes()
 // add_action('rest_api_init', 'custom_api_posts_routes');
 
 
+
+
 /**
  * Protect the excerpt for protected pages on search results
  */
@@ -392,39 +394,80 @@ add_filter( 'searchwp_live_search_results_template', 'portfolio_page_template', 
  *  Used to add attributes to the search results post content.
  */
 function digimod_theme_assets_render_block(string $block_content, array $block): string {
+    //echo print_r($block['blockName'],true) . ' ' . PHP_EOL;
+
     if(is_search()){
         if ( isset( $block['blockName'] )){
-            if($block['blockName'] === 'core/post-title'){
+            $post_is_restricted = custom_redirect_to_login_check_if_url_in_list(get_permalink(get_the_id()));	
 
-                $html = str_replace(
-                    [
-                        'class="wp-block-post-title"',
-                    ],
-                    [
-                        'class="wp-block-post-title" title="private"'
-                    ],
-                    $block_content
-                );
-                return $html;
+            if($block['blockName'] === 'core/post-title'){
+                if($post_is_restricted){
+                    $html = str_replace(
+                        [
+                            'class="wp-block-post-title"',
+                        ],
+                        [
+                            'class="wp-block-post-title" title="private"'
+                        ],
+                        $block_content
+                    );
+                    return $html;
+                }
 
             }elseif($block['blockName'] === 'core/post-excerpt'){
-                $html = str_replace(
-                    [
-                        'class="wp-block-post-excerpt"',
-                    ],
-                    [
-                        'class="wp-block-post-excerpt" title="private"'
-                    ],
-                    $block_content
-                );
-                return $html;
+                if($post_is_restricted){
+                    $html = str_replace(
+                        [
+                            'class="wp-block-post-excerpt"',
+                        ],
+                        [
+                            'class="wp-block-post-excerpt" title="private"'
+                        ],
+                        $block_content
+                    );
+                    return $html;
+                }
             }
         }
+    }
+
+
+    if($block['blockName'] === 'core/search'){
+        $block_content .= '<div class="live-search-container"></div>';
     }
 
     return $block_content;
 }
 add_filter('render_block', 'digimod_theme_assets_render_block', null, 2);
+
+
+//Turn off the base styles for live search, which controls position css.
+add_filter( 'searchwp_live_search_base_styles', '__return_false' );   
+
+
+//Completely remove all the styling of the live search
+function digimod_theme_assets_searchwp_live_search_theme_css() { 
+	wp_dequeue_style( 'searchwp-live-search' );
+}
+add_action( 'wp_enqueue_scripts', 'digimod_theme_assets_searchwp_live_search_theme_css', 20 );
+
+
+/**
+ * Adjust the SearchWP Live Search config.
+ */
+function digimod_theme_assets_searchwp_live_search_configs($config){
+    //print_r($config);
+
+    $config['default']['results']['offset']['y'] = -32;             //Push up the live search results to line up with the search box.
+    $config['default']['parent_el'] = '.live-search-container';     //Put the live search in our new container.
+
+    return $config;
+
+}
+add_filter( 'searchwp_live_search_configs', 'digimod_theme_assets_searchwp_live_search_configs' );
+
+
+
 
 
 
