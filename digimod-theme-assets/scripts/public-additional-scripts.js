@@ -7,8 +7,10 @@ import './public/grid-layout';
 import './public/homepage';
 import './public/mega-menu';
 import './public/navigation';
+import './public/search';
 import './public/sticky-side-navigation';
 import './public/flex-cards';
+import './public/dom-overrides';
 
 /**
  * All pages DOM manipulation.

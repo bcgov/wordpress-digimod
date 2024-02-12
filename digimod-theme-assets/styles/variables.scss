@@ -7,7 +7,7 @@ $breakpoint-sm-md: 840px;
 $breakpoint-wp-content-sm: $breakpoint-sm-md;
 $breakpoint-md: 991px;
 $breakpoint-md-lg: 1024px;
-$breakpoint-lg: 1199px;
+$breakpoint-lg: 1285px;
 $breakpoint-xl: 1440px;
 $breakpoint-wp-content-wide: $breakpoint-xl;
 
@@ -35,7 +35,7 @@ $menuAncestorHighlight: #324166;
 $highlightblue: #c0e6f7;
 
 
-* {
+:root {
 	// Shadows from https://getcssscan.com/css-box-shadow-examples
 	// #39
 	--box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
@@ -43,3 +43,5 @@ $highlightblue: #c0e6f7;
 		background-color: $highlightblue;
 	}
 }
+
+$searchIcon: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGw9IiMyZDJkMmQiIGQ9Ik0xNS41IDE0SDE0LjcxTDE0LjQzIDEzLjczQzE1LjQxIDEyLjU5IDE2IDExLjExIDE2IDkuNUMxNiA1LjkxIDEzLjA5IDMgOS41IDNDNS45MSAzIDMgNS45MSAzIDkuNUMzIDEzLjA5IDUuOTEgMTYgOS41IDE2QzExLjExIDE2IDEyLjU5IDE1LjQxIDEzLjczIDE0LjQzTDE0IDE0LjcxVjE1LjVMMTkgMjAuNDlMMjAuNDkgMTlMMTUuNSAxNFpNOS41IDE0QzcuMDEgMTQgNSAxMS45OSA1IDkuNUM1IDcuMDEgNy4wMSA1IDkuNSA1QzExLjk5IDUgMTQgNy4wMSAxNCA5LjVDMTQgMTEuOTkgMTEuOTkgMTQgOS41IDE0WiIvPjwvc3ZnPg==);

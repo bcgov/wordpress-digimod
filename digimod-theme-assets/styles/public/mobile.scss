@@ -48,19 +48,19 @@ body.mm-wrapper--opened.mm-wrapper--position-left {
 		z-index: 999;
 	}
 
-	.wp-block-site-logo {
-		position: relative;
-		left: 0.5rem;
-		transition: position 0.3s ease;
-		transition-delay: 0.4s;
-
-		@media (min-width: $breakpoint-lg) {
-			left: 0;
-		}
-
-	}
 }
 
+.wp-block-site-logo {
+	position: relative;
+	left: -1rem;
+	transition: position 0.3s ease;
+	transition-delay: 0.4s;
+
+	@media (min-width: $breakpoint-lg) {
+		left: 0;
+	}
+
+}
 #logo-column {
 	flex-basis: 45% !important;
 

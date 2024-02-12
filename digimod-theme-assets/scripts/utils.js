@@ -216,3 +216,25 @@ function createBreadcrumbSeparator() {
 	separator.textContent = "›";
 	return separator;
 }
+
+/**
+ * Safely adds an event listener to a target element.
+ *
+ * @param {EventTarget | object} el - The target element to which the event listener will be added.
+ * @param {string} event - A string representing the event type to listen for (e.g., 'click', 'resize').
+ * @param {Function | object} handler - The event listener function or object.
+ * @param {boolean | object} [options] - An optional object specifying options for the event listener.
+ * @throws {Error} Throws an error if the target is not a valid element or if it doesn't support addEventListener.
+ */
+export function addSafeEventListenerPlugin( el = document, event, handler, options ) {
+    if ( el && typeof el.addEventListener === 'function' ) {
+        // Call the original function
+        el.addEventListener( event, handler, options );
+    } else {
+        /* eslint-disable no-console */
+        console.warn(
+            'el is not a valid EventTarget or does not support addEventListener'
+        );
+        /* eslint-enable no-console */
+    }
+}

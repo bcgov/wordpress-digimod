@@ -4,35 +4,40 @@
 
 body.custom-digitalgov {
 
-	nav>ul {
-
-		>li {
-
-			&:focus,
-			&:hover {
-				background-color: hsla(0, 0%, 7%, 0.15) !important;
-			}
-
-			a[title="private"]::after {
-				background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDQ0OCA1MTIiICBmaWxsPSIjOWE5YTlhIj48cGF0aCBkPSJNNDAwIDIyNGgtMjR2LTcyQzM3NiA2OC4yIDMwNy44IDAgMjI0IDBTNzIgNjguMiA3MiAxNTJ2NzJINDhjLTI2LjUgMC00OCAyMS41LTQ4IDQ4djE5MmMwIDI2LjUgMjEuNSA0OCA0OCA0OGgzNTJjMjYuNSAwIDQ4LTIxLjUgNDgtNDhWMjcyYzAtMjYuNS0yMS41LTQ4LTQ4LTQ4ek0yNjQgMzkyYzAgMjIuMS0xNy45IDQwLTQwIDQwcy00MC0xNy45LTQwLTQwdi00OGMwLTIyLjEgMTcuOS00MCA0MC00MHM0MCAxNy45IDQwIDQwdjQ4em0zMi0xNjhIMTUydi03MmMwLTM5LjcgMzIuMy03MiA3Mi03MnM3MiAzMi4zIDcyIDcydjcyeiIvPjwvc3ZnPg==);
-				background-position: right;
-				background-repeat: no-repeat;
-				background-size: contain;
-				height: 1rem;
-				width: 1rem;
-				content: "";
-				position: relative;
-				top: 5px;
-				margin-left: 0.5rem;
-			}
+	nav {
+		&[aria-label="Main menu"] {
+			gap: 0;
 		}
-
-		>.current-menu-item {
-			background-color: hsla(0, 0%, 7%, 0.05) !important;
-
-			&.has-secondary-accent-background-color {
-				background-color: $menuAncestorHighlight !important;
-				color: var(--wp--preset--color--white) !important;
+		>ul {
+	
+			>li {
+	
+				&:focus,
+				&:hover {
+					background-color: hsla(0, 0%, 7%, 0.15) !important;
+				}
+	
+				a[title="private"]::after {
+					background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDQ0OCA1MTIiICBmaWxsPSIjOWE5YTlhIj48cGF0aCBkPSJNNDAwIDIyNGgtMjR2LTcyQzM3NiA2OC4yIDMwNy44IDAgMjI0IDBTNzIgNjguMiA3MiAxNTJ2NzJINDhjLTI2LjUgMC00OCAyMS41LTQ4IDQ4djE5MmMwIDI2LjUgMjEuNSA0OCA0OCA0OGgzNTJjMjYuNSAwIDQ4LTIxLjUgNDgtNDhWMjcyYzAtMjYuNS0yMS41LTQ4LTQ4LTQ4ek0yNjQgMzkyYzAgMjIuMS0xNy45IDQwLTQwIDQwcy00MC0xNy45LTQwLTQwdi00OGMwLTIyLjEgMTcuOS00MCA0MC00MHM0MCAxNy45IDQwIDQwdjQ4em0zMi0xNjhIMTUydi03MmMwLTM5LjcgMzIuMy03MiA3Mi03MnM3MiAzMi4zIDcyIDcydjcyeiIvPjwvc3ZnPg==);
+					background-position: right;
+					background-repeat: no-repeat;
+					background-size: contain;
+					height: 1rem;
+					width: 1rem;
+					content: "";
+					position: relative;
+					top: 5px;
+					margin-left: 0.5rem;
+				}
+			}
+	
+			>.current-menu-item {
+				background-color: hsla(0, 0%, 7%, 0.05) !important;
+	
+				&.has-secondary-accent-background-color {
+					background-color: $menuAncestorHighlight !important;
+					color: var(--wp--preset--color--white) !important;
+				}
 			}
 		}
 	}
