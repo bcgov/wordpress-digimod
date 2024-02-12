@@ -79,19 +79,19 @@ if (have_posts()) :
 				</p>
 			</a>
 			<?php $result_count++; ?>
+		</div>
 		<?php endwhile; ?>
 
-		<?php if ($result_count > 0) : 
+		<?php if ($result_count > 0) :
 			// Output the "See all results" link if there are more than 4 suggestions.
 			$search_query = isset($_POST['s']) ? sanitize_text_field($_POST['s']) : '';
-			?>
+		?>
 			<p class="results-info">
 				<?php echo sprintf(__("Showing %d suggestions for <strong>%s</strong>, submit your search to see all results.", 'searchwp-live-ajax-search'), $result_count, $search_query); ?>
 			</p>
 		<?php endif; ?>
+		
 
-
-		</div>
 	<?php else : ?>
 		<p class="searchwp-live-search-no-results" role="option">
 			<?php esc_html_e('No suggestions found, use the search button to do a full search.', 'searchwp-live-ajax-search'); ?>

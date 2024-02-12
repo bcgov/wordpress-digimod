@@ -97,6 +97,10 @@ header:has(#search-container) {
 	font-size: 0.85rem;
 }
 
+body:has(.searchwp-live-search-results :focus) {
+	overflow: hidden;
+}
+
 .live-search-container {
 	margin: 0 !important;
 	padding-inline: 0.25rem;
