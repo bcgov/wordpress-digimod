@@ -1,38 +1,28 @@
 <?php
-
 /**
- * Search results are contained within a div.searchwp-live-search-results
- * which you can style accordingly as you would any other element on your site
+ * Live Search search regults template.
  *
- * Some base styles are output in wp_footer that do nothing but position the
- * results container and apply a default transition, you can disable that by
- * adding the following to your theme's functions.php:
+ * @package Bcgov\DigitalGov
+ * @since 1.3.0
  *
- * add_filter( 'searchwp_live_search_base_styles', '__return_false' );
  *
- * There is a separate stylesheet that is also enqueued that applies the default
- * results theme (the visual styles) but you can disable that too by adding
- * the following to your theme's functions.php:
- *
- * wp_dequeue_style( 'searchwp-live-search' );
- *
- * You can use ~/searchwp-live-search/assets/styles/style.css as a guide to customize
+ * ***** IMPORTANT!!! This template is only for Live Search results.
  */
 
-// exit if accessed directly
+
+// exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// IMPORTANT. This template is only for Live Search results.
-
-
-//error_reporting( E_ALL );
-//ini_set( 'display_errors', '1' );
+// phpcs:disable
+// error_reporting( E_ALL );
+// ini_set( 'display_errors', '1' );
+// phpcs:enable
 
 $highlighter = new \SearchWP\Highlighter();
 
-$search_query = isset( $_REQUEST['s'] ) ? sanitize_text_field( $_REQUEST['s'] ) : null;
+$search_query = isset( $_REQUEST['s'] ) ? sanitize_text_field( $_REQUEST['s'] ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 $search_results = [];
 if ( ! empty( $search_query ) && class_exists( '\\SearchWP\\Query' ) ) {
@@ -41,7 +31,7 @@ if ( ! empty( $search_query ) && class_exists( '\\SearchWP\\Query' ) ) {
         [
 			'engine'   => 'default',  // The Engine name.
 			'fields'   => 'all',      // Load proper native objects of each result.
-			'per_page' => 4,        // How many results to show in live search
+			'per_page' => 4,          // How many results to show in live search.
 		]
     );
 
@@ -65,7 +55,7 @@ if ( class_exists( '\SearchWP_Metrics\QueryPopularQueriesOverTime' ) ) {
 		[
 			'days'    => 30,
 			'engine'  => 'default',
-			'exclude' => [], // Settings::get( 'ignored_queries', 'array' ),
+			'exclude' => [],
 		]
 	);
 }
@@ -99,7 +89,7 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 	<?php } ?>
 
 
-	<?php echo '' . $searchwp_query->found_results . ' results found in ' . $searchwp_query->query_time . ' seconds.'; ?>
+	<?php echo '' . wp_kses( $searchwp_query->found_results, 0 ) . ' results found in ' . wp_kses( $searchwp_query->query_time, 0 ) . ' seconds.'; ?>
 
 	<?php foreach ( $search_results as $search_result ) { ?>
 		<?php
@@ -107,11 +97,9 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 
 		$result_content = get_the_excerpt( $search_result );
 		if ( $post_is_restricted ) {
-			if ( is_user_logged_in() ) {
-			} else {
+			if ( ! is_user_logged_in() ) {
 				$result_content = __( 'There is no excerpt because this is a protected post. ' );
 			}
-		} else {
 		}
 
 
@@ -121,15 +109,14 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 				<div class="searchwp-live-search-result" role="option" id="" aria-selected="false">
 					<a href="<?php echo esc_url( get_permalink( $search_result->ID ) ); ?>" title="<?php if ( $post_is_restricted ) {echo 'private';} ?>">
 						<?php
-						// highlight the title
-						$title = get_the_title( $search_result->ID );
+						// highlight the title.
+						$the_title = get_the_title( $search_result->ID );
 						if ( $highlighter ) {
-							// $title = $highlighter->apply_highlight( $title, $query );
-							$title = $highlighter->apply( $title, $search_query );
+							$the_title = $highlighter->apply( $the_title, $search_query );
 						}
-						echo $title;
+						echo wp_kses( $the_title, [ 'mark' => [] ] );
 						?>
-						<p class="live-search-excerpt"><?php echo '' . $result_content . ''; ?></p>
+						<p class="live-search-excerpt"><?php echo '' . wp_kses( $result_content, [ 'mark' => [] ] ) . ''; ?></p>
 					</a>
 					
 				</div>
@@ -139,7 +126,7 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 			case 'WP_User':
 				?>
 				<div class="searchwp-live-search-result" role="option" id="" aria-selected="false">
-					<p><a href="<?php echo get_author_posts_url( $search_result->data->ID ); ?>">
+					<p><a href="<?php echo wp_kses( get_author_posts_url( $search_result->data->ID ), 0 ); ?>">
 						<?php echo esc_html( $search_result->data->display_name ); ?> &raquo;
 					</a></p>
 				</div>
@@ -151,10 +138,20 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 	$result_count = count( $search_results );
 	if ( $result_count ) {
 		// Output the "See all results" link if there are more than 4 suggestions.
-		$search_query = isset( $_POST['s'] ) ? sanitize_text_field( $_POST['s'] ) : '';
+		$search_query = isset( $_POST['s'] ) ? sanitize_text_field( $_POST['s'] ) : '';  // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		?>
 		<p class="results-info">
-			<?php printf( __( 'Showing %1$d suggestions for <strong>%2$s</strong>, submit your search to see all results.', 'searchwp-live-ajax-search' ), $result_count, $search_query ); ?>
+			<?php
+			echo wp_kses(
+				printf(
+					/* translators: %1$d: results count, %2$s: search keywords */
+                    __( 'Showing %1$d suggestions for <strong>%2$s</strong>, submit your search to see all results.', 'searchwp-live-ajax-search' ),
+					$result_count,
+					$search_query
+				),
+				[ 'strong' => [] ]
+			);
+			?>
 		</p>
 	<?php } ?>
 

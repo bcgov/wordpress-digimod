@@ -10,6 +10,9 @@ namespace Bcgov\DigitalGov;
 use Bcgov\DigitalGov\Blocks;
 use Bcgov\Common\Loader;
 
+/**
+ * Plugin class.
+ */
 class Plugin {
 	/**
 	 * The unique identifier of this plugin.
@@ -28,15 +31,25 @@ class Plugin {
     public static $plugin_title = 'Digital Gov Theme Assets';
 
     /**
-     * The plugin root directory.
+     * The plugin directory.
      *
-     * @var string $plugin_dir The path to this plugin's root directory.
+     * @var string $plugin_folder The name of plugin's directory.
      */
 	public static $plugin_folder = '/digimod-theme-assets/';
 
-    public static $plugin_dir = null;
+	/**
+     * The plugin root directory.
+     *
+     * @var string $plugin_folder The path to this plugin's root directory.
+     */
+    public static $plugin_dir = null; // Set up later dynamically.
 
-    public static $plugin_url = null;  // Set up later dynamically
+	/**
+     * The plugin root url.
+     *
+     * @var string $plugin_folder The path to this plugin's root url.
+     */
+    public static $plugin_url = null;  // Set up later dynamically.
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -64,14 +77,17 @@ class Plugin {
 	/**
      * Register our admin JS assets
      */
-	function register_admin_js() {
+	public function register_admin_js() {
         $asset_file = include self::$plugin_dir . 'dist-plugin/admin.asset.php';
 
         wp_enqueue_script(
             'digitalgov/digimod-theme-assets-plugin-admin',
             self::$plugin_url . 'dist-plugin/admin.js',
             $asset_file['dependencies'],
-            $asset_file['version']
+            $asset_file['version'],
+			[
+				'in_footer' => true,
+			]
         );
 	}
 
@@ -79,8 +95,11 @@ class Plugin {
 	/**
 	 * Protect the excerpt for idir protected pages on search results, in case the results show up outside the search results templates we setup.
 	 *  This doesnt account for built in wp password protected pages, wp handles the excerpt itself for those.
+	 *
+	 * @param string $excerpt The original excerpt text.
+	 * @param object $post The post object.
 	 */
-	function protect_excerpt( $excerpt, $post ) {
+	public function protect_excerpt( $excerpt, $post ) {
 		if ( is_search() ) {
 			$post_excerpt       = $post->post_excerpt ?
 				$excerpt :
@@ -105,7 +124,7 @@ class Plugin {
 
 
 
-
+	// phpcs:disable
 	/**
 	 * Provide for the ability to change block html content.
 	 *  Used to add attributes to the search results post content.
@@ -156,4 +175,5 @@ class Plugin {
 	}
 	add_filter( 'render_block', 'digimod_theme_assets_render_block', null, 2 );
 	*/
+	// phpcs:enable
 }

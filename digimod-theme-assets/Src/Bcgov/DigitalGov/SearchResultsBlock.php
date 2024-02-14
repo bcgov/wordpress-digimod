@@ -10,7 +10,9 @@ namespace Bcgov\DigitalGov;
 use Bcgov\Common\Loader;
 
 
-
+/**
+ * SearchResultsBlock class.
+ */
 class SearchResultsBlock {
 
 	/**
@@ -37,8 +39,8 @@ class SearchResultsBlock {
 	 * @param int $length Excerpt length.
 	 * @return int (Maybe) modified excerpt length.
 	 */
-	function excerpt_length( $length ) {
-		if ( doing_action( 'wp_ajax_searchwp_live_search' ) ) {
+	public function excerpt_length( $length ) {
+		if ( doing_action( 'wp_ajax_searchwp_live_search' ) || doing_action( 'wp_ajax_nopriv_searchwp_live_search' ) ) {
 			return 10;
 		}
 		return $length;
@@ -55,12 +57,9 @@ class SearchResultsBlock {
 
         if ( $is_gb_editor ) {
 			$_GET['s'] = 'digital'; // Provide a search keyword for the blockeditor so you can see it visually.
-
-		} else {
-
 		}
 
-		if ( ! isset( $_GET['s'] ) ) {
+		if ( ! isset( $_GET['s'] ) ) {  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return $template;
 		}
 
@@ -86,8 +85,8 @@ class SearchResultsBlock {
 		];
 
 		// Retrieve applicable query parameters.
-		$search_query = isset( $_GET['s'] ) ? sanitize_text_field( $_GET['s'] ) : null;
-		$search_page  = isset( $_GET['swppg'] ) ? absint( $_GET['swppg'] ) : 1;
+		$search_query = isset( $_GET['s'] ) ? sanitize_text_field( $_GET['s'] ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$search_page  = isset( $_GET['swppg'] ) ? absint( $_GET['swppg'] ) : 1;         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		// Perform the search.
 		$search_results    = [];
@@ -128,7 +127,7 @@ class SearchResultsBlock {
 				<?php $display_data = $this->get_display_data( $search_result ); ?>
 				
 				<article id="post-0" class="swp-result-item post-0 post type-post status-publish format-standard hentry category-uncategorized entry">
-					<?php if ( ! empty( $display_data['image_html'] ) && ! empty( $settings['swp-image-size'] ) && $settings['swp-image-size'] !== 'none' ) : ?>
+					<?php if ( ! empty( $display_data['image_html'] ) && ! empty( $settings['swp-image-size'] ) && 'none' !== $settings['swp-image-size'] ) : ?>
 						<div class="swp-result-item--img-container">
 							<div class="swp-result-item--img">
 								<?php echo wp_kses_post( $display_data['image_html'] ); ?>
@@ -181,8 +180,10 @@ class SearchResultsBlock {
 
 	/**
 	 * Helper function to get the various pieces needed to render the search results items
+	 *
+	 * @param object $result The search results individual result item.
 	 */
-	function get_display_data( $result ) {
+	private function get_display_data( $result ) {
 
 		if ( $result instanceof \WP_Post ) {
 			$data = [
@@ -238,13 +239,13 @@ class SearchResultsBlock {
 	 * @param array $settings Search Results Page settings.
 	 * @return string
 	 */
-	function get_container_classes( $settings ) {
+	private function get_container_classes( $settings ) {
 
 		$classes = [
 			'swp-search-results',
 		];
 
-		if ( $settings['swp-layout-style'] === 'grid' ) {
+		if ( 'grid' === $settings['swp-layout-style'] ) {
 			$classes[] = 'swp-grid';
 			$per_row   = absint( $settings['swp-results-per-row'] );
 			if ( ! empty( $per_row ) ) {
@@ -252,21 +253,21 @@ class SearchResultsBlock {
 			}
 		}
 
-		if ( $settings['swp-layout-style'] === 'list' ) {
+		if ( 'list' === $settings['swp-layout-style'] ) {
 			$classes[] = 'swp-flex';
 		}
 
 		$image_size = $settings['swp-image-size'];
-		if ( empty( $image_size ) || $image_size === 'none' ) {
+		if ( empty( $image_size ) || 'none' === $image_size ) {
 			$classes[] = 'swp-rp--img-none';
 		}
-		if ( $image_size === 'small' ) {
+		if ( 'small' === $image_size ) {
 			$classes[] = 'swp-rp--img-sm';
 		}
-		if ( $image_size === 'medium' ) {
+		if ( 'medium' === $image_size ) {
 			$classes[] = 'swp-rp--img-m';
 		}
-		if ( $image_size === 'large' ) {
+		if ( 'large' === $image_size ) {
 			$classes[] = 'swp-rp--img-l';
 		}
 
@@ -279,17 +280,17 @@ class SearchResultsBlock {
 	 * @param array $settings Search Results Page settings.
 	 * @return string
 	 */
-	function get_pagination_classes( $settings ) {
+	private function get_pagination_classes( $settings ) {
 		$classes = [
 			'nav-links',
 		];
 
-		if ( $settings['swp-pagination-style'] === 'circular' ) {
+		if ( 'circular' === $settings['swp-pagination-style'] ) {
 			$classes[] = 'swp-results-pagination';
 			$classes[] = 'swp-results-pagination--circular';
 		}
 
-		if ( $settings['swp-pagination-style'] === 'boxed' ) {
+		if ( 'boxed' === $settings['swp-pagination-style'] ) {
 			$classes[] = 'swp-results-pagination';
 			$classes[] = 'swp-results-pagination--boxed';
 		}

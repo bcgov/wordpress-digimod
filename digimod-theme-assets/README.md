@@ -7,6 +7,9 @@ This allows for SCSS and vanilla Javascript module-based development by providin
 
 The intent of this environment is to be used for lightweight additions to styles or DOM manipulation that is beyond the scope of what WordPress itself can manage inside the core block theme environment.
 
+As of 1.3.0 composer is required.
+
+
 ## Entry points
 
 For public facing style updates use:
@@ -26,6 +29,11 @@ npm run build:watch
 For one off builds:
 ```
 npm run build
+```
+
+For production:
+```
+composer production
 ```
 
 Files from either of these commands will be found in **`/dist/assets/`** – as noted above these files should then be uploaded to the Media Library and enqueued for Public or Admin use (or both) respectively. By default only styles are provided for enqueing on the admin side. You are safe to ignore any other files exported to the `dist` directory. It should also be noted that previous files uploaded and enqueued should be removed/deleted from the Media Library so as to not cause errors or unintended consequences.

@@ -23,7 +23,14 @@
 			"Bcgov\\DigitalGov\\": "src/Bcgov/DigitalGov/"
 		}
 	},
-	"scripts": {        
+	"scripts": {       
+		"production": [
+            "npm run build"
+        ],       
+		"production-proper": [
+            "npm run build",
+            "Bcgov\\Script\\Checklists::postProductionChecks"
+        ], 
         "phpcs": [
             "Bcgov\\Script\\Standards::phpcs"
         ],

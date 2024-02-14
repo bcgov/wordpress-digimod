@@ -1,7 +1,8 @@
 <?php
+// phpcs:ignoreFile
 
 if ( ! class_exists( 'digimod_plugin_update_check' ) ) {
-	class digimod_plugin_update_check {
+	class digimod_plugin_update_check {	
 		private $current_version;
 		private $plugin_slug;
 		private $slug;
