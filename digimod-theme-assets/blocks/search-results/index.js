@@ -7,7 +7,7 @@ registerBlockType('digimod-plugin/search-results', {
     title: __('Digital Gov - Search Results'),
     description: 'Used to display Search Results',
     category: 'digimod-plugin',
-    icon: 'postList',
+    icon: 'search',
     edit: (props) => {
         const blockProps = useBlockProps();
         return (
