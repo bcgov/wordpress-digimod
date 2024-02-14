@@ -53,7 +53,7 @@
    .custom-card-content{
     height:100%;
    }
-   
+
   .card-container {
     display: flex;
     flex-wrap: wrap;
@@ -140,4 +140,3 @@
   .clearFilters:hover{
     text-decoration: none;
   }
-  
