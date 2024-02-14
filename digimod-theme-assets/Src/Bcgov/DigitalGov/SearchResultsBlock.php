@@ -5,6 +5,7 @@
  * @package Bcgov\DigitalGov
  * @since 1.3.0
  */
+
 namespace Bcgov\DigitalGov;
 
 use Bcgov\Common\Loader;
@@ -16,22 +17,22 @@ use Bcgov\Common\Loader;
 class SearchResultsBlock {
 
 	/**
-     * Constructor.
-     */
+	 * Constructor.
+	 */
 	public function __construct() {
-        $this->init();
+		$this->init();
 	}
 
 	/**
-     * Sets up hooks.
-     *
-     * @return void
-     */
+	 * Sets up hooks.
+	 *
+	 * @return void
+	 */
 	public function init() {
-        $loader = new Loader();
+		$loader = new Loader();
 		$loader->add_filter( 'excerpt_length', $this, 'excerpt_length', 9223372036854775807 );  // Some other plugin is setting the excerpt length to 100 and using this big int as priority, lets replace it.
-        $loader->run();
-    }
+		$loader->run();
+	}
 
 	/**
 	 * Filter the excerpt length if its the live search.
@@ -51,11 +52,11 @@ class SearchResultsBlock {
 	 * Perform the actual search and return the results
 	 */
 	public function render_search_results() {
-        $is_gb_editor = Blocks::check_is_gb_editor();
+		$is_gb_editor = Blocks::check_is_gb_editor();
 
-        $output = '';
+		$output = '';
 
-        if ( $is_gb_editor ) {
+		if ( $is_gb_editor ) {
 			$_GET['s'] = 'digital'; // Provide a search keyword for the blockeditor so you can see it visually.
 		}
 
@@ -121,52 +122,57 @@ class SearchResultsBlock {
 		ob_start();
 		?>
 		<div class="<?php echo esc_attr( $this->get_container_classes( $settings ) ); ?>">
+			<?php if ( ! empty( $search_results ) ) : ?>
+				<?php
+                foreach ( $search_results as $search_result ) :
 
-		<?php if ( ! empty( $search_results ) ) : ?>
-			<?php foreach ( $search_results as $search_result ) : ?>
-				<?php $display_data = $this->get_display_data( $search_result ); ?>
-				
-				<article id="post-0" class="swp-result-item post-0 post type-post status-publish format-standard hentry category-uncategorized entry">
-					<?php if ( ! empty( $display_data['image_html'] ) && ! empty( $settings['swp-image-size'] ) && 'none' !== $settings['swp-image-size'] ) : ?>
-						<div class="swp-result-item--img-container">
-							<div class="swp-result-item--img">
-								<?php echo wp_kses_post( $display_data['image_html'] ); ?>
-							</div>
-						</div>
-					<?php endif; ?>
-					
-					<div class="swp-result-item--info-container">
-						<h2 class="entry-title">
-							<a href="<?php echo esc_url( $display_data['permalink'] ); ?>">
-								<?php echo wp_kses_post( $display_data['title'] ); ?>
-							</a>
-						</h2>
-						<?php if ( ! empty( $settings['swp-description-enabled'] ) ) : ?>
-							<p class="swp-result-item--desc">
-								<?php echo wp_kses_post( $display_data['content'] ); ?>
-							</p>
-						<?php endif; ?>
+					$post_is_restricted = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) ) || post_password_required( $search_result->ID );
 
-						<?php if ( ! empty( $settings['swp-button-enabled'] ) ) : ?>
-							<a href="<?php echo esc_url( $display_data['permalink'] ); ?>" class="swp-result-item--button">
-								<?php echo ! empty( $settings['swp-button-label'] ) ? esc_html( $settings['swp-button-label'] ) : esc_html__( 'Read More', 'searchwp' ); ?>
-							</a>
+					$display_data = $this->get_display_data( $search_result );
+                    ?>
+
+					<a class="swp-result-item-link" href="<?php echo esc_url( $display_data['permalink'] ); ?>"  title="<?php if ( $post_is_restricted ) {echo 'private';} ?>">
+						<article id="post-0" class="swp-result-item post-0 post type-post status-publish format-standard hentry category-uncategorized entry">
+							<?php if ( ! empty( $display_data['image_html'] ) && ! empty( $settings['swp-image-size'] ) && 'none' !== $settings['swp-image-size'] ) : ?>
+								<div class="swp-result-item--img-container">
+									<div class="swp-result-item--img">
+										<?php echo wp_kses_post( $display_data['image_html'] ); ?>
+									</div>
+								</div>
+							<?php endif; ?>
+
+							<div class="swp-result-item--info-container">
+								<h2 class="entry-title">
+									<?php echo wp_kses_post( $display_data['title'] ); ?>
+								</h2>
+								<?php if ( ! empty( $settings['swp-description-enabled'] ) ) : ?>
+									<p class="swp-result-item--desc">
+										<?php echo wp_kses_post( $display_data['content'] ); ?>
+									</p>
 								<?php endif; ?>
-					</div>
-				</article>
-			<?php endforeach; ?>
 
-			</div><!-- End of .swp-search-results -->
+								<?php if ( ! empty( $settings['swp-button-enabled'] ) ) : ?>
+									<a href="<?php echo esc_url( $display_data['permalink'] ); ?>" class="swp-result-item--button">
+										<?php echo ! empty( $settings['swp-button-label'] ) ? esc_html( $settings['swp-button-label'] ) : esc_html__( 'Read More', 'searchwp' ); ?>
+									</a>
+								<?php endif; ?>
+							</div>
+						</article>
+					</a>
+				<?php endforeach; ?>
 
-			<?php if ( $searchwp_query->max_num_pages > 1 ) : ?>
-				<div class="navigation pagination" role="navigation">
-					<h2 class="screen-reader-text"><?php esc_html_e( 'Results navigation', 'searchwp' ); ?></h2>
-					<div class="<?php echo esc_attr( $this->get_pagination_classes( $settings ) ); ?>"><?php echo wp_kses_post( $search_pagination ); ?></div>
-				</div>
-			<?php endif; ?>
-		<?php else : ?>
-			<p><?php esc_html_e( 'No results found, please search again.', 'searchwp' ); ?></p>
+		</div><!-- End of .swp-search-results -->
+
+
+				<?php if ( $searchwp_query->max_num_pages > 1 ) : ?>
+			<div class="navigation pagination" role="navigation">
+				<h2 class="screen-reader-text"><?php esc_html_e( 'Results navigation', 'searchwp' ); ?></h2>
+				<div class="<?php echo esc_attr( $this->get_pagination_classes( $settings ) ); ?>"><?php echo wp_kses_post( $search_pagination ); ?></div>
+			</div>
 		<?php endif; ?>
+	<?php else : ?>
+		<p><?php esc_html_e( 'No results found, please refine your search and try again.', 'searchwp' ); ?></p>
+	<?php endif; ?>
 
 		<?php
 
