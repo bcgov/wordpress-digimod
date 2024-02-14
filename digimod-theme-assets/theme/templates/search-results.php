@@ -121,9 +121,9 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 		<p class="results-info">
 			<?php
 			echo wp_kses(
-				printf(
+				sprintf(
 					/* translators: %1$d: results count, %2$s: search keywords */
-                    __( 'Showing %1$d suggestions for <strong>%2$s</strong>, submit your search to see all results.', 'searchwp-live-ajax-search' ),
+                    __( 'Showing %1$d suggestions for <strong>%2$s</strong>, submit your search to see all results.'),
 					$result_count,
 					$search_query
 				),
