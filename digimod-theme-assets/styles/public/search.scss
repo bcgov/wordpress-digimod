@@ -266,11 +266,8 @@ body.search-results {
 
 				.entry-title {
 					color: var(--wp--preset--color--primary-brand);
-					.searchwp-highlight.searchwp-highlight {
+					mark {
 						font-weight: 700;
-					}
-
-					.searchwp-highlight {
 						text-decoration: underline;
 					}
 				}
@@ -290,8 +287,8 @@ body.search-results {
 		font-size: 1.05rem;
 		margin: 0;
 		font-weight: 400;
-		.searchwp-highlight.searchwp-highlight {
-			font-weight: 700;
+		mark {
+			font-weight: 700 !important;
 		}
 	}
 
@@ -301,10 +298,9 @@ body.search-results {
 		min-height: 0;
 
 		>* {
-			font-size: 1rem;
 			line-height: 1.5;
 
-			.searchwp-highlight {
+			mark {
 				background-color: transparent;
 			}
 		}
@@ -399,7 +395,7 @@ body.search-results {
 	}
 }
 
-.searchwp-highlight.searchwp-highlight {
+mark {
 	background-color: var(--wp--preset--color--transparent);
 	color: var(--wp--preset--color--primary-brand);
 	font-size: inherit;
