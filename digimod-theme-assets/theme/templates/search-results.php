@@ -71,35 +71,12 @@ if ( class_exists( '\SearchWP_Metrics\QueryPopularQueriesOverTime' ) ) {
 }
 
 $popular_searches = wp_list_pluck( $popular_searches, 'query' );
-
-
 ?>
-<style>
-	.live-search-container { color: black;}
-	.searchwp-form-quick-search a { display: inline-block; }
-</style><?php // NATE please adjust this/move it to the proper place. Needed so the results show otherwise its white text. ?>
 
 
 <?php if ( ! empty( $search_query ) && ! empty( $search_results ) ) { ?>
-	<?php if ( $popular_searches ) { ?>
-		<div class="searchwp-form-quick-search">
-			<span><?php esc_html_e( 'Popular searches', 'searchwp' ); ?>: </span>
-			<?php foreach ( $popular_searches as $item ) : ?>
-				<?php
-				$quick_search_link = add_query_arg(
-					[
-						's' => esc_attr( $item ),
-					],
-					home_url( '/' )
-				);
-				?>
-				<a href="<?php echo esc_url( $quick_search_link ); ?>" class=""><?php echo esc_html( $item ); ?></a>
-			<?php endforeach; ?>
-		</div>
-	<?php } ?>
 
-
-	<?php echo '' . $searchwp_query->found_results . ' results found in ' . $searchwp_query->query_time . ' seconds.'; ?>
+	<div id="results-found"><?php echo '' . $searchwp_query->found_results . ' results found in ' . $searchwp_query->query_time . ' seconds.'; ?></div>
 
 	<?php foreach ( $search_results as $search_result ) { ?>
 		<?php
@@ -120,7 +97,7 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 				?>
 				<div class="searchwp-live-search-result" role="option" id="" aria-selected="false">
 					<a href="<?php echo esc_url( get_permalink( $search_result->ID ) ); ?>" title="<?php if ( $post_is_restricted ) {echo 'private';} ?>">
-						<?php
+						<p class="live-search-title"><?php
 						// highlight the title
 						$title = get_the_title( $search_result->ID );
 						if ( $highlighter ) {
@@ -128,7 +105,7 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 							$title = $highlighter->apply( $title, $search_query );
 						}
 						echo $title;
-						?>
+						?></p>
 						<p class="live-search-excerpt"><?php echo '' . $result_content . ''; ?></p>
 					</a>
 					
@@ -158,8 +135,25 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 		</p>
 	<?php } ?>
 
-<?php } else { ?>
-	<p class="searchwp-live-search-no-results" role="option">
-		<?php esc_html_e( 'No suggestions found, use the search button to do a full search.', 'searchwp-live-ajax-search' ); ?>
-	</p>
+	
+	<?php } else { ?>
+		<p class="searchwp-live-search-no-results" role="option">
+			<?php esc_html_e( 'No suggestions found, please refine your query or choose from the list below.', 'searchwp-live-ajax-search' ); ?>
+		</p>
+		<?php if ( $popular_searches ) { ?>
+			<div class="searchwp-form-quick-search">
+				<h2 class="popular-searches-header"><?php esc_html_e( 'Popular searches', 'searchwp' ); ?>: </h2>
+				<?php foreach ( $popular_searches as $item ) : ?>
+					<?php
+					$quick_search_link = add_query_arg(
+						[
+							's' => esc_attr( $item ),
+						],
+						home_url( '/' )
+					);
+					?>
+					<a href="<?php echo esc_url( $quick_search_link ); ?>" class=""><?php echo esc_html( $item ); ?></a>
+				<?php endforeach; ?>
+			</div>
+		<?php } ?>
 <?php } ?>
