@@ -123,7 +123,7 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 			echo wp_kses(
 				sprintf(
 					/* translators: %1$d: results count, %2$s: search keywords */
-                    __( 'Showing %1$d suggestions for <strong>%2$s</strong>, submit your search to see all results.'),
+                    __( 'Showing %1$d suggestions for <strong>%2$s</strong>, submit your search to see all results.' ),
 					$result_count,
 					$search_query
 				),
