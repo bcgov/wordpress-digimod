@@ -70,6 +70,7 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 
 	<?php foreach ( $search_results as $search_result ) { ?>
 		<?php
+		
 		$post_is_restricted = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) ) || post_password_required( $search_result->ID );
 
 		$result_content = get_the_excerpt( $search_result );
@@ -88,13 +89,13 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 						<p class="live-search-title">
                         <?php
 						// highlight the title.
-						$the_title = get_the_title( $search_result->ID );
+						$the_title = get_the_title( $search_result );
 						if ( $highlighter ) {
 							$the_title = $highlighter->apply( $the_title, $search_query );
 						}
-						echo $the_title; // wp_kses( $the_title, [ 'mark' => [] ] );
+						echo wp_kses( $the_title, [ 'mark' => [] ] );
 						?>
-						<p class="live-search-excerpt"><?php echo '' . wp_kses( $result_content, [ 'mark' => [] ] ) . ''; ?></p>
+						<p class="live-search-excerpt"><?php echo wp_kses_post( $result_content ); ?></p>
 					</a>
 					
 				</div>
