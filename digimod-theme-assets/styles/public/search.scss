@@ -176,6 +176,7 @@ body:has(.searchwp-live-search-results :focus) {
 				font-weight: 700;
 			}
 		}
+
 		&[title="private"] p.live-search-title {
 
 			&::after {
@@ -259,7 +260,8 @@ body.search-results {
 		.swp-result-item {
 			border-bottom: none;
 
-			&:hover {
+			&:hover,
+			&:focus-visible {
 				border-top: 1px solid var(--wp--preset--color--primary-brand);
 				border-bottom: 1px solid var(--wp--preset--color--primary-brand);
 
@@ -285,11 +287,21 @@ body.search-results {
 
 				.entry-title {
 					color: var(--wp--preset--color--primary-brand);
+
 					mark {
 						font-weight: 700;
 						text-decoration: underline;
 					}
 				}
+			}
+
+		}
+
+		&:focus-visible {
+			.swp-result-item {
+				background-color: #4a81e71a !important;
+				border-inline: 1px solid var(--wp--preset--color--primary-brand);
+				padding-inline: calc(1rem - 1px);
 			}
 		}
 
@@ -306,6 +318,7 @@ body.search-results {
 		font-size: 1.05rem;
 		margin: 0;
 		font-weight: 400;
+
 		mark {
 			font-weight: 700 !important;
 		}
@@ -320,6 +333,7 @@ body.search-results {
 			line-height: 1.5;
 
 		}
+
 		.searchwp-highlight.searchwp-highlight {
 			background-color: transparent;
 			text-decoration: underline;
