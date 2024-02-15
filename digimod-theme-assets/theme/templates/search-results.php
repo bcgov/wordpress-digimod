@@ -92,7 +92,7 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 						if ( $highlighter ) {
 							$the_title = $highlighter->apply( $the_title, $search_query );
 						}
-						echo wp_kses( $the_title, [ 'mark' => [] ] );
+						echo $the_title; // wp_kses( $the_title, [ 'mark' => [] ] );
 						?>
 						<p class="live-search-excerpt"><?php echo '' . wp_kses( $result_content, [ 'mark' => [] ] ) . ''; ?></p>
 					</a>

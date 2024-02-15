@@ -7,8 +7,6 @@
  */
 namespace Bcgov\DigitalGov;
 
-use Bcgov\Common\Loader;
-
 /**
  * Blocks class sets up dynamic blocks.
  */
@@ -27,9 +25,7 @@ class Blocks {
      * @return void
      */
     public function init() {
-        $loader = new Loader();
-        $loader->add_action( 'init', $this, 'register_blocks' );
-        $loader->run();
+        add_action( 'init', [ $this, 'register_blocks' ] );
     }
 
     /**

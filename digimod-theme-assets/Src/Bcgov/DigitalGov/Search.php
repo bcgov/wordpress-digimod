@@ -7,8 +7,6 @@
  */
 namespace Bcgov\DigitalGov;
 
-use Bcgov\Common\Loader;
-
 /**
  * Search class.
  */
@@ -26,14 +24,11 @@ class Search {
      * @return void
      */
     public function init() {
-        $loader = new Loader();
-		$loader->add_filter( 'searchwp_live_search_base_styles', $this, 'searchwp_turn_off_base_styles' );
-		$loader->add_action( 'wp_enqueue_scripts', $this, 'searchwp_live_search_theme_css', 20 );
-		$loader->add_filter( 'searchwp_live_search_configs', $this, 'searchwp_live_search_configs' );
-		$loader->add_filter( 'searchwp_live_search_results_template', $this, 'portfolio_page_template', 99 );
-		$loader->add_filter( 'render_block', $this, 'render_block', null, 2 );
-
-        $loader->run();
+		add_filter( 'searchwp_live_search_base_styles', [ $this, 'searchwp_turn_off_base_styles' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'searchwp_live_search_theme_css' ], 20 );
+		add_filter( 'searchwp_live_search_configs', [ $this, 'searchwp_live_search_configs' ] );
+		add_filter( 'searchwp_live_search_results_template', [ $this, 'portfolio_page_template' ], 99 );
+		add_filter( 'render_block', [ $this, 'render_block' ], null, 2 );
     }
 
 	/**

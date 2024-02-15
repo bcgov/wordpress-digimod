@@ -9,9 +9,6 @@
 
 namespace Bcgov\DigitalGov;
 
-use Bcgov\Common\Loader;
-
-
 /**
  * SearchResultsBlock class.
  */
@@ -31,9 +28,7 @@ class SearchResultsBlock {
 	 * @return void
 	 */
 	public function init() {
-		$loader = new Loader();
-		$loader->add_filter( 'excerpt_length', $this, 'excerpt_length', 9223372036854775807 );  // Some other plugin is setting the excerpt length to 100 and using this big int as priority, lets replace it.
-		$loader->run();
+		add_filter( 'excerpt_length', [ $this, 'excerpt_length' ], 9223372036854775807 );  // Some other plugin is setting the excerpt length to 100 and using this big int as priority, lets replace it.
 	}
 
 	/**

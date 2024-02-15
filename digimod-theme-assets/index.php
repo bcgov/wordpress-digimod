@@ -18,21 +18,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 
-/**
-* Loads the autoloader.
-*/
-if ( ! class_exists( 'Bcgov\\DigitalGov\\Plugin' ) ) {
-    $local_composer  = __DIR__ . '/vendor/autoload.php';
-    $server_composer = __DIR__ . '/../../../../vendor/autoload.php';
-    if ( file_exists( $local_composer ) || file_exists( $server_composer ) ) {
-        if ( file_exists( $server_composer ) ) {
-            require_once $server_composer;
-        }
-        if ( ! class_exists( 'Bcgov\\DigitalGov\\Plugin' ) ) {
-            require_once $local_composer;
-        }
-    }
-}
+// Load the nessesary classes as we dont have a proper build script on the server side deployment to make use of the composer/vendor/autoloader
+require_once __DIR__ . '/Src/Bcgov/DigitalGov/Plugin.php';
+require_once __DIR__ . '/Src/Bcgov/DigitalGov/Blocks.php';
+require_once __DIR__ . '/Src/Bcgov/DigitalGov/Search.php';
+require_once __DIR__ . '/Src/Bcgov/DigitalGov/SearchResultsBlock.php';
+
+
 
 /**
  * Begins execution of the plugin.
@@ -42,7 +34,10 @@ if ( ! class_exists( 'Bcgov\\DigitalGov\\Plugin' ) ) {
 function run_diggov() {
 	if ( class_exists( 'Bcgov\DigitalGov\Plugin' ) ) {
 		new Bcgov\DigitalGov\Plugin();
-	}
+
+	} else {
+		echo '<!-- Unable to run plugin -->';
+    }
 }
 
 /** This is to ensure that the common-plugin gets loaded before this plugin, otherwise admin functions will not work. */

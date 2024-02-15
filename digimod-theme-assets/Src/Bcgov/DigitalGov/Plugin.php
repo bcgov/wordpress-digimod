@@ -8,7 +8,8 @@
 namespace Bcgov\DigitalGov;
 
 use Bcgov\DigitalGov\Blocks;
-use Bcgov\Common\Loader;
+use Bcgov\DigitalGov\Search;
+
 
 /**
  * Plugin class.
@@ -64,13 +65,11 @@ class Plugin {
 		self::$plugin_dir = WP_PLUGIN_DIR . self::$plugin_folder;
 		self::$plugin_url = plugins_url() . self::$plugin_folder;
 
+		add_filter( 'get_the_excerpt', [ $this, 'protect_excerpt' ], 50, 2 );
+        add_action( 'admin_enqueue_scripts', [ $this, 'register_admin_js' ] );
+
         new Blocks();
 		new Search();
-
-        $loader = new Loader();
-		$loader->add_filter( 'get_the_excerpt', $this, 'protect_excerpt', 50, 2 );
-        $loader->add_action( 'admin_enqueue_scripts', $this, 'register_admin_js' );
-		$loader->run();
 	}
 
 
