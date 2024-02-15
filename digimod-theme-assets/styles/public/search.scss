@@ -260,8 +260,7 @@ body.search-results {
 		.swp-result-item {
 			border-bottom: none;
 
-			&:hover,
-			&:focus-visible {
+			&:hover {
 				border-top: 1px solid var(--wp--preset--color--primary-brand);
 				border-bottom: 1px solid var(--wp--preset--color--primary-brand);
 
@@ -301,11 +300,19 @@ body.search-results {
 			.swp-result-item {
 				background-color: #4a81e71a !important;
 				border-inline: 1px solid var(--wp--preset--color--primary-brand);
+				border-top: 1px solid var(--wp--preset--color--primary-brand);
+				border-bottom: 1px solid var(--wp--preset--color--primary-brand);
+				border-radius: 0.25rem;
 				padding-inline: calc(1rem - 1px);
+
+				.swp-result-item--desc {
+					border-bottom: none;
+				}
 			}
 		}
 
-		&:has(.swp-result-item:hover) {
+		&:has(.swp-result-item:hover),
+		&:focus-visible:has(.swp-result-item) {
 			top: -1px;
 		}
 	}
