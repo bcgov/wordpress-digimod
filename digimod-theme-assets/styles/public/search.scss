@@ -1,3 +1,7 @@
+#search-container .wp-block-search__button {
+	background-color: var(--wp--preset--color--primary-brand);
+}
+
 .wp-block-buttons.toggle-search-container>.wp-block-button {
 
 	position: relative;
@@ -200,6 +204,13 @@ body:has(.searchwp-live-search-results :focus) {
 		font-size: 0.85rem;
 		margin-top: 0;
 		padding-block: 0;
+
+		mark {
+			background-color: transparent;
+			text-decoration: underline;
+			text-underline-offset: 3px;
+			text-decoration-line: 2px;
+		}
 	}
 
 	.results-info {
@@ -308,9 +319,12 @@ body.search-results {
 		>* {
 			line-height: 1.5;
 
-			mark {
-				background-color: transparent;
-			}
+		}
+		.searchwp-highlight.searchwp-highlight {
+			background-color: transparent;
+			text-decoration: underline;
+			text-underline-offset: 3px;
+			text-decoration-line: 2px;
 		}
 	}
 
