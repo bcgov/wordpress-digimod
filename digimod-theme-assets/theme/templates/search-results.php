@@ -93,9 +93,16 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 						if ( $highlighter ) {
 							$the_title = $highlighter->apply( $the_title, $search_query );
 						}
-						echo wp_kses( $the_title, [ 'mark' => [] ] );
+						echo ($post_is_restricted ? 'Protected: ' : '') .  wp_kses( $the_title, [ 'mark' => [] ] );
 						?>
-						<p class="live-search-excerpt"><?php echo wp_kses_post( $result_content ); ?></p>
+						
+						<p class="live-search-excerpt">
+							<?php if($post_is_restricted){?>
+								There is no excerpt because this is a protected post.
+							<?php }else{ ?>
+								<?php echo wp_kses_post( $result_content ); ?>
+							<?php } ?>
+						</p>
 					</a>
 					
 				</div>

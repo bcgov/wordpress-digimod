@@ -65,7 +65,7 @@ class Plugin {
 		self::$plugin_dir = WP_PLUGIN_DIR . self::$plugin_folder;
 		self::$plugin_url = plugins_url() . self::$plugin_folder;
 
-		add_filter( 'get_the_excerpt', [ $this, 'protect_excerpt' ], 50, 2 );
+		add_filter( 'get_the_excerpt', [ $this, 'protect_excerpt' ], 99, 2 );
         add_action( 'admin_enqueue_scripts', [ $this, 'register_admin_js' ] );
 
         new Blocks();

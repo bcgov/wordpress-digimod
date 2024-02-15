@@ -122,7 +122,8 @@ class SearchResultsBlock {
 			<?php if ( ! empty( $search_results ) ) : ?>
 				<?php foreach ( $search_results as $search_result ) : ?>
 					<?php
-					$post_is_restricted = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) ) || post_password_required( $search_result->ID );
+					$post_is_restricted_idir = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) );
+					$post_is_restricted =  $post_is_restricted_idir || post_password_required( $search_result->ID );
 
 					$display_data = $this->get_display_data( $search_result );
 					?>
@@ -138,11 +139,16 @@ class SearchResultsBlock {
 
 							<div class="swp-result-item--info-container">
 								<h2 class="entry-title">
-									<?php echo wp_kses_post( $display_data['title'] ); ?>
+									<?php echo ($post_is_restricted_idir ? 'Protected: ' : '') .   wp_kses_post($search_result->post_title); ?>
+									<?php //echo wp_kses_post( $display_data['title'] ); //Dont use this, due to highlighter, the title gets double protected text. ?>
 								</h2>
 								<?php if ( ! empty( $settings['swp-description-enabled'] ) ) : ?>
 									<p class="swp-result-item--desc">
-										<?php echo wp_kses_post( $display_data['content'] ); ?>
+										<?php if($post_is_restricted){?>
+											There is no excerpt because this is a protected post.
+										<?php }else{ ?>
+											<?php echo wp_kses_post( $display_data['content'] ); ?>
+										<?php } ?>
 									</p>
 								<?php endif; ?>
 
