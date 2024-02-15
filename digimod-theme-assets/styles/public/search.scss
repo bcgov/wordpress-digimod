@@ -425,7 +425,8 @@ body.search-results {
 				&.page-numbers {
 					border: 1px solid currentcolor;
 					border-radius: .33rem;
-					padding-inline: 0.25rem;
+					padding-inline: .5rem;
+					padding-block: .25rem;
 				}
 
 				&:hover,
