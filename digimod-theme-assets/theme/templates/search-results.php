@@ -66,11 +66,11 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 
 <?php if ( ! empty( $search_query ) && ! empty( $search_results ) ) { ?>
 
-	<div id="results-found"><?php echo wp_kses( $searchwp_query->found_results, 0 ) . ' results found in ' . wp_kses( $searchwp_query->query_time, 0 ) . ' seconds.'; ?></div>
+	<div id="results-found"><?php echo wp_kses( $searchwp_query->found_results, 0 ) . ' results found in ' . wp_kses( round( $searchwp_query->query_time, 3 ), 0 ) . ' seconds.'; ?></div>
 
 	<?php foreach ( $search_results as $search_result ) { ?>
 		<?php
-		
+
 		$post_is_restricted = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) ) || post_password_required( $search_result->ID );
 
 		$result_content = get_the_excerpt( $search_result );
@@ -88,18 +88,20 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 					<a href="<?php echo esc_url( get_permalink( $search_result->ID ) ); ?>" title="<?php if ( $post_is_restricted ) {echo 'private';} ?>">
 						<p class="live-search-title">
                         <?php
-						// highlight the title.
-						$the_title = get_the_title( $search_result );
+
+						$post_title = Bcgov\DigitalGov\Search::get_final_title( $search_result );
+
+						// highlight the title, allow for overrides.
 						if ( $highlighter ) {
-							$the_title = $highlighter->apply( $the_title, $search_query );
+							$post_title = $highlighter->apply( $post_title, $search_query );
 						}
-						echo ($post_is_restricted ? 'Protected: ' : '') .  wp_kses( $the_title, [ 'mark' => [] ] );
+						echo ( $post_is_restricted ? 'Protected: ' : '' ) . wp_kses( $post_title, [ 'mark' => [] ] );
 						?>
 						
 						<p class="live-search-excerpt">
-							<?php if($post_is_restricted){?>
+							<?php if ( $post_is_restricted ) { ?>
 								There is no excerpt because this is a protected post.
-							<?php }else{ ?>
+							<?php } else { ?>
 								<?php echo wp_kses_post( $result_content ); ?>
 							<?php } ?>
 						</p>

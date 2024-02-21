@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Search Results Block for DigitalGov.
  *
@@ -123,7 +122,7 @@ class SearchResultsBlock {
 				<?php foreach ( $search_results as $search_result ) : ?>
 					<?php
 					$post_is_restricted_idir = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) );
-					$post_is_restricted =  $post_is_restricted_idir || post_password_required( $search_result->ID );
+					$post_is_restricted      = $post_is_restricted_idir || post_password_required( $search_result->ID );
 
 					$display_data = $this->get_display_data( $search_result );
 					?>
@@ -139,14 +138,14 @@ class SearchResultsBlock {
 
 							<div class="swp-result-item--info-container">
 								<h2 class="entry-title">
-									<?php echo ($post_is_restricted_idir ? 'Protected: ' : '') .   wp_kses_post($search_result->post_title); ?>
-									<?php //echo wp_kses_post( $display_data['title'] ); //Dont use this, due to highlighter, the title gets double protected text. ?>
+									<?php echo ( $post_is_restricted_idir ? 'Protected: ' : '' ) . wp_kses_post( $display_data['title'] ); ?>
+									<?php // echo wp_kses_post( $display_data['title'] ); //Dont use this, due to highlighter, the title gets double protected text. ?>
 								</h2>
 								<?php if ( ! empty( $settings['swp-description-enabled'] ) ) : ?>
 									<p class="swp-result-item--desc">
-										<?php if($post_is_restricted){?>
+										<?php if ( $post_is_restricted ) { ?>
 											There is no excerpt because this is a protected post.
-										<?php }else{ ?>
+										<?php } else { ?>
 											<?php echo wp_kses_post( $display_data['content'] ); ?>
 										<?php } ?>
 									</p>
@@ -192,14 +191,17 @@ class SearchResultsBlock {
 	private function get_display_data( $result ) {
 
 		if ( $result instanceof \WP_Post ) {
+			$post_title = Search::get_final_title( $result );
+
 			$data = [
 				'id'         => absint( $result->ID ),
 				'type'       => get_post_type( $result ),
-				'title'      => get_the_title( $result ),
+				'title'      => $post_title,
 				'permalink'  => get_the_permalink( $result ),
 				'image_html' => get_the_post_thumbnail( $result ),
 				'content'    => get_the_excerpt( $result ),
 			];
+
 		}
 
 		if ( $result instanceof \WP_User ) {

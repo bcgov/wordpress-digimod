@@ -70,11 +70,44 @@ class Plugin {
 
         new Blocks();
 		new Search();
+
+		// Register Meta box for custom fields.
+		add_action(
+            'add_meta_boxes',
+            function () {
+				add_meta_box( 'digimod-theme-assets-post-extra', 'Extra Options', [ $this, 'post_extra_cb' ], get_post_types(), 'side' );
+			}
+        );
+
+		// save meta value with save post hook.
+		add_action(
+            'save_post',
+            function ( $post_id ) {
+				if ( isset( $_POST['digimod-theme-assets-custom-title'] ) ) {                                                       //phpcs:ignore WordPress.Security.NonceVerification.Missing
+					update_post_meta( $post_id, 'digimod-theme-assets-custom-title', $_POST['digimod-theme-assets-custom-title'] ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
+				}
+			}
+        );
+	}
+
+
+
+	/**
+	 * The meta box to add to posts.
+	 *
+	 * @param object $post The post object being edited.
+	 */
+	public function post_extra_cb( $post ) {
+		$meta_val = get_post_meta( $post->ID, 'digimod-theme-assets-custom-title', true );
+		?>
+		<label>Custom Title for Search:</label>
+		<input type="text" name="digimod-theme-assets-custom-title" value="<?php echo esc_attr( $meta_val ); ?>">
+		<?php
 	}
 
 
 	/**
-     * Register our admin JS assets
+     * Register our admin JS assets.
      */
 	public function register_admin_js() {
         $asset_file = include self::$plugin_dir . 'dist-plugin/admin.asset.php';
