@@ -88,14 +88,8 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 					<a href="<?php echo esc_url( get_permalink( $search_result->ID ) ); ?>" title="<?php if ( $post_is_restricted ) {echo 'private';} ?>">
 						<p class="live-search-title">
                         <?php
-
-						$post_title = Bcgov\DigitalGov\Search::get_final_title( $search_result );
-
-						// highlight the title, allow for overrides.
-						if ( $highlighter ) {
-							$post_title = $highlighter->apply( $post_title, $search_query );
-						}
-						echo ( $post_is_restricted ? 'Protected: ' : '' ) . wp_kses( $post_title, [ 'mark' => [] ] );
+						$post_title = Bcgov\DigitalGov\Search::get_final_title( $search_result, true, $search_query );
+						echo wp_kses( $post_title, [ 'mark' => [] ] );
 						?>
 						
 						<p class="live-search-excerpt">

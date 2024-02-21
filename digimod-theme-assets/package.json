@@ -13,7 +13,7 @@
 		"start": "wp-scripts start 'src/admin.js' --output-path=dist-plugin"
   },
   "dependencies": {
-    "vue": "^3.3.2"
+    "vue": "^3.4.19"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",

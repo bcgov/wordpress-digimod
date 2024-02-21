@@ -124,7 +124,7 @@ class SearchResultsBlock {
 					$post_is_restricted_idir = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) );
 					$post_is_restricted      = $post_is_restricted_idir || post_password_required( $search_result->ID );
 
-					$display_data = $this->get_display_data( $search_result );
+					$display_data = $this->get_display_data( $search_result, $search_query );
 					?>
 					<a class="swp-result-item-link" href="<?php echo esc_url( $display_data['permalink'] ); ?>" title="<?php if ( $post_is_restricted ) { echo 'private'; } ?>">
 						<article id="post-<?php echo esc_attr( $search_result->ID ); ?>" class="swp-result-item post-<?php echo esc_attr( $search_result->ID ); ?> post type-post status-publish format-standard hentry category-uncategorized entry">
@@ -138,8 +138,7 @@ class SearchResultsBlock {
 
 							<div class="swp-result-item--info-container">
 								<h2 class="entry-title">
-									<?php echo ( $post_is_restricted_idir ? 'Protected: ' : '' ) . wp_kses_post( $display_data['title'] ); ?>
-									<?php // echo wp_kses_post( $display_data['title'] ); //Dont use this, due to highlighter, the title gets double protected text. ?>
+									<?php echo wp_kses_post( $display_data['title'] ); ?>
 								</h2>
 								<?php if ( ! empty( $settings['swp-description-enabled'] ) ) : ?>
 									<p class="swp-result-item--desc">
@@ -187,11 +186,12 @@ class SearchResultsBlock {
 	 * Helper function to get the various pieces needed to render the search results items
 	 *
 	 * @param object $result The search results individual result item.
+	 * @param string $search_query The search query used.
 	 */
-	private function get_display_data( $result ) {
+	private function get_display_data( $result, $search_query ) {
 
 		if ( $result instanceof \WP_Post ) {
-			$post_title = Search::get_final_title( $result );
+			$post_title = Search::get_final_title( $result, true, $search_query );
 
 			$data = [
 				'id'         => absint( $result->ID ),

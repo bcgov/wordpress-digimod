@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 
-// Load the nessesary classes as we dont have a proper build script on the server side deployment to make use of the composer/vendor/autoloader
+// Load the nessesary classes as we dont have a proper build script on the server side deployment to make use of the composer/vendor/autoloader.
 require_once __DIR__ . '/Src/Bcgov/DigitalGov/Plugin.php';
 require_once __DIR__ . '/Src/Bcgov/DigitalGov/Blocks.php';
 require_once __DIR__ . '/Src/Bcgov/DigitalGov/Search.php';
@@ -58,6 +58,9 @@ function custom_assets_loader() {
     $plugin_dir = plugin_dir_path( __FILE__ );
     $assets_dir = $plugin_dir . 'dist/assets/';
 
+	$plugin_data    = get_plugin_data( $plugin_dir . 'index.php' );
+	$plugin_version = $plugin_data['Version'];
+
     $public_css_files = glob( $assets_dir . 'public*.css' );
     $public_js_files  = glob( $assets_dir . 'public*.js' );
 
@@ -68,23 +71,23 @@ function custom_assets_loader() {
     if ( ! is_admin() ) {
         foreach ( $public_css_files as $file ) {
             $file_url = plugins_url( str_replace( $plugin_dir, '', $file ), __FILE__ );
-            wp_enqueue_style( 'custom-public-' . basename( $file, '.css' ), $file_url );
+            wp_enqueue_style( 'custom-public-' . basename( $file, '.css' ), $file_url, [], $plugin_version );
         }
 
         foreach ( $public_js_files as $file ) {
             $file_url = plugins_url( str_replace( $plugin_dir, '', $file ), __FILE__ );
-            wp_enqueue_script( 'custom-public-' . basename( $file, '.js' ), $file_url, [], false, true );
+            wp_enqueue_script( 'custom-public-' . basename( $file, '.js' ), $file_url, [], $plugin_version, true );
         }
     } else {
         // Load admin CSS and JS files.
         foreach ( $admin_css_files as $file ) {
             $file_url = plugins_url( str_replace( $plugin_dir, '', $file ), __FILE__ );
-            wp_enqueue_style( 'custom-admin-' . basename( $file, '.css' ), $file_url );
+            wp_enqueue_style( 'custom-admin-' . basename( $file, '.css' ), $file_url, [], $plugin_version );
         }
 
         foreach ( $admin_js_files as $file ) {
             $file_url = plugins_url( str_replace( $plugin_dir, '', $file ), __FILE__ );
-            wp_enqueue_script( 'custom-admin-' . basename( $file, '.js' ), $file_url, [], false, true );
+            wp_enqueue_script( 'custom-admin-' . basename( $file, '.js' ), $file_url, [], $plugin_version, true );
         }
     }
 }
@@ -204,10 +207,16 @@ add_filter( 'wp_theme_json_data_theme', 'filter_theme_json_theme' );
  * Register block to load the Vue.js app.
  */
 function vuejs_wordpress_block_plugin() {
+    $plugin_dir     = plugin_dir_path( __FILE__ );
+	$plugin_data    = get_plugin_data( $plugin_dir . 'index.php' );
+	$plugin_version = $plugin_data['Version'];
+
     wp_enqueue_script(
         'digimod-plugin/custom-filter-block',
         plugin_dir_url( __FILE__ ) . 'blocks/vue-blocks/custom-filter-vue-block.js',
-        array( 'wp-blocks', 'wp-element', 'wp-editor' )
+        array( 'wp-blocks', 'wp-element', 'wp-editor' ),
+        $plugin_version,
+        true
     );
 
     // phpcs:disable
@@ -230,6 +239,9 @@ function vuejs_app_plugin() {
     $plugin_dir = plugin_dir_path( __FILE__ );
     $assets_dir = $plugin_dir . 'dist/assets/';
 
+	$plugin_data    = get_plugin_data( $plugin_dir . 'index.php' );
+	$plugin_version = $plugin_data['Version'];
+
     $public_css_files = glob( $assets_dir . 'vue*.css' );
     //phpcs:ignore
     // $public_js_files = glob( $assets_dir . 'vue*.js' );  
@@ -237,19 +249,20 @@ function vuejs_app_plugin() {
     if ( is_admin() ) {
         foreach ( $public_css_files as $file ) {
             $file_url = plugins_url( str_replace( $plugin_dir, '', $file ), __FILE__ );
-            wp_enqueue_style( 'vue-app-' . basename( $file, '.css' ), $file_url );
+            wp_enqueue_style( 'vue-app-' . basename( $file, '.css' ), $file_url, [], $plugin_version );
         }
     }
 }
 
 add_action( 'enqueue_block_editor_assets', 'vuejs_app_plugin' );
 
-
+//phpcs:disable
 /**
  * Load vue app assets, only when the block is used on the page.
  *
  * @param array $attributes The attributes.
  */
+/*
 function vuejs_post_filter_app_dynamic_block_plugin( $attributes ) {
 
     $plugin_dir = plugin_dir_path( __FILE__ );
@@ -280,6 +293,36 @@ function vuejs_post_filter_app_dynamic_block_plugin( $attributes ) {
     // Add the 'data-columns' attribute to the output div.
     return '<div id="postFilterApp" class="' . esc_attr( $className ) . '" data-columns="' . esc_attr( $columns ) . '" data-post-type="' . esc_attr( $postType ) . '"  data-heading-size="' . esc_attr( $headingSize ) . '" data-heading-link-active="' . esc_attr( $headingLinkActive ) . '" data-use-excerpt="' . esc_attr( $useExcerpt ) . '" data-post-type-label="' . esc_attr( $postTypeLabel ) . '">Loading...</div>';
 }
+*/
+//phpcs:enable
+
+/**
+ * Allow for overriding a js script embed tag to embed as a module.
+ *   Used for Vue/Vite to be loaded as a module and not override the global namespace.
+ *   Based on https://stackoverflow.com/questions/76573766/how-to-properly-create-wp-enqueue-and-functions-script-to-run-vite-frontend .
+ *
+ * @param bool $script_handle The name of the script to override.
+ */
+function script_type_module( $script_handle = false ): string {
+    // change the script type to module.
+    add_filter(
+        'script_loader_tag',
+        function ( $tag, $handle, $src ) use ( $script_handle ) {
+
+			if ( $script_handle !== $handle ) {
+				return $tag;
+			}
+
+			// return the new script module type tag.
+			return '<script type="module" src="' . esc_url( $src ) . '" id="' . $handle . '-js"></script>'; //phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
+		},
+        10,
+        3
+    );
+
+	return false;
+}
+
 
 /**
  * Enqueue files for the vue app.
@@ -290,17 +333,22 @@ function vuejs_custom_app_dynamic_block_plugin( $attributes ) {
     $plugin_dir = plugin_dir_path( __FILE__ );
     $assets_dir = $plugin_dir . 'dist/assets/';
 
+	$plugin_data    = get_plugin_data( $plugin_dir . 'index.php' );
+	$plugin_version = $plugin_data['Version'];
+
     $public_css_files = glob( $assets_dir . 'vue*.css' );
     $public_js_files  = glob( $assets_dir . 'vue*.js' );
 
     foreach ( $public_css_files as $file ) {
         $file_url = plugins_url( str_replace( $plugin_dir, '', $file ), __FILE__ );
-        wp_enqueue_style( 'vue-app-' . basename( $file, '.css' ), $file_url );
+        wp_enqueue_style( 'vue-app-' . basename( $file, '.css' ), $file_url, [], $plugin_version );
     }
 
     foreach ( $public_js_files as $file ) {
         $file_url = plugins_url( str_replace( $plugin_dir, '', $file ), __FILE__ );
-        wp_enqueue_script( 'vue-app-' . basename( $file, '.js' ), $file_url, [], false, true );
+        wp_enqueue_script( 'vue-app-' . basename( $file, '.js' ), $file_url, [], $plugin_version, true );
+
+        script_type_module( 'vue-app-' . basename( $file, '.js' ) );
     }
 
     // Access the 'columns' attribute.

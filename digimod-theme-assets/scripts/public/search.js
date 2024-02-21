@@ -111,6 +111,6 @@ if ('complete' === document.readyState) {
 	addSafeEventListenerPlugin(
 		document,
 		'DOMContentLoaded',
-		digitalGovSearch()
+		digitalGovSearch
 	);
 }

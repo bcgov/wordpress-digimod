@@ -93,16 +93,23 @@ class Search {
 	 * Apply overides and other rules to the post title to get to the final search results title.
 	 *
 	 * @param object $post_obj The post object.
+	 * @param bool   $highlight Should we highlight search query in the title.
+	 * @param string $search_query The search query used.
 	 *
 	 * @return string $post_title The re-worked title for the post.
 	 */
-	public static function get_final_title( $post_obj ) {
-		$post_title = $post_obj->post_title; // Use the original title to avoid the double 'protected' problem with get_the_title( $result );.
+	public static function get_final_title( $post_obj, $highlight = true, $search_query = '' ) {
+		$highlighter = new \SearchWP\Highlighter();
+
+		$post_is_restricted = custom_redirect_to_login_check_if_url_in_list( get_permalink( $post_obj->ID ) ) || post_password_required( $post_obj->ID );
+		$post_title         = $post_obj->post_title; // Use the original title to avoid the double 'protected' problem with get_the_title( $result );.
 
 		$possible_title_override = get_post_meta( $post_obj->ID, 'digimod-theme-assets-custom-title', true );
 
+		$requires_highlighting = false; // Depending on the source of our title, it may come pre-highlighted so only highlight as needed.
 		if ( ! empty( $possible_title_override ) ) {
-			$post_title = $possible_title_override;
+			$post_title            = $possible_title_override;
+			$requires_highlighting = true;
 
 		} elseif ( function_exists( 'aioseo' ) ) { // Allow for the AIOSEO title change capability.
 			$aioseo_title_pre_process = aioseo()->meta->metaData->getMetaData( $post_obj )->title;    // Has the replacement tags #.
@@ -112,8 +119,23 @@ class Search {
 					$possible_title = substr( $aioseo_title_pre_process, 0, strspn( $aioseo_title_pre_process, $aioseo_title_post_process ) ); // Diff the two and return only the same, which should be the title sans any site name or tags.
 					if ( $possible_title ) {
 						$post_title = $possible_title;
+
+						$requires_highlighting = true;
 					}
 				}
+			}
+		}
+
+		if ( $post_is_restricted ) {
+			// Double check that the post does have the Protected title.
+			if ( stripos( $post_title, 'Protected:' ) !== 0 ) {    // Very important to check for not 0 and only not 0. false means something else.
+				$post_title = 'Protected: ' . $post_title;
+			}
+		}
+
+		if ( $requires_highlighting && $highlight && '' !== $search_query ) {
+			if ( $highlighter ) {
+				$post_title = $highlighter->apply( $post_title, $search_query );
 			}
 		}
 
