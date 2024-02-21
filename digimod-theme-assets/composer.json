@@ -1,7 +1,7 @@
 {
 	"name": "bcgov-plugin/digimod-theme-assets",
     "description": "DIGIMOD - Block Theme Frontend Enhancements",
-	"version": "1.3.1",
+	"version": "1.3.2",
 	"type": "wordpress-plugin",
     "repositories": [
         {
