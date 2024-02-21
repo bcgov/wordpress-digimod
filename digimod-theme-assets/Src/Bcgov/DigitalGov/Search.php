@@ -87,4 +87,36 @@ class Search {
 
 		return $block_content;
 	}
+
+
+	/**
+	 * Apply overides and other rules to the post title to get to the final search results title.
+	 *
+	 * @param object $post_obj The post object.
+	 *
+	 * @return string $post_title The re-worked title for the post.
+	 */
+	public static function get_final_title( $post_obj ) {
+		$post_title = $post_obj->post_title; // Use the original title to avoid the double 'protected' problem with get_the_title( $result );.
+
+		$possible_title_override = get_post_meta( $post_obj->ID, 'digimod-theme-assets-custom-title', true );
+
+		if ( ! empty( $possible_title_override ) ) {
+			$post_title = $possible_title_override;
+
+		} elseif ( function_exists( 'aioseo' ) ) { // Allow for the AIOSEO title change capability.
+			$aioseo_title_pre_process = aioseo()->meta->metaData->getMetaData( $post_obj )->title;    // Has the replacement tags #.
+			if ( $aioseo_title_pre_process ) {
+				$aioseo_title_post_process = aioseo()->meta->title->getPostTitle( $post_obj );          // Tags are now replaced.
+				if ( $aioseo_title_pre_process ) {
+					$possible_title = substr( $aioseo_title_pre_process, 0, strspn( $aioseo_title_pre_process, $aioseo_title_post_process ) ); // Diff the two and return only the same, which should be the title sans any site name or tags.
+					if ( $possible_title ) {
+						$post_title = $possible_title;
+					}
+				}
+			}
+		}
+
+		return $post_title;
+	}
 }

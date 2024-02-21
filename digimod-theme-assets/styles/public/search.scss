@@ -2,6 +2,8 @@
 	background-color: var(--wp--preset--color--primary-brand);
 }
 
+
+
 .wp-block-buttons.toggle-search-container>.wp-block-button {
 
 	position: relative;
@@ -111,6 +113,12 @@ body:has(.searchwp-live-search-results :focus) {
 	margin: 0 !important;
 	padding-inline: 0.25rem;
 
+	.searchwp-live-search-no-min-chars {
+		.spinner{
+			display: none;
+		}
+	}
+	
 	.spinner {
 		scale: 0.5;
 		animation: spin 0.3s linear infinite;
