@@ -27,19 +27,37 @@ const domReady = () => {
 	setTimeout(function () {
 
 		/**
-		 * Link checking for external URLs and classing accordingly.
+		 * Remove events from WordPress generated links based on 'no-events' class.
 		 */
-		// const pageLinks = document.querySelectorAll('.bcgov-body-content a');
+        const removeInteractionsLinks = document.querySelectorAll('.no-events a');
 
-		// if (pageLinks) {
-		// 	pageLinks.forEach((link) => {
-		// 		let isInternal = (link.href.indexOf(window.site.domain) && link.href.indexOf('mailto')) ? true : false;
-
-		// 		if (isInternal) {
-		// 			link.classList.add('external');
-		// 		}
-		// 	})
-		// }
+        if (removeInteractionsLinks.length) {
+            setTimeout(() => {
+                removeInteractionsLinks.forEach((link) => {
+                    const parent = link.parentNode;
+                    const span = document.createElement('span');
+                    
+                    Array.from(link.attributes).forEach(attr => {
+                        // Exclude href attribute
+                        if (attr.name.toLowerCase() !== 'href') {
+                            span.setAttribute(attr.name, attr.value);
+                        }
+                    });
+                    
+                    span.innerHTML = link.innerHTML;
+                    span.classList.add('tag');
+                    
+                    // Check if the new span has a sibling with class .wp-block-post-terms__separator – this is useful for taxonomy categories that have a built in separator.
+                    const separatorSibling = link.nextElementSibling;
+                    if (link && separatorSibling && separatorSibling.classList.contains('wp-block-post-terms__separator')) {
+                        parent.removeChild(separatorSibling);
+                    }
+                    
+                    parent.insertBefore(span, link);
+                    parent.removeChild(link);
+                });
+            }, 0);
+        }
 
 		/**
 		 * Add data-link attribute to all in-page links in order to do the bold hover state.

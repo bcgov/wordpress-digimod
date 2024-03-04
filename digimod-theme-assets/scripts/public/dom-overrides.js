@@ -17,8 +17,8 @@ const windowResize = () => {
 
 		document.body.classList.remove( 'largeScreen' );
 		document.body.classList.remove( 'tablet' );
-		document.body.classList.remove( 'mobile' );
-		
+		document.body.classList.remove( 'mobile' );        
+
 	}, 50);
 };
 
