@@ -65,6 +65,7 @@ class Search {
 	public function searchwp_live_search_configs( $config ) {
 		$config['default']['results']['offset']['y'] = -32;                         // Push up the live search results to line up with the search box.
 		$config['default']['parent_el']              = '.live-search-container';    // Put the live search in our new container.
+		$config['default']['input']['delay']         = 800;                         // Increase the delay to start searching to this many MS as some people type slowly.
 
 		return $config;
 	}

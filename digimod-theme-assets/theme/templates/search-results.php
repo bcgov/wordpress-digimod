@@ -61,12 +61,14 @@ if ( class_exists( '\SearchWP_Metrics\QueryPopularQueriesOverTime' ) ) {
 }
 
 $popular_searches = wp_list_pluck( $popular_searches, 'query' );
+
+// in ' . wp_kses( round( $searchwp_query->query_time, 3 ), 0 ) . ' seconds.
 ?>
 
 
 <?php if ( ! empty( $search_query ) && ! empty( $search_results ) ) { ?>
 
-	<div id="results-found"><?php echo wp_kses( $searchwp_query->found_results, 0 ) . ' results found in ' . wp_kses( round( $searchwp_query->query_time, 3 ), 0 ) . ' seconds.'; ?></div>
+	<div id="results-found"><?php echo wp_kses( $searchwp_query->found_results, 0 ) . ' results found '; ?></div>
 
 	<?php foreach ( $search_results as $search_result ) { ?>
 		<?php
@@ -120,7 +122,6 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 	$result_count = count( $search_results );
 	if ( $result_count ) {
 		// Output the "See all results" link if there are more than 4 suggestions.
-		$search_query = isset( $_POST['s'] ) ? sanitize_text_field( $_POST['s'] ) : '';  // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		?>
 		<p class="results-info">
 			<?php
@@ -129,7 +130,7 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 					/* translators: %1$d: results count, %2$s: search keywords */
                     __( 'Showing %1$d suggestions for <strong>%2$s</strong>, submit your search to see all results.' ),
 					$result_count,
-					$search_query
+					stripslashes( $search_query )
 				),
 				[ 'strong' => [] ]
 			);

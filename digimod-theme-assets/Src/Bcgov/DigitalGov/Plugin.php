@@ -88,8 +88,67 @@ class Plugin {
 				}
 			}
         );
+
+		// Hook into the global query filter.
+		add_filter( 'query', [ $this, 'optimize_searchwp_quoted_search' ] );
 	}
 
+
+
+	/**
+	 * Modify the wp query from searchwp to fix performance issue when doing a quoted search.
+	 *
+	 * @param string $sql The sql query to be modified.
+	 *
+	 * @return string $sql The modified sql query.
+	 */
+	public function optimize_searchwp_quoted_search( $sql ) {
+		if ( class_exists( 'SearchWP' ) && \SearchWP\Settings::get( 'quoted_search_support', 'boolean' ) ) {
+			//phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( isset( $_REQUEST['s'] ) ) {    // Only modify the query if its a search query.
+				if ( stripos( $sql, '(SELECT ID AS id FROM wp_posts WHERE 1=1 AND' ) !== false ) { //Look for the quoted search query.
+
+					// Extract the post type being queried for, then use that post type to help filter down the query.
+					preg_match( '/(?:AND s.source = \'post.)(.*)(?:\')/i', $sql, $tmp_regex_result );
+					if ( count( $tmp_regex_result ) === 2 ) {
+						$source_post_type = $tmp_regex_result[1];
+
+						$sql = str_ireplace(
+							'(SELECT ID AS id FROM wp_posts WHERE 1=1 AND ',
+							'(SELECT ID AS id FROM wp_posts WHERE 1=1 AND post_status="publish" AND post_type="' . $source_post_type . '" AND ',
+							$sql
+						);
+
+					} else {
+						// In case we have a problem extracting the post type, we can still add the publish post status.
+						$sql = str_ireplace(
+							'(SELECT ID AS id FROM wp_posts WHERE 1=1 AND ',
+							'(SELECT ID AS id FROM wp_posts WHERE 1=1 AND post_status="publish" AND ',
+							$sql
+						);
+					}
+
+					// Rework the query so that the JOIN doesnt join the all the data but just the ID's. Speeds up significantly the query (from 7s to 0.03s).
+					$sql = str_ireplace(
+						[
+							'LEFT JOIN wp_searchwp_index s',
+							'ON s.id = p.id',
+							'GROUP BY id',
+						],
+						[
+							'LEFT JOIN (SELECT distinct(ID) FROM wp_searchwp_index s',
+							'',
+							') as s ON s.id = p.id GROUP BY id',
+						],
+						$sql
+					);
+
+				}
+			}
+		}
+
+		return $sql;
+	}
 
 
 	/**
