@@ -118,7 +118,7 @@ class SearchResultsBlock {
 		ob_start();
 		?>
 		<div class="<?php echo esc_attr( $this->get_container_classes( $settings ) ); ?>">
-			<?php if ( ! empty( $search_results ) ) : ?>
+			<?php if ( ! empty( $search_results ) ) { ?>
 				<?php foreach ( $search_results as $search_result ) : ?>
 					<?php
 					$post_is_restricted_idir = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) );
@@ -167,9 +167,15 @@ class SearchResultsBlock {
 				<div class="<?php echo esc_attr( $this->get_pagination_classes( $settings ) ); ?>"><?php echo wp_kses_post( $search_pagination ); ?></div>
 			</div>
 		<?php endif; ?>
-	<?php else : ?>
-		<p><?php esc_html_e( 'No results found, please refine your search and try again.', 'searchwp' ); ?></p>
-	<?php endif; ?>
+	<?php } else { ?>
+
+		<?php if (  \SearchWP\Tokens::get_minimum_length() > strlen($search_query) ) { ?>
+			<p><?php esc_html_e( 'Please enter at least ' . \SearchWP\Tokens::get_minimum_length() . ' letters to search for.', 'searchwp' ); ?></p>
+
+		<?php } else { ?>
+			<p><?php esc_html_e( 'No results found, please refine your search and try again.', 'searchwp' ); ?></p>
+		<?php } ?>
+	<?php } ?>
 
 
 		<?php
