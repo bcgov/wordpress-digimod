@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DIGIMOD - Block Theme Frontend Enhancements
  * Description: A plugin to load custom scripts, styles and theme settings to augment the default BCGov Block Theme capabilities
- * Version: 1.3.2
+ * Version: 1.3.3
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
