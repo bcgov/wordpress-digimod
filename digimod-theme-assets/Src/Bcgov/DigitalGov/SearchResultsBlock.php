@@ -169,8 +169,8 @@ class SearchResultsBlock {
 		<?php endif; ?>
 	<?php } else { ?>
 
-		<?php if (  \SearchWP\Tokens::get_minimum_length() > strlen($search_query) ) { ?>
-			<p><?php esc_html_e( 'Please enter at least ' . \SearchWP\Tokens::get_minimum_length() . ' letters to search for.', 'searchwp' ); ?></p>
+		<?php if (  (new \SearchWP\Tokens)->get_minimum_length() > strlen($search_query) ) { ?>
+			<p><?php esc_html_e( 'Please enter at least ' . (new \SearchWP\Tokens)->get_minimum_length() . ' letters to search for.', 'searchwp' ); ?></p>
 
 		<?php } else { ?>
 			<p><?php esc_html_e( 'No results found, please refine your search and try again.', 'searchwp' ); ?></p>
