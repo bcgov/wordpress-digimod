@@ -70,7 +70,11 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 
 	<div id="results-found"><?php echo wp_kses( $searchwp_query->found_results, 0 ) . ' results found '; ?></div>
 
-	<?php foreach ( $search_results as $search_result ) { ?>
+	<?php 
+	// Initiate Metrics link tracking.
+	do_action( 'searchwp_metrics_click_tracking_start' );
+	
+	foreach ( $search_results as $search_result ) { ?>
 		<?php
 
 		$post_is_restricted = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) ) || post_password_required( $search_result->ID );
@@ -118,6 +122,9 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 			    break;
 		}
 	}
+	// Stop Metrics link tracking.
+	do_action( 'searchwp_metrics_click_tracking_stop' );
+
 
 	$result_count = count( $search_results );
 	if ( $result_count ) {

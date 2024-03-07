@@ -118,8 +118,11 @@ class SearchResultsBlock {
 		ob_start();
 		?>
 		<div class="<?php echo esc_attr( $this->get_container_classes( $settings ) ); ?>">
-			<?php if ( ! empty( $search_results ) ) { ?>
-				<?php foreach ( $search_results as $search_result ) : ?>
+			<?php if ( ! empty( $search_results ) ) {
+				// Initiate Metrics link tracking.
+				do_action( 'searchwp_metrics_click_tracking_start' );
+				?>
+				<?php foreach ( $search_results as $search_result ) { ?>
 					<?php
 					$post_is_restricted_idir = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) );
 					$post_is_restricted      = $post_is_restricted_idir || post_password_required( $search_result->ID );
@@ -158,7 +161,10 @@ class SearchResultsBlock {
 							</div>
 						</article>
 					</a>
-				<?php endforeach; ?>
+				<?php }
+				// Stop Metrics link tracking.
+				do_action( 'searchwp_metrics_click_tracking_stop' );
+				?>
 		</div><!-- End of .swp-search-results -->
 
 				<?php if ( $searchwp_query->max_num_pages > 1 ) : ?>
@@ -170,7 +176,7 @@ class SearchResultsBlock {
 	<?php } else { ?>
 
 		<?php if (  (new \SearchWP\Tokens)->get_minimum_length() > strlen($search_query) ) { ?>
-			<p><?php esc_html_e( 'Please enter at least ' . (new \SearchWP\Tokens)->get_minimum_length() . ' letters to search for.', 'searchwp' ); ?></p>
+			<p><?php esc_html_e( 'Your search must be at least' . (new \SearchWP\Tokens)->get_minimum_length() . ' letters long.', 'searchwp' ); ?></p>
 
 		<?php } else { ?>
 			<p><?php esc_html_e( 'No results found, please refine your search and try again.', 'searchwp' ); ?></p>
