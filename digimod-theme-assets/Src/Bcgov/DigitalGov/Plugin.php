@@ -106,7 +106,7 @@ class Plugin {
 		if ( class_exists( 'SearchWP' ) && \SearchWP\Settings::get( 'quoted_search_support', 'boolean' ) ) {
 			//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( isset( $_REQUEST['s'] ) ) {    // Only modify the query if its a search query.
-				if ( stripos( $sql, '(SELECT ID AS id FROM wp_posts WHERE 1=1 AND' ) !== false ) { //Look for the quoted search query.
+				if ( stripos( $sql, '(SELECT ID AS id FROM wp_posts WHERE 1=1 AND' ) !== false ) { // Look for the quoted search query.
 
 					// Extract the post type being queried for, then use that post type to help filter down the query.
 					preg_match( '/(?:AND s.source = \'post.)(.*)(?:\')/i', $sql, $tmp_regex_result );

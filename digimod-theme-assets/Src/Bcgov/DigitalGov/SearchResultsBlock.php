@@ -118,7 +118,8 @@ class SearchResultsBlock {
 		ob_start();
 		?>
 		<div class="<?php echo esc_attr( $this->get_container_classes( $settings ) ); ?>">
-			<?php if ( ! empty( $search_results ) ) {
+			<?php
+            if ( ! empty( $search_results ) ) {
 				// Initiate Metrics link tracking.
 				do_action( 'searchwp_metrics_click_tracking_start' );
 				?>
@@ -145,8 +146,15 @@ class SearchResultsBlock {
 								</h2>
 								<?php if ( ! empty( $settings['swp-description-enabled'] ) ) : ?>
 									<p class="swp-result-item--desc">
-										<?php if ( $post_is_restricted ) { ?>
-											There is no excerpt because this is a protected post.
+										<?php
+                                        if ( $post_is_restricted ) {
+											if ( $post_is_restricted_idir ) {
+												?>
+												This content requires an IDIR login to view.
+												
+											<?php } else { ?>
+												There is no excerpt because this is a protected post.
+											<?php } ?>
 										<?php } else { ?>
 											<?php echo wp_kses_post( $display_data['content'] ); ?>
 										<?php } ?>
@@ -161,7 +169,8 @@ class SearchResultsBlock {
 							</div>
 						</article>
 					</a>
-				<?php }
+					<?php
+                }
 				// Stop Metrics link tracking.
 				do_action( 'searchwp_metrics_click_tracking_stop' );
 				?>
@@ -175,8 +184,8 @@ class SearchResultsBlock {
 		<?php endif; ?>
 	<?php } else { ?>
 
-		<?php if (  (new \SearchWP\Tokens)->get_minimum_length() > strlen($search_query) ) { ?>
-			<p><?php esc_html_e( 'Your search must be at least' . (new \SearchWP\Tokens)->get_minimum_length() . ' letters long.', 'searchwp' ); ?></p>
+				<?php if ( ( new \SearchWP\Tokens() )->get_minimum_length() > strlen( $search_query ) ) { ?>
+			<p><?php esc_html_e( 'Your search must be at least' . ( new \SearchWP\Tokens() )->get_minimum_length() . ' letters long.', 'searchwp' ); ?></p>
 
 		<?php } else { ?>
 			<p><?php esc_html_e( 'No results found, please refine your search and try again.', 'searchwp' ); ?></p>

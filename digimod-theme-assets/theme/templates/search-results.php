@@ -70,19 +70,26 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 
 	<div id="results-found"><?php echo wp_kses( $searchwp_query->found_results, 0 ) . ' results found '; ?></div>
 
-	<?php 
+	<?php
 	// Initiate Metrics link tracking.
 	do_action( 'searchwp_metrics_click_tracking_start' );
-	
-	foreach ( $search_results as $search_result ) { ?>
+
+	foreach ( $search_results as $search_result ) {
+		?>
 		<?php
 
-		$post_is_restricted = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) ) || post_password_required( $search_result->ID );
+		$post_is_restricted_idir = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) );
+		$post_is_restricted      = $post_is_restricted_idir || post_password_required( $search_result->ID );
 
 		$result_content = get_the_excerpt( $search_result );
 		if ( $post_is_restricted ) {
 			if ( ! is_user_logged_in() ) {
-				$result_content = __( 'There is no excerpt because this is a protected post. ' );
+				if ( $post_is_restricted_idir ) {
+					$result_content = __( 'This content requires an IDIR login to view.' );
+
+				} else {
+					$result_content = __( 'There is no excerpt because this is a protected post. ' );
+				}
 			}
 		}
 
@@ -98,12 +105,8 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 						echo wp_kses( $post_title, [ 'mark' => [] ] );
 						?>
 						
-						<p class="live-search-excerpt">
-							<?php if ( $post_is_restricted ) { ?>
-								There is no excerpt because this is a protected post.
-							<?php } else { ?>
-								<?php echo wp_kses_post( $result_content ); ?>
-							<?php } ?>
+						<p class="live-search-excerpt">							
+							<?php echo wp_kses_post( $result_content ); ?>
 						</p>
 					</a>
 					
@@ -139,7 +142,10 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 					$result_count,
 					stripslashes( $search_query )
 				),
-				[ 'strong' => [], 'br' => [] ]
+				[
+					'strong' => [],
+					'br'     => [],
+				]
 			);
 			?>
 		</p>
