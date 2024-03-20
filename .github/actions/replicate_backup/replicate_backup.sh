@@ -73,8 +73,6 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
     echo "::endgroup::"
 
-    # Import site
-    echo "::group::Import WP Site"
 
     NAMESPACE="c0cce6-$ENVIRONMENT"
     OC_ENV=$ENVIRONMENT
@@ -85,6 +83,14 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     fi
     WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
     WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
+
+    if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
+        echo "Unknown site name: ${SITE_NAME}"
+        exit 1
+    fi 
+
+    # Import site
+    echo "::group::Import WP Site"
 
     # Copy over import plugins
     echo "Copying over import plugins"
