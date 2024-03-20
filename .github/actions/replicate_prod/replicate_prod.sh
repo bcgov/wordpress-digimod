@@ -16,7 +16,7 @@ echo "::endgroup::"
 NAMESPACE="c0cce6-prod"
 OC_ENV=prod
 OC_SITE_NAME=digital
-WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[?(0)].metadata.name}')
 WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     echo "::group::Export Production Site"
@@ -75,7 +75,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     NAMESPACE="c0cce6-$ENVIRONMENT"
     OC_ENV=$ENVIRONMENT
     OC_SITE_NAME=digital-$SITE_NAME
-    WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+    WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[?(0)].metadata.name}')
     WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
     if [ -z "$WORDPRESS_CONTAINER_NAME" ]; then
