@@ -50,12 +50,17 @@ WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o json
 if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     chmod +x site-delete-unix.sh
     ./site-delete-unix.sh
+
+    #Generate GH Actions summary
+    echo "### Deployment Deleted:" >> $GITHUB_STEP_SUMMARY
+
+else
+    #Generate GH Actions summary
+    echo "### Deployment Not Found (nothing deleted):" >> $GITHUB_STEP_SUMMARY
 fi      
-echo "::endgroup::"
 
-
-#Generate GH Actions summary
-echo "### Deployment Deleted:" >> $GITHUB_STEP_SUMMARY
 echo "Deployment Environment: ${ENVIRONMENT}" >> $GITHUB_STEP_SUMMARY
 echo "Site Name: ${SITE_NAME}"  >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+
+echo "::endgroup::"
