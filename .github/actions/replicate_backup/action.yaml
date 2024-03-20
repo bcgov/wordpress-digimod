@@ -1,5 +1,5 @@
-name: Replicate Backup
-description: 'Replicates the backup instance on the given deployment'
+name: Replicate Backup (Restore Backup)
+description: 'Replicates a backup file from the backup instance on the given deployment'
 inputs:
   environment:
     description: 'Deployment environment'

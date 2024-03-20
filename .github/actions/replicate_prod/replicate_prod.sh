@@ -6,8 +6,11 @@ OPENSHIFT_SERVER=$3
 DEV_TOKEN=$4
 TEST_TOKEN=$5
 PROD_TOKEN=$6
+
 # Log in to OpenShift
+echo "::group::Login to Production OC"
 oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN --insecure-skip-tls-verify=true
+echo "::endgroup::"
 
 # Export site from production
 NAMESPACE="c0cce6-prod"
@@ -16,6 +19,8 @@ OC_SITE_NAME=digital
 WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
+    echo "::group::Export Production Site"
+
     # Download wp-cli in the GitHub Actions workspace
     curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
     chmod +x wp-cli.phar
@@ -36,8 +41,10 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     # log out of prod due to paranoia
     
     echo "Backup on prod finished"
+    echo "::endgroup::"
 
     oc logout
+    
 
     # Log in to OpenShift
     echo "Deploying to $ENVIRONMENT"
@@ -58,8 +65,14 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
         exit 1
         ;;
     esac
+
+    echo "::group::Login to target OC"
     oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
+    echo "::endgroup::"
+
     # Import site
+    echo "::group::Import WP Site"
+    
     NAMESPACE="c0cce6-$ENVIRONMENT"
     OC_ENV=$ENVIRONMENT
     OC_SITE_NAME=digital-$SITE_NAME
@@ -90,6 +103,11 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
     #activate the plugins
     # oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate $active_plugins
+
+    #Disable site indexing
+    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar option set blog_public 0
+
+    echo "::endgroup::"
 
     echo "Replicate production finished"
 fi
