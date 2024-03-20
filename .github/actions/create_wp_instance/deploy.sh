@@ -104,4 +104,4 @@ echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
 echo "### WP Install Results: " >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
-echo ${WP_INSTALL_RESULTS}" >> $GITHUB_STEP_SUMMARY
+echo "${WP_INSTALL_RESULTS}" >> $GITHUB_STEP_SUMMARY
