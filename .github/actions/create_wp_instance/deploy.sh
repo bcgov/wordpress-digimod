@@ -97,7 +97,7 @@ oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /t
 echo "::endgroup::"
 
 #Generate GH Actions summary
-echo "### Deployment:"
+echo "### Deployment:" >> $GITHUB_STEP_SUMMARY
 echo "Deployment Environment: ${ENVIRONMENT}" >> $GITHUB_STEP_SUMMARY
 echo "Site Name: ${SITE_NAME}"  >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
