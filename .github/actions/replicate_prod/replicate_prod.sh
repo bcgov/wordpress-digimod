@@ -117,4 +117,10 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     echo "::endgroup::"
 
     echo "Replicate production finished"
+
+else
+    echo "Unable to find production"
+    echo "Pod Name: $WORDPRESS_POD_NAME"
+    echo "Container Name: $WORDPRESS_CONTAINER_NAME"
+    
 fi
