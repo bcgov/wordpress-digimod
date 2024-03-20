@@ -82,7 +82,7 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 		$post_is_restricted      = $post_is_restricted_idir || post_password_required( $search_result->ID );
 
 		$result_content = get_the_excerpt( $search_result );
-		if ( $post_is_restricted ) {
+		if ( $post_is_restricted ) { 
 			if ( ! is_user_logged_in() ) {
 				if ( $post_is_restricted_idir ) {
 					$result_content = __( 'This content requires an IDIR login to view.' );

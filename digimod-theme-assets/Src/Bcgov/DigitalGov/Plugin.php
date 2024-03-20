@@ -196,13 +196,13 @@ class Plugin {
 				$excerpt :
 				wp_trim_excerpt( '', $post );
 			$post_is_restricted = custom_redirect_to_login_check_if_url_in_list( get_permalink( $post ) );
-
+			
 			$result_content = '';
 			if ( $post_is_restricted ) {
 				if ( is_user_logged_in() ) {
 					$result_content .= $post_excerpt;
 				} else {
-					$result_content .= ' <p>' . __( 'There is no excerpt because this is a protected post. ' ) . '</p>';
+					$result_content .= ' <p>' . __( 'This content requires an IDIR login to view.' ) . '</p>';
 				}
 			} else {
 				$result_content .= $post_excerpt;

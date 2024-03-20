@@ -147,14 +147,15 @@ class SearchResultsBlock {
 								<?php if ( ! empty( $settings['swp-description-enabled'] ) ) : ?>
 									<p class="swp-result-item--desc">
 										<?php
-                                        if ( $post_is_restricted ) {
-											if ( $post_is_restricted_idir ) {
-												?>
+                                        if ( $post_is_restricted && !is_user_logged_in() ) {
+											if ( $post_is_restricted_idir ) { ?>
 												This content requires an IDIR login to view.
 												
 											<?php } else { ?>
 												There is no excerpt because this is a protected post.
+
 											<?php } ?>
+											
 										<?php } else { ?>
 											<?php echo wp_kses_post( $display_data['content'] ); ?>
 										<?php } ?>
