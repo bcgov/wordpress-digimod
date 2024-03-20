@@ -85,7 +85,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
     if [ -z "$WORDPRESS_CONTAINER_NAME" ]; then
-        echo "Unknown site name: ${SITE_NAME}"
+        echo "Error: Unknown site name: ${SITE_NAME}"
         exit 1
     fi 
 
@@ -112,9 +112,9 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
     #perform the restore
     echo "Running restore"
-    echo $NAMESPACE
-    echo $WORDPRESS_CONTAINER_NAME
-    echo $WORDPRESS_POD_NAME
+    echo " Namespace: ${NAMESPACE}"
+    echo " Container Name: ${WORDPRESS_CONTAINER_NAME}"
+    echo " Pod Name: ${WORDPRESS_POD_NAME}"
     
     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar ai1wm restore wp-backup.wpress"
 

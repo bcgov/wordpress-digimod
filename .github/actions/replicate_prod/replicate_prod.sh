@@ -79,7 +79,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
     if [ -z "$WORDPRESS_CONTAINER_NAME" ]; then
-        echo "Unknown site name: ${SITE_NAME}"
+        echo "Error: Unknown site name: ${SITE_NAME}"
         exit 1
     fi 
 

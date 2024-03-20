@@ -1,0 +1,34 @@
+name: Delete Wordpress instance
+description: 'Deletes a WordPress instance'
+inputs:
+  environment:
+    description: 'Deployment environment'
+    required: true
+    default: 'test'
+  site-name:
+    description: 'Site name'
+    required: true
+    default: 'test'
+  openshift-server:
+    description: 'OpenShift server'
+    required: true
+  dev-token:
+    description: 'Dev token'
+    required: true
+  test-token:
+    description: 'Test token'
+    required: true
+  prod-token:
+    description: 'Prod token'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    # - name: List files in current directory
+    #   run: ls -al
+    #   shell: bash
+    - name: Create the instance
+      run: |
+        chmod +x ./.github/actions/delete_wp_instance/deploy.sh
+        ./.github/actions/delete_wp_instance/deploy.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
+      shell: bash
