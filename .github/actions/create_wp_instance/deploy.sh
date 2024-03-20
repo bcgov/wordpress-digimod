@@ -30,7 +30,10 @@ case "$ENVIRONMENT" in
     ;;
 esac
 
+
+echo "::group::Login to OC"
 oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
+echo "::endgroup::"
 
 #Go into the deployment folder
 cd wordpress-deploy-digimod
@@ -87,9 +90,18 @@ oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod 
 
 #Perform a site install
 WP_INSTALL_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar core install --url=${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca --admin_user=tester --admin_email=info@example.com  --title="${OC_SITE_NAME}.gov.bc.ca Testing Framework")
+echo "WP Install Results: ${WP_INSTALL_RESULTS}"
 
 #Disable site indexing
 oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar option set blog_public 0
 echo "::endgroup::"
 
-echo "### WP Install Results: ${WP_INSTALL_RESULTS}" >> $GITHUB_STEP_SUMMARY
+#Generate GH Actions summary
+echo "### Deployment:"
+echo "Deployment Environment: ${ENVIRONMENT}" >> $GITHUB_STEP_SUMMARY
+echo "Site Name: ${SITE_NAME}"  >> $GITHUB_STEP_SUMMARY
+echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+
+echo "### WP Install Results: " >> $GITHUB_STEP_SUMMARY
+echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+echo ${WP_INSTALL_RESULTS}" >> $GITHUB_STEP_SUMMARY
