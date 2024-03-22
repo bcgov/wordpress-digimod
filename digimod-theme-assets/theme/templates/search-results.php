@@ -68,7 +68,7 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 
 <?php if ( ! empty( $search_query ) && ! empty( $search_results ) ) { ?>
 
-	<div id="results-found"><?php echo wp_kses( $searchwp_query->found_results, 0 ) . ' results found '; ?></div>
+	<div id="results-found">Showing <?php echo count($search_results) ?> of <?php echo wp_kses( $searchwp_query->found_results, 0 ); ?> results.</div>
 
 	<?php
 	// Initiate Metrics link tracking.
@@ -135,28 +135,37 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 		?>
 		<p class="results-info">
 			<?php
-			echo wp_kses(
+			echo '<a href="?s=' . wp_kses($search_query,[]) . '">' . wp_kses(
 				sprintf(
 					/* translators: %1$d: results count, %2$s: search keywords */
-                    __( 'Showing %1$d suggestions for <strong>%2$s</strong>.<br> Submit your search to see all results.' ),
-					$result_count,
-					stripslashes( $search_query )
+                    __( 'See all %1$d results.' ),
+					$searchwp_query->found_results					
 				),
 				[
 					'strong' => [],
 					'br'     => [],
 				]
-			);
+			) . '</a>';
 			?>
 		</p>
 	<?php } ?>
 
 	
 	<?php } else { ?>
-		<p class="searchwp-live-search-no-results" role="option">
-			<?php esc_html_e( 'No suggestions found, please refine your query or choose from the list below.', 'searchwp-live-ajax-search' ); ?>
-		</p>
-		<?php if ( $popular_searches ) { ?>
+		<div class="searchwp-live-search-no-results" role="option">
+			<img><?php /* NATE, also add the magnifying glass with clouds here as well */?>
+			
+			<p>Sorry, we couldn't find any results for '<?php echo wp_kses_post($search_query)?>'</p>
+			<p>To improve your search results:</p>
+			<ul>
+				<li>Check your spelling</li>
+				<li>Use fewer keywords</li>
+				<li>Try a simpler phrase</li>
+			</ul>
+		</div>
+
+
+		<?php  /*if ( $popular_searches ) { ?>
 			<div class="searchwp-form-quick-search">
 				<h2 class="popular-searches-header"><?php esc_html_e( 'Popular searches', 'searchwp' ); ?>: </h2>
 				<?php foreach ( $popular_searches as $item ) : ?>
@@ -171,5 +180,5 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 					<a href="<?php echo esc_url( $quick_search_link ); ?>" class=""><?php echo esc_html( $item ); ?></a>
 				<?php endforeach; ?>
 			</div>
-		<?php } ?>
+		<?php } */?>
 <?php } ?>

@@ -83,7 +83,10 @@ class Search {
 		// echo print_r($block['blockName'],true) . ' ' . PHP_EOL;	
 
 		if ( 'core/search' === $block['blockName'] ) {
-			$block_content .= '<div class="live-search-container"></div>';
+			ob_start();
+			require Plugin::$plugin_dir . 'theme/templates/live-search-container.php';
+			
+			$block_content .= ob_get_clean();
 		}
 
 		return $block_content;

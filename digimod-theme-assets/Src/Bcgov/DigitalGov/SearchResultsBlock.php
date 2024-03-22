@@ -123,12 +123,19 @@ class SearchResultsBlock {
 				// Initiate Metrics link tracking.
 				do_action( 'searchwp_metrics_click_tracking_start' );
 				?>
+
+				<h1>Showing results for '<?php echo wp_kses_post($search_query)?>'</h1>
+				<p>Showing <?php echo count($search_results);?> of <?php echo wp_kses( $searchwp_query->found_results, 0 ); ?> results.</p>
+
 				<?php foreach ( $search_results as $search_result ) { ?>
 					<?php
 					$post_is_restricted_idir = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) );
 					$post_is_restricted      = $post_is_restricted_idir || post_password_required( $search_result->ID );
 
 					$display_data = $this->get_display_data( $search_result, $search_query );
+
+					$search_categories = wp_list_pluck(get_the_terms($search_result, 'search-category'),'name');
+					//print_r($search_categories);
 					?>
 					<a class="swp-result-item-link" href="<?php echo esc_url( $display_data['permalink'] ); ?>" title="<?php if ( $post_is_restricted ) { echo 'private'; } ?>">
 						<article id="post-<?php echo esc_attr( $search_result->ID ); ?>" class="swp-result-item post-<?php echo esc_attr( $search_result->ID ); ?> post type-post status-publish format-standard hentry category-uncategorized entry">
@@ -141,9 +148,14 @@ class SearchResultsBlock {
 							<?php endif; ?>
 
 							<div class="swp-result-item--info-container">
+								<?php if(count($search_categories)){?>
+									<i><?php echo implode(',' , $search_categories);?></i>
+								<?php } ?>
+
 								<h2 class="entry-title">
 									<?php echo wp_kses_post( $display_data['title'] ); ?>
 								</h2>
+
 								<?php if ( ! empty( $settings['swp-description-enabled'] ) ) : ?>
 									<p class="swp-result-item--desc">
 										<?php
@@ -185,11 +197,51 @@ class SearchResultsBlock {
 		<?php endif; ?>
 	<?php } else { ?>
 
-				<?php if ( ( new \SearchWP\Tokens() )->get_minimum_length() > strlen( $search_query ) ) { ?>
+		<?php if ( ( new \SearchWP\Tokens() )->get_minimum_length() > strlen( $search_query ) ) { ?>
 			<p><?php esc_html_e( 'Your search must be at least' . ( new \SearchWP\Tokens() )->get_minimum_length() . ' letters long.', 'searchwp' ); ?></p>
 
 		<?php } else { ?>
-			<p><?php esc_html_e( 'No results found, please refine your search and try again.', 'searchwp' ); ?></p>
+
+			<h1>No results for '<?php echo wp_kses_post($search_query)?>'</h1>
+
+			<?php /* NATE, how do we add the sarch bar  here ? */?>
+
+			<div class="searchwp-live-search-no-results" role="option">
+				<img><?php /* NATE, also add the magnifying glass with clouds here as well */?>
+				
+				<p>Sorry, we couldn't find any results for '<?php echo wp_kses_post($search_query)?>'</p>
+				<p>To improve your search results:</p>
+				<ul>
+					<li>Check your spelling</li>
+					<li>Use fewer keywords</li>
+					<li>Try a simpler phrase</li>
+				</ul>
+			</div>
+
+			<?php /* same as the content in live-search-container.php */ ?>
+			<div class="live-search-extra">
+				<strong>Popular Content</strong>
+				<div style="border:1px solid black; background:aqua; padding:10px;">
+					<strong>Title 1</strong>
+					<p>Donec id elit non mi porta gravida at eget metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sed diam eget risus.</p>
+				</div>
+
+				<div style="border:1px solid black; background:aqua; padding:10px;">
+					<strong>Title 2</strong>
+					<p>Donec id elit non mi porta gravida at eget metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecen.</p>
+				</div>
+
+				<div style="border:1px solid black; background:aqua; padding:10px;">
+					<strong>Title 3</strong>
+					<p>Donec id elit non mi porta gravida at eget metus. Lorem ipsum dolor sit amet, consectetur a.</p>
+				</div>
+
+				<div style="border: 1px solid black; background: lightgray; padding:10px;">
+					<strong>Propular keywords: </strong> <a href="?s=keyword1">keyword1</a> <a href="?s=keyword2">keyword2</a> <a href="?s=keyword13">keyword3</a>
+				</div>
+			</div>
+
+			<p>Stll can't find what you are looking for? <a href="/about/#contact">Contact Us</a></p>
 		<?php } ?>
 	<?php } ?>
 
