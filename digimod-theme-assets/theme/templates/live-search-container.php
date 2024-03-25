@@ -2,23 +2,23 @@
 
 <?php /* same as the content in SearchResultsBlock.php */ ?>
 <div class="live-search-extra">
-	<strong>Popular Content</strong>
-	<div style="border:1px solid black; background:aqua; padding:10px;">
-		<strong>Title 1</strong>
-		<p>Donec id elit non mi porta gravida at eget metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sed diam eget risus.</p>
-	</div>
+	<h2>Popular Content</h2>
+	<a href="/policies-standards/digital-plan/" title=""><div class="popular-content">
+		<h3>Digital Plan</h3>
+		<p>The Digital Plan has 4 missions to achieve the next phase of digital transformation in government.</p>
+	</div></a>
 
-	<div style="border:1px solid black; background:aqua; padding:10px;">
-		<strong>Title 2</strong>
-		<p>Donec id elit non mi porta gravida at eget metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecen.</p>
-	</div>
+	<a href="/policies-standards/dcop/" title=""><div class="popular-content">
+		<h3>Digital Code of Practice</h3>
+		<p>The Digital Code of Practice is a guidebook for all public service employees and contractors involved in and accountable for digital service delivery. </p>
+	</div></a>
 
-	<div style="border:1px solid black; background:aqua; padding:10px;">
-		<strong>Title 3</strong>
-		<p>Donec id elit non mi porta gravida at eget metus. Lorem ipsum dolor sit amet, consectetur a.</p>
-	</div>
+	<a href="/blog/" title=""><div class="popular-content">
+		<h3>#DigitalBC blog</h3>
+		<p>Our blog explores the challenges and impacts of the digital modernization efforts happening in the B.C. government.</p>
+	</div></a>
 
-	<div style="border: 1px solid black; background: lightgray; padding:10px;">
-		<strong>Propular keywords: </strong> <a href="?s=keyword1">keyword1</a> <a href="?s=keyword2">keyword2</a> <a href="?s=keyword13">keyword3</a>
+	<div class="searchwp-form-quick-search">
+		<h2 class="popular-searches-header">Popular keywords: </h2> <a href="?s=trust">trust</a>  <a href="?s=policies">policies</a> <a href="?s=accessibility">accessibility</a> <a href="?s=blog">blog</a> <a href="?s=guides">guides</a> <a href="?s=design">design</a> <a href="?s=case+studies">case studies</a> <a href="?s=cloud">cloud</a> <a href="?s=design">design</a> <a href="?s=onboard">onboard</a> <a href="?s=hire">hire</a>
 	</div>
 </div>

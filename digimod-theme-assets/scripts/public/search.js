@@ -37,9 +37,11 @@ const digitalGovSearch = () => {
 							if (searchInput) {
 								searchInput.focus();
 							}
+							toggleSearchBtn.classList.add('close');
 						} else {
 							searchFieldContainer.classList.add('hidden');
 							searchFieldContainer.style.display = 'none';
+							toggleSearchBtn.classList.remove('close');
 						}
 					}
 				});
@@ -65,19 +67,23 @@ const digitalGovSearch = () => {
 					addSafeEventListenerPlugin(searchButton, 'blur', function (event) {
 						event.preventDefault();
 						const resultsShowing = document.querySelector('.searchwp-live-search-results-showing');
+						const popularContentShowingg = document.querySelector('.live-search-extra');
 
 							window.requestAnimationFrame(() => {
 								if (
 									searchInput ===
 									event.target.ownerDocument.activeElement
-								)
+								) {
 									return;
+								}
 								if (
 									toggleSearchBtn ===
 									event.target.ownerDocument.activeElement
-								)
+								) {
 									return;
+								}
 								if (resultsShowing) return;
+								if (popularContentShowingg) return;
 								
 								toggleSearchBtn.focus();
 								toggleSearchBtn.click();
@@ -97,8 +103,9 @@ const digitalGovSearch = () => {
 				searchFieldContainer.style.display = 'none';
 			}
 
-			if (searchPage && toggleSearchBtn) {
-				toggleSearchBtn.click();
+			if (searchPage && searchFieldContainer) {
+				searchFieldContainer.remove();
+				toggleSearchBtn.classList.add('disabled');
 			}
 
 		});

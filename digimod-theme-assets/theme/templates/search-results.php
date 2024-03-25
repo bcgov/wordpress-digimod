@@ -153,15 +153,7 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 	
 	<?php } else { ?>
 		<div class="searchwp-live-search-no-results" role="option">
-			<img><?php /* NATE, also add the magnifying glass with clouds here as well */?>
-			
-			<p>Sorry, we couldn't find any results for '<?php echo wp_kses_post($search_query)?>'</p>
-			<p>To improve your search results:</p>
-			<ul>
-				<li>Check your spelling</li>
-				<li>Use fewer keywords</li>
-				<li>Try a simpler phrase</li>
-			</ul>
+			<p>Sorry, we couldn't find any results for '<strong style="padding-inline: 0.05rem;"><?php echo wp_kses_post($search_query)?></strong>'</p>
 		</div>
 
 
