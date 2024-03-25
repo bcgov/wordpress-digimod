@@ -162,7 +162,7 @@ class SearchResultsBlock
 
 							<div class="swp-result-item--info-container">
 								<?php if (count($search_categories)) { ?>
-									<i><?php echo implode(',', $search_categories); ?></i>
+									<div class="decorator"><?php echo implode(',', $search_categories); ?></div>
 								<?php } ?>
 
 								<h2 class="entry-title">

@@ -476,6 +476,11 @@ body.search-results {
 				}
 			}
 
+			.decorator {
+				padding-block: 0.25rem;
+				color: var(--wp--preset--color--gray-80);
+			}
+
 		}
 
 		&:focus-visible {
@@ -504,7 +509,7 @@ body.search-results {
 	}
 
 	.entry-title {
-		font-size: 1.05rem;
+		font-size: 1.35rem;
 		margin: 0;
 		font-weight: 400;
 
@@ -519,8 +524,10 @@ body.search-results {
 
 	.swp-result-item--desc {
 		border-bottom: 1px solid var(--wp--preset--color--primary-brand);
-		padding-bottom: 1rem;
+		font-size: clamp(var(--wp--preset--font-size--normal), 1rem + ((1vw - 0.48rem) * 0.481), 1.15rem);
+		margin-block: 0;
 		min-height: 0;
+		padding-bottom: 1.35rem;
 
 		>* {
 			line-height: 1.5;
@@ -530,8 +537,7 @@ body.search-results {
 		.searchwp-highlight.searchwp-highlight {
 			background-color: transparent;
 			text-decoration: underline;
-			text-underline-offset: 3px;
-			text-decoration-line: 2px;
+			font-weight: 700;
 		}
 	}
 
