@@ -477,7 +477,6 @@ body.search-results {
 			}
 
 			.decorator {
-				padding-block: 0.25rem;
 				color: var(--wp--preset--color--gray-80);
 			}
 
@@ -509,8 +508,8 @@ body.search-results {
 	}
 
 	.entry-title {
-		font-size: 1.35rem;
-		margin: 0;
+		font-size: 1.25rem;
+		margin-block: 0.25rem;
 		font-weight: 400;
 
 		mark {
@@ -524,7 +523,7 @@ body.search-results {
 
 	.swp-result-item--desc {
 		border-bottom: 1px solid var(--wp--preset--color--primary-brand);
-		font-size: clamp(var(--wp--preset--font-size--normal), 1rem + ((1vw - 0.48rem) * 0.481), 1.15rem);
+		font-size: 1rem;
 		margin-block: 0;
 		min-height: 0;
 		padding-bottom: 1.35rem;
