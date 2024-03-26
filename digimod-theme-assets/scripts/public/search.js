@@ -67,7 +67,7 @@ const digitalGovSearch = () => {
 					addSafeEventListenerPlugin(searchButton, 'blur', function (event) {
 						event.preventDefault();
 						const resultsShowing = document.querySelector('.searchwp-live-search-results-showing');
-						const popularContentShowingg = document.querySelector('.live-search-extra');
+						const popularContentShowing = document.querySelector('.live-search-extra');
 
 							window.requestAnimationFrame(() => {
 								if (
@@ -83,7 +83,7 @@ const digitalGovSearch = () => {
 									return;
 								}
 								if (resultsShowing) return;
-								if (popularContentShowingg) return;
+								if (popularContentShowing) return;
 								
 								toggleSearchBtn.focus();
 								toggleSearchBtn.click();

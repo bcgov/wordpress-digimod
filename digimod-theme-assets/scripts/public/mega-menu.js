@@ -26,7 +26,9 @@ const domReady = () => {
                 let isCheckedForHeight = false;
 
                 item.addEventListener('pointerenter', () => {
-                    if (subMenuContainer) {
+                    const popularContentShowing = document.querySelector('.live-search-extra');
+
+                    if (subMenuContainer && ! popularContentShowing) {
                         const firstSubMenuItemButton =
                             subMenuContainer.querySelector(
                                 '.wp-block-navigation-item:first-child button'
