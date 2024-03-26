@@ -19,6 +19,6 @@
 	</div></a>
 
 	<div class="searchwp-form-quick-search">
-		<h2 class="popular-searches-header">Popular keywords: </h2> <a href="?s=trust">trust</a>  <a href="?s=policies">policies</a> <a href="?s=accessibility">accessibility</a> <a href="?s=blog">blog</a> <a href="?s=guides">guides</a> <a href="?s=design">design</a> <a href="?s=case+studies">case studies</a> <a href="?s=cloud">cloud</a> <a href="?s=design">design</a> <a href="?s=onboard">onboard</a> <a href="?s=hire">hire</a>
+		<h2 class="popular-searches-header">Popular keywords: </h2> <a href="/?s=trust">trust</a>  <a href="/?s=policies">policies</a> <a href="/?s=accessibility">accessibility</a> <a href="/?s=blog">blog</a> <a href="/?s=guides">guides</a> <a href="/?s=design">design</a> <a href="/?s=case+studies">case studies</a> <a href="/?s=cloud">cloud</a> <a href="/?s=design">design</a> <a href="/?s=onboard">onboard</a> <a href="/?s=hire">hire</a>
 	</div>
 </div>

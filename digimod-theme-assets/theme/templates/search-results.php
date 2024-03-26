@@ -135,7 +135,7 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 		?>
 		<p class="results-info">
 			<?php
-			echo '<a href="?s=' . wp_kses($search_query,[]) . '">' . wp_kses(
+			echo '<a href="/?s=' . wp_kses($search_query,[]) . '">' . wp_kses(
 				sprintf(
 					/* translators: %1$d: results count, %2$s: search keywords */
                     __( 'See all %1$d results.' ),
