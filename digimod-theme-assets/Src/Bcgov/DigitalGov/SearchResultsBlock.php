@@ -42,7 +42,7 @@ class SearchResultsBlock {
 			return 10;
 
 		}else if(is_search()){
-			return 40;
+			return 30;
 		}
 
 		return $length;
