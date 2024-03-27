@@ -1,3 +1,8 @@
+<?php
+/**
+ * The container html for the live-search
+ */
+?>
 <div class="live-search-container"></div>
 
 <?php /* same as the content in SearchResultsBlock.php */ ?>

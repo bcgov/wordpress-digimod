@@ -86,7 +86,7 @@ class Search {
 		if ( 'core/search' === $block['blockName'] ) {
 			ob_start();
 			require Plugin::$plugin_dir . 'theme/templates/live-search-container.php';
-			
+
 			$block_content .= ob_get_clean();
 		}
 
