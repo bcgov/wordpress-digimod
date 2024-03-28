@@ -46,7 +46,7 @@ class SearchResultsBlock
 		if (doing_action('wp_ajax_searchwp_live_search') || doing_action('wp_ajax_nopriv_searchwp_live_search')) {
 			return 10;
 		} else if (is_search()) {
-			return 30;
+			return 24;
 		}
 
 		return $length;
