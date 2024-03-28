@@ -7,7 +7,7 @@
 
 <?php /* same as the content in SearchResultsBlock.php */ ?>
 <div class="live-search-extra">
-	<h2>Popular Content</h2>
+	<h2>Popular content</h2>
 	<a href="/policies-standards/digital-plan/" title=""><div class="popular-content">
 		<h3>Digital Plan</h3>
 		<p>The Digital Plan has 4 missions to achieve the next phase of digital transformation in government.</p>
@@ -24,6 +24,18 @@
 	</div></a>
 
 	<div class="searchwp-form-quick-search">
-		<h2 class="popular-searches-header">Popular keywords: </h2> <a href="/?s=trust">trust</a>  <a href="/?s=policies">policies</a> <a href="/?s=accessibility">accessibility</a> <a href="/?s=blog">blog</a> <a href="/?s=guides">guides</a> <a href="/?s=design">design</a> <a href="/?s=case+studies">case studies</a> <a href="/?s=cloud">cloud</a> <a href="/?s=design">design</a> <a href="/?s=onboard">onboard</a> <a href="/?s=hire">hire</a>
+		<h2 class="popular-searches-header">Popular keywords: </h2> 
+					<a href="/?s=agile">Agile</a>
+					<a href="/?s=digital+code+of+practice">Digital Code of Practice</a>
+					<a href="/?s=digital+plan">Digital Plan</a>
+					<a href="/?s=digital+trust">Digital trust</a>
+					<a href="/?s=accessibility">Accessibility</a>
+					<a href="/?s=CHEFS">CHEFS</a>
+					<a href="/?s=community+of+practice">Community of practice</a>
+					<a href="/?s=courses">Courses</a>
+					<a href="/?s=digital+funding">Digital funding</a>
+					<a href="/?s=saas">SaaS</a>
+					<a href="/?s=cloud+services">Cloud services</a>
+					<a href="/?s=common+components">Common components</a>
 	</div>
 </div>
