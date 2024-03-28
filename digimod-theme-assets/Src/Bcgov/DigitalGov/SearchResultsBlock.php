@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Search Results Block for DigitalGov.
  *
@@ -11,14 +12,16 @@ namespace Bcgov\DigitalGov;
 /**
  * SearchResultsBlock class.
  */
-class SearchResultsBlock {
+class SearchResultsBlock
+{
 
 
 
 	/**
 	 * Constructor.
 	 */
-	public function __construct() {
+	public function __construct()
+	{
 		$this->init();
 	}
 
@@ -27,8 +30,9 @@ class SearchResultsBlock {
 	 *
 	 * @return void
 	 */
-	public function init() {
-		add_filter( 'excerpt_length', [ $this, 'excerpt_length' ], 9223372036854775807 );  // Some other plugin is setting the excerpt length to 100 and using this big int as priority, lets replace it.
+	public function init()
+	{
+		add_filter('excerpt_length', [$this, 'excerpt_length'], 9223372036854775807);  // Some other plugin is setting the excerpt length to 100 and using this big int as priority, lets replace it.
 	}
 
 	/**
@@ -37,12 +41,12 @@ class SearchResultsBlock {
 	 * @param int $length Excerpt length.
 	 * @return int (Maybe) modified excerpt length.
 	 */
-	public function excerpt_length( $length ) {
-		if ( doing_action( 'wp_ajax_searchwp_live_search' ) || doing_action( 'wp_ajax_nopriv_searchwp_live_search' ) ) {
+	public function excerpt_length($length)
+	{
+		if (doing_action('wp_ajax_searchwp_live_search') || doing_action('wp_ajax_nopriv_searchwp_live_search')) {
 			return 10;
-
-		}else if(is_search()){
-			return 30;
+		} else if (is_search()) {
+			return 24;
 		}
 
 		return $length;
@@ -52,16 +56,17 @@ class SearchResultsBlock {
 	/**
 	 * Perform the actual search and return the results
 	 */
-	public function render_search_results() {
+	public function render_search_results()
+	{
 		$is_gb_editor = Blocks::check_is_gb_editor();
 
 		$output = '';
 
-		if ( $is_gb_editor ) {
+		if ($is_gb_editor) {
 			$_GET['s'] = 'digital'; // Provide a search keyword for the blockeditor so you can see it visually.
 		}
 
-		if ( ! isset( $_GET['s'] ) ) {  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if (!isset($_GET['s'])) {  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return $template;
 		}
 
@@ -87,25 +92,25 @@ class SearchResultsBlock {
 		];
 
 		// Retrieve applicable query parameters.
-		$search_query = isset( $_GET['s'] ) ? sanitize_text_field( $_GET['s'] ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$search_page  = isset( $_GET['swppg'] ) ? absint( $_GET['swppg'] ) : 1;         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$search_query = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$search_page  = isset($_GET['swppg']) ? absint($_GET['swppg']) : 1;         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		// Perform the search.
 		$search_results    = [];
 		$search_pagination = '';
-		$per_page          = absint( $settings['swp-results-per-page'] );
+		$per_page          = absint($settings['swp-results-per-page']);
 
-		if ( class_exists( '\\SearchWP\\Query' ) ) {
+		if (class_exists('\\SearchWP\\Query')) {
 			$search_args = [
 				'engine' => $engine, // The Engine name.
 				'fields' => 'all',          // Load proper native objects of each result.
 				'page'   => $search_page,
 			];
 
-			if ( ! empty( $per_page ) ) {
+			if (!empty($per_page)) {
 				$search_args['per_page'] = $per_page;
 			}
-			$searchwp_query = new \SearchWP\Query( $search_query, $search_args );
+			$searchwp_query = new \SearchWP\Query($search_query, $search_args);
 
 			$search_results = $searchwp_query->get_results();
 
@@ -121,63 +126,63 @@ class SearchResultsBlock {
 		}
 
 		ob_start();
-		?>
-		<div class="<?php echo esc_attr( $this->get_container_classes( $settings ) ); ?>">
+?>
+		<div class="<?php echo esc_attr($this->get_container_classes($settings)); ?>">
 			<?php
-			if ( ! empty( $search_results ) ) {
+			if (!empty($search_results)) {
 				// Initiate Metrics link tracking.
-				do_action( 'searchwp_metrics_click_tracking_start' );
-				?>
+				do_action('searchwp_metrics_click_tracking_start');
+			?>
 
-				<h1>Showing results for '<strong><?php echo wp_kses_post( $search_query ); ?></strong>'</h1>
+				<h1>Showing results for '<strong><?php echo wp_kses_post($search_query); ?></strong>'</h1>
 
 				<?php
 				get_search_form();
 				?>
 
-				<p class="results-count">Showing <?php echo count( $search_results ); ?> of <?php echo wp_kses( $searchwp_query->found_results, 0 ); ?> results.</p>
+				<p class="results-count">Showing <?php echo count($search_results); ?> of <?php echo wp_kses($searchwp_query->found_results, 0); ?> results.</p>
 
-				<?php foreach ( $search_results as $search_result ) { ?>
+				<?php foreach ($search_results as $search_result) { ?>
 					<?php
-					$post_is_restricted_idir = custom_redirect_to_login_check_if_url_in_list( get_permalink( $search_result->ID ) );
-					$post_is_restricted      = $post_is_restricted_idir || post_password_required( $search_result->ID );
+					$post_is_restricted_idir = custom_redirect_to_login_check_if_url_in_list(get_permalink($search_result->ID));
+					$post_is_restricted      = $post_is_restricted_idir || post_password_required($search_result->ID);
 
-					$display_data = $this->get_display_data( $search_result, $search_query );
+					$display_data = $this->get_display_data($search_result, $search_query);
 
-					$search_categories = wp_list_pluck( get_the_terms( $search_result, 'search-category' ), 'name' );
+					$search_categories = wp_list_pluck(get_the_terms($search_result, 'search-category'), 'name');
 					// print_r($search_categories); //phpcs:ignore
 					?>
-					<a class="swp-result-item-link" href="<?php echo esc_url( $display_data['permalink'] ); ?>" title="
+					<a class="swp-result-item-link" href="<?php echo esc_url($display_data['permalink']); ?>" title="
                                                                      <?php
-																		if ( $post_is_restricted ) {
-																															echo 'private';
+																		if ($post_is_restricted) {
+																			echo 'private';
 																		}
 																		?>
                                                                                                                         ">
-						<article id="post-<?php echo esc_attr( $search_result->ID ); ?>" class="swp-result-item post-<?php echo esc_attr( $search_result->ID ); ?> post type-post status-publish format-standard hentry category-uncategorized entry">
-							<?php if ( ! empty( $display_data['image_html'] ) && ! empty( $settings['swp-image-size'] ) && 'none' !== $settings['swp-image-size'] ) : ?>
+						<article id="post-<?php echo esc_attr($search_result->ID); ?>" class="swp-result-item post-<?php echo esc_attr($search_result->ID); ?> post type-post status-publish format-standard hentry category-uncategorized entry">
+							<?php if (!empty($display_data['image_html']) && !empty($settings['swp-image-size']) && 'none' !== $settings['swp-image-size']) : ?>
 								<div class="swp-result-item--img-container">
 									<div class="swp-result-item--img">
-										<?php echo wp_kses_post( $display_data['image_html'] ); ?>
+										<?php echo wp_kses_post($display_data['image_html']); ?>
 									</div>
 								</div>
 							<?php endif; ?>
 
 							<div class="swp-result-item--info-container">
-								<?php if ( count( $search_categories ) ) { ?>
-									<div class="decorator"><?php echo wp_kses_post( implode( ',', $search_categories ) ); ?></div>
+								<?php if (count($search_categories)) { ?>
+									<div class="decorator"><?php echo wp_kses_post(implode(',', $search_categories)); ?></div>
 								<?php } ?>
 
 								<h2 class="entry-title">
-									<?php echo wp_kses_post( $display_data['title'] ); ?>
+									<?php echo wp_kses_post($display_data['title']); ?>
 								</h2>
 
-								<?php if ( ! empty( $settings['swp-description-enabled'] ) ) : ?>
+								<?php if (!empty($settings['swp-description-enabled'])) : ?>
 									<p class="swp-result-item--desc">
 										<?php
-										if ( $post_is_restricted && ! is_user_logged_in() ) {
-											if ( $post_is_restricted_idir ) {
-												?>
+										if ($post_is_restricted && !is_user_logged_in()) {
+											if ($post_is_restricted_idir) {
+										?>
 												This content requires an IDIR login to view.
 
 											<?php } else { ?>
@@ -186,58 +191,60 @@ class SearchResultsBlock {
 											<?php } ?>
 
 										<?php } else { ?>
-											<?php echo wp_kses_post( $display_data['content'] ); ?>
+											<?php echo wp_kses_post($display_data['content']); ?>
 										<?php } ?>
 									</p>
 								<?php endif; ?>
 
-								<?php if ( ! empty( $settings['swp-button-enabled'] ) ) : ?>
-									<a href="<?php echo esc_url( $display_data['permalink'] ); ?>" class="swp-result-item--button">
-										<?php echo ! empty( $settings['swp-button-label'] ) ? esc_html( $settings['swp-button-label'] ) : esc_html__( 'Read More', 'searchwp' ); ?>
+								<?php if (!empty($settings['swp-button-enabled'])) : ?>
+									<a href="<?php echo esc_url($display_data['permalink']); ?>" class="swp-result-item--button">
+										<?php echo !empty($settings['swp-button-label']) ? esc_html($settings['swp-button-label']) : esc_html__('Read More', 'searchwp'); ?>
 									</a>
 								<?php endif; ?>
 							</div>
 						</article>
 					</a>
-					<?php
+				<?php
 				}
 				// Stop Metrics link tracking.
-				do_action( 'searchwp_metrics_click_tracking_stop' );
+				do_action('searchwp_metrics_click_tracking_stop');
 				?>
 		</div><!-- End of .swp-search-results -->
 
-				<?php if ( $searchwp_query->max_num_pages > 1 ) : ?>
+		<?php if ($searchwp_query->max_num_pages > 1) : ?>
 			<div class="navigation pagination" role="navigation">
-				<h2 class="screen-reader-text"><?php esc_html_e( 'Results navigation', 'searchwp' ); ?></h2>
-				<div class="<?php echo esc_attr( $this->get_pagination_classes( $settings ) ); ?>"><?php echo wp_kses_post( $search_pagination ); ?></div>
+				<h2 class="screen-reader-text"><?php esc_html_e('Results navigation', 'searchwp'); ?></h2>
+				<div class="<?php echo esc_attr($this->get_pagination_classes($settings)); ?>"><?php echo wp_kses_post($search_pagination); ?></div>
 			</div>
 		<?php endif; ?>
 	<?php } else { ?>
 
-				<?php if ( ( new \SearchWP\Tokens() )->get_minimum_length() > strlen( $search_query ) ) { ?>
-			<p><?php esc_html_e( 'Your search must be at least' . ( new \SearchWP\Tokens() )->get_minimum_length() . ' letters long.', 'searchwp' ); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText ?></p>
+		<?php if ((new \SearchWP\Tokens())->get_minimum_length() > strlen($search_query)) { ?>
+			<p><?php esc_html_e('Your search must be at least' . (new \SearchWP\Tokens())->get_minimum_length() . ' letters long.', 'searchwp'); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText 
+				?></p>
 
 		<?php } else { ?>
 
-			<h1>No results for '<?php echo wp_kses_post( $search_query ); ?>'</h1>
+			<h1>No results for '<?php echo wp_kses_post($search_query); ?>'</h1>
 
-					<?php get_search_form(); ?>
+			<?php get_search_form(); ?>
 
 			<div class="searchwp-live-search-no-results" role="option">
 				<div class="search-no-results-message">
-					<p>Sorry, we couldn't find any results for '<strong><?php echo wp_kses_post( $search_query ); ?></strong>'</p>
+					<p>Sorry, we couldn't find any results for '<strong><?php echo wp_kses_post($search_query); ?></strong>'</p>
 					<p>To improve your search results:</p>
 					<ul>
 						<li>Check your spelling</li>
 						<li>Use fewer keywords</li>
 						<li>Try a simpler phrase</li>
 					</ul>
+					<p>Still can't find what you are looking for? <a href="/about/#contact">Contact Us</a></p>
 				</div>
 			</div>
 
-					<?php /* same as the content in live-search-container.php */ ?>
-			<div class="live-search-extra">
-				<h2>Popular Content</h2>
+			<?php /* same as the content in live-search-container.php */ ?>
+			<div class="live-search-extra hidden">
+				<h2>Popular content</h2>
 				<a href="/policies-standards/digital-plan/" title="">
 					<div class="popular-content">
 						<h3>Digital Plan</h3>
@@ -260,16 +267,28 @@ class SearchResultsBlock {
 				</a>
 
 				<div class="searchwp-form-quick-search">
-					<h2 class="popular-searches-header">Popular keywords: </h2> <a href="/?s=trust">trust</a> <a href="/?s=policies">policies</a> <a href="/?s=accessibility">accessibility</a> <a href="/?s=blog">blog</a> <a href="/?s=guides">guides</a> <a href="/?s=design">design</a> <a href="/?s=case+studies">case studies</a> <a href="/?s=cloud">cloud</a> <a href="/?s=design">design</a> <a href="/?s=onboard">onboard</a> <a href="/?s=hire">hire</a>
+					<h2 class="popular-searches-header">Popular keywords: </h2> 
+					<a href="/?s=agile">Agile</a>
+					<a href="/?s=digital+code+of+practice">Digital Code of Practice</a>
+					<a href="/?s=digital+plan">Digital Plan</a>
+					<a href="/?s=digital+trust">Digital trust</a>
+					<a href="/?s=accessibility">Accessibility</a>
+					<a href="/?s=CHEFS">CHEFS</a>
+					<a href="/?s=community+of+practice">Community of practice</a>
+					<a href="/?s=courses">Courses</a>
+					<a href="/?s=digital+funding">Digital funding</a>
+					<a href="/?s=saas">SaaS</a>
+					<a href="/?s=cloud+services">Cloud services</a>
+					<a href="/?s=common+components">Common components</a>
 				</div>
 			</div>
 
-			<p>Stll can't find what you are looking for? <a href="/about/#contact">Contact Us</a></p>
+			
 		<?php } ?>
 	<?php } ?>
 
 
-		<?php
+<?php
 
 		$output .= ob_get_clean();
 
@@ -285,38 +304,39 @@ class SearchResultsBlock {
 	 * @param object $result The search results individual result item.
 	 * @param string $search_query The search query used.
 	 */
-	private function get_display_data( $result, $search_query ) {
+	private function get_display_data($result, $search_query)
+	{
 
-		if ( $result instanceof \WP_Post ) {
-			$post_title = Search::get_final_title( $result, true, $search_query );
+		if ($result instanceof \WP_Post) {
+			$post_title = Search::get_final_title($result, true, $search_query);
 
 			$data = [
-				'id'         => absint( $result->ID ),
-				'type'       => get_post_type( $result ),
+				'id'         => absint($result->ID),
+				'type'       => get_post_type($result),
 				'title'      => $post_title,
-				'permalink'  => get_the_permalink( $result ),
-				'image_html' => get_the_post_thumbnail( $result ),
-				'content'    => get_the_excerpt( $result ),
+				'permalink'  => get_the_permalink($result),
+				'image_html' => get_the_post_thumbnail($result),
+				'content'    => get_the_excerpt($result),
 			];
 		}
 
-		if ( $result instanceof \WP_User ) {
+		if ($result instanceof \WP_User) {
 			$data = [
-				'id'         => absint( $result->ID ),
+				'id'         => absint($result->ID),
 				'type'       => 'user',
 				'title'      => $result->data->display_name,
-				'permalink'  => get_author_posts_url( $result->data->ID ),
-				'image_html' => get_avatar( $result->data->ID ),
-				'content'    => get_the_author_meta( 'description', $result->data->ID ),
+				'permalink'  => get_author_posts_url($result->data->ID),
+				'image_html' => get_avatar($result->data->ID),
+				'content'    => get_the_author_meta('description', $result->data->ID),
 			];
 		}
 
-		if ( $result instanceof \WP_Term ) {
+		if ($result instanceof \WP_Term) {
 			$data = [
-				'id'         => absint( $result->term_id ),
+				'id'         => absint($result->term_id),
 				'type'       => 'taxonomy-term',
 				'title'      => $result->name,
-				'permalink'  => get_term_link( $result->term_id, $result->taxonomy ),
+				'permalink'  => get_term_link($result->term_id, $result->taxonomy),
 				'image_html' => '',
 				'content'    => $result->description,
 			];
@@ -331,10 +351,10 @@ class SearchResultsBlock {
 			'content'    => '',
 		];
 
-		$data = apply_filters( 'searchwp\results\entry\data', $data, $result );
+		$data = apply_filters('searchwp\results\entry\data', $data, $result);
 
 		// Make sure that default array structure is preserved.
-		return is_array( $data ) ? array_merge( $defaults, $data ) : $defaults;
+		return is_array($data) ? array_merge($defaults, $data) : $defaults;
 	}
 
 	/**
@@ -343,39 +363,40 @@ class SearchResultsBlock {
 	 * @param array $settings Search Results Page settings.
 	 * @return string
 	 */
-	private function get_container_classes( $settings ) {
+	private function get_container_classes($settings)
+	{
 
 		$classes = [
 			'swp-search-results',
 		];
 
-		if ( 'grid' === $settings['swp-layout-style'] ) {
+		if ('grid' === $settings['swp-layout-style']) {
 			$classes[] = 'swp-grid';
-			$per_row   = absint( $settings['swp-results-per-row'] );
-			if ( ! empty( $per_row ) ) {
+			$per_row   = absint($settings['swp-results-per-row']);
+			if (!empty($per_row)) {
 				$classes[] = 'swp-grid--cols-' . $per_row;
 			}
 		}
 
-		if ( 'list' === $settings['swp-layout-style'] ) {
+		if ('list' === $settings['swp-layout-style']) {
 			$classes[] = 'swp-flex';
 		}
 
 		$image_size = $settings['swp-image-size'];
-		if ( empty( $image_size ) || 'none' === $image_size ) {
+		if (empty($image_size) || 'none' === $image_size) {
 			$classes[] = 'swp-rp--img-none';
 		}
-		if ( 'small' === $image_size ) {
+		if ('small' === $image_size) {
 			$classes[] = 'swp-rp--img-sm';
 		}
-		if ( 'medium' === $image_size ) {
+		if ('medium' === $image_size) {
 			$classes[] = 'swp-rp--img-m';
 		}
-		if ( 'large' === $image_size ) {
+		if ('large' === $image_size) {
 			$classes[] = 'swp-rp--img-l';
 		}
 
-		return implode( ' ', $classes );
+		return implode(' ', $classes);
 	}
 
 	/**
@@ -384,21 +405,22 @@ class SearchResultsBlock {
 	 * @param array $settings Search Results Page settings.
 	 * @return string
 	 */
-	private function get_pagination_classes( $settings ) {
+	private function get_pagination_classes($settings)
+	{
 		$classes = [
 			'nav-links',
 		];
 
-		if ( 'circular' === $settings['swp-pagination-style'] ) {
+		if ('circular' === $settings['swp-pagination-style']) {
 			$classes[] = 'swp-results-pagination';
 			$classes[] = 'swp-results-pagination--circular';
 		}
 
-		if ( 'boxed' === $settings['swp-pagination-style'] ) {
+		if ('boxed' === $settings['swp-pagination-style']) {
 			$classes[] = 'swp-results-pagination';
 			$classes[] = 'swp-results-pagination--boxed';
 		}
 
-		return implode( ' ', $classes );
+		return implode(' ', $classes);
 	}
 }

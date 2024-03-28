@@ -131,14 +131,14 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 
 	$result_count = count( $search_results );
 	if ( $result_count ) {
-		// Output the "See all results" link if there are more than 4 suggestions.
+		// Output the "Show all results" link if there are more than 4 suggestions.
 		?>
 		<p class="results-info">
 			<?php
 			echo '<a href="/?s=' . wp_kses( $search_query, [] ) . '">' . wp_kses(
 				sprintf(
 					/* translators: %1$d: results count, %2$s: search keywords */
-                    __( 'See all %1$d results.' ),
+                    __( 'Show all %1$d results.' ),
 					$searchwp_query->found_results
 				),
 				[
