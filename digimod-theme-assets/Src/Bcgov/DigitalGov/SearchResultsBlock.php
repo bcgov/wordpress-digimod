@@ -151,14 +151,9 @@ class SearchResultsBlock
 
 					$search_categories = wp_list_pluck(get_the_terms($search_result, 'search-category'), 'name');
 					// print_r($search_categories); //phpcs:ignore
+					$private = ($post_is_restricted) ? 'private' : '';
 					?>
-					<a class="swp-result-item-link" href="<?php echo esc_url($display_data['permalink']); ?>" title="
-                                                                     <?php
-																		if ($post_is_restricted) {
-																			echo 'private';
-																		}
-																		?>
-                                                                                                                        ">
+					<a class="swp-result-item-link" href="<?php echo esc_url($display_data['permalink']); ?>" title="<?php echo esc_attr($private); ?>">
 						<article id="post-<?php echo esc_attr($search_result->ID); ?>" class="swp-result-item post-<?php echo esc_attr($search_result->ID); ?> post type-post status-publish format-standard hentry category-uncategorized entry">
 							<?php if (!empty($display_data['image_html']) && !empty($settings['swp-image-size']) && 'none' !== $settings['swp-image-size']) : ?>
 								<div class="swp-result-item--img-container">
