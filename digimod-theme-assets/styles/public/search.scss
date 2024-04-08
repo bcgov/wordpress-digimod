@@ -539,10 +539,8 @@ body.search-results {
 		}
 
 		&:first-of-type  {
-			&:is(:hover, :focus-visible) {
-				.swp-result-item {
-					padding-top: calc(1rem + 1px);
-				}
+			.swp-result-item:is(:hover, :focus-visible) {
+				padding-top: calc(1rem + 1px);
 			}
 		}
 	}
