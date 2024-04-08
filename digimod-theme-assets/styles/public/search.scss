@@ -553,9 +553,13 @@ body.search-results {
 
 	.swp-result-item-link:first-of-type .swp-result-item {
 		border-top: 1px solid var(--wp--preset--color--black);
+	}
 
+	.swp-result-item-link:first-of-type  {
 		&:is(:hover, :focus-visible) {
-			padding-top: calc(1rem + 1px);
+			.swp-result-item {
+				padding-top: calc(1rem + 1px);
+			}
 		}
 	}
 
