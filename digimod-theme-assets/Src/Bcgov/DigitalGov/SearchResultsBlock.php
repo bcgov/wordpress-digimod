@@ -239,7 +239,7 @@ class SearchResultsBlock
 
 			<?php /* same as the content in live-search-container.php */ ?>
 			<div class="live-search-extra hidden">
-				<h2>Popular content</h2>
+				<h2>Featured topics</h2>
 				<a href="/policies-standards/digital-plan/" title="">
 					<div class="popular-content">
 						<h3>Digital Plan</h3>
@@ -261,6 +261,8 @@ class SearchResultsBlock
 					</div>
 				</a>
 
+			</div>
+			<div class="live-search-extra">
 				<div class="searchwp-form-quick-search">
 					<h2 class="popular-searches-header">Popular keywords: </h2> 
 					<a href="/?s=agile">Agile</a>

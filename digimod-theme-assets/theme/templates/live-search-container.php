@@ -7,7 +7,7 @@
 
 <?php /* same as the content in SearchResultsBlock.php */ ?>
 <div class="live-search-extra">
-	<h2>Popular content</h2>
+	<h2>Featured topics</h2>
 	<a href="/policies-standards/digital-plan/" title=""><div class="popular-content">
 		<h3>Digital Plan</h3>
 		<p>The Digital Plan has 4 missions to achieve the next phase of digital transformation in government.</p>

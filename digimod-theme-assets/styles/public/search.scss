@@ -370,7 +370,7 @@ body:has(.searchwp-live-search-results[aria-expanded="true"]) .live-search-extra
 	}
 
 	a {
-		text-decoration: underline;
+		text-decoration: underline !important;
 		text-underline-offset: 3px;
 		border-bottom: 0;
 		color: var(--wp--preset--color--primary-brand);
@@ -380,6 +380,10 @@ body:has(.searchwp-live-search-results[aria-expanded="true"]) .live-search-extra
 		&:not(:last-child)::after {
 			content: ",";
 			display: inline;
+		}
+
+		&:is(:hover, :focus-visible) {
+			color: var(--wp--preset--color--secondary-brand);
 		}
 	}
 }

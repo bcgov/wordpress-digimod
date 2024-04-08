@@ -31,7 +31,7 @@ if ( ! empty( $search_query ) && class_exists( '\\SearchWP\\Query' ) ) {
         [
 			'engine'   => 'default',  // The Engine name.
 			'fields'   => 'all',      // Load proper native objects of each result.
-			'per_page' => 4,          // How many results to show in live search.
+			'per_page' => 5,          // How many results to show in live search.
 		]
     );
 
@@ -152,8 +152,24 @@ $popular_searches = wp_list_pluck( $popular_searches, 'query' );
 
 	
 	<?php } else { ?>
-		<div class="searchwp-live-search-no-results" role="option">
+		<div class="searchwp-live-search-no-results" role="option" style="margin-block: 3rem;">
 			<p>Sorry, we couldn't find any results for '<strong style="padding-inline: 0.05rem;"><?php echo wp_kses_post( $search_query ); ?></strong>'</p>
+		</div>
+
+		<div class="searchwp-form-quick-search">
+			<h2 class="popular-searches-header">Popular keywords: </h2> 
+				<a href="/?s=agile">Agile</a>
+				<a href="/?s=digital+code+of+practice">Digital Code of Practice</a>
+				<a href="/?s=digital+plan">Digital Plan</a>
+				<a href="/?s=digital+trust">Digital trust</a>
+				<a href="/?s=accessibility">Accessibility</a>
+				<a href="/?s=CHEFS">CHEFS</a>
+				<a href="/?s=community+of+practice">Community of practice</a>
+				<a href="/?s=courses">Courses</a>
+				<a href="/?s=digital+funding">Digital funding</a>
+				<a href="/?s=saas">SaaS</a>
+				<a href="/?s=cloud+services">Cloud services</a>
+					<a href="/?s=common+components">Common components</a>
 		</div>
 
 
