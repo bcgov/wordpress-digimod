@@ -538,7 +538,7 @@ body.search-results {
 			top: -1px;
 		}
 
-		&:first-of-type  {
+		&:first-of-type {
 			.swp-result-item:is(:hover, :focus-visible) {
 				padding-top: calc(1rem + 1px);
 			}
