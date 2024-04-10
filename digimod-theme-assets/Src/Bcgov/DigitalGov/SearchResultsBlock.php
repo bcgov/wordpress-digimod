@@ -140,7 +140,7 @@ class SearchResultsBlock
 				get_search_form();
 				?>
 
-				<p class="results-count">Showing <?php echo count($search_results); ?> of <?php echo wp_kses($searchwp_query->found_results, 0); ?> results.</p>
+				<p class="results-count">Showing <?php echo count($search_results); ?> of <?php echo wp_kses($searchwp_query->found_results, 0); ?> results</p>
 
 				<?php foreach ($search_results as $search_result) { ?>
 					<?php
@@ -234,7 +234,6 @@ class SearchResultsBlock
 						<li>Use fewer keywords</li>
 						<li>Try a simpler phrase</li>
 					</ul>
-					<p>Still can't find what you are looking for? <a href="/about/#contact">Contact Us</a></p>
 				</div>
 			</div>
 
@@ -267,14 +266,19 @@ class SearchResultsBlock
 				<div class="searchwp-form-quick-search">
 					<h2 class="popular-searches-header">Popular keywords: </h2>
 					<a href="/?s=agile">agile</a>
+					<a href="/?s=digital+code+of+practice">Digital Code of Practice</a>
+					<a href="/?s=digital+plan">Digital Plan</a>
 					<a href="/?s=digital+trust">digital trust</a>
 					<a href="/?s=accessibility">accessibility</a>
-					<a href="/?s=community">community</a>
+					<a href="/?s=chefs">CHEFS</a>
+					<a href="/?s=community+of+practice">Community of practice</a>
 					<a href="/?s=courses">courses</a>
 					<a href="/?s=digital+funding">digital funding</a>
+					<a href="/?s=saas">SaaS</a>
 					<a href="/?s=cloud">cloud</a>
 					<a href="/?s=common+components">common components</a>
 				</div>
+				<p style="color: var(--wp--preset--color--gray-80);">Still can't find what you are looking for? <a href="/about/#contact" style="color: var(--wp--preset--color--gray-80); text-decoration: underline !important;">Contact us</a>.</p>
 			</div>
 
 
