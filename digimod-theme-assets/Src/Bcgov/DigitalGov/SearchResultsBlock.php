@@ -153,7 +153,7 @@ class SearchResultsBlock
 					// print_r($search_categories); //phpcs:ignore
 					$private = ($post_is_restricted) ? 'private' : '';
 					?>
-					<a class="swp-result-item-link" href="<?php echo esc_url($display_data['permalink']); ?>" title="<?php echo esc_attr($private); ?>">
+					<a class="swp-result-item-link" href="<?php echo esc_url($display_data['permalink']); ?>" data-reveal="<?php echo esc_attr($private); ?>">
 						<article id="post-<?php echo esc_attr($search_result->ID); ?>" class="swp-result-item post-<?php echo esc_attr($search_result->ID); ?> post type-post status-publish format-standard hentry category-uncategorized entry">
 							<?php if (!empty($display_data['image_html']) && !empty($settings['swp-image-size']) && 'none' !== $settings['swp-image-size']) : ?>
 								<div class="swp-result-item--img-container">
@@ -164,14 +164,14 @@ class SearchResultsBlock
 							<?php endif; ?>
 
 							<div class="swp-result-item--info-container">
-								<h2 class="entry-title" aria-label=": page title: <?php
+								<h2 class="entry-title" aria-label="page title: <?php
 																					$title_without_mark = strip_tags($display_data['title']);
 																					echo $title_without_mark; ?>:">
 									<?php echo wp_kses_post($display_data['title']); ?>
 								</h2>
 
 								<?php if (count($search_categories)) { ?>
-									<div class="decorator" aria-label=": content type: <?php echo wp_kses_post(implode(',', $search_categories)); ?>:"><?php echo wp_kses_post(implode(',', $search_categories)); ?></div>
+									<div class="decorator" aria-label="content type: <?php echo wp_kses_post(implode(',', $search_categories)); ?>:"><?php echo wp_kses_post(implode(',', $search_categories)); ?></div>
 								<?php } ?>
 
 								<?php if (!empty($settings['swp-description-enabled'])) : ?>
@@ -187,7 +187,7 @@ class SearchResultsBlock
 										$content = wp_kses_post($content_without_mark);
 									}
 									?>
-									<p class="swp-result-item--desc" aria-label=": excerpt: <?php echo $content; ?>">
+									<p class="swp-result-item--desc" aria-label="excerpt: <?php echo $content; ?>">
 										<?php echo wp_kses_post($display_data['content']); ?>
 									</p>
 								<?php endif; ?>

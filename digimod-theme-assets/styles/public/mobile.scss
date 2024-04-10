@@ -122,7 +122,8 @@ nav.mm-menu {
 	border-right: 1px solid var(--wp--preset--color--gray-40);
 	z-index: 9;
 
-	a[title="private"]::after {
+	a[title="private"]::after,
+	a[data-reveal="private"]::after {
 		background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDQ0OCA1MTIiICBmaWxsPSIjOWE5YTlhIj48cGF0aCBkPSJNNDAwIDIyNGgtMjR2LTcyQzM3NiA2OC4yIDMwNy44IDAgMjI0IDBTNzIgNjguMiA3MiAxNTJ2NzJINDhjLTI2LjUgMC00OCAyMS41LTQ4IDQ4djE5MmMwIDI2LjUgMjEuNSA0OCA0OCA0OGgzNTJjMjYuNSAwIDQ4LTIxLjUgNDgtNDhWMjcyYzAtMjYuNS0yMS41LTQ4LTQ4LTQ4ek0yNjQgMzkyYzAgMjIuMS0xNy45IDQwLTQwIDQwcy00MC0xNy45LTQwLTQwdi00OGMwLTIyLjEgMTcuOS00MCA0MC00MHM0MCAxNy45IDQwIDQwdjQ4em0zMi0xNjhIMTUydi03MmMwLTM5LjcgMzIuMy03MiA3Mi03MnM3MiAzMi4zIDcyIDcydjcyeiIvPjwvc3ZnPg==);
 		background-position: right;
 		background-repeat: no-repeat;
