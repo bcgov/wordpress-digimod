@@ -40,9 +40,11 @@ const domReady = () => {
 
             if (clickCount === 3) {
                 const search = document.querySelector("#search-container");
-                search.classList.remove('hidden');
-                search.style.display = 'block';
-                clickCount = 0;
+                if (search) {
+                    search.classList.remove('hidden');
+                    search.style.display = 'block';
+                    clickCount = 0;
+                }
             }
         }
 
@@ -51,9 +53,11 @@ const domReady = () => {
         document.addEventListener('click', function (event) {
             if (!siteHeader.contains(event.target)) {
                 const search = document.querySelector("#search-container");
-                search.classList.add('hidden');
-                search.style.display = 'none';
-                clickCount = 0;
+                if (search) {
+                    search.classList.add('hidden');
+                    search.style.display = 'none';
+                    clickCount = 0;
+                }
             }
         });
 
