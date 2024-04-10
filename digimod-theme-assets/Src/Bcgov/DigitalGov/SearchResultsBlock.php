@@ -265,18 +265,14 @@ class SearchResultsBlock
 			<div class="live-search-extra">
 				<div class="searchwp-form-quick-search">
 					<h2 class="popular-searches-header">Popular keywords: </h2> 
-					<a href="/?s=agile">Agile</a>
-					<a href="/?s=digital+code+of+practice">Digital Code of Practice</a>
-					<a href="/?s=digital+plan">Digital Plan</a>
-					<a href="/?s=digital+trust">Digital trust</a>
-					<a href="/?s=accessibility">Accessibility</a>
-					<a href="/?s=CHEFS">CHEFS</a>
-					<a href="/?s=community+of+practice">Community of practice</a>
-					<a href="/?s=courses">Courses</a>
-					<a href="/?s=digital+funding">Digital funding</a>
-					<a href="/?s=saas">SaaS</a>
-					<a href="/?s=cloud+services">Cloud services</a>
-					<a href="/?s=common+components">Common components</a>
+					<a href="/?s=agile">agile</a>
+					<a href="/?s=digital+trust">digital trust</a>
+					<a href="/?s=accessibility">accessibility</a>
+					<a href="/?s=community">community</a>
+					<a href="/?s=courses">courses</a>
+					<a href="/?s=digital+funding">digital funding</a>
+					<a href="/?s=cloud">cloud</a>
+					<a href="/?s=common+components">common components</a>
 				</div>
 			</div>
 
