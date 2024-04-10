@@ -164,30 +164,31 @@ class SearchResultsBlock
 							<?php endif; ?>
 
 							<div class="swp-result-item--info-container">
-								<h2 class="entry-title">
+								<h2 class="entry-title" aria-label="page title: <?php
+																					$title_without_mark = strip_tags($display_data['title']);
+																					echo $title_without_mark; ?>...">
 									<?php echo wp_kses_post($display_data['title']); ?>
 								</h2>
 
 								<?php if (count($search_categories)) { ?>
-									<div class="decorator"><?php echo wp_kses_post(implode(',', $search_categories)); ?></div>
+									<div class="decorator" aria-label="content type: <?php echo wp_kses_post(implode(',', $search_categories)); ?>..."><?php echo wp_kses_post(implode(',', $search_categories)); ?></div>
 								<?php } ?>
 
 								<?php if (!empty($settings['swp-description-enabled'])) : ?>
-									<p class="swp-result-item--desc">
-										<?php
-										if ($post_is_restricted && !is_user_logged_in()) {
-											if ($post_is_restricted_idir) {
-										?>
-												This content requires an IDIR login to view.
-
-											<?php } else { ?>
-												There is no excerpt because this is a protected post.
-
-											<?php } ?>
-
-										<?php } else { ?>
-											<?php echo wp_kses_post($display_data['content']); ?>
-										<?php } ?>
+									<?php
+									if ($post_is_restricted && !is_user_logged_in()) {
+										if ($post_is_restricted_idir) {
+											$content = "This content requires an IDIR login to view.";
+										} else {
+											$content = "There is no excerpt because this is a protected post.";
+										}
+									} else {
+										$content_without_mark = strip_tags($display_data['content']);
+										$content = wp_kses_post($content_without_mark);
+									}
+									?>
+									<p class="swp-result-item--desc" aria-label="page description: <?php echo $content; ?>">
+										<?php echo wp_kses_post($display_data['content']); ?>
 									</p>
 								<?php endif; ?>
 
@@ -264,7 +265,7 @@ class SearchResultsBlock
 			</div>
 			<div class="live-search-extra">
 				<div class="searchwp-form-quick-search">
-					<h2 class="popular-searches-header">Popular keywords: </h2> 
+					<h2 class="popular-searches-header">Popular keywords: </h2>
 					<a href="/?s=agile">agile</a>
 					<a href="/?s=digital+trust">digital trust</a>
 					<a href="/?s=accessibility">accessibility</a>
@@ -276,7 +277,7 @@ class SearchResultsBlock
 				</div>
 			</div>
 
-			
+
 		<?php } ?>
 	<?php } ?>
 
