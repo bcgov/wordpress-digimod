@@ -105,7 +105,9 @@ const digitalGovSearch = () => {
 
 			if (searchPage && searchFieldContainer) {
 				searchFieldContainer.remove();
-				toggleSearchBtn.classList.add('disabled');
+				if (toggleSearchBtn) {
+					toggleSearchBtn.classList.add('disabled');
+				}
 			}
 
 		});
