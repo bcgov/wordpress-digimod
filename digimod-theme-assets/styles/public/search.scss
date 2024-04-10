@@ -193,6 +193,10 @@ body:has(.searchwp-live-search-results[aria-expanded="true"]) .live-search-extra
 
 .live-search-extra {
 
+	h2 {
+		margin-block: 0.5rem;
+	}
+
 	.popular-content {
 		border: 1px solid var(--wp--preset--color--primary-brand);
 		border-radius: 3px;
@@ -200,10 +204,6 @@ body:has(.searchwp-live-search-results[aria-expanded="true"]) .live-search-extra
 		padding: 1rem;
 		background-color: #eff4fb !important;
 		color: var(--wp--preset--color--primary-brand);
-
-		h2 {
-			margin-block: 0.5rem;
-		}
 
 		h3 {
 			color: var(--wp--preset--color--primary-brand);
