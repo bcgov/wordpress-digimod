@@ -91,6 +91,9 @@ class Plugin {
 
 		// Hook into the global query filter.
 		add_filter( 'query', [ $this, 'optimize_searchwp_quoted_search' ] );
+
+		// Add excerpts to pages for better search support.
+		add_post_type_support( 'page', 'excerpt' );
 	}
 
 
