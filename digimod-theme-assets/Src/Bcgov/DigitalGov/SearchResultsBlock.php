@@ -178,16 +178,16 @@ class SearchResultsBlock
 									<?php
 									if ($post_is_restricted && !is_user_logged_in()) {
 										if ($post_is_restricted_idir) {
-											$content = "This content requires an IDIR login to view.";
+											$content = "excerpt: This content requires an IDIR login to view.";
 										} else {
 											$content = "There is no excerpt because this is a protected post.";
 										}
 									} else {
 										$content_without_mark = strip_tags($display_data['content']);
-										$content = wp_kses_post($content_without_mark);
+										$content = "excerpt: " . wp_kses_post($content_without_mark);
 									}
 									?>
-									<p class="swp-result-item--desc" aria-label="excerpt: <?php echo $content; ?>">
+									<p class="swp-result-item--desc" aria-label="<?php echo $content; ?>">
 										<?php echo wp_kses_post($display_data['content']); ?>
 									</p>
 								<?php endif; ?>
