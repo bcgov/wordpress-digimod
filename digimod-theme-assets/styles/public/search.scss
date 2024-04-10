@@ -497,8 +497,6 @@ body.search-results {
 				}
 			}
 
-			
-
 			padding-top: 1rem;
 			padding-bottom: 0;
 			padding-inline: 1rem;
@@ -527,6 +525,7 @@ body.search-results {
 			.decorator {
 				color: var(--wp--preset--color--gray-80);
 				font-size: 1rem;
+				order: -1;
 			}
 
 		}
@@ -560,6 +559,8 @@ body.search-results {
 
 	.swp-result-item--info-container {
 		gap: 0.15rem;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.entry-title {

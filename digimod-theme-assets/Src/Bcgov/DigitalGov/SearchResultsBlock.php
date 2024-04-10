@@ -164,13 +164,13 @@ class SearchResultsBlock
 							<?php endif; ?>
 
 							<div class="swp-result-item--info-container">
-								<?php if (count($search_categories)) { ?>
-									<div class="decorator"><?php echo wp_kses_post(implode(',', $search_categories)); ?></div>
-								<?php } ?>
-
 								<h2 class="entry-title">
 									<?php echo wp_kses_post($display_data['title']); ?>
 								</h2>
+
+								<?php if (count($search_categories)) { ?>
+									<div class="decorator"><?php echo wp_kses_post(implode(',', $search_categories)); ?></div>
+								<?php } ?>
 
 								<?php if (!empty($settings['swp-description-enabled'])) : ?>
 									<p class="swp-result-item--desc">
