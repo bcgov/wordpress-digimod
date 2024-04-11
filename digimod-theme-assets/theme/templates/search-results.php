@@ -81,7 +81,8 @@ $popular_searches = wp_list_pluck($popular_searches, 'query');
 		$post_is_restricted_idir = custom_redirect_to_login_check_if_url_in_list(get_permalink($search_result->ID));
 		$post_is_restricted      = $post_is_restricted_idir || post_password_required($search_result->ID);
 
-		$result_content = get_the_excerpt($search_result);
+		$thePost = get_post($search_result->ID);
+		$result_content = $thePost->post_excerpt ? $thePost->post_excerpt : get_the_excerpt( $search_result ); //Search sets up the excerpt for highlighting, and thus doesnt use the manually set one. by passing the post id it forces the manually set one.
 		if ($post_is_restricted) {
 			if (!is_user_logged_in()) {
 				if ($post_is_restricted_idir) {
