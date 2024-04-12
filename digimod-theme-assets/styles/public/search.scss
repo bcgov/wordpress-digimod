@@ -181,6 +181,11 @@ header:has(#search-container) {
 	font-size: 1rem;
 	font-weight: 700;
 	letter-spacing: 0.25px;
+
+	&:focus-visible {
+		outline: 1px solid var(--wp--preset--color--primary-brand);
+		outline-offset: 2px;
+	}
 }
 
 body:has(.searchwp-live-search-results :focus) {
@@ -446,6 +451,11 @@ body:has(.searchwp-live-search-results[aria-expanded="true"]) .live-search-extra
 		letter-spacing: .25px;
 		border-width: 0;
 		color: #fff;
+
+		&:focus-visible {
+			outline: 1px solid var(--wp--preset--color--primary-brand);
+			outline-offset: 2px;
+		}
 	}
 }
 
