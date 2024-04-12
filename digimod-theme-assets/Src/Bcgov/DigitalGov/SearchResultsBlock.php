@@ -280,7 +280,7 @@ class SearchResultsBlock {
 					<a href="/?s=cloud">cloud</a>
 					<a href="/?s=common+components">common components</a>
 				</div>
-				<p style="color: var(--wp--preset--color--gray-80);">Still can't find what you are looking for? <a href="/about/#contact" style="color: var(--wp--preset--color--gray-80); text-decoration: underline !important;">Contact us</a>.</p>
+				<p style="color: var(--wp--preset--color--gray-80);">Still can't find what you are looking for? <a href="/about/#contact" style="color: var(--wp--preset--color--secondary-brand); text-decoration: underline !important;">Contact us</a>.</p>
 			</div>
 
 
