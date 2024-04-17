@@ -88,6 +88,10 @@ class SearchResultsBlock {
 			'swp-pagination-style'    => '',
 		];
 
+		//Remove the slashes added to the query 
+		$_GET['s'] = stripslashes($_GET['s']);
+		
+
 		// Retrieve applicable query parameters.
 		$search_query = isset( $_GET['s'] ) ? sanitize_text_field( $_GET['s'] ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$search_page  = isset( $_GET['swppg'] ) ? absint( $_GET['swppg'] ) : 1;         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
