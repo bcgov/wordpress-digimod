@@ -40,7 +40,7 @@
 		<a href="/?s=chefs">CHEFS</a>
 		<a href="/?s=community+of+practice">Community of practice</a>
 		<a href="/?s=courses">courses</a>
-		<a href="/?s=digital+funding">digital funding</a>
+		<a href="/?s=funding">funding</a>
 		<a href="/?s=saas">SaaS</a>
 		<a href="/?s=cloud">cloud</a>
 		<a href="/?s=common+components">common components</a>
