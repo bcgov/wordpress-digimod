@@ -26,42 +26,6 @@ const domReady = () => {
      */
     setTimeout(function () {
 
-
-        /**
-         * Testing for Search – remove once Search is in production
-         */
-
-        const siteHeader = document.querySelector('.bcgov-site-header');
-
-        let clickCount = 0;
-
-        function handleHeaderClick() {
-            clickCount++;
-
-            if (clickCount === 3) {
-                const search = document.querySelector("#search-container");
-                if (search) {
-                    search.classList.remove('hidden');
-                    search.style.display = 'block';
-                    clickCount = 0;
-                }
-            }
-        }
-
-        siteHeader.addEventListener('click', handleHeaderClick);
-
-        document.addEventListener('click', function (event) {
-            if (!siteHeader.contains(event.target)) {
-                const search = document.querySelector("#search-container");
-                if (search) {
-                    search.classList.add('hidden');
-                    search.style.display = 'none';
-                    clickCount = 0;
-                }
-            }
-        });
-
-
         /**
          * Remove events from WordPress generated links based on 'no-events' class.
          */
