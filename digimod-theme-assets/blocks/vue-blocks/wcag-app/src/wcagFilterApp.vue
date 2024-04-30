@@ -28,7 +28,7 @@
                 class="has-text-color has-secondary-brand-color is-style-default wp-block-post-title card-title"
                 v-html="post.title.rendered"></h3>
 
-              <p v-if="post.acf.success_criteria_number.value" class="has-text-color has-secondary-brand-color" style="margin-block:1rem 0;">Success criterion {{ post.acf.success_criteria_number.value }}
+              <p v-if="post.acf.success_criteria_number.value" class="has-text-color has-secondary-brand-color" style="margin-block:1rem 0; font-size:1rem">Success criterion {{ post.acf.success_criteria_number.value }}
                 <span v-if="'null' !== post.acf.success_criteria_level.value">(Level {{ post.acf.success_criteria_level.value }})</span>
               </p>
 
