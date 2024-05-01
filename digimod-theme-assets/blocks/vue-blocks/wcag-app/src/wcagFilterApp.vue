@@ -29,7 +29,7 @@
                 v-html="post.title.rendered"></h3>
 
               <p v-if="undefined !== post.acf.success_criteria_number && post.acf.success_criteria_number.value" class="has-text-color has-secondary-brand-color" style="margin-block:1rem 0; font-size:1rem">Success criterion {{ post.acf.success_criteria_number.value }}
-                <span v-if="'null' !== post.acf.success_criteria_level.value">(Level {{ post.acf.success_criteria_level.value }})</span>
+                <span v-if="undefined !== post.acf.success_criteria_level && 'null' !== post.acf.success_criteria_level.value">(Level {{ post.acf.success_criteria_level.value }})</span>
               </p>
 
               <p v-if="post.acf.team_name_ministry" style="margin-top:0;">{{ post.acf.team_name_ministry.value }}
