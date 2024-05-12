@@ -1,0 +1,32 @@
+{
+  "version": "3.80.31058.0",
+  "course_id": "5x12YKDMLzu_course_id",
+  "title": "Action Plan",
+  "thumbnail": "story_content/thumbnail.jpg",
+  "scenes": [
+    {
+      "title": "Untitled Scene"
+    }
+  ],
+  "slides": [
+    {
+      "id": "6ISZkNh5rYo",
+      "title": "Instructions",
+      "scene_index": "1.1"
+    },
+    {
+      "id": "6jtuXtqqQZ0",
+      "title": "Document and Print",
+      "scene_index": "1.2"
+    }
+  ],
+  "player": {
+    "name": "unified",
+    "width": 740,
+    "height": 1024
+  },
+  "stage": {
+    "width": 720,
+    "height": 930
+  }
+}
