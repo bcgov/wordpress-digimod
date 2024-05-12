@@ -28,8 +28,8 @@ if (!defined('ABSPATH')) {
 // Begin function to check for updates to plugin
 require_once "digimod-update-check.php";
 
-add_action('init', 'digimod_misc_update_check_init');
-function digimod_misc_update_check_init()
+add_action('init', 'digimod_agile_fundamentals_training_update_check_init');
+function digimod_agile_fundamentals_training_update_check_init()
 {
     if (class_exists('digimod_plugin_update_check')) {
         new digimod_plugin_update_check(__FILE__, plugin_basename(__FILE__));
