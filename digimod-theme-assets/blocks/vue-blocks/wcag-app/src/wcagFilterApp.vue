@@ -282,15 +282,12 @@ onMounted(() => {
   font-weight: 700;
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
-  position: relative;
-  top: -1px;
 }
 
 .clear-filters:hover,
 .clear-filters:focus-visible {
   background-color: var(--wp--preset--color--primary-brand);
   color: var(--wp--preset--color--white);
-  top: 0px;
 }
 
 .filter-card {
