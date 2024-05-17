@@ -15,7 +15,9 @@
           </label>
         </div>
       </template>
-      <button class="clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters' aria-label='Show all filterable content. Removes previously set filter options.'>Show all</button>
+      <div class="tag-checkbox">
+        <button class="tag clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters' aria-label='Show all filterable content. Removes previously set filter options.'>Show all</button>
+      </div>
     </div>
   </div>
   <div v-if="filteredPosts.length > 0" class='num-available'>{{ filteredPosts.length }} of {{ posts.length }} results
@@ -275,8 +277,8 @@ onMounted(() => {
   border-radius: 0.5rem;
   color: var(--wp--preset--color--secondary-brand);
   cursor: pointer;
-  padding: 0.33rem 0.66rem 0.5rem;
-  margin: 0;
+  padding: .33rem .35rem 1.45rem;
+  margin: 0 0 0 0.25rem;
   overflow: hidden;
   font-size: 1rem;
   font-weight: 700;
@@ -288,6 +290,9 @@ onMounted(() => {
 .clear-filters:focus-visible {
   background-color: var(--wp--preset--color--primary-brand);
   color: var(--wp--preset--color--white);
+  outline: 2px solid var(--wp--preset--color--primary-brand);
+  outline-offset: 2px;
+  text-decoration: none;
 }
 
 .filter-card {
