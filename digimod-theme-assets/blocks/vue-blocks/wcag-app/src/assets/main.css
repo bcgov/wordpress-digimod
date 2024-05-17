@@ -101,7 +101,7 @@
   }
 
   .taxonomy-common_component_category{
-    align-items: flex-start;
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
     gap: 0.33rem;

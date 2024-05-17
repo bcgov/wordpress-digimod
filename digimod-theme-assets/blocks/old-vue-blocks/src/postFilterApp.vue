@@ -398,11 +398,11 @@ onMounted(() => {
 }
 
 .taxonomy-common_component_category {
-  align-items: flex-start;
   display: flex;
+  align-items: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: 0.25rem;
-  justify-content: flex-start;
 }
 
 .vue-card-container {
