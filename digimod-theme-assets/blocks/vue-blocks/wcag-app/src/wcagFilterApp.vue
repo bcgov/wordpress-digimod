@@ -10,7 +10,7 @@
           </label>
       </div>
       </template>
-      <button class="clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters'>Reset filters</button>
+      <button class="clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters'>Show all</button>
     </div>
   </div>
   <div v-if="filteredPosts.length > 0" class='num-available'>{{ filteredPosts.length }} of {{ posts.length }} results showing</div>
@@ -41,7 +41,7 @@
                 </span></p>
               <div v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms wcag-card-tags">
                 <template v-for="tag in post.wcag_tag" :key="tag">
-                  <span v-if='tag !== "Active"' class="tag">{{ tag }}</span>
+                  <span v-if='tag !== "Active"'  :class="{'tag': true, 'active': selectedTags.includes(tag)}">{{ tag }}</span>
                 </template>
               </div>
             </div>
@@ -64,6 +64,7 @@ const selectedTags = ref([]);
 const cssClass = ref('');
 const columns = ref(3);
 const showMessage = ref(false);
+const allTagSelected = ref(true);
 
 const fetchData = async () => {
   const url = `/wp-json/wp/v2/${postType.value}?_embed&per_page=100`;
@@ -93,6 +94,7 @@ const checkTag = (index) => {
     selectedTags.value.push(tag);
   }
 };
+  
 
 // const checkTag = (index) => {
 //   const tag = uniqueTags.value[index];
@@ -129,7 +131,7 @@ const filteredPosts = computed(() => {
     console.log('posts:', posts);
     return posts.value
       .filter((post) =>
-        post.wcag_tag && post.wcag_tag.length && selectedTags.value.every((tag) => post.wcag_tag.includes(tag))
+        post.wcag_tag && post.wcag_tag.length && selectedTags.value.some((tag) => post.wcag_tag.includes(tag))
       )
       .slice()
       .sort((a, b) => (a.title.rendered > b.title.rendered) ? 1 : -1);

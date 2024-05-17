@@ -86,6 +86,12 @@
 				font-size: 12px;
 				white-space: nowrap;
 				text-align: center;
+
+				&.active {
+					background-color: #4a81e71a;
+					color: var(--wp--preset--color--primary-brand);
+					font-weight: 700;
+				}
 			}
 		}
 	}
