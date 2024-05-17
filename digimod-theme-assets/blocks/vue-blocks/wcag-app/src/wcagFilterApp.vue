@@ -1,18 +1,21 @@
 <template>
   <div v-if="uniqueTags.length > 0" class='tag-filter-container'>
-    <div class="taxonomy-common_component_category wp-block-post-terms" style="float:left;">
+    <div role='heading' id="id-group-label" class='sr-only' aria-hidden='true'>Filterable categories</div>
+    <div class="taxonomy-common_component_category wp-block-post-terms" style="float:left;" role="group" aria-labelledby="id-group-label">
       <template v-for="tag, index in uniqueTags">
         <div v-if='tag !== "Active"' :key="tag" class="tag-checkbox">
           <input type="checkbox" :id="'tag-' + index" :value="tag" v-model="selectedTags" class="tag-input" />
           <label :for="tag" class="tag-label tag" tabindex="0" @click="checkTag(index)"
             @keydown.space.enter.prevent="checkTag(index)" 
             @keydown="handleKeyNavigation($event, index)" 
-            role="button" :aria-label="getTagAriaLabel(tag)">
+            role="checkbox" 
+            :aria-label="getTagAriaLabel(tag)"
+            :aria-checked="getTagAriaChecked(tag)">
             {{ tag }}
           </label>
         </div>
       </template>
-      <button class="clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters'>Show all</button>
+      <button class="clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters' aria-label='Show all filterable content. Removes previously set filter options.'>Show all</button>
     </div>
   </div>
   <div v-if="filteredPosts.length > 0" class='num-available'>{{ filteredPosts.length }} of {{ posts.length }} results
@@ -46,12 +49,13 @@
                   {{ post.acf.short_description ? post.acf.short_description.value : post.acf.description.value
                   }}
                 </span></p>
-              <div v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms wcag-card-tags">
+              <div role='heading' id="id-tag-group-label" class='sr-only'>Applicable filter categories</div>
+              <ul v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms wcag-card-tags">
                 <template v-for="tag in post.wcag_tag" :key="tag">
-                  <span v-if='tag !== "Active"' :class="{ 'tag': true, 'active': selectedTags.includes(tag) }">{{ tag
-                    }}</span>
+                  <li v-if='tag !== "Active"' :class="{ 'tag': true, 'active': selectedTags.includes(tag) }">{{ tag
+                    }}</li>
                 </template>
-              </div>
+              </ul>
             </div>
           </a>
         </li>
@@ -172,11 +176,15 @@ const handleKeyNavigation = (event, index) => {
 //   }
 // };
 
-
-
 const getTagAriaLabel = (tag) => {
   return `${tag} filter ${selectedTags.value.includes(tag) ? 'selected' : 'deselected'}`;
 };
+
+const getTagAriaChecked = (tag) => {
+  return `${selectedTags.value.includes(tag) ? 'true' : 'false'}`;
+};
+
+
 
 const clearFilters = () => {
   selectedTags.value = [];

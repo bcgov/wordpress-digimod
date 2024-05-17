@@ -76,16 +76,21 @@
 			gap: 0.25rem;
 			justify-content: flex-start;
 			align-items: flex-start;
+			padding: 0;
+			width: 100%;
 
+			li.tag,
 			span.tag {
 				background-color: var(--wp--preset--color--background);
 				border: 1px solid $dustygrey;
 				border-radius: 999px;
+				display: inline-block;
 				height: 25px;
 				padding: 3px 8px 0;
 				font-size: 12px;
 				white-space: nowrap;
 				text-align: center;
+				width: fit-content;
 
 				&.active {
 					background-color: #4a81e71a;
