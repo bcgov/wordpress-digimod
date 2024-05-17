@@ -1,22 +1,21 @@
 <template>
   <div v-if="uniqueTags.length > 0" class='tag-filter-container'>
     <div role='heading' id="id-group-label" class='sr-only' aria-hidden='true'>Filterable categories</div>
-    <div class="taxonomy-common_component_category wp-block-post-terms" style="float:left;" role="group" aria-labelledby="id-group-label">
+    <div class="taxonomy-common_component_category wp-block-post-terms" style="float:left;" role="group"
+      aria-labelledby="id-group-label">
       <template v-for="tag, index in uniqueTags">
-        <div v-if='tag !== "Active"' :key="tag" class="tag-checkbox">
+        <div class="tag-checkbox">
           <input type="checkbox" :id="'tag-' + index" :value="tag" v-model="selectedTags" class="tag-input" />
           <label :for="tag" class="tag-label tag" tabindex="0" @click="checkTag(index)"
-            @keydown.space.enter.prevent="checkTag(index)" 
-            @keydown="handleKeyNavigation($event, index)" 
-            role="checkbox" 
-            :aria-label="getTagAriaLabel(tag)"
-            :aria-checked="getTagAriaChecked(tag)">
+            @keydown.space.enter.prevent="checkTag(index)" @keydown="handleKeyNavigation($event, index)" role="checkbox"
+            :aria-label="getTagAriaLabel(tag)" :aria-checked="getTagAriaChecked(tag)">
             {{ tag }}
           </label>
         </div>
       </template>
       <div class="tag-checkbox">
-        <button class="tag clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters' aria-label='Show all filterable content. Removes previously set filter options.'>Show all</button>
+        <button class="tag clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters'
+          aria-label='Show all filterable content. Removes previously set filter options.'>Show all</button>
       </div>
     </div>
   </div>
@@ -131,6 +130,22 @@ const handleKeyNavigation = (event, index) => {
     }
   };
 
+  // const focusNext = () => {
+  //   if (index === labels.length) {
+  //     labels[0].focus();
+  //   } else if (index >= 0) {
+  //     labels[index].focus();
+  //   } 
+  // };
+
+  // const focusPrev = () => {
+  //   if (index === 1) {
+  //     labels[labels.length - 1].focus();
+  //   } else if (index > 1) {
+  //     labels[index - 2].focus();
+  //   }
+  // };
+
   const focusFirst = () => {
     labels[0].focus();
   };
@@ -192,7 +207,7 @@ const clearFilters = () => {
   selectedTags.value = [];
 };
 
-const uniqueTags = computed(() => [...new Set(posts.value.flatMap((post) => post.wcag_tag || []).sort())]);
+const uniqueTags = computed(() => [...new Set(posts.value.flatMap((post) => post.wcag_tag || []).filter(tag => tag !== "Active").sort())]); // Remove the Active category so it does not interfere with arrow navigation
 const filteredPosts = computed(() => {
   if (!selectedTags.value.length) {
     return posts.value;
