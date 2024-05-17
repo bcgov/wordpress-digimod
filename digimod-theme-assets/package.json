@@ -9,16 +9,19 @@
     "build:watch": "vite build --watch",
     "build": "vite build; wp-scripts build 'src/admin.js' --output-path=dist-plugin",
     "preview": "vite preview",
-    "test": "vitest",    
-		"start": "wp-scripts start 'src/admin.js' --output-path=dist-plugin"
+    "test": "vitest",
+    "start": "wp-scripts start 'src/admin.js' --output-path=dist-plugin"
   },
   "dependencies": {
     "vue": "^3.4.19"
   },
   "devDependencies": {
+    "@bcgov/wordpress-eslint": "git+https://apps.itsm.gov.bc.ca/bitbucket/scm/wp/bcgov-wordpress-eslint.git#semver:1.x",
+    "@bcgov/wordpress-stylelintrc": "git+https://apps.itsm.gov.bc.ca/bitbucket/scm/wp/bcgov-wordpress-stylelintrc.git#semver:1.x",
     "@rushstack/eslint-patch": "^1.2.0",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/eslint-config-prettier": "^7.1.0",
+    "@wordpress/scripts": "^26.19.0",
     "eslint": "^8.39.0",
     "eslint-plugin-vue": "^9.11.0",
     "jsdom": "^21.1.0",
@@ -26,9 +29,6 @@
     "sass": "^1.58.3",
     "terser": "^5.18.2",
     "vite": "^4.3.5",
-    "vitest": "^0.29.2",
-		"@bcgov/wordpress-eslint": "git+https://apps.itsm.gov.bc.ca/bitbucket/scm/wp/bcgov-wordpress-eslint.git#semver:1.x",
-		"@bcgov/wordpress-stylelintrc": "git+https://apps.itsm.gov.bc.ca/bitbucket/scm/wp/bcgov-wordpress-stylelintrc.git#semver:1.x",
-		"@wordpress/scripts": "^26.19.0"
+    "vitest": "^0.29.2"
   }
 }
