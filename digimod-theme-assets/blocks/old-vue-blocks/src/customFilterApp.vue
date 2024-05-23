@@ -131,7 +131,7 @@
 }
 
 .tag-input:checked+.tag {
-  background-color: #dfe7ed;
+  background-color: var(--wp--preset--color--white);
   color: #000;
   outline: 2px solid var(--wp--preset--color--primary-brand);
   outline-offset: -1px;

@@ -265,24 +265,24 @@ onMounted(() => {
 .tag-input:checked+.tag:focus-visible,
 .tag-input:checked+.tag:hover {
   background-color: var(--wp--preset--color--primary-brand);
-  color: #dfe7ed;
+  color: var(--wp--preset--color--white);
   outline: 2px solid var(--wp--preset--color--white);
   outline-offset: -4px;
 }
 
 .tag-input:checked+.tag {
-  color: #dfe7ed;
+  color: var(--wp--preset--color--white);
   background-color: var(--wp--preset--color--secondary-brand);
   border: 2px solid var(--wp--preset--color--primary-brand);
   padding: calc(0.33rem - 1px) calc(0.66rem - 1px);
 }
 
-.card-title-link:hover {
+.card-title-link:is(:hover, :focus-visible) {
   outline: 0 !important;
   border-radius: 1rem !important;
 }
 
-.card-title-link:hover .wcag-card-content {
+.card-title-link:is(:hover, :focus-visible) .wcag-card-content {
   outline: 2px solid var(--wp--preset--color--primary-brand);
 }
 
