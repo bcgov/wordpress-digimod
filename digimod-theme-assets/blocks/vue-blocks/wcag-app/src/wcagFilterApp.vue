@@ -256,11 +256,6 @@ onMounted(() => {
   margin-bottom: .33rem;
 }
 
-/* Sets up colour differentiation for WCAG P.O.U.R. prinicple tags (first four) */
-[data-post-type-label="WCAG card"] .tag-checkbox:nth-child(-n+4) label {
-  background-color: var(--wp--preset--color--white);
-}
-
 .tag.tag-label {
   padding: 0.33rem 0.66rem;
 }
@@ -280,6 +275,12 @@ onMounted(() => {
   background-color: var(--wp--preset--color--secondary-brand);
   border: 2px solid var(--wp--preset--color--primary-brand);
   padding: calc(0.33rem - 1px) calc(0.66rem - 1px);
+}
+
+/* Sets up colour differentiation for WCAG P.O.U.R. prinicple tags (first four) */
+[data-post-type-label="WCAG card"] .tag-checkbox:nth-child(-n+4):has(.tag-input:not(:checked)) label:not(:hover, :focus-visible) {
+  background-color: var(--wp--preset--color--white);
+  color: var(--wp--preset--color--primary-brand);
 }
 
 .card-title-link:is(:hover, :focus-visible) {
