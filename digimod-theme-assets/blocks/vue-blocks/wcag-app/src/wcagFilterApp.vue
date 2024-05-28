@@ -253,7 +253,7 @@ onMounted(() => {
 }
 
 .tag-checkbox {
-  margin-bottom: .33rem;
+  margin-bottom: .66rem;
 }
 
 .tag.tag-label {
