@@ -9,7 +9,7 @@
           <label :for="tag" class="tag-label tag" tabindex="0" @click="checkTag(index)"
             @keydown.space.enter.prevent="checkTag(index)" @keydown="handleKeyNavigation($event, index)" role="checkbox"
             :aria-label="getTagAriaLabel(tag)" :aria-checked="getTagAriaChecked(tag)">
-            {{ tag }}
+            {{ removePrefix(tag) }}
           </label>
         </div>
       </template>
@@ -53,7 +53,7 @@
               <div role='heading' id="id-tag-group-label" class='sr-only'>Applicable filter categories</div>
               <ul v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms wcag-card-tags">
                 <template v-for="tag in post.wcag_tag" :key="tag">
-                  <li v-if='tag !== "Active"' :class="{ 'tag': true, 'active': selectedTags.includes(tag) }">{{ tag
+                  <li v-if='tag !== "Active"' :class="{ 'tag': true, 'active': selectedTags.includes(tag) }">{{ removePrefix(tag)
                     }}</li>
                 </template>
               </ul>
@@ -221,6 +221,10 @@ const filteredPosts = computed(() => {
       .sort((a, b) => (a.title.rendered > b.title.rendered) ? 1 : -1);
   }
 });
+
+const removePrefix = (label) => {
+  return label.replace(/^\d+\.\s*/, '');
+}
 
 onMounted(() => {
 
