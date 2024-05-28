@@ -256,6 +256,11 @@ onMounted(() => {
   margin-bottom: .33rem;
 }
 
+/* Sets up colour differentiation for WCAG P.O.U.R. prinicple tags (first four) */
+[data-post-type-label="WCAG card"] .tag-checkbox:nth-child(-n+4) label {
+  background-color: var(--wp--preset--color--white);
+}
+
 .tag.tag-label {
   padding: 0.33rem 0.66rem;
 }
