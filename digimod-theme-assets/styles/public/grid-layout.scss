@@ -17,7 +17,7 @@
 			
 			display: none;
 			background-color: var(--wp--preset--color--primary-brand);
-			border-radius: 0 !important;
+			border-radius: 0;
 
 			@media (min-width: 782px) {
 				display: flex;
