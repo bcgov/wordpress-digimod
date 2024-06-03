@@ -1,5 +1,9 @@
 .grid-layout {
 
+	.flex-card {
+		box-shadow: none;
+	}
+
 	.card-container {
 		gap: 0 !important;
 	}
@@ -12,7 +16,7 @@
 		&.grid-header {
 			
 			display: none;
-			background-color: var(--wp--preset--color--primary-brand) !important;
+			background-color: var(--wp--preset--color--primary-brand);
 			border-radius: 0 !important;
 
 			@media (min-width: 782px) {
