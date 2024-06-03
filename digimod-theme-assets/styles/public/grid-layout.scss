@@ -36,6 +36,11 @@
 				box-shadow: none;
 				width: 100%;
 
+				& > * {
+					color: var(--wp--preset--color--white);
+					font-size: clamp(0.875rem, 0.875rem + ((1vw - 0.48rem) * 0.24), 1rem);
+				}
+
 				.wp-block-heading.mobile-only {
 					margin: 0;
 				}
