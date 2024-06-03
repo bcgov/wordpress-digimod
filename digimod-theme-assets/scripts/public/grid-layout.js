@@ -22,10 +22,10 @@ const domReady = () => {
 				if (gridHeader) {
 					const headerElements = gridHeader.querySelectorAll('.wp-block-heading');
 	
-					const flexCards = gridLayout.querySelectorAll('.wp-block-group.flex-card');
+					const gridContentCards = gridLayout.querySelectorAll('.grid-body .wp-block-group');
 	
-					if (flexCards) {
-						flexCards.forEach(function (flexCard, index) {
+					if (gridContentCards) {
+						gridContentCards.forEach(function (flexCard, index) {
 							const headerIndex = index % headerElements.length;
 							const headerElement = headerElements[headerIndex];
 							const headerValue = headerElement.innerText;

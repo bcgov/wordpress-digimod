@@ -54,4 +54,21 @@
 			}
 		}
 	}
+
+	.grid-body {
+		border: 1px solid var(--wp--preset--color--gray-40);
+
+		@media (min-width: 782px) {
+			border: 0;
+		}
+		
+		.wp-block-column:not(:first-of-type) {
+			border-left: none;
+
+			@media (min-width: 782px) {
+				border-left: 1px solid var(--wp--preset--color--gray-40);
+			}
+		}
+	}
+
 }
