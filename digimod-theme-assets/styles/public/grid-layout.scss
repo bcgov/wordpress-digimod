@@ -57,6 +57,7 @@
 
 	.grid-body {
 		border: 1px solid var(--wp--preset--color--gray-40);
+		gap: 0;
 
 		@media (min-width: 782px) {
 			border: 0;
