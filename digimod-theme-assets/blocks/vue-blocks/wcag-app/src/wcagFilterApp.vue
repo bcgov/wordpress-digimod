@@ -282,10 +282,10 @@ onMounted(() => {
 }
 
 /* Sets up colour differentiation for WCAG P.O.U.R. prinicple tags (first four) */
-[data-post-type-label="WCAG card"] .tag-checkbox:nth-child(-n+4):has(.tag-input:not(:checked)) label:not(:hover, :focus-visible) {
+/* [data-post-type-label="WCAG card"] .tag-checkbox:nth-child(-n+4):has(.tag-input:not(:checked)) label:not(:hover, :focus-visible) {
   background-color: var(--wp--preset--color--white);
   color: var(--wp--preset--color--secondary-brand);
-}
+} */
 
 .card-title-link:is(:hover, :focus-visible) {
   outline: 0 !important;
