@@ -36,49 +36,49 @@
 		padding: calc(0.8rem + 3px);
 		border: 0;
 	}
-}
-
-.gform-button {
-	background-color: var(--wp--preset--color--primary-brand);
-	border-radius: 0 .33rem .33rem 0;
-	border: 0;
-	color: var(--wp--preset--color--white);
-	cursor: pointer;
-	font-size: 1rem;
-	line-height: 1.5;
-	padding: calc(0.667rem + 2px) calc(1.333rem + 2px);
-}
-
-.gform_validation_errors {
-	padding: 1rem 1rem .5rem !important;
-	display: inline-block;
-	width: auto;
-	margin-bottom: 1rem;
-
-	.error-info {
-		font-size: 1.15rem;
-		  line-height: 1.5;
+	
+	.gform-button {
+		background-color: var(--wp--preset--color--primary-brand);
+		border-radius: 0 .33rem .33rem 0;
+		border: 0;
+		color: var(--wp--preset--color--white);
+		cursor: pointer;
+		font-size: 1rem;
+		line-height: 1.5;
+		padding: calc(0.667rem + 2px) calc(1.333rem + 2px);
 	}
-
-	h2 {
-		padding-bottom: 0 !important;
+	
+	.gform_validation_errors {
+		padding: 1rem 1rem .5rem !important;
+		display: inline-block;
+		width: auto;
+		margin-bottom: 1rem;
+	
+		.error-info {
+			font-size: 1.15rem;
+			  line-height: 1.5;
+		}
+	
+		> h2 {
+			padding-bottom: 0 !important;
+		}
 	}
-}
-
-.gform_confirmation_message {
-	color: #1A5822;
-	border: 2px solid #1A5822;
-	display: inline-block;
-	padding: 0 1rem;
-	border-radius: 3px;
-	background-color: #F6FFF8;
-
-	p {
-		margin: 0.5rem;
-
-		span {
-			top: -0.25rem;
-			  position: relative;
+	
+	.gform_confirmation_message {
+		color: #1A5822;
+		border: 2px solid #1A5822;
+		display: inline-block;
+		padding: 0 1rem;
+		border-radius: 3px;
+		background-color: #F6FFF8;
+	
+		p {
+			margin: 0.5rem;
+	
+			span {
+				top: -0.25rem;
+				  position: relative;
+			}
 		}
 	}
 }
