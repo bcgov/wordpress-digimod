@@ -50,7 +50,7 @@
 }
 
 .gform_validation_errors {
-	padding: 1rem 1rem .5rem;
+	padding: 1rem 1rem .5rem !important;
 	display: inline-block;
 	width: auto;
 	margin-bottom: 1rem;
@@ -58,6 +58,10 @@
 	.error-info {
 		font-size: 1.15rem;
 		  line-height: 1.5;
+	}
+
+	h2 {
+		padding-bottom: 0 !important;
 	}
 }
 
