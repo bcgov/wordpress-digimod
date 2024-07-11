@@ -68,7 +68,7 @@ if ('complete' === document.readyState) {
     document.addEventListener('DOMContentLoaded', domReady);
 }
 
-if (jQuery && jQuery('body.home').length) {
+if (jQuery && jQuery('.gform-subscribe_wrapper').length) {
     
     jQuery(document).ready(function () {
     
