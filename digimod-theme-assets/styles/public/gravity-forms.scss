@@ -1,6 +1,17 @@
 
 .gform_wrapper.gravity-theme {
 
+	input[type="email"] {
+		border-radius: .33rem 0 0 .33rem;
+		outline-offset: -1px;
+		outline: 1px solid var(--wp--preset--color--gray-60);
+
+		&:focus-visible {
+			outline-offset: -1px;
+			outline: 1px solid var(--wp--preset--color--primary-brand);
+		}
+	}
+
 	.gform_fields {
 		gap: 0;
 		position: relative;
@@ -55,8 +66,8 @@
 		margin-bottom: 1rem;
 	
 		.error-info {
-			font-size: 1.15rem;
-			  line-height: 1.5;
+			font-size: 1rem;
+			line-height: 1.5;
 		}
 	
 		> h2 {
