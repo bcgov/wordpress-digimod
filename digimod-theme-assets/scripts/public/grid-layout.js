@@ -12,6 +12,7 @@ const domReady = () => {
 	window.requestAnimationFrame(() => {
 		/**
 		 * Setup for tabular grid layout modifications for screen reader and mobile.
+		 * See: https://www.w3.org/WAI/ARIA/apg/patterns/table/
 		 */
 		const gridLayouts = document.querySelectorAll('.grid-layout');
 
@@ -103,15 +104,17 @@ const domReady = () => {
 
 		/**
 		 * Setup for detail-with-number-container grid layout modifications for screen reader.
+		 * See: https://www.w3.org/WAI/ARIA/apg/patterns/grid/examples/layout-grids/
 		 */
-
 		const detailsWithNumbersContainers = document.querySelectorAll('.detail-with-number-container');
 
-		if (detailsWithNumbersContainers) {
+		if (detailsWithNumbersContainers.length > 0) {
 
-			// Create a new div with the role of 'rowgroup'
+			// Create a new div with the role of 'grid'
 			const gridGroupDiv = document.createElement('div');
 			gridGroupDiv.setAttribute('role', 'grid');
+			gridGroupDiv.setAttribute('data-wrap-cols', true);
+			gridGroupDiv.setAttribute('data-wrap-rows', true);
 
 			// Insert the gridGroupDiv before the first detailContainer
 			const firstDetailContainer = detailsWithNumbersContainers[0];
@@ -122,6 +125,8 @@ const domReady = () => {
 				gridGroupDiv.appendChild(detailContainer);
 			});
 
+			let determinedHeadingLevel = null; // This will store the heading level to be used across all rows
+
 			detailsWithNumbersContainers.forEach(function (detailContainer, index) {
 
 				detailContainer.setAttribute('role', 'row');
@@ -131,45 +136,99 @@ const domReady = () => {
 
 				if (detailCell && headlineCell) {
 					detailCell.setAttribute('role', 'gridcell');
-					detailCell.setAttribute('aria-label', `Headline: ${headlineCell.innerText}...`);
 					detailCell.setAttribute('tabindex', '0');
 
 					const headlines = headlineCell.querySelectorAll('.wp-block-heading');
 
+					// Concatenate all headlines' text into a single string
+					let concatenatedHeadlineText = '';
 					headlines.forEach(function (headline) {
-						if (headlines) {
-							headlines.forEach(function (headline) {
-								headline.setAttribute('aria-hidden', true);
-							})
+						concatenatedHeadlineText += headline.innerText + ' ';
+						headline.setAttribute('aria-hidden', true); // Hide original headlines from screen readers
+					});
+
+					if (concatenatedHeadlineText.trim()) {
+						if (index === 0) {
+							// Determine heading level on the first row
+							let nearestHeading = null;
+							let currentElement = detailContainer.previousElementSibling;
+
+							// Traverse previous siblings to find the nearest wp-block-heading
+							while (currentElement && !nearestHeading) {
+								if (currentElement.classList.contains('wp-block-heading')) {
+									nearestHeading = currentElement;
+									break;
+								}
+
+								const headings = currentElement.querySelectorAll('.wp-block-heading');
+								if (headings.length > 0) {
+									nearestHeading = headings[headings.length - 1]; // Select the last one found inside the sibling
+									break;
+								}
+
+								currentElement = currentElement.previousElementSibling;
+							}
+
+							let parentElement = detailContainer.parentElement;
+							while (!nearestHeading && parentElement) {
+								currentElement = parentElement.previousElementSibling;
+
+								while (currentElement) {
+									if (currentElement.classList.contains('wp-block-heading')) {
+										nearestHeading = currentElement;
+										break;
+									}
+
+									const headings = currentElement.querySelectorAll('.wp-block-heading');
+									if (headings.length > 0) {
+										nearestHeading = headings[headings.length - 1];
+										break;
+									}
+
+									currentElement = currentElement.previousElementSibling;
+								}
+
+								parentElement = parentElement.parentElement;
+							}
+
+							if (nearestHeading) {
+								const nearestHeadingTagName = nearestHeading.tagName.toLowerCase();
+								determinedHeadingLevel = parseInt(nearestHeadingTagName.replace('h', '')) + 1;
+								if (determinedHeadingLevel > 6) determinedHeadingLevel = 6; // <h6> is the lowest level
+							} else {
+								determinedHeadingLevel = 2; // Default to <h2> if no heading is found
+							}
 						}
-					})
+
+						// Create the new heading element using the determined heading level
+						const newHeading = document.createElement(`h${determinedHeadingLevel}`);
+						newHeading.innerText = concatenatedHeadlineText.trim();
+						newHeading.classList.add('sr-only');
+
+						// Insert the new heading at the start of detailCell
+						detailCell.insertBefore(newHeading, detailCell.firstChild);
+					}
 				}
 
-				if (0 === index) {
-
+				if (index === 0) {
 					let nearestHeading = null;
 					let currentElement = detailContainer.previousElementSibling;
 
-					// Traverse previous siblings to find the nearest wp-block-heading
 					while (currentElement && !nearestHeading) {
-						// Check if the current element is a .wp-block-heading
 						if (currentElement.classList.contains('wp-block-heading')) {
 							nearestHeading = currentElement;
 							break;
 						}
 
-						// Check inside the current sibling for any wp-block-heading
 						const headings = currentElement.querySelectorAll('.wp-block-heading');
 						if (headings.length > 0) {
-							nearestHeading = headings[headings.length - 1]; // Select the last one found inside the sibling
+							nearestHeading = headings[headings.length - 1];
 							break;
 						}
 
-						// Move to the previous sibling
 						currentElement = currentElement.previousElementSibling;
 					}
 
-					// If no heading found, traverse up the DOM and check previous siblings of parent elements
 					let parentElement = detailContainer.parentElement;
 					while (!nearestHeading && parentElement) {
 						currentElement = parentElement.previousElementSibling;
@@ -192,7 +251,6 @@ const domReady = () => {
 						parentElement = parentElement.parentElement;
 					}
 
-					// If a heading is found, set it as the aria-label of gridGroupDiv
 					if (nearestHeading) {
 						let headingId = nearestHeading.getAttribute('id');
 						if (!headingId) {
@@ -203,7 +261,62 @@ const domReady = () => {
 					}
 				}
 			});
+
+			// Add keyboard navigation
+			gridGroupDiv.addEventListener('keydown', function (event) {
+				const activeElement = document.activeElement;
+				if (activeElement.getAttribute('role') === 'gridcell') {
+					const row = activeElement.parentElement;
+					const rows = Array.from(gridGroupDiv.querySelectorAll('[role="row"]'));
+					const cells = Array.from(row.querySelectorAll('[role="gridcell"]'));
+					const rowIndex = rows.indexOf(row);
+					const cellIndex = cells.indexOf(activeElement);
+
+					switch (event.key) {
+						case 'ArrowRight':
+						case 'ArrowDown':
+							if (rowIndex < rows.length - 1) {
+								const nextRowCells = rows[rowIndex + 1].querySelectorAll('[role="gridcell"]');
+								nextRowCells[cellIndex].focus();
+							}
+							break;
+						case 'ArrowLeft':
+						case 'ArrowUp':
+							if (rowIndex > 0) {
+								const prevRowCells = rows[rowIndex - 1].querySelectorAll('[role="gridcell"]');
+								prevRowCells[cellIndex].focus();
+							}
+							break;
+						case 'PageDown':
+							if (rowIndex < rows.length - 1) {
+								const nextRowIndex = Math.min(rowIndex + 3, rows.length - 1); // Adjust 3 as the number of rows to scroll
+								const nextRowCells = rows[nextRowIndex].querySelectorAll('[role="gridcell"]');
+								nextRowCells[cellIndex].focus();
+							}
+							break;
+						case 'PageUp':
+							if (rowIndex > 0) {
+								const prevRowIndex = Math.max(rowIndex - 3, 0); // Adjust 3 as the number of rows to scroll
+								const prevRowCells = rows[prevRowIndex].querySelectorAll('[role="gridcell"]');
+								prevRowCells[cellIndex].focus();
+							}
+							break;
+						case 'Home':
+							// Move focus to the first cell in the first row
+							rows[0].querySelector('[role="gridcell"]').focus();
+							break;
+
+						case 'End':
+							// Move focus to the last cell in the last row
+							const lastRow = rows[rows.length - 1];
+							lastRow.querySelector('[role="gridcell"]:last-child').focus();
+							break;
+					}
+				}
+			});
 		}
+
+
 
 
 	});
