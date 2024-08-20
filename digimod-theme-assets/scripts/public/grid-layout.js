@@ -293,6 +293,7 @@ const domReady = () => {
 								const nextRowCells = rows[nextRowIndex].querySelectorAll('[role="gridcell"]');
 								nextRowCells[cellIndex].focus();
 							}
+							event.preventDefault();
 							break;
 						case 'PageUp':
 							if (rowIndex > 0) {
@@ -300,16 +301,19 @@ const domReady = () => {
 								const prevRowCells = rows[prevRowIndex].querySelectorAll('[role="gridcell"]');
 								prevRowCells[cellIndex].focus();
 							}
+							event.preventDefault();
 							break;
 						case 'Home':
 							// Move focus to the first cell in the first row
 							rows[0].querySelector('[role="gridcell"]').focus();
+							event.preventDefault();
 							break;
 
 						case 'End':
 							// Move focus to the last cell in the last row
 							const lastRow = rows[rows.length - 1];
 							lastRow.querySelector('[role="gridcell"]:last-child').focus();
+							event.preventDefault();
 							break;
 					}
 				}
