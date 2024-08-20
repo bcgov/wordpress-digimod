@@ -1,0 +1,25 @@
+.detail-with-number-container.detail-with-number-container .wp-block-column:first-of-type::after {
+	pointer-events: none;
+	bottom: -2.35rem;
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHZpZXdCb3g9IjAgMCAxNC43IDE4Ij48cGF0aCBkPSJNNi43IDE3LjdjLjQuNCAxIC40IDEuNCAwbDYuNC02LjRjLjQtLjQuNC0xIDAtMS40cy0xLS40LTEuNCAwbC01LjcgNS43LTUuNy01LjdjLS40LS40LTEtLjQtMS40IDBzLS40IDEgMCAxLjR6TTYuNCAwdjE3aDJWMHoiIHN0eWxlPSJmaWxsOiMwMDJhNGUiLz48L3N2Zz4=);
+	display: block;
+	height: 2.33rem;
+	left: calc(50% - 1rem);
+	position: absolute;
+	right: auto;
+	top: auto;
+	width: 1.6rem;
+	content: "";
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+@media (max-width: 782px) {
+	.detail-with-number-container.detail-with-number-container .wp-block-column:first-of-type::after {
+		background-image: none;
+	}
+}
+
+.detail-with-number-container.detail-with-number-container.last .wp-block-column::after {
+	background-image: none;
+}
