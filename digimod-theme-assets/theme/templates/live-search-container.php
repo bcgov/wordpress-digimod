@@ -26,7 +26,7 @@
 	<a href="/blog/" title="">
 		<div class="popular-content">
 			<h3>#DigitalBC blog</h3>
-			<p>Our blog explores the challenges and impacts of the digital modernization efforts happening in the B.C. government.</p>
+			<p>Our blog explores the challenges and impacts of the digital transformation efforts happening in the B.C. government.</p>
 		</div>
 	</a>
 
