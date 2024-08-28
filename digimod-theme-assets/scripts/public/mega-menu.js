@@ -15,8 +15,9 @@ const domReady = () => {
         const popularContentShowing = document.querySelector('.live-search-extra');
 
         if (subMenuContainer && !popularContentShowing) {
-            const firstSubMenuItemButton = subMenuContainer.querySelector('.wp-block-navigation-item:first-child button');
+            subMenuContainer.style.display = 'block'; // Ensure the submenu container is visible
 
+            const firstSubMenuItemButton = subMenuContainer.querySelector('.wp-block-navigation-item:first-child button');
             if (firstSubMenuItemButton && firstSubMenuItemButton.getAttribute('aria-expanded') === 'false') {
                 firstSubMenuItemButton.focus();
                 firstSubMenuItemButton.click();

@@ -8,16 +8,20 @@ const digitalGovSearch = () => {
 	 */
 	window.requestAnimationFrame(() => {
 
+		const searchPage = document.querySelector('body.search');
 		const toggleSearchBtn = document.querySelector('.toggle-search-btn a');
 		const searchFieldContainer = document.querySelector('#search-container');
-
+		
 		if (toggleSearchBtn) {
+		
+			
 			if (searchFieldContainer) {
 				const siblingElement =
 					searchFieldContainer.previousElementSibling;
 
 				const searchInput = searchFieldContainer.querySelector('input');
 				const searchButton = searchFieldContainer.querySelector('button');
+				let ignoreFocusOut = false;
 
 				if (searchFieldContainer && siblingElement) {
 					siblingElement.parentNode.insertBefore(
@@ -25,10 +29,29 @@ const digitalGovSearch = () => {
 						siblingElement
 					);
 				}
+
+				// Add a click event listener to the toggleSearchBtn to set the flag
+				addSafeEventListenerPlugin(document, 'mousedown', (event) => {
+					if (!searchFieldContainer.classList.contains('hidden') && !searchFieldContainer.contains(event.target) && !toggleSearchBtn.contains(event.target)) {
+						// Trigger the focus out behavior
+						searchFieldContainer.dispatchEvent(new Event('focusout', { bubbles: true }));
+					  }
+				});
+
+				addSafeEventListenerPlugin(searchFieldContainer, 'focusout', (event) => {
+					// search panel has lost focus
+					if (!searchFieldContainer.contains(event.relatedTarget) && !toggleSearchBtn.contains(event.relatedTarget)) {
+						toggleSearchBtn.focus();
+						toggleSearchBtn.click();
+					}
+					// Reset the flag after processing the focusout event
+					ignoreFocusOut = false;
+				});
+
 				addSafeEventListenerPlugin(toggleSearchBtn, 'click', function (event) {
 					event.preventDefault();
 
-					if (searchFieldContainer) {
+					if (searchFieldContainer && !searchPage) {
 						if (
 							searchFieldContainer.classList.contains('hidden')
 						) {
@@ -63,37 +86,35 @@ const digitalGovSearch = () => {
 
 				if (searchFieldContainer) {
 
-					
 					addSafeEventListenerPlugin(searchButton, 'blur', function (event) {
 						event.preventDefault();
 						const resultsShowing = document.querySelector('.searchwp-live-search-results-showing');
 						const popularContentShowing = document.querySelector('.live-search-extra');
 
-							window.requestAnimationFrame(() => {
-								if (
-									searchInput ===
-									event.target.ownerDocument.activeElement
-								) {
-									return;
-								}
-								if (
-									toggleSearchBtn ===
-									event.target.ownerDocument.activeElement
-								) {
-									return;
-								}
-								if (resultsShowing) return;
-								if (popularContentShowing) return;
-								
-								toggleSearchBtn.focus();
-								toggleSearchBtn.click();
-							});
+						window.requestAnimationFrame(() => {
+							if (
+								searchInput ===
+								event.target.ownerDocument.activeElement
+							) {
+								return;
+							}
+							if (
+								toggleSearchBtn ===
+								event.target.ownerDocument.activeElement
+							) {
+								return;
+							}
+							if (resultsShowing) return;
+							if (popularContentShowing) return;
+
+							toggleSearchBtn.focus();
+							toggleSearchBtn.click();
+						});
 					});
 				}
 			}
 		}
 		window.requestAnimationFrame(() => {
-			const searchPage = document.querySelector('body.search');
 			const header = document.querySelector('.bcgov-header-group');
 			const headerHeight = window
 				.getComputedStyle(header)
@@ -110,6 +131,10 @@ const digitalGovSearch = () => {
 				}
 			}
 
+			// disallow keyboard nav on search results pages
+			if (searchPage) {
+				toggleSearchBtn.setAttribute('tabindex', '-1');
+			}
 		});
 	});
 };
