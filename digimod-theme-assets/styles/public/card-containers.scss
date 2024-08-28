@@ -115,7 +115,6 @@
 	}
 }
 
-
 .case-study-card-container,
 .cop-card-container {
 
@@ -181,6 +180,18 @@
 			height: 100%;
 		}
 	}
+}
+
+.card-container:not(.no-shadow) .wp-block-column .has-icon>.wp-block-group {
+	flex-direction: row;
+}
+
+.card-container:not(.no-shadow) .wp-block-column .has-icon figure {
+	min-width: 56px;
+}
+
+.card-container:not(.no-shadow) .wp-block-column .has-icon .wp-block-group {
+	box-shadow: none;
 }
 
 

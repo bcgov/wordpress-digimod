@@ -1,0 +1,34 @@
+.wp-block-media-text.alignwide.has-media-on-the-right .wp-block-media-text__content {
+	padding-left: 0;
+}
+
+@media (max-width: 600px) {
+	.wp-block-media-text.is-stacked-on-mobile .wp-block-media-text__media+.wp-block-media-text__content {
+		margin-top: 2rem;
+	}
+}
+
+.checkbox-callout .wp-block-media-text {
+	display: flex;
+}
+
+.checkbox-callout .wp-block-media-text figure {
+	order: 0;
+	flex: 1;
+	max-width: 120px;
+	margin: 0 !important;
+}
+
+.checkbox-callout .wp-block-media-text__content {
+	order: 1;
+	flex: 1;
+	max-width: 80%;
+	padding: 0 1rem 0 0;
+}
+
+.checkbox-callout .wp-block-columns figure {
+	order: 0;
+	flex: 1;
+	max-width: 120px;
+	margin: 0 !important;
+}

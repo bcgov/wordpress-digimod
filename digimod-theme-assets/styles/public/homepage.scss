@@ -14,11 +14,12 @@ body.home {
 			justify-content: center;
 			align-items: center;
 			padding-block: 2rem;
-			
+
 			img {
 				width: 320px;
 			}
 		}
+
 		img {
 
 			&.checkmark {
@@ -49,7 +50,7 @@ body.home {
 			.gform_fields {
 				gap: 0;
 				position: relative;
-				
+
 				.gfield_validation_message,
 				.gform-field-label {
 					border: 0 !important;
@@ -68,15 +69,15 @@ body.home {
 					}
 				}
 			}
-			
-			#field_submit {
-			   position: relative;
-			   top: -2px;
-			   right: 0;
-			   padding: 2px 0;
-		   }
 
-		   .gfield input.large {
+			#field_submit {
+				position: relative;
+				top: -2px;
+				right: 0;
+				padding: 2px 0;
+			}
+
+			.gfield input.large {
 				width: 100%;
 				padding: calc(0.8rem + 3px);
 				border: 0;
@@ -102,7 +103,7 @@ body.home {
 
 			.error-info {
 				font-size: 1.15rem;
-  				line-height: 1.5;
+				line-height: 1.5;
 			}
 		}
 
@@ -116,10 +117,10 @@ body.home {
 
 			p {
 				margin: 0.5rem;
-	
+
 				span {
 					top: -0.25rem;
-					  position: relative;
+					position: relative;
 				}
 			}
 		}
