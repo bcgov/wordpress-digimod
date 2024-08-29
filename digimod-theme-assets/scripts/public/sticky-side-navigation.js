@@ -93,7 +93,6 @@ const domReady = () => {
                                 setTimeout(() => {
                                     target.setAttribute('tabindex', '0');
                                     target.focus();
-                                    target.removeAttribute('tabindex');
                                     target.style.outline = 'none';
                                 }, 1000);
                             }
