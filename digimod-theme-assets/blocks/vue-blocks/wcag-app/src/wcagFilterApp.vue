@@ -19,7 +19,7 @@
       </div>
     </div>
   </div>
-  <div v-if="filteredPosts.length > 0" class='num-available'>{{ filteredPosts.length }} of {{ posts.length }} results
+  <div v-if="filteredPosts.length > 0" class='num-available' aria-atomic='true' aria-live='polite'>{{ filteredPosts.length }} of {{ posts.length }} results
     showing</div>
   <div v-if="filteredPosts.length > 0" class="wp-block-columns card-container">
     <div class="wp-block-query wcag-card-container">
