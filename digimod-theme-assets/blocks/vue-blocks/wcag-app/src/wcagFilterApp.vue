@@ -4,7 +4,7 @@
     <div class="taxonomy-common_component_category wp-block-post-terms" style="float:left;" role="group"
       aria-labelledby="id-group-label">
       <template v-for="tag, index in uniqueTags">
-        <div v-if="'Common component' !== tag" class="tag-checkbox">
+        <div class="tag-checkbox">
           <input type="checkbox" :id="'tag-' + index" :value="tag" v-model="selectedTags" class="tag-input" />
           <label :for="tag" class="tag-label tag" :tabindex='(0 === index) ? 0 : -1' @click="checkTag(index)"
             @keydown.space.enter.prevent="checkTag(index)" @keydown="handleKeyNavigation($event, index)" role="checkbox"
@@ -19,7 +19,7 @@
       </div>
     </div>
   </div>
-  <div v-if="filteredPosts.length > 0" class='num-available' ariar-atomic='true' aria-live='polite'>{{ filteredPosts.length }} of {{ posts.length }} results
+  <div v-if="filteredPosts.length > 0" class='num-available'>{{ filteredPosts.length }} of {{ posts.length }} results
     showing</div>
   <div v-if="filteredPosts.length > 0" class="wp-block-columns card-container">
     <div class="wp-block-query wcag-card-container">
@@ -53,7 +53,7 @@
               <div role='heading' id="id-tag-group-label" class='sr-only'>Applicable filter categories</div>
               <ul v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms wcag-card-tags">
                 <template v-for="tag in post.wcag_tag" :key="tag">
-                  <li v-if='tag !== "Active"  && "Common component" !== tag' :class="{ 'tag': true, 'active': selectedTags.includes(tag) }">{{ removePrefix(tag)
+                  <li v-if='tag !== "Active"' :class="{ 'tag': true, 'active': selectedTags.includes(tag) }">{{ removePrefix(tag)
                     }}</li>
                 </template>
               </ul>
@@ -207,7 +207,7 @@ const clearFilters = () => {
   selectedTags.value = [];
 };
 
-const uniqueTags = computed(() => [...new Set(posts.value.flatMap((post) => post.wcag_tag || []).filter(tag => tag !== "Active").sort())]); // Remove the Active category so it does not interfere with arrow navigation
+const uniqueTags = computed(() => [...new Set(posts.value.flatMap((post) => post.wcag_tag || []).filter(tag => tag !== "Active").filter(tag => tag !== "Common component").sort())]); // Remove the Active category so it does not interfere with arrow navigation
 const filteredPosts = computed(() => {
   if (!selectedTags.value.length) {
     return posts.value;
