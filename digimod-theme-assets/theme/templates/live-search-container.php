@@ -11,7 +11,7 @@
 	<h2>Featured topics</h2>
 	<a href="/policies-standards/digital-plan/progress" title="">
 		<div class="popular-content">
-			<h3>Progress Report</h3>
+			<h3>Digital Plan Progress Report</h3>
 			<p>The Digital Plan supports the transformation of services. Our 2024 progress report shares stories from teams who are building inclusive, accessible and connected solutions. </p>
 		</div>
 	</a>
