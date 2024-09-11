@@ -9,10 +9,10 @@
 <?php /* same as the content in SearchResultsBlock.php */ ?>
 <div class="live-search-extra">
 	<h2>Featured topics</h2>
-	<a href="/policies-standards/digital-plan/" title="">
+	<a href="/policies-standards/digital-plan/progress" title="">
 		<div class="popular-content">
-			<h3>Digital Plan</h3>
-			<p>The Digital Plan has 4 missions to achieve the next phase of digital transformation in government.</p>
+			<h3>Progress Report</h3>
+			<p>The Digital Plan supports the transformation of services. Our 2024 progress report shares stories from teams who are building inclusive, accessible and connected solutions. </p>
 		</div>
 	</a>
 
