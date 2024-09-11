@@ -11,13 +11,11 @@
 	<?php 
 	//Load content for this from a page made to hold the content
 
-	$postIdToLoad = url_to_postid('live-search-content');
-
-	if($postIdToLoad){
-		$content = get_the_content(null,false,$postIdToLoad);
+	$postToLoad = get_page_by_path('live-search-content');
+	if($postToLoad){
+		$content = get_the_content(null,false,$postToLoad->ID);
 
 		echo $content;
-
 	}
 	?>
 
