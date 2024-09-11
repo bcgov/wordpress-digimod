@@ -8,6 +8,23 @@
 
 <?php /* same as the content in SearchResultsBlock.php */ ?>
 <div class="live-search-extra">
+	<?php 
+	//Load content for this from a page made to hold the content
+
+	$postIdToLoad = url_to_postid('live-search-content');
+
+	if($postIdToLoad){
+		$content = get_the_content(null,false,$postIdToLoad);
+
+		echo $content;
+
+	}
+	?>
+
+
+	<?php 
+	//ORIGINAL Content, moved to Wordpress as a page.
+	/*	
 	<h2>Featured topics</h2>
 	<a href="/policies-standards/digital-plan/progress" title="">
 		<div class="popular-content">
@@ -45,4 +62,5 @@
 		<a href="/?s=cloud">cloud</a>
 		<a href="/?s=common+components">common components</a>
 	</div>
+	*/?>
 </div>
