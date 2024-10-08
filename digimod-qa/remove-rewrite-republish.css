@@ -1,0 +1,8 @@
+/* For contributors: 
+- they should not see rewrite-republish button (handled by overriding edit button with rewrite-and-republish link)
+- hide ability to change status through quick edit (otherwise can put a post in draft while it's still in QA, which is invalid)
+*/
+.rewrite, .inline-edit-status{
+    display:none !important;
+}
+
