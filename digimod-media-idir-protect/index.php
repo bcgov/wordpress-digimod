@@ -322,15 +322,14 @@ class IdirProtectedMediaFiles {
 
 				if(stripos($file_path, 'private/') === 0){	
 					//Setup the redirect from the original non-private url to the new private url.			
-					$new_url =  str_ireplace(get_site_url(), '', $this->override_get_attachment_url(null, $aProtectedMedia->ID));	//Remove the site url so redirects only start with the slash
-					
+					$new_url =  $this->override_get_attachment_url(null, $aProtectedMedia->ID);
+					$new_url_parsed = parse_url($new_url);
+					$new_url = $new_url_parsed['path'];		//Remove the site url so redirects only start with the slash
+
 					$file_path_old = str_ireplace('private/', '', $file_path);
-					$old_url = $file_path_old; 
-
-					$old_url_parsed = parse_url($upload_folder_arr['url'] . '/' .  $old_url);
-
-
-					$old_url = str_ireplace(get_site_url(), '', $upload_folder_arr['url']) . '/' .  $old_url;
+					$old_url = $upload_folder_arr['url'] . '/' .  $file_path_old; 
+					$old_url_parsed = parse_url($old_url);
+					$old_url = $old_url_parsed['path'];		//Remove the site url so redirects only start with the slash
 
 
 					$redirect_data = array(
