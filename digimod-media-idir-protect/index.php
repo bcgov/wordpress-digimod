@@ -40,12 +40,16 @@ add_action(
 );
 
 
+/*
+* Register the deactivation hook
+*/
+register_deactivation_hook( __FILE__, array( 'IdirProtectedMediaFiles', 'plugin_deactivation' ) );
+
+
 
 /*
 * Our main Plugin class
-
 */
-
 class IdirProtectedMediaFiles {
 	private $cache_transient_key         = '_idir_protected_media_cache';
 
@@ -53,6 +57,8 @@ class IdirProtectedMediaFiles {
 	public function __construct() {
 		add_action( 'init', array($this, 'url_handler')  );
 		add_action( 'admin_init', array($this, 'check_has_required_plugin') );
+
+		add_action( 'admin_notices', array( $this, 'plugin_activation' ) ) ;
 
 		add_filter('wp_get_attachment_url', array($this, 'override_get_attachment_url'), 10, 2 );
 
@@ -87,6 +93,31 @@ class IdirProtectedMediaFiles {
 		?><div class="error"><p>Sorry, but DIGIMOD - IDIR Protect Media Files Plugin requires the Safe Redirect Manager plugin to be installed and active.</p></div><?php
 	}
 	
+
+	/*
+	* Provide warning about NGINX when activating plugin
+	*/
+	public function plugin_activation() {
+		if( 1 != get_option( 'ipm_activated' ) ) {
+			add_option( 'ipm_activated', 1 );
+			
+			$html = '<div class="updated">';
+				$html .= '<p>';
+					$html .= __( 'The DIGIMOD - IDIR Protect Media Files Plugin was activated. Please make sure you setup the correct NGINX configuration to <strong>block access to the wp-content/uploads/private folder!</strong>', 'advanced-google-analytics' );
+				$html .= '</p>';
+			$html .= '</div><!-- /.updated -->';
+
+			echo $html;
+		} 
+	}
+
+
+	/*
+	* Delete the option that keeps track of initial plugin activation on de-activation
+	*/
+	public static  function plugin_deactivation() {
+		delete_option('ipm_activated');
+	}
 
 
 	/*
@@ -343,16 +374,14 @@ class IdirProtectedMediaFiles {
 				}
 			}
 
-			//set_transient( $this->$cache_transient_key, $ipm_redirects, 30 * DAY_IN_SECONDS );
+			set_transient( $this->$cache_transient_key, $ipm_redirects, 30 * DAY_IN_SECONDS );
 	
-
-			if(isset($_GET['x']) && $_GET['x'] == 1){
-				print_r(get_site_url());
-				print_r($old_url_parsed);
+			/*if(isset($_GET['x']) && $_GET['x'] == 1){
 				print_r($upload_folder_arr);
 				print_r($media);
 				print_r($ipm_redirects); die();	
-			}
+			}*/
+
 			return array_merge($ipm_redirects, $redirects);
 
 		}else{
