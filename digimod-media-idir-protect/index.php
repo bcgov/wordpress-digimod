@@ -327,7 +327,7 @@ class IdirProtectedMediaFiles {
 					$file_path_old = str_ireplace('private/', '', $file_path);
 					$old_url = $file_path_old; 
 
-					$old_url_parsed = parse_url($old_url);
+					$old_url_parsed = parse_url($upload_folder_arr['url'] . '/' .  $old_url);
 
 
 					$old_url = str_ireplace(get_site_url(), '', $upload_folder_arr['url']) . '/' .  $old_url;
@@ -345,10 +345,10 @@ class IdirProtectedMediaFiles {
 			}
 
 			//set_transient( $this->$cache_transient_key, $ipm_redirects, 30 * DAY_IN_SECONDS );
-
-			//print_r($ipm_redirects); die();		
+	
 
 			if(isset($_GET['x']) && $_GET['x'] == 1){
+				print_r(get_site_url());
 				print_r($old_url_parsed);
 				print_r($upload_folder_arr);
 				print_r($media);
