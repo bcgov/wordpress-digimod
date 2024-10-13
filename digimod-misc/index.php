@@ -3,7 +3,7 @@
 /**
  * Plugin Name: DIGIMOD - miscellaneous
  * Description: Miscellaneous features for DigitalGov; Defines WCAG Tag taxonomy, CLI Keycloak SSO/Miniorange adjuster.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -20,6 +20,8 @@ Changelog
       - Added shortcode for 'Better Notifications for WP' to grab the logged in user
 
 1.2.0 - Added enabling custom admin notification banner under Admin Settings menu.
+
+1.2.1 - Added admin notice to not upgrade AIO SEO past 4.7.1.1 until further notice, as 4.7.2 breaks gutenberg on WP 6.4.3
 */
 
 // Exit if accessed directly
@@ -212,7 +214,34 @@ add_action('init', 'register_wcag_tags', 0);
 
 
 
+/*
+Prevent updating of AIO SEO
+From: https://wordpress.stackexchange.com/questions/397326/how-do-i-disable-an-update-for-a-specific-plugin
+*/
+function digimod_misc_disable_plugin_updates( $value ) {
+    //create an array of plugins you want to exclude from updates ( string composed by folder/main_file.php)
+     $pluginsNotUpdatable = [
+      'all-in-one-seo-pack/all_in_one_seo_pack.php'
+    ];
 
+    if ( isset($value) && is_object($value) ) {
+      foreach ($pluginsNotUpdatable as $plugin) {
+          if ( isset( $value->response[$plugin] ) ) {
+              unset( $value->response[$plugin] );
+          }
+        }
+    }
+    return $value;
+  }
+  add_filter( 'site_transient_update_plugins', 'digimod_misc_disable_plugin_updates' );
+
+function digimod_misc_custom_admin_notice() {
+    global $pagenow;
+    if ( $pagenow == 'plugins.php' ){
+        echo '<div class="notice notice-warning"><p>Do <strong>not</strong> update All In One SEO past 4.7.1.1 until further notice! It will break gutenberg on WP 6.4.</p></div>';
+    }
+}
+add_action( 'admin_notices', 'digimod_misc_custom_admin_notice' );
 
 
 
