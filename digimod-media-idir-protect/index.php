@@ -11,6 +11,15 @@
  * Plugin URI: https://github.com/bcgov/wordpress-digimod/tree/main/digimod-media-idir-protect
  * Update URI: https://raw.githubusercontent.com/bcgov/wordpress-digimod/main/digimod-media-idir-protect/index.php
 * Requires Plugins: safe-redirect-manager
+* /
+
+/*
+* NGINX Config required:
+  # Block access to the private folder media as part of the new Digimod-Media-IDIR-Protect plugin.
+	location ~ /wp-content/uploads/private {
+		deny all;
+		return 404;
+	}
 */
 
 
@@ -100,7 +109,7 @@ class IdirProtectedMediaFiles {
 	public function plugin_activation() {
 		if( 1 != get_option( 'ipm_activated' ) ) {
 			add_option( 'ipm_activated', 1 );
-			
+
 			$html = '<div class="updated">';
 				$html .= '<p>';
 					$html .= __( 'The DIGIMOD - IDIR Protect Media Files Plugin was activated. Please make sure you setup the correct NGINX configuration to <strong>block access to the wp-content/uploads/private folder!</strong>', 'advanced-google-analytics' );
