@@ -74,8 +74,16 @@ class IdirProtectedMediaFiles {
 		add_filter('attachment_fields_to_edit', array($this, 'add_custom_text_field_to_attachment_fields_to_edit'), null, 2); 
 		add_filter('attachment_fields_to_save', array($this, 'save_custom_checkbox_attachment_field'), null, 2);
 
-
 		add_filter('srm_registered_redirects', array($this, 'edit_srm_redirects'), null, 2);
+
+		add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+	}
+
+	function enqueue_scripts(){
+		wp_enqueue_script('media_idir_protect_script', plugin_dir_url( __FILE__ ) . '/media-idir-protect.js', array ('jquery'),'1.0');
+
+		$media_idir_protect_script_vars = array( 'plugin_dir' => plugin_dir_url( __FILE__ ) );
+     	wp_localize_script( 'media_idir_protect_script', 'media_idir_protect_script_vars', $media_idir_protect_script_vars );
 	}
 
 
@@ -299,6 +307,9 @@ class IdirProtectedMediaFiles {
 
 					// Get the login URL
 					$login_url = wp_login_url(home_url($current_page_url));
+
+
+					header("Access-Control-Allow-Origin: *");
 
 					// Redirect the user to the login URL
 					wp_redirect("/?option=oauthredirect&app_name=keycloak");
