@@ -14,6 +14,11 @@
 * /
 
 /*
+* Functionality
+* - Adds to the Media Library the ability to protect a media item by moving it to a protected folder
+* - Provides a special url for accessing protected media so that it can be controlled via WP.
+* - Handles (with some exceptions) embedding of secure media with a placeholder image.
+
 * NGINX Config required:
   # Block access to the private folder media as part of the new Digimod-Media-IDIR-Protect plugin.
 	location ~ /wp-content/uploads/private {
@@ -316,7 +321,15 @@ class IdirProtectedMediaFiles {
 					$http_accept_arr = explode(',', $_SERVER['HTTP_ACCEPT']);
 					if(is_array($http_accept_arr) && count($http_accept_arr) > 0 && $http_accept_arr[0] != 'text/html'){
 						//Resource has been embeded, present the placeholder image. This will not work for pdf or non image embeds.
-						echo file_get_contents(__DIR__ . '/' . $this->placeholder_src);
+
+						$placeholder_path_full = __DIR__ . '/' . $this->placeholder_src;
+
+						$finfo = finfo_open(FILEINFO_MIME_TYPE);
+						$mime_type = finfo_file($finfo, $placeholder_path_full);
+						header("Content-Type: $mime_type");
+
+
+						echo file_get_contents($placeholder_path_full);
 
 					}else{
 						//Direct file access due to 'text/html' or missing/invalid HTTP_ACCEPT
