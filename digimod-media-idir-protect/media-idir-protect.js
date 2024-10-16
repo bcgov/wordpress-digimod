@@ -19,8 +19,6 @@ async function mediaIdirProtectHandleImage(img) {
 			img.src = img.src.replace('http://', 'https://');
 		}
 
-		setPlaceholderSize(img);
-
 		const urlWithNoCache = appendRandomParam(img.src);
 
 		try {
