@@ -12,7 +12,7 @@ const domReadyForIDIRCheck = () => {
 };
 
 async function mediaIdirProtectHandleImage(img) {
-	const isProtectedImage = img.src.includes('/wp-uploads-idir-protected/');
+	const isProtectedImage = img.src.includes('/wp-uploads-idir-protected/') || img.closest('.protected-media');
 
 	if (isProtectedImage) {
 		// Replace HTTP with HTTPS if needed
@@ -23,10 +23,9 @@ async function mediaIdirProtectHandleImage(img) {
 		const urlWithNoCache = appendRandomParam(img.src);
 
 		try {
-			const response = await fetch(urlWithNoCache, { method: 'HEAD', redirect: 'manual' });
+			const response = await fetch(urlWithNoCache, { method: 'HEAD' });	//, redirect: 'manual'
 
-			// If the response is an opaque redirect, it's protected, so replace the image
-			if (response.type === 'opaqueredirect' || response.status == 401) {
+			if (response.status == 401) {	//response.type === 'opaqueredirect' ||   // If the response is an opaque redirect, it's most likely protected, so replace the image
 				replaceImageWithPlaceholder(img);
 			}
 		} catch (error) {
