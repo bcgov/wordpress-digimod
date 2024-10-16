@@ -8,7 +8,7 @@ on:
     - cron: '0 2 * * *'
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
