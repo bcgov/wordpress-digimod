@@ -26,7 +26,7 @@ async function mediaIdirProtectHandleImage(img) {
 			const response = await fetch(urlWithNoCache, { method: 'HEAD', redirect: 'manual' });
 
 			// If the response is an opaque redirect, it's protected, so replace the image
-			if (response.type === 'opaqueredirect') {
+			if (response.type === 'opaqueredirect' || response.status == 401) {
 				replaceImageWithPlaceholder(img);
 			}
 		} catch (error) {

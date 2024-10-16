@@ -85,6 +85,9 @@ class IdirProtectedMediaFiles {
 		add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 	}
 
+	/*
+	* Load up the javascript needed
+	*/
 	function enqueue_scripts(){
 		wp_enqueue_script('media_idir_protect_script', plugin_dir_url( __FILE__ ) . '/media-idir-protect.js', array ('jquery'),'1.0');
 
@@ -328,8 +331,10 @@ class IdirProtectedMediaFiles {
 						$mime_type = finfo_file($finfo, $placeholder_path_full);
 						header("Content-Type: $mime_type");
 
+						status_header(401);
 
 						echo file_get_contents($placeholder_path_full);
+
 
 					}else{
 						//Direct file access due to 'text/html' or missing/invalid HTTP_ACCEPT
@@ -421,12 +426,6 @@ class IdirProtectedMediaFiles {
 
 			set_transient( $this->$cache_transient_key, $ipm_redirects, 30 * DAY_IN_SECONDS );
 	
-			/*if(isset($_GET['x']) && $_GET['x'] == 1){
-				print_r($upload_folder_arr);
-				print_r($media);
-				print_r($ipm_redirects); die();	
-			}*/
-
 			return array_merge($ipm_redirects, $redirects);
 
 		}else{
