@@ -61,6 +61,7 @@ register_deactivation_hook( __FILE__, array( 'IdirProtectedMediaFiles', 'plugin_
 */
 class IdirProtectedMediaFiles {
 	private $cache_transient_key         = '_idir_protected_media_cache';
+	private $placeholder_src 			 = 'unauth-placeholder.png';
 
 
 	public function __construct() {
@@ -82,7 +83,7 @@ class IdirProtectedMediaFiles {
 	function enqueue_scripts(){
 		wp_enqueue_script('media_idir_protect_script', plugin_dir_url( __FILE__ ) . '/media-idir-protect.js', array ('jquery'),'1.0');
 
-		$media_idir_protect_script_vars = array( 'plugin_dir' => plugin_dir_url( __FILE__ ) );
+		$media_idir_protect_script_vars = array( 'plugin_dir' => plugin_dir_url( __FILE__ ), 'placeholder_src' => $this->placeholder_src );
      	wp_localize_script( 'media_idir_protect_script', 'media_idir_protect_script_vars', $media_idir_protect_script_vars );
 	}
 
@@ -147,7 +148,7 @@ class IdirProtectedMediaFiles {
 			'input' => 'html',
 			'html' => '<input type="checkbox" id="attachments-'.$post->ID.'-idir_protected" name="attachments['.$post->ID.'][idir_protected]" value="1"'.($is_idir_protected ? ' checked="checked"' : '').' /> ', 
 			'value' => $text_field,
-			'helps' => 'Should new links to this media item be IDIR protected. Existing links to this media item will redirect to the new private url.'
+			'helps' => 'Links to this media will be IDIR protected. When enabled, existing links to this media will automatically redirect to the protected file. Note: when linking to image files any added ALT text is not IDIR protected.'
 		);
 		return $form_fields;
 	}
@@ -311,8 +312,19 @@ class IdirProtectedMediaFiles {
 
 					header("Access-Control-Allow-Origin: *");
 
-					// Redirect the user to the login URL
-					wp_redirect("/?option=oauthredirect&app_name=keycloak");
+
+					$http_accept_arr = explode(',', $_SERVER['HTTP_ACCEPT']);
+					if(is_array($http_accept_arr) && count($http_accept_arr) > 0 && $http_accept_arr[0] != 'text/html'){
+						//Resource has been embeded, present the placeholder image. This will not work for pdf or non image embeds.
+						echo file_get_contents(__DIR__ . '/' . $this->placeholder_src);
+
+					}else{
+						//Direct file access due to 'text/html' or missing/invalid HTTP_ACCEPT
+
+						// Redirect the user to the login URL
+						wp_redirect("/?option=oauthredirect&app_name=keycloak");
+					}
+
 					exit;
 				}
 			}
