@@ -42,10 +42,11 @@ function mediaIdirProtectHandleImage(img) {
 
 function replaceImageWithPlaceholder(img) {
 	const placeholderSrc = `${media_idir_protect_script_vars.plugin_dir}/${media_idir_protect_script_vars.placeholder_src}`;
-	img.onload = function() {
-		setPlaceholderSize(img);
-	};
 	img.src = appendRandomParam(placeholderSrc);
+	// Sizing the image after it paints...maybe?
+	window.requestAnimationFrame(() => {
+		setPlaceholderSize(img);
+	});
 }
 
 function setPlaceholderSize(img) {
