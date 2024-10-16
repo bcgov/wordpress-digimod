@@ -2,7 +2,7 @@ const placeholderHeight = 160;
 const placeholderWidth = 544;
 
 function mediaIdirProtectHandleImage(img) {
-	var isProtectedImage = img.src.indexOf('/wp-uploads-idir-protected/') != -1;
+	const isProtectedImage = img.src.includes('/wp-uploads-idir-protected/');
 
 	if(isProtectedImage){
 		
@@ -11,7 +11,6 @@ function mediaIdirProtectHandleImage(img) {
 		}
 
 		const urlWithNoCache = appendRandomParam(img.src);
-
 
 		fetch(urlWithNoCache, { method: 'HEAD', redirect: 'manual' }).then(response => {
 			//If we can fetch it and its not a redirect, then its not the IDIR login. Leave it alone.
@@ -25,10 +24,10 @@ function mediaIdirProtectHandleImage(img) {
 	}
 }
 
-
 function replaceImageWithPlaceholder(img){
-	img.src = appendRandomParam(media_idir_protect_script_vars.plugin_dir + '/' + media_idir_protect_script_vars.placeholder_src);
-	setPlaceholderSize(img); 
+	const placeholderSrc = `${media_idir_protect_script_vars.plugin_dir}/${media_idir_protect_script_vars.placeholder_src}`;
+	img.src = appendRandomParam(placeholderSrc);
+	setPlaceholderSize(img);
 }
 
 function setPlaceholderSize(img) {
@@ -41,6 +40,6 @@ function appendRandomParam(url) {
     return url.includes('?') ? `${url}&_cached_at=${timestamp}` : `${url}?_cached_at=${timestamp}`;
 }
 
-jQuery(document).ready(function() {
-	document.querySelectorAll('img').forEach(img => mediaIdirProtectHandleImage(img));	
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('img').forEach(img => mediaIdirProtectHandleImage(img));
 });
