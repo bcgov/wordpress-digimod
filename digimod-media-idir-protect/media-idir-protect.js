@@ -1,9 +1,3 @@
-/**
- * Placeholder image DOM manipulation for IDIR protection.
- *
- * @return {void}
-*/
-
 const placeholderHeight = 160;
 const placeholderWidth = 544;
 
@@ -17,42 +11,47 @@ const domReadyForIDIRCheck = () => {
 	});
 };
 
-function mediaIdirProtectHandleImage(img) {
+async function mediaIdirProtectHandleImage(img) {
 	const isProtectedImage = img.src.includes('/wp-uploads-idir-protected/');
 
 	if (isProtectedImage) {
-
+		// Replace HTTP with HTTPS if needed
 		if (img.src.startsWith('http://')) {
 			img.src = img.src.replace('http://', 'https://');
 		}
 
 		const urlWithNoCache = appendRandomParam(img.src);
 
-		fetch(urlWithNoCache, { method: 'HEAD', redirect: 'manual' }).then(response => {
-			//If we can fetch it and its not a redirect, then its not the IDIR login. Leave it alone.
-			if (response.type == 'opaqueredirect') {
+		try {
+			const response = await fetch(urlWithNoCache, { method: 'HEAD', redirect: 'manual' });
+
+			// If the response is an opaque redirect, it's protected, so replace the image
+			if (response.type === 'opaqueredirect') {
 				replaceImageWithPlaceholder(img);
 			}
-
-		}).catch(error => {
+		} catch (error) {
+			// In case of fetch failure, replace with the placeholder image
 			replaceImageWithPlaceholder(img);
-		}).finally(() => {
-			// Will the image be resized after it's replaced and loaded?
-			img.onload = () => {
-				setPlaceholderSize(img);
-			};
-		});
+		}
 	}
 }
 
 function replaceImageWithPlaceholder(img) {
 	const placeholderSrc = `${media_idir_protect_script_vars.plugin_dir}/${media_idir_protect_script_vars.placeholder_src}`;
+
+	// Using onload event to set size after the image has fully loaded
+	img.onload = () => {
+		setPlaceholderSize(img);
+	};
+
+	// Change the image source to the placeholder with cache-busting
 	img.src = appendRandomParam(placeholderSrc);
 }
 
 function setPlaceholderSize(img) {
 	img.style.width = `${placeholderWidth}px`;
 	img.style.height = `${placeholderHeight}px`;
+	console.log(`Set image size: width=${placeholderWidth}px, height=${placeholderHeight}px`);
 }
 
 function appendRandomParam(url) {
@@ -60,7 +59,7 @@ function appendRandomParam(url) {
 	return url.includes('?') ? `${url}&_cached_at=${timestamp}` : `${url}?_cached_at=${timestamp}`;
 }
 
-if ('complete' === document.readyState) {
+if (document.readyState === 'complete') {
 	domReadyForIDIRCheck();
 } else {
 	document.addEventListener('DOMContentLoaded', domReadyForIDIRCheck);
