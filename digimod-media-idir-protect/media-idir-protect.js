@@ -6,7 +6,6 @@ const domReadyForIDIRCheck = () => {
 	 * SafarIE bug requires repaint update.
 	 */
 	window.requestAnimationFrame(() => {
-		console.log('Checking for IDIR secured images');
 		document.querySelectorAll('img').forEach(img => mediaIdirProtectHandleImage(img));
 	});
 };
@@ -19,6 +18,8 @@ async function mediaIdirProtectHandleImage(img) {
 		if (img.src.startsWith('http://')) {
 			img.src = img.src.replace('http://', 'https://');
 		}
+
+		setPlaceholderSize(img);
 
 		const urlWithNoCache = appendRandomParam(img.src);
 
@@ -48,9 +49,10 @@ function replaceImageWithPlaceholder(img) {
 }
 
 function setPlaceholderSize(img) {
-	img.style.width = `${placeholderWidth}px`;
-	img.style.height = `${placeholderHeight}px`;
-	console.log(`Set image size: width=${placeholderWidth}px, height=${placeholderHeight}px`);
+	img.style.maxWidth = `${placeholderWidth}px !important`;
+	img.style.maxHeight = `${placeholderHeight}px !important`;
+	img.style.width = '100%';
+	img.style.height = 'auto';
 }
 
 function appendRandomParam(url) {
