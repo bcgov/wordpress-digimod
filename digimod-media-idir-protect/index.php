@@ -215,6 +215,8 @@ class IdirProtectedMediaFiles {
 		$moved_success = $wp_filesystem->move($upload_folder_arr['basedir'] . '/' . $file_path, $upload_folder_arr['basedir'] . '/' . $file_path_new);
 		//echo $file_path . "\n". $upload_folder_arr['basedir'] . '/' . $file_path_new; 
 		if($moved_success){
+			$this->clean_up_alt_sizes($attachment_id);	//Must be done before we update the path
+
 			// Update the path inside the post meta
 			update_post_meta( $attachment_id, '_wp_attached_file', $file_path_new );
 
@@ -227,6 +229,9 @@ class IdirProtectedMediaFiles {
 			delete_post_meta($attachment_id, 'idir_protected' );
 
 			$this->clear_redirect_cache();
+
+			$updated_metadata = wp_generate_attachment_metadata($attachment_id, $upload_folder_arr['basedir'] . '/' . $file_path_new);
+			wp_update_attachment_metadata( $attachment_id, $updated_metadata );
 
 
 			$notices = get_option('ipm_notices');
@@ -281,6 +286,8 @@ class IdirProtectedMediaFiles {
 
 		$moved_success = $wp_filesystem->move($upload_folder_arr['basedir'] . '/' . $file_path, $private_folder_path . '/' . $file_path);
 		if($moved_success){
+			$this->clean_up_alt_sizes($attachment_id);	//Must be done before we update the path
+
 			// Update the path inside the post meta
 			update_post_meta( $attachment_id, '_wp_attached_file', $file_path_new );
 
@@ -294,6 +301,9 @@ class IdirProtectedMediaFiles {
 
 			$this->clear_redirect_cache();
 
+			$updated_metadata = wp_generate_attachment_metadata($attachment_id, $private_folder_path . '/' . $file_path);
+			wp_update_attachment_metadata( $attachment_id, $updated_metadata );
+
 
 			$notices = get_option('ipm_notices');
 			if(!is_array($notices)){ $notices = [];	}
@@ -302,7 +312,7 @@ class IdirProtectedMediaFiles {
 
 			update_option('ipm_notices', $notices);
 
-			
+
 		}else{
 			$notices = get_option('ipm_notices');
 			if(!is_array($notices)){ $notices = [];	}
@@ -314,6 +324,25 @@ class IdirProtectedMediaFiles {
 
 	}
 
+
+	function clean_up_alt_sizes($attachment_id){
+		$meta = wp_get_attachment_metadata( $attachment_id );
+
+		$upload_folder_arr = wp_get_upload_dir();
+
+		$image_fullpath = $upload_folder_arr['basedir'] . '/' . $meta['file'];
+		$file_info = pathinfo( $image_fullpath );
+
+		if ( ! empty( $meta['sizes'] ) && is_iterable( $meta['sizes'] ) ) {
+			foreach ( $meta['sizes'] as $size_data ) {
+				if ( empty( $size_data['file'] ) ) {
+					continue;
+				}
+				$thumb_fullpath = trailingslashit( $file_info['dirname'] ) . wp_basename( $size_data['file'] );
+				unlink( $thumb_fullpath );
+			}
+		}
+	}
 	
 
 
@@ -327,10 +356,20 @@ class IdirProtectedMediaFiles {
 			$url_exploded = explode('/',$_SERVER["REQUEST_URI"]);
 
 			if($url_exploded[1] == 'wp-uploads-idir-protected' && is_numeric($url_exploded[2])){
+				$attachment_id = $url_exploded[2];
+				$is_idir_protected = (bool) get_post_meta($attachment_id, 'idir_protected', true);
+
+				//If not IDIR protected
+				if($attachment_id && !$is_idir_protected){
+					//Redirect to the unprotected url to let the webserver serve the file.
+					wp_redirect(wp_get_attachment_url($attachment_id));
+					exit();
+				}
+
 
 				if(is_user_logged_in()){
 					//$file_to_load = str_ireplace('/wp-uploads-idir-protected', '', $_SERVER["REQUEST_URI"]);
-					$attachment_id = $url_exploded[2];
+					
 					$file_path = get_post_meta( $attachment_id, '_wp_attached_file', true );
 
 					$upload_folder_arr = wp_get_upload_dir();
@@ -447,6 +486,7 @@ class IdirProtectedMediaFiles {
 			);
 			$media = get_posts($args);
 			foreach ( $media as $aProtectedMedia ) {
+
 				$file_path = get_post_meta( $aProtectedMedia->ID, '_wp_attached_file', true );
 
 				if(stripos($file_path, 'private/') === 0){	
@@ -468,6 +508,34 @@ class IdirProtectedMediaFiles {
 						'status_code'   => (int) 302,
 					);
 					$ipm_redirects[] = $redirect_data;
+
+
+					//Now setup redirects for each size of image to the new private url.
+					$meta = wp_get_attachment_metadata( $aProtectedMedia->ID );
+					if ( ! empty( $meta['sizes'] ) && is_iterable( $meta['sizes'] ) ) {
+						foreach ( $meta['sizes'] as $size_data ) {
+							if ( empty( $size_data['file'] ) ) {
+								continue;
+							}
+
+							$new_url = get_site_url() . '/wp-uploads-idir-protected/' . $aProtectedMedia->ID . '/'.basename($size_data['file']);
+							$new_url_parsed = parse_url($new_url);
+							$new_url = $new_url_parsed['path'];		//Remove the site url so redirects only start with the slash
+
+							$old_url = $upload_folder_arr['url'] . '/' .  $size_data['file']; 
+							$old_url_parsed = parse_url($old_url);
+							$old_url = $old_url_parsed['path'];		//Remove the site url so redirects only start with the slash
+
+							$redirect_data = array(
+								'ID'            => 'ipm_' . $aProtectedMedia->ID . '_' . $size_data['width'] . 'x' . $size_data['height'],
+								'redirect_from' => $old_url,
+								'redirect_to'   => $new_url,
+								'status_code'   => (int) 302,
+							);
+							$ipm_redirects[] = $redirect_data;
+
+						}
+					}
 
 				}
 			}
