@@ -541,7 +541,7 @@ class IdirProtectedMediaFiles {
 			}
 
 			set_transient( $this->$cache_transient_key, $ipm_redirects, 30 * DAY_IN_SECONDS );
-	
+			print_r($ipm_redirects);die();	
 			return array_merge($ipm_redirects, $redirects);
 
 		}else{
