@@ -74,7 +74,7 @@ class IdirProtectedMediaFiles {
 		add_action( 'init', array($this, 'url_handler')  );
 		add_action( 'admin_init', array($this, 'check_has_required_plugin') );
 
-		add_action( 'admin_notices', array( $this, 'plugin_activation' ) ) ;
+		add_action( 'admin_notices', array( $this, 'admin_notices' ) ) ;
 
 		add_filter('wp_get_attachment_url', array($this, 'override_get_attachment_url'), 10, 2 );
 
@@ -124,7 +124,7 @@ class IdirProtectedMediaFiles {
 	/*
 	* Provide warning about NGINX when activating plugin
 	*/
-	public function plugin_activation() {
+	public function admin_notices() {
 		if( 1 != get_option( 'ipm_activated' ) ) {
 			add_option( 'ipm_activated', 1 );
 
@@ -136,6 +136,19 @@ class IdirProtectedMediaFiles {
 
 			echo $html;
 		} 
+
+
+		if(get_option( 'ipm_notices' )){
+			$html = '<div class="notice notice-info">';
+				$html .= '<p>';
+					$html .= __( 'IDIR Protect Media Notice(s): <br>' . implode('<br>', get_option( 'ipm_notices' )) );
+				$html .= '</p>';
+			$html .= '</div><!-- /.updated -->';
+
+			echo $html;
+
+			delete_option( 'ipm_notices' );
+		}
 	}
 
 
@@ -183,7 +196,7 @@ class IdirProtectedMediaFiles {
 		$file_path = get_post_meta( $attachment_id, '_wp_attached_file', true );
 
 		if(stripos($file_path, 'private/') !== 0){
-			//already in private folder.
+			//already in public folder.
 			return;
 		}
 		$file_path_new = str_ireplace('private/', '', $file_path);
@@ -214,6 +227,23 @@ class IdirProtectedMediaFiles {
 			delete_post_meta($attachment_id, 'idir_protected' );
 
 			$this->clear_redirect_cache();
+
+
+			$notices = get_option('ipm_notices');
+			if(!is_array($notices)){ $notices = [];	}
+
+			$notices[] = 'Success moved to public folder - ' .  $file_path . ' to ' . $file_path_new;
+
+			update_option('ipm_notices', $notices);
+
+
+		}else{
+			$notices = get_option('ipm_notices');
+			if(!is_array($notices)){ $notices = [];	}
+
+			$notices[] = '<strong>Error</strong> Unable to move to public folder - ' . $upload_folder_arr['basedir'] . '/' . $file_path . ' to ' . $upload_folder_arr['basedir'] . '/' . $file_path_new;
+
+			update_option('ipm_notices', $notices);
 		}
 
 	}
@@ -263,6 +293,23 @@ class IdirProtectedMediaFiles {
 			update_post_meta($attachment_id, 'idir_protected', 1);  
 
 			$this->clear_redirect_cache();
+
+
+			$notices = get_option('ipm_notices');
+			if(!is_array($notices)){ $notices = [];	}
+
+			$notices[] = 'Success moved to private folder - ' .  $file_path . ' to ' . $file_path_new;
+
+			update_option('ipm_notices', $notices);
+
+			
+		}else{
+			$notices = get_option('ipm_notices');
+			if(!is_array($notices)){ $notices = [];	}
+
+			$notices[] = '<strong>Error</strong> Unable to move to private folder - ' . $upload_folder_arr['basedir'] . '/' . $file_path . ' to ' . $upload_folder_arr['basedir'] . '/' . $file_path_new;
+
+			update_option('ipm_notices', $notices);
 		}
 
 	}
