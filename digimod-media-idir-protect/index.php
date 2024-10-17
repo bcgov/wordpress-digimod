@@ -544,11 +544,25 @@ class IdirProtectedMediaFiles {
 			
 
 			echo $requested_path;
-			echo "\n";
+			echo "\n<br>";
+			echo "\n<br>";
+
+			echo $_SERVER['REQUEST_URI'];
+			echo "\n<br>";
+			echo wp_unslash( $_SERVER['REQUEST_URI'] );
+			echo "\n<br>";
+			echo sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
+			echo "\n<br>";
+			echo apply_filters( 'srm_requested_path', sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ?? '' );
+			echo "\n<br>";
+			echo "\n<br>";
+
 
 			$requested_path2   = esc_url_raw( apply_filters( 'srm_requested_path', sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ?? '' ) );
 			$requested_path2   = untrailingslashit( stripslashes( $requested_path2 ) );
 			echo $requested_path2;
+			echo "\n<br>";
+			echo "\n<br>";
 			
 			print_r($ipm_redirects);die();	
 
