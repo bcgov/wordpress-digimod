@@ -541,7 +541,17 @@ class IdirProtectedMediaFiles {
 			}
 
 			set_transient( $this->$cache_transient_key, $ipm_redirects, 30 * DAY_IN_SECONDS );
+			
+
+			echo $requested_path;
+			echo "\n";
+
+			$requested_path2   = esc_url_raw( apply_filters( 'srm_requested_path', sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ?? '' ) );
+			$requested_path2   = untrailingslashit( stripslashes( $requested_path2 ) );
+			echo $requested_path2;
+			
 			print_r($ipm_redirects);die();	
+
 			return array_merge($ipm_redirects, $redirects);
 
 		}else{
