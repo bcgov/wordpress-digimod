@@ -18,6 +18,7 @@
 * - Adds to the Media Library the ability to protect a media item by moving it to a protected folder
 * - Provides a special url for accessing protected media so that it can be controlled via WP.
 * - Handles (with some exceptions) embedding of secure media with a placeholder image.
+* - Images with the manually-set class 'protected-media' are considered protected and get the special placeholder image when protected.
 
 * NGINX Config required:
   # Block access to the private folder media as part of the new Digimod-Media-IDIR-Protect plugin.
@@ -156,7 +157,7 @@ class IdirProtectedMediaFiles {
 			'input' => 'html',
 			'html' => '<input type="checkbox" id="attachments-'.$post->ID.'-idir_protected" name="attachments['.$post->ID.'][idir_protected]" value="1"'.($is_idir_protected ? ' checked="checked"' : '').' /> ', 
 			'value' => $text_field,
-			'helps' => 'Links to this media will be IDIR protected. When enabled, existing links to this media will automatically redirect to the protected file. Note: when linking to image files any added ALT text is not IDIR protected.'
+			'helps' => 'Links to this media will be IDIR protected. When enabled, existing links to this media will automatically redirect to the protected file. Note: when linking to image files any added ALT text is not IDIR protected.<br><br><strong>Important:</strong> Assign the class "protected-media" to the image when embedding a secure media item.'
 		);
 		return $form_fields;
 	}

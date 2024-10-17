@@ -6,7 +6,6 @@ const domReadyForIDIRCheck = () => {
 	 * SafarIE bug requires repaint update.
 	 */
 	window.requestAnimationFrame(() => {
-		console.log('Checking for IDIR secured images');
 		document.querySelectorAll('img').forEach(img => mediaIdirProtectHandleImage(img));
 	});
 };
@@ -23,11 +22,12 @@ async function mediaIdirProtectHandleImage(img) {
 		const urlWithNoCache = appendRandomParam(img.src);
 
 		try {
-			const response = await fetch(urlWithNoCache, { method: 'HEAD' });	//, redirect: 'manual'
+			const response = await fetch(urlWithNoCache, { method: 'HEAD' });
 
-			if (response.status == 401) {	//response.type === 'opaqueredirect' ||   // If the response is an opaque redirect, it's most likely protected, so replace the image
+			if (response.status == 401) {
 				replaceImageWithPlaceholder(img);
 			}
+			
 		} catch (error) {
 			// In case of fetch failure, replace with the placeholder image
 			replaceImageWithPlaceholder(img);
@@ -50,7 +50,6 @@ function replaceImageWithPlaceholder(img) {
 function setPlaceholderSize(img) {
 	img.style.width = `${placeholderWidth}px`;
 	img.style.height = `${placeholderHeight}px`;
-	console.log(`Set image size: width=${placeholderWidth}px, height=${placeholderHeight}px`);
 }
 
 function appendRandomParam(url) {
