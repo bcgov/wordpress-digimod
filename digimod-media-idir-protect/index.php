@@ -84,6 +84,9 @@ class IdirProtectedMediaFiles {
 		add_filter('srm_registered_redirects', array($this, 'edit_srm_redirects'), null, 2);
 
 		add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+
+
+		add_filter('srm_requested_path', array($this, 'plugin_srm_requested_path'));
 	}
 
 	/*
@@ -160,6 +163,22 @@ class IdirProtectedMediaFiles {
 	}
 
 
+	/**
+	* Filter srm_requested_path.
+	*
+	* By default SRM does not call `urldecode` meaning that special characters are % encoded,
+	* and therefore stripped out by sanitize_text_field.
+	*
+	* By calling urldecode first, we ensure that redirects work even when the URL contains a special character.
+	*
+	* @see https://github.com/10up/safe-redirect-manager/issues/102
+	* @return string
+	*/
+	function plugin_srm_requested_path() {
+		return sanitize_text_field( wp_unslash( urldecode( $_SERVER['REQUEST_URI'] ) ) ) ?? '';
+	}
+
+
 	/*
 	* Setup the checkbox for the media attachment details dialog
 	*/
@@ -213,7 +232,7 @@ class IdirProtectedMediaFiles {
 		WP_Filesystem();
 
 		$moved_success = $wp_filesystem->move($upload_folder_arr['basedir'] . '/' . $file_path, $upload_folder_arr['basedir'] . '/' . $file_path_new);
-		//echo $file_path . "\n". $upload_folder_arr['basedir'] . '/' . $file_path_new; 
+		
 		if($moved_success){
 			$this->clean_up_alt_sizes($attachment_id);	//Must be done before we update the path
 
@@ -542,29 +561,7 @@ class IdirProtectedMediaFiles {
 
 			set_transient( $this->$cache_transient_key, $ipm_redirects, 30 * DAY_IN_SECONDS );
 			
-
-			echo $requested_path;
-			echo "\n<br>";
-			echo "\n<br>";
-
-			echo $_SERVER['REQUEST_URI'];
-			echo "\n<br>";
-			echo wp_unslash( $_SERVER['REQUEST_URI'] );
-			echo "\n<br>";
-			echo sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
-			echo "\n<br>";
-			echo apply_filters( 'srm_requested_path', sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ?? '' );
-			echo "\n<br>";
-			echo "\n<br>";
-
-
-			$requested_path2   = esc_url_raw( apply_filters( 'srm_requested_path', sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ?? '' ) );
-			$requested_path2   = untrailingslashit( stripslashes( $requested_path2 ) );
-			echo $requested_path2;
-			echo "\n<br>";
-			echo "\n<br>";
-			
-			print_r($ipm_redirects);die();	
+			//print_r($ipm_redirects);die();	
 
 			return array_merge($ipm_redirects, $redirects);
 
