@@ -187,9 +187,9 @@ class IdirProtectedMediaFiles {
 		$form_fields['idir_protected'] = array(
 			'label' => 'IDIR Protected',
 			'input' => 'html',
-			'html' => '<input type="checkbox" id="attachments-'.$post->ID.'-idir_protected" name="attachments['.$post->ID.'][idir_protected]" value="1"'.($is_idir_protected ? ' checked="checked"' : '').' /> ', 
+			'html' => '<input type="checkbox" id="attachments-'.$post->ID.'-idir_protected" name="attachments['.$post->ID.'][idir_protected]" value="1"'.($is_idir_protected ? ' checked="checked"' : '').' /> <label for="attachments-'.$post->ID.'-idir_protected" style="padding-top: 7px;">Secure media</label>', 
 			'value' => $text_field,
-			'helps' => 'Links to this media will be IDIR protected. When enabled, existing links to this media will automatically redirect to the protected file. Note: when linking to image files any added ALT text is not IDIR protected.<br><br><strong>Important:</strong> Assign the class "protected-media" to the image when embedding a secure media item.'
+			'helps' => 'Links to this media will be IDIR protected. When enabled, existing links to this media will automatically redirect to the protected file.<br><br><strong>Important:</strong> when linking to image files any added ALT text is not IDIR protected.<br><br><strong>Note:</strong> If the unsecure placeholder displays too large, assigning the class "protected-media" will cause it to resize when loaded.'
 		);
 		return $form_fields;
 	}
