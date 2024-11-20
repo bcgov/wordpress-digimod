@@ -482,14 +482,14 @@ class IdirProtectedMediaFiles {
 	* Clear the cache we have of media redirects
 	*/
 	function clear_redirect_cache(){		
-		delete_transient( $this->$cache_transient_key);
+		delete_transient( $this->cache_transient_key);
 	}
 
 	/*
 	* Adjust the redirects to make the previously public media go to the private url and prevent a 404
 	*/
 	function edit_srm_redirects($redirects, $requested_path){
-		$ipm_redirects             = get_transient( $this->$cache_transient_key );
+		$ipm_redirects             = get_transient( $this->cache_transient_key );
 
 		if ( false === $ipm_redirects ) {
 			$ipm_redirects = array();
@@ -559,7 +559,7 @@ class IdirProtectedMediaFiles {
 				}
 			}
 
-			set_transient( $this->$cache_transient_key, $ipm_redirects, 30 * DAY_IN_SECONDS );
+			set_transient( $this->cache_transient_key, $ipm_redirects, 30 * DAY_IN_SECONDS );
 			
 			//print_r($ipm_redirects);die();	
 
