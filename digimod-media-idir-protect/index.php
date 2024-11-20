@@ -3,7 +3,7 @@
 /**
 * Plugin Name: DIGIMOD - IDIR Protect Media Files
 * Description: Provides the ability to protect media files behind IDIR.
-* Version: 1.0.0
+* Version: 1.0.1
  * Author: Digimod
  * Author URI: https://digital.gov.bc.ca
  * License: GPL2
