@@ -16,17 +16,17 @@
 * For admin editor based styles use: html :where(.editor-styles-wrapper) { } 
 */
 
-.interface-interface-skeleton__editor .components-notice-list.components-editor-notices__pinned::before {
-	content: "Publishing to PROD (digital.gov.bc.ca) is prohibited during the interregnum period.";
-	z-index: 9;
-	height: 2.75rem;
-	width: 100%;
-	background-color: red;
-	padding: 1.5rem 1rem 0;
-	font-weight: bold;
-	text-align: center;
-	display: block;
-}
+// .interface-interface-skeleton__editor .components-notice-list.components-editor-notices__pinned::before {
+// 	content: "Publishing to PROD (digital.gov.bc.ca) is prohibited during the interregnum period.";
+// 	z-index: 9;
+// 	height: 2.75rem;
+// 	width: 100%;
+// 	background-color: red;
+// 	padding: 1.5rem 1rem 0;
+// 	font-weight: bold;
+// 	text-align: center;
+// 	display: block;
+// }
 
 html :where(.editor-styles-wrapper) {
 
