@@ -29,6 +29,8 @@ class Search {
 		add_filter( 'searchwp_live_search_configs', [ $this, 'searchwp_live_search_configs' ] );
 		add_filter( 'searchwp_live_search_results_template', [ $this, 'portfolio_page_template' ], 99 );
 		add_filter( 'render_block', [ $this, 'render_block' ], null, 2 );
+
+		add_filter( 'searchwp\tokens\minimum_length', [ $this, 'searchwp_adjust_minimum_length' ], null, 1 );
     }
 
 	/**
@@ -145,5 +147,18 @@ class Search {
 		}
 
 		return $post_title;
+	}
+
+
+	/**
+	 * Reduce SearchWP's minimum character length to 2 (default is 3).
+	 * 	Tweaked to allow for searches including 'ai' keyword.
+	 * 
+	 * @param int $min The default minimum length
+	 * 
+	 * @return int The new minimum length
+	 */
+	public static function searchwp_adjust_minimum_length( $min ) {
+		return 2;
 	}
 }

@@ -272,6 +272,7 @@ class SearchResultsBlock {
 				<div class="searchwp-form-quick-search">
 					<h2 class="popular-searches-header">Popular keywords: </h2>
 					<a href="/?s=agile">agile</a>
+					<a href="/?s=artificial+intelligence">artificial intelligence</a>					
 					<a href="/?s=digital+code+of+practice">Digital Code of Practice</a>
 					<a href="/?s=digital+plan">Digital Plan</a>
 					<a href="/?s=digital+trust">digital trust</a>
