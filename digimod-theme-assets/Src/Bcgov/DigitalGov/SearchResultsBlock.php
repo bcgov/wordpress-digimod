@@ -243,7 +243,21 @@ class SearchResultsBlock {
 				</div>
 			</div>
 
-					<?php /* same as the content in live-search-container.php */ ?>
+
+			<?php 
+			//Load content for this from a page made to hold the content
+
+			$postToLoad = get_page_by_path('live-search-content');
+			if($postToLoad){
+				$content = get_the_content(null,false,$postToLoad->ID);
+
+				echo $content;
+			}
+			?>
+			<?php /* same as the content in live-search-container.php */ ?>
+			<?php 
+			//ORIGINAL Content, moved to Wordpress as a page.
+			/*	
 			<div class="live-search-extra hidden">
 				<h2>Featured topics</h2>
 				<a href="/policies-standards/digital-plan/" title="">
@@ -271,23 +285,23 @@ class SearchResultsBlock {
 			<div class="live-search-extra">
 				<div class="searchwp-form-quick-search">
 					<h2 class="popular-searches-header">Popular keywords: </h2>
-					<a href="/?s=agile">agile</a>
-					<a href="/?s=artificial+intelligence">artificial intelligence</a>					
+					<a href="/?s=agile">Agile</a>				
+					<a href="/?s=artificial+intelligence">Artificial Intelligence</a>	
 					<a href="/?s=digital+code+of+practice">Digital Code of Practice</a>
 					<a href="/?s=digital+plan">Digital Plan</a>
-					<a href="/?s=digital+trust">digital trust</a>
-					<a href="/?s=accessibility">accessibility</a>
+					<a href="/?s=digital+trust">Digital Trust</a>
+					<a href="/?s=accessibility">Accessibility</a>
 					<a href="/?s=chefs">CHEFS</a>
 					<a href="/?s=community+of+practice">Community of practice</a>
-					<a href="/?s=courses">courses</a>
-					<a href="/?s=funding">funding</a>
+					<a href="/?s=courses">Courses</a>
+					<a href="/?s=funding">Funding</a>
 					<a href="/?s=saas">SaaS</a>
-					<a href="/?s=cloud">cloud</a>
-					<a href="/?s=common+components">common components</a>
+					<a href="/?s=cloud">Cloud</a>
+					<a href="/?s=common+components">Common Components</a>
 				</div>
 				<p style="color: var(--wp--preset--color--gray-80);">Still can't find what you are looking for? <a href="/about/#contact" style="color: var(--wp--preset--color--secondary-brand); text-decoration: underline !important;">Contact us</a>.</p>
 			</div>
-
+			*/?>
 
 		<?php } ?>
 	<?php } ?>
