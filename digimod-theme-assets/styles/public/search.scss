@@ -496,6 +496,10 @@ body.search-no-results {
 			margin-block: 0.25rem !important;
 		}
 	}
+
+	.searchresults-hidden{
+		display: none;
+	}
 }
 
 body.search-results {
