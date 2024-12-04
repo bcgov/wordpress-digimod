@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#Make sure bash exits on any error so that the github action is marked as error
+set -e
+
+
 # Set directory
 sourceDir="/var/www/html/wp-content/ai1wm-backups"
 dir="/var/www/html/wp-content/ai1wm-backups-history"
