@@ -38,8 +38,12 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
     echo "- Grabbing backup file"
     LATEST_FILE=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c 'ls -t /var/www/html/wp-content/ai1wm-backups | head -n 1 ')
-    oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups/$LATEST_FILE ./wp-backup.wpress
+    echo "-- MD5 of remote backup file"
+    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- md5sum /var/www/html/wp-content/ai1wm-backups/$LATEST_FILE
+    oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups/$LATEST_FILE ./wp-backup.wpress --retries=5    #attempt to prevent the EOF error when copying the large backup by using retries option
     echo "- Grabbed backup file $LATEST_FILE"
+    echo "-- MD5 of copied backup file"
+    md5sum ./wp-backup.wpress
 
     echo "- Grabbing AIOWPMigration plugins"
     oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration ./plugins/all-in-one-wp-migration
@@ -112,7 +116,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
     # Copy over backup file
     echo "Uploading backup file"
-    oc cp --no-preserve ./wp-backup.wpress -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups/wp-backup.wpress
+    oc cp --no-preserve ./wp-backup.wpress -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups/wp-backup.wpress --retries=5    #attempt to prevent the EOF error when copying the large backup by using retries option
 
     #perform the restore
     echo "Running restore"
