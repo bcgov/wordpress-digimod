@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#Make sure bash exits on any error so that the github action is marked as error
-set -e
+#This file is copied to digital-backup and run there.
+#Cleans up the number of backup files.
 
 # Set directory
 sourceDir="/var/www/html/wp-content/ai1wm-backups"
@@ -21,8 +21,8 @@ then
     exit 1
 fi
 
-# Copy .wpress files to the new directory
-cp "$sourceDir"/*.wpress "$dir"
+# Move .wpress files to the new directory
+mv "$sourceDir"/*.wpress "$dir"
 
 # Count the number of .wpress files
 num_files=$(ls -1 "$dir"/*.wpress 2>/dev/null | wc -l)
