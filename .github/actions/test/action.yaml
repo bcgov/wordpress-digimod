@@ -1,0 +1,11 @@
+name: Test Action
+description: 'Testing actions'
+inputs:
+runs:
+  using: 'composite'
+  steps:
+    - name: Test Script
+      run: |
+        chmod +x ./.github/actions/test/test.sh
+        ./.github/actions/test/test.sh
+      shell: bash
