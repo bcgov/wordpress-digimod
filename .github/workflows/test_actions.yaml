@@ -1,5 +1,7 @@
 # Manual started workflow
 name: Test Workflow
+on:
+  workflow_dispatch:
 jobs:
   deploy:
     runs-on: ubuntu-22.04
