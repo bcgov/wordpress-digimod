@@ -1,6 +1,5 @@
 name: Test Action
 description: 'Testing actions'
-inputs:
 runs:
   using: 'composite'
   steps:
