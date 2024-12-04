@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#Make sure bash exits on any error so that the github action is marked as error
+set -e
+
 ENVIRONMENT=$1
 SITE_NAME=$2
 OPENSHIFT_SERVER=$3
