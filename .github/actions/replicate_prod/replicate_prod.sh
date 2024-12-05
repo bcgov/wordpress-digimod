@@ -26,8 +26,9 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
     # Download wp-cli in the GitHub Actions workspace
     echo "Getting and copying WP CLI phar"
-    curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar --fail
     chmod +x wp-cli.phar
+
     # Copy wp-cli to the WordPress instance 
     oc cp --no-preserve wp-cli.phar $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/wp-cli.phar -c $WORDPRESS_CONTAINER_NAME
     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
@@ -38,12 +39,14 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
     echo "- Grabbing backup file"
     LATEST_FILE=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c 'ls -t /var/www/html/wp-content/ai1wm-backups | head -n 1 ')
-    echo "-- MD5 of remote backup file"
-    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- md5sum /var/www/html/wp-content/ai1wm-backups/$LATEST_FILE
+    REMOTE_MD5=($(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- md5sum /var/www/html/wp-content/ai1wm-backups/$LATEST_FILE))
+    echo "-- MD5 of remote backup file: $REMOTE_MD5"
+    
     oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups/$LATEST_FILE ./wp-backup.wpress --retries=5    #attempt to prevent the EOF error when copying the large backup by using retries option
     echo "- Grabbed backup file $LATEST_FILE"
-    echo "-- MD5 of copied backup file"
-    md5sum ./wp-backup.wpress
+
+    LOCAL_MD5=($(md5sum ./wp-backup.wpress))
+    echo "-- MD5 of copied backup file: $LOCAL_MD5"
 
     echo "- Grabbing AIOWPMigration plugins"
     oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration ./plugins/all-in-one-wp-migration
@@ -101,8 +104,10 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
     # Download wp-cli in the GitHub Actions workspace
     echo "Getting and copying WP CLI phar"
-    curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-    chmod +x wp-cli.phar
+
+    #Its already grabbed above, no need to re-grab.
+    #curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar --fail
+    #chmod +x wp-cli.phar
 
     # Copy wp-cli to the WordPress instance and install wordpress
     oc cp --no-preserve wp-cli.phar $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/wp-cli.phar -c $WORDPRESS_CONTAINER_NAME
@@ -118,9 +123,21 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     echo "Uploading backup file"
     oc cp --no-preserve ./wp-backup.wpress -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups/wp-backup.wpress --retries=5    #attempt to prevent the EOF error when copying the large backup by using retries option
 
-    #perform the restore
+
+    #perform the restore. Check for failure, and run again if failed.
     echo "Running restore"
-    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar ai1wm restore wp-backup.wpress"
+    ret=0
+    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar ai1wm restore wp-backup.wpress" || ret=$?
+    if [ $ret -eq 0 ]; then
+        # The command was successful
+        echo '- Restore command ran successfully'
+
+    else
+        # The command was not successful
+        echo "Restore command failed, trying one more time..."
+        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar ai1wm restore wp-backup.wpress"
+    fi
+
 
     #activate the plugins
     # oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate $active_plugins
