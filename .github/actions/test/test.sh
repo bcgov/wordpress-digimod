@@ -10,6 +10,10 @@ PROD_TOKEN=$4
 
 NAMESPACE="c0cce6-prod"
 
+echo 'old oc login way'
+oc login $OPENSHIFT_SERVER --token=$DEV_TOKEN --insecure-skip-tls-verify=true
+oc logout
+
 #testing new OC login way
 curl -k -X POST $OPENSHIFT_SERVER/api/v1/namespaces/$NAMESPACE/serviceaccounts/pipeline/token --header "Authorization: Bearer $DEV_TOKEN" -d '{"spec": {"expirationSeconds": 600}}' -H 'Content-Type: application/json; charset=utf-8'
 
