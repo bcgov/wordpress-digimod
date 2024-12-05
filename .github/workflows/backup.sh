@@ -45,8 +45,9 @@ else
     echo "No .wpress file to rename in $dir"
 fi
 
-if [ "$num_files" -lt 6 ]; then
-    echo "There are less than 6 .wpress files in $dir. Exiting..."
+#Keep 6 backups at a time.
+if [ "$num_files" -lt 7 ]; then
+    echo "There are less than 7 .wpress files in $dir. Exiting..."
     exit 0
 fi
 
