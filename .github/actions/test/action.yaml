@@ -1,5 +1,18 @@
 name: Test Action
 description: 'Testing actions'
+inputs:
+  openshift-server:
+    description: 'OpenShift server'
+    required: true
+  dev-token:
+    description: 'Dev token'
+    required: true
+  test-token:
+    description: 'Test token'
+    required: true
+  prod-token:
+    description: 'Prod token'
+    required: true
 runs:
   using: 'composite'
   steps:
