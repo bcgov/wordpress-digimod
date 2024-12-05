@@ -112,3 +112,6 @@ vendor/
 
 #Misc Mac meta files
 .DS_Store
+
+
+testing/cypress/e2e/screenshots-for-*

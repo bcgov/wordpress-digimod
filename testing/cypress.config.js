@@ -17,6 +17,7 @@ const urlSlug = require('url-slug');
 module.exports = defineConfig({
   viewportHeight:900,
   viewportWidth:1440,
+  video: false,
   e2e: {
     // supportFile:false,
     async setupNodeEvents(on, config) {
@@ -46,10 +47,14 @@ module.exports = defineConfig({
 
       // wordpressSiteUrl = wordpressSiteUrl || 'https://digital-test.apps.silver.devops.gov.bc.ca/';
 
-      let wordpressSiteUrl ='https://digital-test.apps.silver.devops.gov.bc.ca/';
+      //let wordpressSiteUrl = 'https://digital-test.apps.silver.devops.gov.bc.ca/';1
+      let wordpressSiteUrl = 'https://digital.gov.bc.ca/';
 
       let urlsFilePath = './urls_for_'+urlSlug.convert(wordpressSiteUrl)+'.json';
       let urls = await getUpdatedUrls(wordpressSiteUrl,urlsFilePath);
+
+//      let urls = {newUrls: ['https://digital-test.apps.silver.devops.gov.bc.ca/common-components/']};
+
       config.env.sitemapUrls = urls.newUrls;
       config.env.missingUrls = urls.missingUrls;
       config.env.baseUrl = wordpressSiteUrl;
