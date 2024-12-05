@@ -135,6 +135,10 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     else
         # The command was not successful
         echo "Restore command failed, trying one more time..."
+
+        #need to re-activate the plugins first
+        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate all-in-one-wp-migration all-in-one-wp-migration-unlimited-extension
+
         oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar ai1wm restore wp-backup.wpress"
     fi
 
