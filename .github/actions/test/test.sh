@@ -11,6 +11,8 @@ PROD_TOKEN=$4
 NAMESPACE="c0cce6-prod"
 
 #testing new OC login way
+curl -k -X POST $OPENSHIFT_SERVER/api/v1/namespaces/$NAMESPACE/serviceaccounts/pipeline/token --header "Authorization: Bearer $DEV_TOKEN" -d '{"spec": {"expirationSeconds": 600}}' -H 'Content-Type: application/json; charset=utf-8'
+
 OC_TEMP_TOKEN=$(curl -k -X POST $OPENSHIFT_SERVER/api/v1/namespaces/$NAMESPACE/serviceaccounts/pipeline/token --header "Authorization: Bearer $DEV_TOKEN" -d '{"spec": {"expirationSeconds": 600}}' -H 'Content-Type: application/json; charset=utf-8' | jq -r '.status.token' )
 
 oc login --token=$OC_TEMP_TOKEN --server=$OPENSHIFT_SERVER
