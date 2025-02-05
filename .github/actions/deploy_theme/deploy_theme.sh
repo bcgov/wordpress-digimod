@@ -52,8 +52,10 @@ oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /t
 
 
 cd bcgov-wordpress-block-theme-digimod
-composer update
-composer install
+
+#Satis is no longer available from GH action workers. /dist folder is commited when changes are made, should not need to build theme.
+#composer update
+#composer install
 
 tar -cf theme.tar --exclude=./github ./
 oc cp --no-preserve theme.tar $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/themes/theme.tar -c $WORDPRESS_CONTAINER_NAME
