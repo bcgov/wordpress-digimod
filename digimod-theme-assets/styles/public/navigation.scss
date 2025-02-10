@@ -7,8 +7,18 @@ nav ul.has-background {
 	// padding: 0.25rem 0.5rem;
 }
 
-body.custom-digitalgov {
+body.custom-digitalgov.has-ribbon-menu {
 
+
+	#main-menu nav {
+		display: none;
+	}
+
+	@media (min-width: 1360px) {
+		#main-menu nav {
+			display: block;
+		}
+	}
 
 	nav {
 		&[aria-label="Main menu"] {
@@ -18,17 +28,21 @@ body.custom-digitalgov {
 	
 			>li {
 
-				padding: 0.5rem 0.15rem;
+				padding: 0.5rem 0.15rem !important;
 
 				> ul,
 				> ul ul {
 					box-shadow: 0 0.6000000238418579px 1.7999999523162842px 0 #0000001a,0 3.200000047683716px 7.199999809265137px 0 #00000021;
 				}
 				
-				> ul li { 
-					min-width: 250px; 
+				> ul,
+				> ul li,
+				> ul ul,
+				> ul ul li { 
+					min-width: 300px; 
+					width: 300px; 
 					a {
-						min-width: 250px;
+						width: 100%; 
 					}
 				}
 	
@@ -69,6 +83,8 @@ body.custom-digitalgov {
 			}
 			
 			a.wp-block-navigation-item__content {
+				background-color: transparent;
+
 				& a:is(:hover, :focus-visible),
 				&:hover,
 				&:focus-visible {
@@ -201,29 +217,29 @@ body.custom-digitalgov {
 
 	@media (max-width: 860px) {
 
-		.is-style-ribbon-menu {
-			height: 0;
+		// .is-style-ribbon-menu {
+		// 	height: 0;
 
-			#main-menu {
-				display: flex;
-				top: -3.75rem;
-				position: relative;
-				justify-content: flex-end;
-				width: calc(100% - 2rem);
-			}
+		// 	#main-menu {
+		// 		display: flex;
+		// 		top: -3.75rem;
+		// 		position: relative;
+		// 		justify-content: flex-end;
+		// 		width: calc(100% - 2rem);
+		// 	}
 
-			.has-modal-open .wp-block-navigation__container>.wp-block-navigation-item {
-				flex: 1;
-				margin: 0;
-				min-height: 1rem;
-				min-width: calc(100% - 6rem);
-				width: 100%;
-			}
+		// 	.has-modal-open .wp-block-navigation__container>.wp-block-navigation-item {
+		// 		flex: 1;
+		// 		margin: 0;
+		// 		min-height: 1rem;
+		// 		min-width: calc(100% - 6rem);
+		// 		width: 100%;
+		// 	}
 
-			nav.wp-block-navigation {
-				width: auto;
-			}
-		}
+		// 	nav.wp-block-navigation {
+		// 		width: auto;
+		// 	}
+		// }
 
 		.wp-block-navigation__responsive-container-close {
 			top: -3.5rem;
