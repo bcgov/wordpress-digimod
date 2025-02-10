@@ -1,0 +1,599 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/theme.json",
+	"customTemplates": [
+		{
+			"name": "page-no-title",
+			"postTypes": [
+				"page"
+			],
+			"title": "Page – Content only"
+		},
+		{
+			"name": "blank",
+			"postTypes": [
+				"page"
+			],
+			"title": "Blank page or post"
+		},
+		{
+			"name": "single",
+			"postTypes": [
+				"post"
+			],
+			"title": "Single Post"
+		}
+	],
+	"patterns": [
+		"bcgov-hero-banner"
+	],
+	"settings": {
+		"appearanceTools": true,
+		"blocks": {
+			"core/column": {
+				"spacing": {
+					"padding": true
+				}
+			},
+			"core/media-text": {
+				"spacing": {
+					"margin": true,
+					"padding": true
+				}
+			}
+		},
+		"color": {
+			"gradients": [
+				{
+					"gradient": "linear-gradient(0deg, rgba(14, 52, 104,0.12) 0%, rgba(14, 52, 104,0.36) 100%)",
+					"name": "Primary (Brand) Opacity",
+					"slug": "primary-brand-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(59, 90, 148,0.12) 0%, rgba(59, 90, 148,0.36) 100%)",
+					"name": "Secondary (Brand) Opacity",
+					"slug": "secondary-brand-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(246, 185, 0,0.12) 0%, rgba(246, 185, 0,0.36) 100%)",
+					"name": "Accent (Brand) Opacity",
+					"slug": "accent-brand-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(236, 197, 29,0.12) 0%, rgba(236, 197, 29,0.36) 100%)",
+					"name": "Secondary Accent Opacity",
+					"slug": "secondary-accent-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(189, 204, 111,0.12) 0%, rgba(189, 204, 111,0.36) 100%)",
+					"name": "Tertiary Opacity",
+					"slug": "tertiary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(90, 143, 142,0.12) 0%, rgba(90, 143, 142,0.36) 100%)",
+					"name": "Quarternary Opacity",
+					"slug": "quarternary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(188, 207, 201,0.12) 0%, rgba(188, 207, 201,0.36) 100%)",
+					"name": "Quinary Opacity",
+					"slug": "quinary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(159, 160, 139,0.12) 0%, rgba(159, 160, 139,0.36) 100%)",
+					"name": "Senary Opacity",
+					"slug": "senary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(108, 95, 78,0.12) 0%, rgba(108, 95, 78,0.36) 100%)",
+					"name": "Septenary Opacity",
+					"slug": "septenary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(242, 109, 111,0.12) 0%, rgba(242, 109, 111,0.36) 100%)",
+					"name": "Octonary Opacity",
+					"slug": "octonary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(242, 164, 136,0.12) 0%, rgba(242, 164, 136,0.36) 100%)",
+					"name": "Nonary Opacity",
+					"slug": "nonary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(5, 166, 209,0.12) 0%, rgba(5, 166, 209,0.36) 100%)",
+					"name": "Denary Opacity",
+					"slug": "denary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(218, 153, 1,0.12) 0%, rgba(218, 153, 1,0.36) 100%)",
+					"name": "Ondenary Opacity",
+					"slug": "ondenary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(5, 166, 209,0.12) 0%, rgba(5, 166, 209,0.36) 100%)",
+					"name": "Duodenary Opacity",
+					"slug": "duodenary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(255, 196, 139,0.12) 0%, rgba(255, 196, 139,0.36) 100%)",
+					"name": "Tridenary Opacity",
+					"slug": "tridenary-opacity"
+				},
+				{
+					"gradient": "linear-gradient(0deg, rgba(212, 186, 135,0.12) 0%, rgba(212, 186, 135,0.36) 100%)",
+					"name": "Quadenary Opacity",
+					"slug": "quadenary-opacity"
+				},
+				{
+					"color": "#000",
+					"gradient": "linear-gradient(135deg,rgb(20,43,67) 0%,rgb(5,66,119) 56%,rgb(20,43,67) 100%)",
+					"name": "Dark blue gradient",
+					"slug": "custom-dark-blue-gradient"
+				},
+				{
+					"gradient": "linear-gradient(135deg,rgb(239,247,255) 0%,rgb(244,250,255) 48%,rgb(239,247,255) 100%)",
+					"name": "Light blue gradient",
+					"slug": "custom-light-blue-gradient"
+				}
+			],
+			"palette": [
+				{
+					"color": "#0E3468",
+					"name": "Primary (Brand)",
+					"slug": "primary-brand"
+				},
+				{
+					"color": "#3B5A94",
+					"name": "Secondary (Brand)",
+					"slug": "secondary-brand"
+				},
+				{
+					"color": "#ffffff",
+					"name": "Accent (Brand)",
+					"slug": "accent"
+				},
+				{
+					"color": "#eaf4ff",
+					"name": "Secondary Accent",
+					"slug": "secondary-accent"
+				},
+				{
+					"color": "#0E3469",
+					"name": "Headline Colour",
+					"slug": "headline-color"
+				},
+				{
+					"color": "#111111",
+					"name": "Text Colour",
+					"slug": "text-color"
+				},
+				{
+					"color": "#fcba19",
+					"name": "Tertiary",
+					"slug": "tertiary"
+				},
+				{
+					"color": "#5A8F8E",
+					"name": "Quarternary",
+					"slug": "quarternary"
+				},
+				{
+					"color": "#BCCFC9",
+					"name": "Quinary",
+					"slug": "quinary"
+				},
+				{
+					"color": "#9FA08B",
+					"name": "Senary",
+					"slug": "senary"
+				},
+				{
+					"color": "#292929",
+					"name": "Septenary",
+					"slug": "septenary"
+				},
+				{
+					"color": "#F26D6F",
+					"name": "Octonary",
+					"slug": "octonary"
+				},
+				{
+					"color": "#F2A488",
+					"name": "Nonary",
+					"slug": "nonary"
+				},
+				{
+					"color": "#05A6D1",
+					"name": "Denary",
+					"slug": "denary"
+				},
+				{
+					"color": "#DA9901",
+					"name": "Ondenary",
+					"slug": "ondenary"
+				},
+				{
+					"color": "#2E585D",
+					"name": "Duodenary",
+					"slug": "duodenary"
+				},
+				{
+					"color": "#FFC48B",
+					"name": "Tridenary",
+					"slug": "tridenary"
+				},
+				{
+					"color": "#D4BA87",
+					"name": "Quadenary",
+					"slug": "quadenary"
+				},
+				{
+					"color": "#656565",
+					"name": "Gray 80",
+					"slug": "gray-80"
+				},
+				{
+					"color": "#A1A1A1",
+					"name": "Gray 60",
+					"slug": "gray-60"
+				},
+				{
+					"color": "#C7C7C7",
+					"name": "Gray 40",
+					"slug": "gray-40"
+				},
+				{
+					"color": "#222222",
+					"name": "Foreground",
+					"slug": "foreground"
+				},
+				{
+					"color": "#f9f9f9",
+					"name": "Background",
+					"slug": "background"
+				},
+				{
+					"color": "transparent",
+					"name": "Transparent",
+					"slug": "transparent"
+				}
+			]
+		},
+		"custom": {
+			"all-bootstrap-blocks": {
+				"areoi-customize-options-enable-cssgrid": false
+			}
+		},
+		"layout": {
+			"contentSize": "1330px",
+			"wideSize": "1330px"
+		},
+		"spacing": {
+			"blockGap": null,
+			"customSpacingSize": true,
+			"defaultSpacingSizes": false,
+			"spacingScale": {
+				"theme": {
+					"increment": 1.75,
+					"mediumStep": 1.5,
+					"operator": "*",
+					"steps": 9,
+					"unit": "rem"
+				}
+			},
+			"spacingSizes": [
+				{
+					"name": "3X-Small",
+					"size": "0.16rem",
+					"slug": "10"
+				},
+				{
+					"name": "2X-Small",
+					"size": "0.28rem",
+					"slug": "20"
+				},
+				{
+					"name": "X-Small",
+					"size": "0.49rem",
+					"slug": "30"
+				},
+				{
+					"name": "Small",
+					"size": "0.86rem",
+					"slug": "40"
+				},
+				{
+					"name": "Medium",
+					"size": "1.5rem",
+					"slug": "50"
+				},
+				{
+					"name": "Large",
+					"size": "2.63rem",
+					"slug": "60"
+				},
+				{
+					"name": "X-Large",
+					"size": "4.59rem",
+					"slug": "70"
+				},
+				{
+					"name": "2X-Large",
+					"size": "8.04rem",
+					"slug": "80"
+				},
+				{
+					"name": "3X-Large",
+					"size": "14.07rem",
+					"slug": "90"
+				}
+			]
+		},
+		"typography": {
+			"defaultFontSizes": false,
+			"fluid": true,
+			"fontFamilies": [],
+			"fontSizes": [
+				{
+					"fluid": {
+						"max": "1rem",
+						"min": "0.875rem"
+					},
+					"name": "Small",
+					"size": "clamp(0.875rem, 0.875rem + ((1vw - 0.48rem) * 0.24), 1rem)",
+					"slug": "small"
+				},
+				{
+					"fluid": {
+						"max": "1.2rem",
+						"min": "1rem"
+					},
+					"name": "Medium",
+					"size": "clamp(1rem, 1rem + ((1vw - 0.48rem) * 0.385), 1.2rem)",
+					"slug": "medium"
+				},
+				{
+					"fluid": {
+						"max": "1.44rem",
+						"min": "1.2rem"
+					},
+					"name": "Large",
+					"size": "clamp(1.2rem, 1.2rem + ((1vw - 0.48rem) * 0.462), 1.44rem)",
+					"slug": "large"
+				},
+				{
+					"fluid": {
+						"max": "1.728rem",
+						"min": "1.44rem"
+					},
+					"name": "Extra Large",
+					"size": "clamp(1.44rem, 1.44rem + ((1vw - 0.48rem) * 0.554), 1.728rem)",
+					"slug": "extra-large"
+				},
+				{
+					"fluid": {
+						"max": "2.074rem",
+						"min": "1.728rem"
+					},
+					"name": "Extra Extra large",
+					"size": "clamp(1.728rem, 1.728rem + ((1vw - 0.48rem) * 0.665), 2.074rem)",
+					"slug": "extra-extra-large"
+				}
+			]
+		}
+	},
+	"styles": {
+		"blocks": {
+			"core/list": {
+				"typography": {
+					"fontSize": "1rem",
+					"lineHeight": "1.6"
+				}
+			},
+			"core/list-item": {
+				"css": "& { font-size: clamp(var(--wp--preset--font-size--normal), 1rem + ((1vw - 0.48rem) * 0.481), 1rem); }"
+			},
+			"core/navigation": {
+				"css": "& li { font-size: var(--wp--preset--font-size--normal); }"
+			},
+			"core/paragraph": {
+				"css": "& { font-size: clamp(var(--wp--preset--font-size--normal), 1rem + ((1vw - 0.48rem) * 0.481), 1rem); }"
+			},
+			"core/pullquote": {
+				"css": "& { font-size: clamp(var(--wp--preset--font-size--normal), 1rem + ((1vw - 0.48rem) * 0.481), 1rem); }"
+			},
+			"core/quote": {
+				"css": "& { font-size: clamp(var(--wp--preset--font-size--normal), 1rem + ((1vw - 0.48rem) * 0.481), 1rem); }"
+			},
+			"core/site-title": {
+				"css": "& { font-size: clamp(var(--wp--preset--font-size--normal), 1rem + ((1vw - 0.48rem) * 0.481), 1rem); }"
+			}
+		},
+		"color": {
+			"background": "var(--wp--preset--color--accent)",
+			"text": "var(--wp--preset--color--foreground)"
+		},
+		"css": ".max-80 .wp-block-media-text__media {\n  max-width: 80%;\n  margin-inline: auto;\n}\n\n.wp-block-details {\n  padding: 0.5rem;\n}\n\n.card-container.card-container.card-container .wp-block-group .wp-block-post-featured-image {\n  max-height: 200px;\n  min-height: auto;\n  height: auto !important;\n}\n\n.query-row.query-row {\n  flex-direction: row !important;\n  box-shadow: none !important;\n  line-height: 1.5 !important;\n  padding-top: 2rem;\n  height: auto !important;\n  min-height: 1rem !important;\n  gap: 0.5rem;\n}\n\n.aioseo-breadcrumbs .aioseo-breadcrumb {\n  white-space: nowrap;\n  overflow: hidden;\n  max-width: 160px;\n  text-overflow: ellipsis;\n  width: fit-content;\n  white-space: nowrap !important;\n  display: block;\n}\n\nbody.blog .wp-block-post-date {\n  min-width: fit-content;\n}\n\n@media (max-width: 425px) {\n  .flex-cards .taxonomy-category {\n  margin-top: 1rem !important;\n  flex-direction: column;\ntext-align: center;\n}\n  body.custom-digitalgov .wp-block-navigation.wp-block-navigation {\n    padding: 0 !important;\n  }\n  .wp-block-buttons.toggle-search-container.toggle-search-container > .wp-block-button a.wp-block-button__link {\n    padding: 0.5rem;\n    min-width: 95px;\n  }\n}\n@media (max-width: 1024px) {\n  .wp-block-post-template-is-layout-grid.wp-block-post-template-is-layout-grid.wp-block-post-template-is-layout-grid.wp-block-post-template-is-layout-grid {\n    grid-template-columns: 1fr 1fr;\n  }\n}\n\n@media (max-width: 830px) {\n  .wp-block-post-template-is-layout-grid.wp-block-post-template-is-layout-grid.wp-block-post-template-is-layout-grid.wp-block-post-template-is-layout-grid {\n    grid-template-columns: 1fr;\n  }\n}\n\n\n.no-gap {\n  gap: 0;\n}\n\n.ai-landing.wp-block-media-text .wp-block-media-text__media img {\n  object-position: 66%;\n}\n\n.ai-card {\n  height: 100%;\n}\n\n.stat-card-container {\n  gap: 1rem;\n}\n\n@media (max-width: 1024px) {\n    .wp-block-columns.stat-card-container {\n        flex-wrap: wrap !important;\n    }\n    .wp-block-columns.stat-card-container .wp-block-column {\n        flex-basis: 100%;\n    }\n}\n\n@media (min-width: 1024px) {\n.stat-card-container {\n  gap: 1rem;\n}\n}\n\n.stat-card .number-stat {\n    white-space: nowrap !important;\n }\n\n@media (max-width: 1024px) {\n  .stat-card .number-stat {\n    font-size: 3rem !important;\n  }\n  .stat-card .text-stat {\n    font-size: var(--wp--preset--font-size--large) !important;\n  }\n}\n\n.wp-block-media-text.has-media-on-the-right .wp-block-media-text__content {\n    padding: 0;\n}\n\n@media (min-width: 600px) {\n.wp-block-media-text.has-media-on-the-right .wp-block-media-text__content {\n    padding: 0 2rem 0 0;\n}\n}\n\n/* Interregnum warning */\n.interface-interface-skeleton__editor .interface-interface-skeleton__notices .components-notice-list.components-editor-notices__pinned::before {\n\tcontent: \"Publishing to PROD (digital.gov.bc.ca) is prohibited during the interregnum period.\";\n\tz-index: 9;\n\theight: 2.75rem;\n\twidth: 100%;\n\tbackground-color: red;\n\tpadding: 1.5rem 1rem 0;\n\tfont-weight: bold;\n\ttext-align: center;\n\tdisplay: block;\n}\n\n/* Cloud services newsletter subscribe form override */\n\nbody.home .home-newsletter.home-newsletter  .wp-block-media-text__media img {\n  max-width: 320px;\n  width: 100%;\n}\n\nbody.home .home-newsletter.home-newsletter .gform_wrapper.gravity-theme .gform_fields .gform-field-label,\nbody.single-cloud .gform_wrapper.gravity-theme .gform_fields .gform-field-label {\n  border: 0 !important;\n  clip: none !important;\n  clip-path: none !important;\n  height: unset !important;\n  margin: unset !important;\n  overflow: visible !important;\n  padding: initial !important;\n  position: relative !important;\n  width: 100% !important;\n  white-space: unset !important;\ntop: -0.5rem;\n}\n\nbody.single-cloud  .gform_wrapper.gravity-theme fieldset {\n  margin-top: 1rem;\n}\n\nbody.home .home-newsletter.home-newsletter .gform_wrapper.gravity-theme .gform_fields {\n  gap: 0.5rem;\n  position: relative;\n}\n\nbody.home .home-newsletter.home-newsletter  input[type=\"email\"] {\n  border-radius: .33rem;\n  outline-offset: -1px;\n  outline: 1px solid var(--wp--preset--color--primary-brand);\n}\n\nbody.home .home-newsletter.home-newsletter .gform-button {\n  border-radius: 0.33rem;\n  font-size: clamp(14px, 0.875rem + ((1vw - 3.2px) * 0.396), 18px);\n  font-weight: 700;\n}\n\nbody.home .home-newsletter.home-newsletter .gform-button:is(:hover, :focus-visible) {\n  filter: contrast(150%);\n  outline: 2px solid var(--wp--preset--color--primary-brand);\n  outline-offset: 2px;\n}\n\n.ginput_container_email {\n  position: relative;\n  top: -4.5px;\n}\n\nbody.home .home-newsletter.home-newsletter .gform_wrapper.gravity-theme .gfield input.large {\n  padding: calc(.8rem + 2px);\n  font-size: clamp(14px, 0.875rem + ((1vw - 3.2px) * 0.396), 18px);\n}\n\nbody.home .home-newsletter.home-newsletter .gform-button {\n  line-height: 1.5;\n}\n\n.wp-block-media-text.alignwide.has-media-on-the-right.has-media-on-the-right .wp-block-media-text__content {\n  padding-inline: 0;\n}",
+		"elements": {
+			"h1": {
+				"color": {
+					"text": "var(--wp--preset--color--foreground)"
+				},
+				"typography": {
+					"fontSize": "clamp(1.728rem, 1.728rem + ((1vw - 0.48rem) * 0.665), 2.074rem)",
+					"fontStyle": "normal",
+					"fontWeight": "700"
+				}
+			},
+			"h2": {
+				"color": {
+					"text": "var(--wp--preset--color--foreground)"
+				},
+				"typography": {
+					"fontSize": "clamp(1.44rem, 1.44rem + ((1vw - 0.48rem) * 0.554), 1.728rem)",
+					"fontStyle": "normal",
+					"fontWeight": "700"
+				}
+			},
+			"h3": {
+				"color": {
+					"text": "var(--wp--preset--color--foreground)"
+				},
+				"typography": {
+					"fontSize": "clamp(1.2rem, 1.2rem + ((1vw - 0.48rem) * 0.462), 1.44rem)",
+					"fontStyle": "normal",
+					"fontWeight": "700"
+				}
+			},
+			"h4": {
+				"color": {
+					"text": "var(--wp--preset--color--foreground)"
+				},
+				"typography": {
+					"fontSize": "clamp(1rem, 1rem + ((1vw - 0.48rem) * 0.385), 1.2rem)",
+					"fontStyle": "normal",
+					"fontWeight": "700"
+				}
+			},
+			"h5": {
+				"color": {
+					"text": "var(--wp--preset--color--foreground)"
+				},
+				"typography": {
+					"fontSize": "clamp(0.875rem, 0.875rem + ((1vw - 0.48rem) * 0.24), 1rem)",
+					"fontStyle": "normal",
+					"fontWeight": "700"
+				}
+			},
+			"h6": {
+				"color": {
+					"text": "var(--wp--preset--color--foreground)"
+				},
+				"typography": {
+					"fontSize": "var(--wp--preset--font-size--small)",
+					"fontStyle": "normal",
+					"fontWeight": "700"
+				}
+			},
+			"heading": {
+				"typography": {
+					"fontStyle": "normal",
+					"fontWeight": "700"
+				}
+			},
+			"link": {
+				"color": {
+					"text": "var(--wp--preset--color--primary-brand)"
+				},
+				"typography": {
+					"lineHeight": "1.6"
+				}
+			}
+		},
+		"spacing": {
+			"padding": {
+				"bottom": "0px",
+				"left": "0px",
+				"right": "0px",
+				"top": "0px"
+			}
+		},
+		"typography": {
+			"fontSize": "var(--wp--preset--font-size--medium)",
+			"lineHeight": "1.6"
+		}
+	},
+	"templateParts": [
+		{
+			"area": "header",
+			"name": "global-header-container",
+			"title": "Global Header Container"
+		},
+		{
+			"area": "header",
+			"name": "header-ribbon-polylang",
+			"title": "General Header with Polylang ribbon nav"
+		},
+		{
+			"area": "header",
+			"name": "header",
+			"title": "General Header with ribbon nav"
+		},
+		{
+			"area": "header",
+			"name": "header-takeover-nav",
+			"title": "General Header with fullscreen nav"
+		},
+		{
+			"area": "header",
+			"name": "header-alpha-v3-1",
+			"title": "Alpha v3.1 Header"
+		},
+		{
+			"area": "header",
+			"name": "header-alpha-v3-ribbon",
+			"title": "Alpha v3 Header with ribbon nav and search"
+		},
+		{
+			"area": "footer",
+			"name": "footer-alpha-v3-1",
+			"title": "Alpha V3.1 Footer"
+		},
+		{
+			"area": "footer",
+			"name": "footer-text-alpha-v3-1",
+			"title": "Alpha v3.1 Footer Text"
+		},
+		{
+			"area": "footer",
+			"name": "footer-alpha-v3",
+			"title": "Alpha v3 Footer"
+		},
+		{
+			"area": "header",
+			"name": "navigation",
+			"title": "Main Menu"
+		},
+		{
+			"area": "header",
+			"name": "ribbon-navigation",
+			"title": "Ribbon Menu (Main)"
+		},
+		{
+			"area": "header",
+			"name": "takeover-navigation",
+			"title": "Takeover Menu (Main)"
+		},
+		{
+			"area": "header",
+			"name": "search-field",
+			"title": "Search Field – default"
+		},
+		{
+			"area": "header",
+			"name": "search-field-alpha-v3",
+			"title": "Search Field – Alpha v3"
+		},
+		{
+			"area": "header",
+			"name": "breadcrumb-nav",
+			"title": "Breadcrumb Nav – requires AIOSEO plugin"
+		},
+		{
+			"area": "header",
+			"name": "skip-nav",
+			"title": "Accessibility Skip Nav"
+		},
+		{
+			"area": "footer",
+			"name": "global-footer-container",
+			"title": "Global Footer Container"
+		},
+		{
+			"area": "footer",
+			"name": "footer",
+			"title": "BCGov Footer"
+		}
+	],
+	"title": "Digital Gov Default",
+	"version": 3
+}

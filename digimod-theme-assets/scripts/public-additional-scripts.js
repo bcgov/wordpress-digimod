@@ -5,7 +5,7 @@ import './public/continuous-learning';
 import './public/training-cards';
 import './public/grid-layout';
 import './public/homepage';
-import './public/mega-menu';
+// import './public/mega-menu';
 import './public/navigation';
 import './public/search';
 import './public/sticky-side-navigation';

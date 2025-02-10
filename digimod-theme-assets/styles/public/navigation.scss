@@ -2,7 +2,13 @@
 /* stylelint-disable selector-class-pattern */
 /* stylelint-disable font-weight-notation */
 
+nav ol.has-background,
+nav ul.has-background {
+	// padding: 0.25rem 0.5rem;
+}
+
 body.custom-digitalgov {
+
 
 	nav {
 		&[aria-label="Main menu"] {
@@ -11,10 +17,24 @@ body.custom-digitalgov {
 		>ul {
 	
 			>li {
+
+				padding: 0.5rem 0.15rem;
+
+				> ul,
+				> ul ul {
+					box-shadow: 0 0.6000000238418579px 1.7999999523162842px 0 #0000001a,0 3.200000047683716px 7.199999809265137px 0 #00000021;
+				}
+				
+				> ul li { 
+					min-width: 250px; 
+					a {
+						min-width: 250px;
+					}
+				}
 	
 				&:focus,
 				&:hover {
-					background-color: hsla(0, 0%, 7%, 0.15) !important;
+					background-color: hsla(0, 0%, 7%, 0.15);
 				}
 	
 				a[title="private"]::after,
@@ -33,7 +53,7 @@ body.custom-digitalgov {
 			}
 	
 			>.current-menu-item {
-				background-color: hsla(0, 0%, 7%, 0.05) !important;
+				background-color: #dbdbdb;
 	
 				&.has-secondary-accent-background-color {
 					background-color: $menuAncestorHighlight !important;
@@ -41,6 +61,103 @@ body.custom-digitalgov {
 				}
 			}
 		}
+	    
+		.wp-block-navigation.wp-block-navigation { // highlighting.
+	
+			li:has(a:hover) {
+				background-color: #dbdbdb;
+			}
+			
+			a.wp-block-navigation-item__content {
+				& a:is(:hover, :focus-visible),
+				&:hover,
+				&:focus-visible {
+					text-decoration: underline !important;
+				}
+			}
+
+			&__container {
+
+				>.wp-block-navigation-submenu {
+
+					// &.current-menu-item {
+					// 	background-color: #dbdbdb;
+					// }
+				}
+			}
+
+			li.current-menu-item {
+
+
+				>a.wp-block-navigation-item__content {
+					background-color: #dbdbdb;
+					font-weight: bold;
+				}
+
+				>a.wp-block-navigation-item__content[href*="#"]  {
+					background-color: #fff;
+					font-weight: normal;
+				}
+				
+			}
+
+			li:has(li.current-menu-item) {
+				background-color: #dbdbdb;
+			}
+
+
+			&.has-background {
+
+				.has-child {
+
+					.wp-block-navigation {
+
+						&__submenu-container {
+
+							@media (min-width: $breakpoint-sm) {
+
+								a {
+
+									&:hover,
+									&:focus {
+										text-decoration: underline;
+										filter: contrast(100%);
+									}
+
+									@supports selector(:has(*)) {
+
+										&:hover,
+										&:focus {
+											text-decoration: none;
+										}
+									}
+								}
+							}
+
+						}
+					}
+
+				}
+			}
+
+			&__container {
+
+				.wp-block-navigation {
+
+					&-submenu {
+
+						a {
+
+							&:hover,
+							&:focus {
+								background-color: transparent;
+							}
+						}
+					}
+				}
+			}
+		}
+
 	}
 
 
@@ -60,7 +177,7 @@ body.custom-digitalgov {
 			>.wp-block-navigation-item {
 
 				a {
-					padding: 1rem 0.5rem;
+					padding: 1rem;
 
 					&:focus-visible,
 					&:focus,
