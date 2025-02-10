@@ -89,6 +89,8 @@ body.custom-digitalgov.has-ribbon-menu {
 				&:hover,
 				&:focus-visible {
 					text-decoration: underline !important;
+					text-underline-offset: 3px;
+  					text-decoration-color: #858585 !important;
 				}
 			}
 
