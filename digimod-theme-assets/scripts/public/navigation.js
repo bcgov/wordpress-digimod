@@ -63,7 +63,7 @@ const domReady = () => {
 		const highlightMainNavItem = (urlSubstring) => {
 			if (hasSubPage(urlSubstring)) {
 				const liElements = document.querySelectorAll(
-					'.wp - block - navigation - item a[href*="${urlSubstring}"]'
+					`.wp-block-navigation-item a[href*="${urlSubstring}"]`
 				);
 				if (liElements && liElements.length > 0) {
 					const firstLiElement = liElements[0];
@@ -123,7 +123,7 @@ const domReady = () => {
 			if (childContainer) {
 				bounding = childContainer.getBoundingClientRect();
 				// Slight offset from parent
-				childContainer.style.top = '0.85rem';
+				//childContainer.style.top = '0.85rem';
 			}
 
 			const windowWidth = window.innerWidth || document.documentElement.clientWidth;
@@ -135,7 +135,7 @@ const domReady = () => {
 
 				if (bounding.right > windowWidth && childContainer) {
 					childContainer.classList.add('is-offscreen');
-					childContainer.style.left = calc('4px - ${ childContainer.parentNode.parentNode.offsetWidth }px');
+					childContainer.style.left = `calc(4px - ${ childContainer.parentNode.parentNode.offsetWidth }px)`;
 					childContainer.style.right = 'auto';
 					childContainer.style.position = 'absolute';
 				}
@@ -323,6 +323,8 @@ const domReady = () => {
 		};
 
 		const openSubmenu = (menuItemEl) => {
+			const submenu = menuItemEl
+				.closest('.wp-block-navigation-submenu')
 			const toggle = menuItemEl
 				.closest('.wp-block-navigation-submenu')
 				?.querySelector('.wp-block-navigation-submenu__toggle');
@@ -333,27 +335,60 @@ const domReady = () => {
 					.querySelectorAll('button[role="menuitem"]');
 				if (submenuItems.length) {
 					submenuItems[0].focus();
+					doBoundsCheck(submenu);
 				}
 			}
 		};
 
 		const closeSubmenu = (menuItemEl, moveFocusToParent = false) => {
 			const submenu = menuItemEl.closest('.wp-block-navigation-submenu');
-			const toggle = submenu?.querySelector(
+			if (!submenu) return;
+		
+			// Close all toggles that are open within this submenu.
+			const openToggles = submenu.querySelectorAll(
 				'.wp-block-navigation-submenu__toggle[aria-expanded="true"]'
 			);
-			if (toggle) {
+			openToggles.forEach((toggle) => {
 				toggle.setAttribute('aria-expanded', 'false');
-				if (moveFocusToParent) {
-					toggle.focus();
+			});
+		
+			if (moveFocusToParent) {
+				const parentLi = submenu.closest('li');
+				if (parentLi) {
+					const parentToggle = parentLi.querySelector('button[role="menuitem"]');
+					const parentAnchor = parentLi.querySelector('a[role="menuitem"]');
+					if (parentToggle) {
+						parentToggle.focus();
+					} 
+						if (parentAnchor) {
+							parentAnchor.focus();
+						}
+					
 				}
+			}
+		};
+
+		/**
+		 * Move focus to the fiirst menu item in the same <ul> container as `currentItem`.
+		 */
+		const focusFirstElementOfMenu = (currentItem) => {
+			const parentUl = currentItem.closest('ul');
+			if (!parentUl) return;
+
+			const firstLi = parentUl.querySelector('li');
+			if (!firstLi) return;
+
+			const firstMenuItem = firstLi.querySelector('[role="menuitem"]');
+			if (firstMenuItem) {
+				firstMenuItem.focus();
 			}
 		};
 
 		/**
 		 * Move the focus into the first item of a sibling submenu.
 		 */
-		const focusFirstElementOfSiblingMenu = (currentItem) => {
+		const focusFirstElementOfSiblingMenu = (currentItem, event) => {
+			event.preventDefault();
 			const parentLi = currentItem.closest('li');
 			if (!parentLi) return;
 
@@ -371,24 +406,59 @@ const domReady = () => {
 			}
 		};
 
+		/**
+		 * Move focus to the last menu item in the same <ul> container as `currentItem`.
+		 */
+		const focusLastElementOfMenu = (currentItem) => {
+			const parentUl = currentItem.closest('ul');
+			if (!parentUl) return;
+
+			const directLis = Array.from(parentUl.children).filter(
+				(el) => el.tagName.toLowerCase() === 'li'
+			);
+			if (!directLis.length) return;
+
+			const lastLi = directLis[directLis.length - 1];
+
+			const directMenuItems = Array.from(lastLi.children).filter(
+				(el) => el.getAttribute('role') === 'menuitem'
+			);
+			if (!directMenuItems.length) return;
+
+			const lastMenuItem = directMenuItems[directMenuItems.length - 1];
+			lastMenuItem.focus();
+		};
+
+
+		/**
+		 * Move "down" through siblings in an anchor → button → anchor → button pattern.
+		 */
 		const moveDownSiblingMenu = (currentItem) => {
 			const parentLi = currentItem.closest('li');
 			if (!parentLi) return;
-		
-			// Find the next sibling <li> of this parent.
+
+			if (currentItem.localName === 'a') {
+				const sameLiButton = parentLi.querySelector('button[role="menuitem"]');
+				// If we find a different button in the same <li>, focus it and stop.
+				if (sameLiButton && sameLiButton !== currentItem) {
+					sameLiButton.focus();
+					return;
+				}
+			}
+
 			let siblingLi = parentLi.nextElementSibling;
 			while (siblingLi && siblingLi.tagName.toLowerCase() !== 'li') {
 				siblingLi = siblingLi.nextElementSibling;
 			}
-
 			if (!siblingLi) return;
-		
-			// Within that sibling LI, find the first menuitem (anchor/button).
-			const firstMenuItem = siblingLi.querySelector('[role="menuitem"]');
-			if (firstMenuItem) {
-				firstMenuItem.focus();
+
+			const siblingAnchor = siblingLi.querySelector('a[role="menuitem"]');
+			if (siblingAnchor) {
+				siblingAnchor.focus();
 			}
 		};
+
+
 
 		const moveUpSiblingMenu = (currentItem) => {
 			const parentLi = currentItem.closest('li');
@@ -400,10 +470,18 @@ const domReady = () => {
 			}
 
 			if (!siblingLi) return;
-		
-			const firstMenuItem = siblingLi.querySelector('[role="menuitem"]');
-			if (firstMenuItem) {
-				firstMenuItem.focus();
+
+			const currentItemMenuItem = parentLi.querySelector('a[role="menuitem"]');
+			const itemMenuItem = siblingLi.querySelector('a[role="menuitem"]');
+			const buttonMenuItem = siblingLi.querySelector('button[role="menuitem"]');
+			if ('a' === currentItem.localName) {
+				if (buttonMenuItem) {
+					buttonMenuItem.focus();
+				} else {
+					itemMenuItem.focus();
+				}
+			} else {
+				currentItemMenuItem.focus();
 			}
 		};
 
@@ -473,57 +551,109 @@ const domReady = () => {
 						event.stopPropagation();
 						break;
 					}
+					case 'Enter': {
+						if (topLevelItems.includes(currentItem)) {
+							openSubmenu(currentItem)
+							focusFirstElementOfSiblingMenu(currentItem, event);
+						}
+						break;
+					}
 					case 'ArrowDown': {
 						// If top-level item has a submenu, open it; otherwise go to next item.
 						if (topLevelItems.includes(currentItem)) {
-							focusFirstElementOfSiblingMenu(currentItem);
+							focusFirstElementOfSiblingMenu(currentItem, event);
 						} else {
-							openSubmenu(currentItem);
-							moveDownSiblingMenu(currentItem);
+							if ('button' === currentItem.localName) {
+								moveDownSiblingMenu(currentItem);
+							} else {
+								moveDownSiblingMenu(currentItem);
+								// focusMenuItem(allMenuItems, currentIndex + 1);
+							}
 						}
 						break;
 					}
 					case 'ArrowUp': {
-						// Move focus to previous item.
-						openSubmenu(currentItem);
-						moveUpSiblingMenu(currentItem);
+						// If current item is a button, just go to the previous item.
+						if (currentItem.localName === 'button') {
+							focusMenuItem(allMenuItems, currentIndex - 1);
+						} else {
+							const parentLi = currentItem.closest('li');
+							if (!parentLi) break;
+					
+							const parentUl = parentLi.closest('ul');
+							if (!parentUl) break;
+					
+							const directLis = Array.from(parentUl.children).filter(
+								(el) => el.tagName.toLowerCase() === 'li'
+							);
+					
+							if (directLis.length && directLis[0] !== parentLi) {
+								moveUpSiblingMenu(currentItem);
+							} else {
+								closeSubmenu(currentItem);
+								focusMenuItem(allMenuItems, currentIndex - 1);
+							}
+						}
 						break;
 					}
+					
 					case 'ArrowRight': {
-						// Typical menubar approach: if top-level, go to next top-level item.
-						// if sub-level, you could open another submenu or do nothing.
+						// Move focus to next item, but enter submenu if available.
 						if (topLevelItems.includes(currentItem)) {
 							const topIndex = topLevelItems.indexOf(currentItem);
 							focusMenuItem(topLevelItems, topIndex + 1);
 						} else {
-							console.log('right', currentItem);
-							openSubmenu(currentItem);
-							focusMenuItem(allMenuItems, currentIndex + 1);
+							if ('button' === currentItem.localName) {
+								openSubmenu(currentItem);
+								focusMenuItem(allMenuItems, currentIndex + 1);
+							} else {
+								moveDownSiblingMenu(currentItem);
+							}
 						}
 						break;
 					}
 					case 'ArrowLeft': {
-						// Typical menubar approach: if top-level, go to previous top-level item.
-						// if sub-level, close the submenu and move focus to the parent toggle.
 						if (topLevelItems.includes(currentItem)) {
 							const topIndex = topLevelItems.indexOf(currentItem);
 							focusMenuItem(topLevelItems, topIndex - 1);
 						} else {
 							// In sub-level => close submenu, move focus up.
-							console.log('left', currentItem);
-							closeSubmenu(currentItem, true);
-							focusMenuItem(allMenuItems, currentIndex - 1);
+							const containerUl = currentItem.closest('ul');
+							if (!containerUl) return;
+							const directLis = Array.from(containerUl.children).filter(
+								(node) => node.tagName.toLowerCase() === 'li'
+							);
+							if (!directLis.length) return;
+							const firstMenuItem = directLis[0].querySelector('a[role="menuitem"]');
+							if ('button' === currentItem.localName) {
+								focusMenuItem(allMenuItems, currentIndex - 1);
+								closeSubmenu(currentItem);
+							} else if (currentItem.localName === 'a') {
+								if (firstMenuItem === currentItem) {
+									closeSubmenu(currentItem, true);
+								} else {
+									moveUpSiblingMenu(currentItem);
+								}
+							}
 						}
 						break;
 					}
 					case 'Home': {
 						// Move focus to the first item in the entire menu.
-						focusMenuItem(allMenuItems, 0);
+						if (topLevelItems.includes(currentItem)) {
+							focusMenuItem(allMenuItems, 0);
+						} else {
+							focusFirstElementOfMenu(currentItem);
+						}
 						break;
 					}
 					case 'End': {
 						// Move focus to the last item in the entire menu.
-						focusMenuItem(allMenuItems, allMenuItems.length - 1);
+						if (topLevelItems.includes(currentItem)) {
+							focusMenuItem(allMenuItems, allMenuItems.length - 1);
+						} else {
+							focusLastElementOfMenu(currentItem);
+						}
 						break;
 					}
 					default: {
