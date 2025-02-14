@@ -551,13 +551,13 @@ const domReady = () => {
 						event.stopPropagation();
 						break;
 					}
-					case 'Enter': {
-						if (topLevelItems.includes(currentItem)) {
-							openSubmenu(currentItem)
-							focusFirstElementOfSiblingMenu(currentItem, event);
-						}
-						break;
-					}
+					// case 'Enter': {
+					// 	if (topLevelItems.includes(currentItem)) {
+					// 		openSubmenu(currentItem)
+					// 		focusFirstElementOfSiblingMenu(currentItem, event);
+					// 	}
+					// 	break;
+					// }
 					case 'ArrowDown': {
 						// If top-level item has a submenu, open it; otherwise go to next item.
 						if (topLevelItems.includes(currentItem)) {
@@ -631,6 +631,7 @@ const domReady = () => {
 							} else if (currentItem.localName === 'a') {
 								if (firstMenuItem === currentItem) {
 									closeSubmenu(currentItem, true);
+									focusFirstElementOfSiblingMenu(currentItem, event);
 								} else {
 									moveUpSiblingMenu(currentItem);
 								}
