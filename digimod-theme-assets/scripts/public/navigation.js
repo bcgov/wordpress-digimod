@@ -160,14 +160,48 @@ const domReady = () => {
 
 		/**
 		 * Assign ARIA roles:
-		 * - role="menu" on the nav container (or "menubar" if it’s a horizontal menubar).
+		 * - role="menubar"
 		 * - role="menuitem" on anchors/toggles.
 		 */
 		if (navContainer) {
-			navContainer.setAttribute('role', 'menu');
-			const menuLinksAndButtons = navContainer.querySelectorAll('a, button');
-			menuLinksAndButtons.forEach((el) => {
+			const menuULs = navContainer.querySelectorAll('ul');
+			menuULs.forEach((el) => {
+				const formattedName = el.parentElement.querySelector('a').text.trim().toLowerCase().replace(/\s+/g, "_");
+				el.setAttribute('id', `id_${formattedName}_menu`);
+				if ('NAV' === el.parentElement.tagName) {
+					el.setAttribute('aria-label', 'Main menu');
+					el.setAttribute('role', 'menubar');
+				} else {
+					el.setAttribute('role', 'menu');
+					el.setAttribute('tabindex', -1);
+					el.setAttribute('aria-label', el.parentElement.querySelector('a').text);
+				}
+			});
+			const menuLIs = navContainer.querySelectorAll('li');
+			menuLIs.forEach((el) => {
+				if (el.querySelector('ul')) {
+					el.setAttribute('role', 'group');
+				} else {
+					el.setAttribute('role', 'none');
+				}
+			});
+			const menuLinks = navContainer.querySelectorAll('a');
+			menuLinks.forEach((el, index) => {
+				el.setAttribute('tabindex', -1);
+				if (0 === index) {
+					el.setAttribute('tabindex', 0);
+				}
 				el.setAttribute('role', 'menuitem');
+			});
+			const menuButtons = navContainer.querySelectorAll('button');
+			menuButtons.forEach((el) => {
+				const formattedName = el.parentElement.querySelector('a').text.trim().toLowerCase().replace(/\s+/g, "_");
+				el.setAttribute('role', 'menuitem');
+				el.setAttribute('aria-controls', `id_${formattedName}_menu`);
+				el.setAttribute('tabindex', -1);
+				if (el.parentElement.querySelector('ul')) {
+					el.setAttribute('aria-haspopup', 'true');
+				}
 			});
 		}
 
