@@ -49,7 +49,7 @@ body.custom-digitalgov.has-ribbon-menu {
 	
 				&:focus-within,
 				&:hover {
-					background-color: hsla(0, 0%, 7%, 0.15);
+					background-color: var(--bg-highlight);
 				}
 	
 				a[title="private"]::after,
@@ -79,7 +79,7 @@ body.custom-digitalgov.has-ribbon-menu {
 	    
 		.wp-block-navigation.wp-block-navigation { // highlighting.
 	
-			li:has(:hover, :focus-visible) {
+			li:has(:hover, :focus-within) {
 				background-color: var(--bg-highlight);
 			}
 			
