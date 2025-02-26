@@ -3,7 +3,7 @@
 /**
  * Plugin Name: DIGIMOD - miscellaneous
  * Description: Miscellaneous features for DigitalGov; Defines WCAG Tag taxonomy, CLI Keycloak SSO/Miniorange adjuster.
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -24,6 +24,8 @@ Changelog
 1.2.1 - Added admin notice to not upgrade AIO SEO past 4.7.1.1 until further notice, as 4.7.2 breaks gutenberg on WP 6.4.3
 
 1.2.2 - Disabled the AIO SEO warning and block update as AIO SEO 4.7.3.1 fixed the problem.
+
+1.2.3 - Added disabling of miniOrange setting that checks for email_verified=1 from IDIR which is not provided and breaks login.
 */
 
 // Exit if accessed directly
@@ -294,7 +296,20 @@ if (defined('WP_CLI')) {
             $app['accesstokenurl'] = $ssoURI . '/realms/standard/protocol/openid-connect/token';
             $app['redirecturi'] = $siteURL;
             $appslist['keycloak'] = $app;
-            update_option('mo_oauth_apps_list', $appslist);
+            //update_option('mo_oauth_apps_list', $appslist);
+
+
+
+            //Turn off the new setting (6.26.4+) to enforce email_verified that breaks IDIR login as IDIR provider does not provide that field=1
+            $mo_oauth_email_verify_config = get_option( 'mo_oauth_login_settings_option' );
+            if($mo_oauth_email_verify_config && isset($mo_oauth_email_verify_config['mo_oauth_email_verify_check']) && $mo_oauth_email_verify_config['mo_oauth_email_verify_check'] != ''){
+                $mo_oauth_email_verify_config['mo_oauth_email_verify_check'] = '';
+                update_option( 'mo_oauth_login_settings_option', $mo_oauth_email_verify_config );
+
+                WP_CLI::log('Disabled "Allow login to Verified IDP Account" setting.');
+            }
+
+
 
             WP_CLI::success('Miniorange settings reconfigured!');
         }
