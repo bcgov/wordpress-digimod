@@ -3,7 +3,7 @@
 /**
  * Plugin Name: DIGIMOD - miscellaneous
  * Description: Miscellaneous features for DigitalGov; Defines WCAG Tag taxonomy, CLI Keycloak SSO/Miniorange adjuster.
- * Version: 1.2.3
+ * Version: 1.2.4
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -26,6 +26,8 @@ Changelog
 1.2.2 - Disabled the AIO SEO warning and block update as AIO SEO 4.7.3.1 fixed the problem.
 
 1.2.3 - Added disabling of miniOrange setting that checks for email_verified=1 from IDIR which is not provided and breaks login.
+
+1.2.4 - Split out the code from 1.2.3 into its own CLI function.
 */
 
 // Exit if accessed directly
@@ -277,6 +279,10 @@ if (defined('WP_CLI')) {
             // [resourceownerdetailsurl] => 
             // [username_attr] => xxx
 
+            if(!is_array($args) || count($args) != 3){
+                WP_CLI::error('Missing arguments!');
+                return;
+            }
 
             $clientSecret = $args[0];
             $ssoURI = $args[1];
@@ -296,24 +302,35 @@ if (defined('WP_CLI')) {
             $app['accesstokenurl'] = $ssoURI . '/realms/standard/protocol/openid-connect/token';
             $app['redirecturi'] = $siteURL;
             $appslist['keycloak'] = $app;
-            //update_option('mo_oauth_apps_list', $appslist);
-
-
-
-            //Turn off the new setting (6.26.4+) to enforce email_verified that breaks IDIR login as IDIR provider does not provide that field=1
-            $mo_oauth_email_verify_config = get_option( 'mo_oauth_login_settings_option' );
-            if($mo_oauth_email_verify_config && isset($mo_oauth_email_verify_config['mo_oauth_email_verify_check']) && $mo_oauth_email_verify_config['mo_oauth_email_verify_check'] != ''){
-                $mo_oauth_email_verify_config['mo_oauth_email_verify_check'] = '';
-                update_option( 'mo_oauth_login_settings_option', $mo_oauth_email_verify_config );
-
-                WP_CLI::log('Disabled "Allow login to Verified IDP Account" setting.');
-            }
-
-
+            update_option('mo_oauth_apps_list', $appslist);
 
             WP_CLI::success('Miniorange settings reconfigured!');
         }
     }
 
+    class Digimod_fix_mo extends WP_CLI_Command
+    {
+        public function __invoke($args)
+        {
+
+            //Turn off the new setting (6.26.4+) to enforce email_verified that breaks IDIR login as IDIR provider does not provide that field=1
+            WP_CLI::log('Checking "Allow login to Verified IDP Account" setting.');
+            $mo_oauth_email_verify_config = get_option( 'mo_oauth_login_settings_option' );
+            if($mo_oauth_email_verify_config && isset($mo_oauth_email_verify_config['mo_oauth_email_verify_check']) && $mo_oauth_email_verify_config['mo_oauth_email_verify_check'] != ''){
+                $mo_oauth_email_verify_config['mo_oauth_email_verify_check'] = '';
+                update_option( 'mo_oauth_login_settings_option', $mo_oauth_email_verify_config );
+
+                WP_CLI::log('Disabled setting.');
+
+            }else{
+                WP_CLI::log('Setting already disabled');
+            }
+
+
+            WP_CLI::success('Miniorange reconfigured!');
+        }
+    }
+
     WP_CLI::add_command('digimod-config-mo', 'Digimod_config_mo');
+    WP_CLI::add_command('digimod-fix-mo', 'Digimod_fix_mo');
 }
