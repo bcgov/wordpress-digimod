@@ -38,7 +38,7 @@ oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
 
 
 if [ -d "$PLUGIN" ]; then
-	echo "Deploying $PLUGIN"
+	echo "Deploying $PLUGIN to $OC_SITE_NAME"
 
 	WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 	WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
