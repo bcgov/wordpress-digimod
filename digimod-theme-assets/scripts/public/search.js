@@ -66,6 +66,31 @@ const digitalGovSearch = () => {
 	  /**
 	   * Hide container on outside click
 	   */
+	  document.addEventListener('mousedown', (event) => {
+		const isContainerOpen = !searchFieldContainer.classList.contains('hidden');
+		if (!isContainerOpen) return;
+  
+		const clickInsideContainer = searchFieldContainer.contains(event.target);
+		const clickOnToggle = toggleSearchBtn.contains(event.target);
+		const clickOnBtn = searchSubmitBtn && searchSubmitBtn.contains(event.target);
+		const clickOnLink = searchFieldLinks && [...searchFieldLinks].some(link => link.contains(event.target));
+  
+		// If user clicks the actual submit button, do that action
+		if (clickOnBtn) {
+		  event.preventDefault();
+		  searchSubmitBtn.click();
+		  return;
+		}
+  
+		// Otherwise, close if outside both container and toggle
+		if (!clickInsideContainer && !clickOnToggle && !clickOnLink) {
+			// Delay closing just a bit so Safari can finish the link click
+			setTimeout(() => {
+			  closeSearchContainer();
+			}, 10);
+		  }		  
+	  });
+
 	  document.addEventListener('click', (event) => {
 		const isContainerOpen = !searchFieldContainer.classList.contains('hidden');
 		if (!isContainerOpen) return;
@@ -73,7 +98,7 @@ const digitalGovSearch = () => {
 		const clickInsideContainer = searchFieldContainer.contains(event.target);
 		const clickOnToggle = toggleSearchBtn.contains(event.target);
 		const clickOnBtn = searchSubmitBtn && searchSubmitBtn.contains(event.target);
-		const clickOnLink = searchFieldLinks && searchFieldLinks.forEach(el => el.contains(event.target));
+		const clickOnLink = searchFieldLinks && [...searchFieldLinks].some(link => link.contains(event.target));
   
 		// If user clicks the actual submit button, do that action
 		if (clickOnBtn) {
