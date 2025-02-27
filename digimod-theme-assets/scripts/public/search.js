@@ -1,4 +1,3 @@
-import { addSafeEventListenerPlugin } from '../utils';
 /**
  * Search DOM.
  */
@@ -7,144 +6,138 @@ const digitalGovSearch = () => {
 	 * SafarIE iOS requires window.requestAnimationFrame update.
 	 */
 	window.requestAnimationFrame(() => {
-
-		const searchPage = document.querySelector('body.search');
-		const toggleSearchBtn = document.querySelector('.toggle-search-btn a');
-		const searchFieldContainer = document.querySelector('#search-container');
-		
-		if (toggleSearchBtn) {
-		
-			
-			if (searchFieldContainer) {
-				const siblingElement =
-					searchFieldContainer.previousElementSibling;
-
-				const searchInput = searchFieldContainer.querySelector('input');
-				const searchButton = searchFieldContainer.querySelector('button');
-				let ignoreFocusOut = false;
-
-				if (searchFieldContainer && siblingElement) {
-					siblingElement.parentNode.insertBefore(
-						searchFieldContainer,
-						siblingElement
-					);
-				}
-
-				// Add a click event listener to the toggleSearchBtn to set the flag
-				addSafeEventListenerPlugin(document, 'mousedown', (event) => {
-					if (!searchFieldContainer.classList.contains('hidden') && !searchFieldContainer.contains(event.target) && !toggleSearchBtn.contains(event.target)) {
-						// Trigger the focus out behavior
-						searchFieldContainer.dispatchEvent(new Event('focusout', { bubbles: true }));
-					  }
-				});
-
-				addSafeEventListenerPlugin(searchFieldContainer, 'focusout', (event) => {
-					// search panel has lost focus
-					if (!searchFieldContainer.contains(event.relatedTarget) && !toggleSearchBtn.contains(event.relatedTarget)) {
-						toggleSearchBtn.focus();
-						toggleSearchBtn.click();
-					}
-					// Reset the flag after processing the focusout event
-					ignoreFocusOut = false;
-				});
-
-				addSafeEventListenerPlugin(toggleSearchBtn, 'click', function (event) {
-					event.preventDefault();
-
-					if (searchFieldContainer && !searchPage) {
-						if (
-							searchFieldContainer.classList.contains('hidden')
-						) {
-							searchFieldContainer.classList.remove('hidden');
-							searchFieldContainer.style.display = 'block';
-							if (searchInput) {
-								searchInput.focus();
-							}
-							toggleSearchBtn.classList.add('close');
-						} else {
-							searchFieldContainer.classList.add('hidden');
-							searchFieldContainer.style.display = 'none';
-							toggleSearchBtn.classList.remove('close');
-						}
-					}
-				});
-
-				addSafeEventListenerPlugin(toggleSearchBtn, 'keydown', (event) => {
-					if (event.code === 'Space' || event.code === 'Enter') {
-						event.preventDefault();
-						toggleSearchBtn.click();
-					}
-				});
-
-				// Add event listener for the escape key
-				document.addEventListener('keydown', function (event) {
-					if (event.key === 'Escape' && !searchFieldContainer.classList.contains('hidden')) {
-						event.preventDefault();
-						toggleSearchBtn.click();
-					}
-				});
-
-				if (searchFieldContainer) {
-
-					addSafeEventListenerPlugin(searchButton, 'blur', function (event) {
-						event.preventDefault();
-						const resultsShowing = document.querySelector('.searchwp-live-search-results-showing');
-						const popularContentShowing = document.querySelector('.live-search-extra');
-
-						window.requestAnimationFrame(() => {
-							if (
-								searchInput ===
-								event.target.ownerDocument.activeElement
-							) {
-								return;
-							}
-							if (
-								toggleSearchBtn ===
-								event.target.ownerDocument.activeElement
-							) {
-								return;
-							}
-							if (resultsShowing) return;
-							if (popularContentShowing) return;
-
-							toggleSearchBtn.focus();
-							toggleSearchBtn.click();
-						});
-					});
-				}
-			}
-		}
-		window.requestAnimationFrame(() => {
-			const header = document.querySelector('.bcgov-header-group');
-			const headerHeight = window
-				.getComputedStyle(header)
-				.getPropertyValue('height');
-			if (searchFieldContainer) {
-				searchFieldContainer.style.top = headerHeight;
-				searchFieldContainer.style.display = 'none';
-			}
-
-			if (searchPage && searchFieldContainer) {
-				searchFieldContainer.remove();
-				if (toggleSearchBtn) {
-					toggleSearchBtn.classList.add('disabled');
-				}
-			}
-
-			// disallow keyboard nav on search results pages
-			if (searchPage) {
-				toggleSearchBtn.setAttribute('tabindex', '-1');
-			}
+	  const searchPage = document.querySelector('body.search');
+	  const toggleSearchBtn = document.querySelector('.toggle-search-btn a');
+	  const searchFieldContainer = document.querySelector('#search-container');
+  
+	  if (!toggleSearchBtn || !searchFieldContainer) return;
+  
+	  // Move container before sibling if needed
+	  const siblingElement = searchFieldContainer.previousElementSibling;
+	  if (siblingElement) {
+		siblingElement.parentNode.insertBefore(searchFieldContainer, siblingElement);
+	  }
+  
+	  const searchInput = searchFieldContainer.querySelector('input');
+	  const searchSubmitBtn = searchFieldContainer.querySelector('button');
+  
+	  /**
+	   * Helper function: close the search container and return focus
+	   */
+	  function closeSearchContainer() {
+		searchFieldContainer.classList.add('hidden');
+		searchFieldContainer.style.display = 'none';
+		toggleSearchBtn.classList.remove('close');
+		// Give the DOM a frame to settle, then focus the toggle
+		requestAnimationFrame(() => {
+		  toggleSearchBtn.focus();
 		});
+	  }
+  
+	  // Toggle the container when the toggle button is clicked
+	  toggleSearchBtn.addEventListener('click', (event) => {
+		event.preventDefault();
+		// Don’t toggle if on a "search results" page
+		if (searchPage) return;
+  
+		if (searchFieldContainer.classList.contains('hidden')) {
+		  // Show container
+		  searchFieldContainer.classList.remove('hidden');
+		  searchFieldContainer.style.display = 'block';
+		  toggleSearchBtn.classList.add('close');
+		  if (searchInput) {
+			searchInput.focus();
+		  }
+		} else {
+		  // Hide container
+		  closeSearchContainer();
+		}
+	  });
+  
+	  // Allow keyboard activation (Enter/Space) on toggle button
+	  toggleSearchBtn.addEventListener('keydown', (event) => {
+		if (event.code === 'Space' || event.code === 'Enter') {
+		  event.preventDefault();
+		  toggleSearchBtn.click();
+		}
+	  });
+  
+	  /**
+	   * Hide container on outside click
+	   */
+	  document.addEventListener('mousedown', (event) => {
+		const isContainerOpen = !searchFieldContainer.classList.contains('hidden');
+		if (!isContainerOpen) return;
+  
+		const clickInsideContainer = searchFieldContainer.contains(event.target);
+		const clickOnToggle = toggleSearchBtn.contains(event.target);
+		const clickOnBtn = searchSubmitBtn && searchSubmitBtn.contains(event.target);
+  
+		// If user clicks the actual submit button, do that action
+		if (clickOnBtn) {
+		  event.preventDefault();
+		  searchSubmitBtn.click();
+		  return;
+		}
+  
+		// Otherwise, close if outside both container and toggle
+		if (!clickInsideContainer && !clickOnToggle) {
+		  closeSearchContainer();
+		}
+	  });
+  
+	  /**
+	   * Hide container on outside focus (handles tabbing away)
+	   */
+	  document.addEventListener('focusin', (event) => {
+		const isContainerOpen = !searchFieldContainer.classList.contains('hidden');
+		if (!isContainerOpen) return;
+  
+		const focusedInsideContainer = searchFieldContainer.contains(event.target);
+		const focusedOnToggle = toggleSearchBtn.contains(event.target);
+  
+		if (!focusedInsideContainer && !focusedOnToggle) {
+		  closeSearchContainer();
+		}
+	  });
+  
+	  /**
+	   * Hide container on ESC key
+	   */
+	  document.addEventListener('keydown', (event) => {
+		const isContainerOpen = !searchFieldContainer.classList.contains('hidden');
+		if (!isContainerOpen) return;
+  
+		if (event.key === 'Escape') {
+		  event.preventDefault();
+		  closeSearchContainer();
+		}
+	  });
+  
+	  // Position container and handle search results page
+	  window.requestAnimationFrame(() => {
+		const header = document.querySelector('.bcgov-header-group');
+		if (header) {
+		  const headerHeight = window.getComputedStyle(header).getPropertyValue('height');
+		  searchFieldContainer.style.top = headerHeight;
+		}
+		// Hidden by default
+		searchFieldContainer.style.display = 'none';
+  
+		// If on a search results page, remove container entirely
+		if (searchPage) {
+		  searchFieldContainer.remove();
+		  toggleSearchBtn.classList.add('disabled');
+		  // disallow keyboard nav on search results pages
+		  toggleSearchBtn.setAttribute('tabindex', '-1');
+		}
+	  });
 	});
-};
-
-if ('complete' === document.readyState) {
+  };
+  
+  if (document.readyState === 'complete') {
 	digitalGovSearch();
-} else {
-	addSafeEventListenerPlugin(
-		document,
-		'DOMContentLoaded',
-		digitalGovSearch
-	);
-}
+  } else {
+	document.addEventListener('DOMContentLoaded', digitalGovSearch);
+  }
+  
