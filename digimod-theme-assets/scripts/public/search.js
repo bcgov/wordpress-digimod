@@ -66,7 +66,7 @@ const digitalGovSearch = () => {
 	  /**
 	   * Hide container on outside click
 	   */
-	  document.addEventListener('mousedown', (event) => {
+	  document.addEventListener('click', (event) => {
 		const isContainerOpen = !searchFieldContainer.classList.contains('hidden');
 		if (!isContainerOpen) return;
   
@@ -84,8 +84,11 @@ const digitalGovSearch = () => {
   
 		// Otherwise, close if outside both container and toggle
 		if (!clickInsideContainer && !clickOnToggle && !clickOnLink) {
-		  closeSearchContainer();
-		}
+			// Delay closing just a bit so Safari can finish the link click
+			setTimeout(() => {
+			  closeSearchContainer();
+			}, 10);
+		  }		  
 	  });
   
 	  /**
