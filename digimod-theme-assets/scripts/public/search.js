@@ -9,6 +9,7 @@ const digitalGovSearch = () => {
 	  const searchPage = document.querySelector('body.search');
 	  const toggleSearchBtn = document.querySelector('.toggle-search-btn a');
 	  const searchFieldContainer = document.querySelector('#search-container');
+	  const searchFieldLinks = document.querySelectorAll('#search-container a');
   
 	  if (!toggleSearchBtn || !searchFieldContainer) return;
   
@@ -72,6 +73,7 @@ const digitalGovSearch = () => {
 		const clickInsideContainer = searchFieldContainer.contains(event.target);
 		const clickOnToggle = toggleSearchBtn.contains(event.target);
 		const clickOnBtn = searchSubmitBtn && searchSubmitBtn.contains(event.target);
+		const clickOnLink = searchFieldLinks && searchFieldLinks.forEach(el => el.contains(event.target));
   
 		// If user clicks the actual submit button, do that action
 		if (clickOnBtn) {
@@ -81,7 +83,7 @@ const digitalGovSearch = () => {
 		}
   
 		// Otherwise, close if outside both container and toggle
-		if (!clickInsideContainer && !clickOnToggle) {
+		if (!clickInsideContainer && !clickOnToggle && !clickOnLink) {
 		  closeSearchContainer();
 		}
 	  });
