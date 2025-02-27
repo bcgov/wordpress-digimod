@@ -87,7 +87,7 @@ const digitalGovSearch = () => {
 			// Delay closing just a bit so Safari can finish the link click
 			setTimeout(() => {
 			  closeSearchContainer();
-			}, 100);
+			}, 300);
 		  }		  
 	  });
   
@@ -104,7 +104,7 @@ const digitalGovSearch = () => {
 		if (!focusedInsideContainer && !focusedOnToggle) {
 			setTimeout(() => {
 				closeSearchContainer();
-			  }, 100);
+			}, 300);
 		}
 	  });
   
