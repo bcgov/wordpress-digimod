@@ -27,8 +27,6 @@ jobs:
     - name: Rename Miniorange plugin variables and settings
       run: |
         ENVIRONMENT=${{ github.event.inputs.ENVIRONMENT }}
-        SITE_NAME=${{ github.event.inputs.environment }}
-        OC_SITE_NAME=digital-$SITE_NAME
         echo "Deploying to the site $OC_SITE_NAME in $ENVIRONMENT"
         case "$ENVIRONMENT" in
             "dev")

@@ -14,8 +14,8 @@ KEYCLOAK_TEST_CLIENT_SECRET=$7
 PLUGIN=$8
 
 NAMESPACE="c0cce6-$ENVIRONMENT"
+OC_ENV=$ENVIRONMENT
 OC_SITE_NAME=digital-$SITE_NAME
-echo "Deploying to $ENVIRONMENT"
 
 case "$ENVIRONMENT" in
 	"dev")
@@ -33,6 +33,8 @@ case "$ENVIRONMENT" in
 	exit 1
 	;;
 esac
+
+echo "Deploying to the site $OC_SITE_NAME in $OC_ENV"
 
 oc login $OPENSHIFT_SERVER --token=$token 				#--insecure-skip-tls-verify=true
 
@@ -76,7 +78,7 @@ if [ -d "$PLUGIN" ]; then
 	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar w3-total-cache flush all
 
 	echo $PLUGIN deployed successfully.
-	
+
 
 	#Generate GH Actions summary
 	echo "### Deployed Plugin" >> $GITHUB_STEP_SUMMARY
