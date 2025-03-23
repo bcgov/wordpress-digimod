@@ -36,7 +36,7 @@ jobs:
           #Generate GH Actions summary
           echo "### Tag Assigned:" >> $GITHUB_STEP_SUMMARY
           echo "Original Image: wordpress-wordpress-run:latest" >> $GITHUB_STEP_SUMMARY
-          echo "New Tag: ${$RENAME_TARGET}"  >> $GITHUB_STEP_SUMMARY
+          echo "New Tag: ${RENAME_TARGET}"  >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
           echo "### Tag Command Results: " >> $GITHUB_STEP_SUMMARY
