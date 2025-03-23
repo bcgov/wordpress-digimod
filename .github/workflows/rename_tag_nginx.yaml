@@ -3,9 +3,10 @@ on:
   workflow_dispatch:
     inputs:
       rename-target:
-        description: 'Rename "latest" tag to'
+        description: 'Give the folllowing tag to "latest" tagged image'
         required: true
         default: 'test'
+        
 jobs:
   deploy:
     runs-on: ubuntu-22.04
@@ -13,11 +14,13 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+
     - name: Install OC CLI
       run: |
         curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz
         tar xvzf openshift-client-linux.tar.gz
         sudo mv oc kubectl /usr/local/bin/
+
     - name: Rename latest nginx tag
       run: |
         ENVIRONMENT=tools
@@ -26,5 +29,16 @@ jobs:
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
         NAMESPACE="c0cce6-$ENVIRONMENT"
 
-        #run command to change miniorange plugin variables
-        oc -n $NAMESPACE tag wordpress-nginx-run:latest wordpress-nginx-run:$RENAME_TARGET
+        #run command to assign tag to the latest tagged image
+        TAG_RESULTS=$(oc -n $NAMESPACE tag wordpress-nginx-run:latest wordpress-nginx-run:$RENAME_TARGET)
+        echo "Tag Results: ${TAG_RESULTS}"
+
+        #Generate GH Actions summary
+        echo "### Tag Assigned:" >> $GITHUB_STEP_SUMMARY
+        echo "Original Image: wordpress-nginx-run:latest" >> $GITHUB_STEP_SUMMARY
+        echo "New Tag: ${RENAME_TARGET}"  >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+
+        echo "### Tag Command Results: " >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+        echo "${TAG_RESULTS}" >> $GITHUB_STEP_SUMMARY

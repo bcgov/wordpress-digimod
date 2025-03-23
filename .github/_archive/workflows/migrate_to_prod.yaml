@@ -12,12 +12,14 @@ on:
         default: 'test'
 jobs:
   deploy:
+    if: false #Disable action. This is a dangerous action as it replaces production.
+
     runs-on: ubuntu-22.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
       - name: Deploy theme and plugins
-        uses: ./.github/actions/migrate_prod
+        uses: ./.github/actions/migrate_to_prod
         with:
           environment: ${{ github.event.inputs.environment }}
           site-name: ${{ github.event.inputs.site-name }}

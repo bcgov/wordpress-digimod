@@ -1,5 +1,7 @@
 name: Deploy Latest Wordpress
 
+#NG. Mar 22, 2025. This action is long deprecated by the create_wp_instance.yaml action. Dont use.
+
 on:
   workflow_dispatch:
   # schedule:
@@ -7,6 +9,8 @@ on:
 
 jobs:
   poll:
+    if: false #Disable action.
+    
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
