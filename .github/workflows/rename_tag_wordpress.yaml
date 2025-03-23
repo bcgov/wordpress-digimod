@@ -26,7 +26,7 @@ jobs:
           ENVIRONMENT=tools
           RENAME_TARGET=${{ github.event.inputs.rename-target }}
           token=${{ secrets.OPENSHIFT_TOOLS_API_TOKEN  }}
-          oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token #--insecure-skip-tls-verify=true
+          oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token                   #--insecure-skip-tls-verify=true
           NAMESPACE="c0cce6-$ENVIRONMENT"
 
           #run command to assign tag to the latest tagged image

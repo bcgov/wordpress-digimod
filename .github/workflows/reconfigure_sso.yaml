@@ -24,7 +24,7 @@ jobs:
         tar xvzf openshift-client-linux.tar.gz
         sudo mv oc kubectl /usr/local/bin/
 
-    - name: Rename Miniorange plugin variables
+    - name: Rename Miniorange plugin variables and settings
       run: |
         ENVIRONMENT=${{ github.event.inputs.ENVIRONMENT }}
         SITE_NAME=${{ github.event.inputs.environment }}
@@ -47,7 +47,7 @@ jobs:
             exit 1
             ;;
         esac
-        oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token --insecure-skip-tls-verify=true
+        oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token           #--insecure-skip-tls-verify=true
         NAMESPACE="c0cce6-$ENVIRONMENT"
         OC_ENV=$ENVIRONMENT
         OC_SITE_NAME=digital-${{ github.event.inputs.SITE-NAME }}
@@ -85,7 +85,25 @@ jobs:
         esac
 
         #run command to change miniorange plugin variables
-        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $clientSecret $ssoURI $siteURL "
-        
+        CMD1_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $clientSecret $ssoURI $siteURL ")
+        echo "${CMD1_RESULTS}"
+
         #run command to fix any miniorange plugin settings
-        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-fix-mo "
+        CMD2_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-fix-mo ")
+        echo "${CMD2_RESULTS}"
+
+
+
+        #Generate GH Actions summary
+        echo "### SSO Configured:" >> $GITHUB_STEP_SUMMARY
+        echo "Environment: ${$OC_ENV}" >> $GITHUB_STEP_SUMMARY
+        echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+
+        echo "### Command 1 Results: " >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+        echo "${CMD1_RESULTS}" >> $GITHUB_STEP_SUMMARY
+
+        echo "### Command 2 Results: " >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+        echo "${CMD2_RESULTS}" >> $GITHUB_STEP_SUMMARY
