@@ -6,39 +6,39 @@ on:
         description: 'Give the folllowing tag to "latest" tagged image'
         required: true
         default: 'test'
-        
+
 jobs:
   deploy:
-      runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04
 
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      
-    - name: Install OC CLI
-      run: |
-        curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz
-        tar xvzf openshift-client-linux.tar.gz
-        sudo mv oc kubectl /usr/local/bin/
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Install OC CLI
+        run: |
+          curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz
+          tar xvzf openshift-client-linux.tar.gz
+          sudo mv oc kubectl /usr/local/bin/
 
-    - name: Rename latest WordPress tag
-      run: |
-        ENVIRONMENT=tools
-        RENAME_TARGET=${{ github.event.inputs.rename-target }}
-        token=${{ secrets.OPENSHIFT_TOOLS_API_TOKEN  }}
-        oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token #--insecure-skip-tls-verify=true
-        NAMESPACE="c0cce6-$ENVIRONMENT"
+      - name: Rename latest WordPress tag
+        run: |
+          ENVIRONMENT=tools
+          RENAME_TARGET=${{ github.event.inputs.rename-target }}
+          token=${{ secrets.OPENSHIFT_TOOLS_API_TOKEN  }}
+          oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token #--insecure-skip-tls-verify=true
+          NAMESPACE="c0cce6-$ENVIRONMENT"
 
-        #run command to assign tag to the latest tagged image
-        TAG_RESULTS=$(oc -n $NAMESPACE tag wordpress-wordpress-run:latest wordpress-wordpress-run:$RENAME_TARGET)
-        echo "Tag Results: ${TAG_RESULTS}"
+          #run command to assign tag to the latest tagged image
+          TAG_RESULTS=$(oc -n $NAMESPACE tag wordpress-wordpress-run:latest wordpress-wordpress-run:$RENAME_TARGET)
+          echo "Tag Results: ${TAG_RESULTS}"
 
-        #Generate GH Actions summary
-        echo "### Tag Assigned:" >> $GITHUB_STEP_SUMMARY
-        echo "Original Image: wordpress-wordpress-run:latest" >> $GITHUB_STEP_SUMMARY
-        echo "New Tag: ${$RENAME_TARGET}"  >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+          #Generate GH Actions summary
+          echo "### Tag Assigned:" >> $GITHUB_STEP_SUMMARY
+          echo "Original Image: wordpress-wordpress-run:latest" >> $GITHUB_STEP_SUMMARY
+          echo "New Tag: ${$RENAME_TARGET}"  >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
-        echo "### Tag Command Results: " >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
-        echo "${TAG_RESULTS}" >> $GITHUB_STEP_SUMMARY
+          echo "### Tag Command Results: " >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+          echo "${TAG_RESULTS}" >> $GITHUB_STEP_SUMMARY
