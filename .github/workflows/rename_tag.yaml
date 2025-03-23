@@ -6,11 +6,12 @@ on:
         description: 'Give the folllowing tag to "latest" tagged image'
         required: true
         default: 'test'
+        
 jobs:
   deploy:
       runs-on: ubuntu-22.04
 
-    steps:
+  steps:
     - name: Checkout code
       uses: actions/checkout@v2
       
