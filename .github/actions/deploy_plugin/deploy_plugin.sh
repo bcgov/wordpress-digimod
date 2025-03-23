@@ -34,7 +34,7 @@ case "$ENVIRONMENT" in
 	;;
 esac
 
-oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
+oc login $OPENSHIFT_SERVER --token=$token 				#--insecure-skip-tls-verify=true
 
 
 if [ -d "$PLUGIN" ]; then
@@ -54,8 +54,8 @@ if [ -d "$PLUGIN" ]; then
 
 	#Get installed version
 	echo "Existing installed plugin version:"
-	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get $PLUGIN --field=version
-
+	EXISTING_VER_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get $PLUGIN --field=version)
+	echo "${EXISTING_VER_RESULTS}"
 
 	cd $PLUGIN
 	tar -cf $PLUGIN.tar --exclude=./.github --exclude=node_modules ./*
@@ -67,16 +67,43 @@ if [ -d "$PLUGIN" ]; then
 
 
 	echo "Newly installed plugin version:"
-	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get $PLUGIN --field=version
+	NEW_VER_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get $PLUGIN --field=version)
+	echo "${NEW_VER_RESULTS}"
+
 
 
 	echo "Clearing W3TC Cache"
 	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar w3-total-cache flush all
 
-
 	echo $PLUGIN deployed successfully.
+	
+
+	#Generate GH Actions summary
+	echo "### Deployed Plugin" >> $GITHUB_STEP_SUMMARY
+	echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+	echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
+	echo "Plugin: ${PLUGIN}" >> $GITHUB_STEP_SUMMARY
+	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+
+
+	echo "Existing Installed plugin version: ${EXISTING_VER_RESULTS}" >> $GITHUB_STEP_SUMMARY
+	echo "Newly Installed plugin version: ${NEW_VER_RESULTS}" >> $GITHUB_STEP_SUMMARY
+
+	
+
 
 else  
 	echo "plugin $PLUGIN does not exist."
+
+	#Generate GH Actions summary
+	echo "### Deploy Plugin Error" >> $GITHUB_STEP_SUMMARY
+	echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+	echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
+	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+
+	echo "Plugin ${PLUGIN} does not exist." >> $GITHUB_STEP_SUMMARY
+	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+	
 	exit 1
 fi
