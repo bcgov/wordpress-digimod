@@ -74,14 +74,22 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
         ;;
         "prod")
         token=$PROD_TOKEN
-        echo "Cant replicate prod to prod!"
-        exit 1
+        #echo "Cant replicate prod to prod!"
+        #exit 1
         ;;
         *)
         echo "Unknown environment: $ENVIRONMENT"
         exit 1
         ;;
     esac
+
+    #dont allow live site to live site. do allow prod digital to prod backup.
+    if [[ "$ENVIRONMENT" == "prod"]]; then 
+        if [[ "$OC_SITE_NAME" == "digital"]]; then 
+            echo "::error::Cant replicate to environment: production, site: digital!"
+            exit 1
+        fi
+    fi 
 
     OC_ENV=$ENVIRONMENT
     echo "Deploying to the site $OC_SITE_NAME in $OC_ENV"
