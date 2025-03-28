@@ -119,7 +119,6 @@ if [ -d "$PLUGIN" ]; then
 
 
 else  
-	echo "plugin $PLUGIN does not exist."
 	echo "::error::Plugin $PLUGIN does not exist."
 
 	#Generate GH Actions summary

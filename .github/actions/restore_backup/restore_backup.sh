@@ -40,6 +40,11 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     # oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar ai1wm backup
     LATEST_FILE=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c 'ls -t /var/www/html/wp-content/ai1wm-backups-history | sed -n '"$BACKUP_NUMBER"'p')
     
+    if [ -z "${LATEST_FILE}" ];
+        echo "::error::Missing backup file. Backup number $BACKUP_NUMBER not found."
+        exit 1
+    fi
+
     echo "Restoring from $LATEST_FILE"
     oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups-history/$LATEST_FILE ./wp-backup.wpress
     oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration ./plugins/all-in-one-wp-migration
@@ -93,8 +98,6 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
     if [ -z "$WORDPRESS_CONTAINER_NAME" ]; then
-        echo "Error: Unknown site name: ${SITE_NAME}"
-
         echo "::error::Unknown site name: ${SITE_NAME}"
 
         exit 1
@@ -150,7 +153,6 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
 
 else  
-	echo "Backup site not found!"
     echo "::error::Backup site not found!"
 
 	#Generate GH Actions summary
