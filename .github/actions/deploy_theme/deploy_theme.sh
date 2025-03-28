@@ -51,6 +51,7 @@ oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod 
         
 #Get installed version
 echo "Existing installed theme version:"
+set +e
 EXISTING_VER_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar theme get $THEME_NAME --field=version 2>&1)
 EXISTING_VER_RESULTS_EXIT_CODE=$?
 set -e
