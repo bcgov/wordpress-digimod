@@ -87,7 +87,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     echo "Deploying to the site $OC_SITE_NAME in $OC_ENV"
 
     echo "::group::Login to target OC"
-    oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
+    oc login $OPENSHIFT_SERVER --token=$token               #--insecure-skip-tls-verify=true
     echo "::endgroup::"
 
     

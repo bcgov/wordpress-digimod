@@ -13,7 +13,7 @@ BACKUP_NUMBER=$7
 
 # Log in to OpenShift
 echo "::group::Login to Production OC"
-oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN --insecure-skip-tls-verify=true
+oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN              #--insecure-skip-tls-verify=true
 echo "::endgroup::"
 
 # Export backup file from backup
@@ -40,8 +40,9 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     # oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar ai1wm backup
     LATEST_FILE=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c 'ls -t /var/www/html/wp-content/ai1wm-backups-history | sed -n '"$BACKUP_NUMBER"'p')
     
-    if [ -z "${LATEST_FILE}" ];
+    if [ -z "$LATEST_FILE" ]; then
         echo "::error::Missing backup file. Backup number $BACKUP_NUMBER not found."
+        
         exit 1
     fi
 
@@ -89,7 +90,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
     # Log in to OpenShift
     echo "::group::Login to target OC"
-    oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
+    oc login $OPENSHIFT_SERVER --token=$token                   #--insecure-skip-tls-verify=true
     echo "::endgroup::"
 
 
