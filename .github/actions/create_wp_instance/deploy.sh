@@ -58,6 +58,9 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     #chmod +x site-delete-unix.sh
     # ./site-delete-unix.sh
 
+
+    echo "::error::Found existing site!"
+
 	#Generate GH Actions summary
 	echo "### Create WP Instance Error" >> $GITHUB_STEP_SUMMARY
 	echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY

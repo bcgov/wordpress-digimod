@@ -110,17 +110,17 @@ if [ -d "$PLUGIN" ]; then
 	echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
 	echo "Plugin: ${PLUGIN}" >> $GITHUB_STEP_SUMMARY
 	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
-	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
-
 
 	echo "Existing Installed plugin version: ${EXISTING_VER_RESULTS}" >> $GITHUB_STEP_SUMMARY
 	echo "Newly Installed plugin version: ${NEW_VER_RESULTS}" >> $GITHUB_STEP_SUMMARY
+	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
 	
 
 
 else  
 	echo "plugin $PLUGIN does not exist."
+	echo "::error::Plugin $PLUGIN does not exist."
 
 	#Generate GH Actions summary
 	echo "### Deploy Plugin Error" >> $GITHUB_STEP_SUMMARY

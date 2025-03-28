@@ -16,7 +16,7 @@ echo "::group::Login to Production OC"
 oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN --insecure-skip-tls-verify=true
 echo "::endgroup::"
 
-# Export site from backup
+# Export backup file from backup
 NAMESPACE="c0cce6-prod"
 OC_ENV=prod
 OC_SITE_NAME=digital-backup
@@ -53,8 +53,8 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     # log out of prod due to paranoia
     oc logout
 
-    # Log in to OpenShift
-    echo "Deploying to $ENVIRONMENT"
+    
+
     case "$ENVIRONMENT" in
         "dev")
         token=$DEV_TOKEN
@@ -73,23 +73,30 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
         ;;
     esac
 
-    echo "::group::Login to target OC"
-    oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
-    echo "::endgroup::"
-
-
-    NAMESPACE="c0cce6-$ENVIRONMENT"
     OC_ENV=$ENVIRONMENT
     if [ "$SITE_NAME" = "digital" ]; then
         OC_SITE_NAME="digital"
     else
         OC_SITE_NAME="digital-$SITE_NAME"
     fi
+
+    echo "Deploying to the site $OC_SITE_NAME in $OC_ENV"
+
+    # Log in to OpenShift
+    echo "::group::Login to target OC"
+    oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
+    echo "::endgroup::"
+
+
+    NAMESPACE="c0cce6-$ENVIRONMENT"
     WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
     WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
     if [ -z "$WORDPRESS_CONTAINER_NAME" ]; then
         echo "Error: Unknown site name: ${SITE_NAME}"
+
+        echo "::error::Unknown site name: ${SITE_NAME}"
+
         exit 1
     fi 
 
@@ -132,4 +139,26 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     echo "::endgroup::"
 
     echo "Replicate backup finished"
+
+
+    #Generate GH Actions summary
+	echo "### Restored Backup" >> $GITHUB_STEP_SUMMARY
+	echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+	echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
+    echo "Backup number: ${BACKUP_NUMBER}" >> $GITHUB_STEP_SUMMARY
+	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+
+
+else  
+	echo "Backup site not found!"
+    echo "::error::Backup site not found!"
+
+	#Generate GH Actions summary
+	echo "### Restore Backup Error" >> $GITHUB_STEP_SUMMARY
+	echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+	echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
+    echo "Backup number: ${BACKUP_NUMBER}" >> $GITHUB_STEP_SUMMARY
+	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+	
+	exit 1
 fi

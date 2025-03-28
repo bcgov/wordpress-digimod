@@ -12,7 +12,7 @@ PROD_TOKEN=$6
 
 # Log in to OpenShift
 echo "::group::Login to Production OC"
-oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN --insecure-skip-tls-verify=true
+oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN              #--insecure-skip-tls-verify=true
 echo "::endgroup::"
 
 # Export site from production
@@ -97,6 +97,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
     if [ -z "$WORDPRESS_CONTAINER_NAME" ]; then
         echo "Error: Unknown site name: ${SITE_NAME}"
+        echo "::error::Unknown site name: ${SITE_NAME}"
         exit 1
     fi 
 
@@ -155,7 +156,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     echo "Replicate production finished"
 
     #Generate GH Actions summary
-    echo "### Replicated Production to " >> $GITHUB_STEP_SUMMARY
+    echo "### Replicated Production" >> $GITHUB_STEP_SUMMARY
     echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
     echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
     echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
@@ -166,7 +167,7 @@ else
     echo "Pod Name: $WORDPRESS_POD_NAME"
     echo "Container Name: $WORDPRESS_CONTAINER_NAME"
 
-    echo "error::Unable to find production"
+    echo "::error::Unable to find production"
 
     echo "### Replicate Production Error " >> $GITHUB_STEP_SUMMARY
     echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
