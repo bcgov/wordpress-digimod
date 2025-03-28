@@ -35,7 +35,7 @@ esac
 
 
 echo "::group::Login to OC"
-oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
+oc login $OPENSHIFT_SERVER --token=$token       #--insecure-skip-tls-verify=true
 echo "::endgroup::"
 
 #Go into the deployment folder
@@ -63,7 +63,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
 else
     #Generate GH Actions summary
-    echo "### Deployment Not Found (nothing deleted):" >> $GITHUB_STEP_SUMMARY
+    echo "### Deployment Not Found (nothing deleted)" >> $GITHUB_STEP_SUMMARY
 fi      
 
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line

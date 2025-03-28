@@ -35,7 +35,7 @@ esac
 
 
 echo "::group::Login to OC"
-oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
+oc login $OPENSHIFT_SERVER --token=$token           #--insecure-skip-tls-verify=true
 echo "::endgroup::"
 
 #Go into the deployment folder
@@ -53,7 +53,7 @@ WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o json
 if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     echo "Found existing site."
     echo "::endgroup::"
-    
+
     #Changed to not delete if it exists, just in case the site has content. Delete should be an active action.
     #chmod +x site-delete-unix.sh
     # ./site-delete-unix.sh
@@ -119,10 +119,14 @@ echo "::endgroup::"
 
 #Generate GH Actions summary
 echo "### Deployment:" >> $GITHUB_STEP_SUMMARY
-echo "Deployment Environment: ${ENVIRONMENT}" >> $GITHUB_STEP_SUMMARY
-echo "Site Name: ${SITE_NAME}"  >> $GITHUB_STEP_SUMMARY
+echo "Environment: ${ENVIRONMENT}" >> $GITHUB_STEP_SUMMARY
+echo "Site: ${SITE_NAME}"  >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
 echo "### WP Install Results: " >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+echo "${WP_INSTALL_RESULTS}" >> $GITHUB_STEP_SUMMARY
+
+echo "${WP_INSTALL_RESULTS}" >> $GITHUB_STEP_SUMMARY
+echo "**Change the ADMIN password ASAP!**" >> $GITHUB_STEP_SUMMARY
 echo "${WP_INSTALL_RESULTS}" >> $GITHUB_STEP_SUMMARY

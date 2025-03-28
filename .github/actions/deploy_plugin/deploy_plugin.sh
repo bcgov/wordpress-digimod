@@ -62,11 +62,11 @@ if [ -d "$PLUGIN" ]; then
 	set -e
 	if [ $EXISTING_VER_RESULTS_EXIT_CODE -eq 0 ]; then
 		echo "${EXISTING_VER_RESULTS}"
-		
+
 	else
 		echo "Plugin not found"
 
-		echo "::warning Plugin not found"
+		echo "::warning::Plugin not found"
 	fi
 
 
@@ -96,7 +96,7 @@ if [ -d "$PLUGIN" ]; then
 	else
 		echo "W3TC Not installed"
 
-		echo "::warning W3TC Not installed"
+		echo "::warning::W3TC Not installed"
 	fi
 
 
