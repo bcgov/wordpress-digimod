@@ -74,6 +74,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
         ;;
         "prod")
         token=$PROD_TOKEN
+        OC_SITE_NAME=digital-$SITE_NAME
         #echo "Cant replicate prod to prod!"
         #exit 1
         ;;
@@ -83,16 +84,17 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
         ;;
     esac
 
+    OC_ENV=$ENVIRONMENT
+    echo "Deploying to the site $OC_SITE_NAME in $OC_ENV"
+    
     #dont allow live site to live site. do allow prod digital to prod backup.
     if [[ "$ENVIRONMENT" == "prod" ]]; then 
-        if [[ "$OC_SITE_NAME" == "digital" ]]; then 
+        if [[ "$OC_SITE_NAME" == "digital-digital" ]]; then 
             echo "::error::Cant replicate to environment: production, site: digital!"
             exit 1
         fi
     fi 
 
-    OC_ENV=$ENVIRONMENT
-    echo "Deploying to the site $OC_SITE_NAME in $OC_ENV"
 
     echo "::group::Login to target OC"
     oc login $OPENSHIFT_SERVER --token=$token               #--insecure-skip-tls-verify=true
