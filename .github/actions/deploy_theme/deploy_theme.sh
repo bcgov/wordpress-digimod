@@ -76,7 +76,11 @@ oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- mkdir 
 oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar -xmf /var/www/html/wp-content/themes/theme.tar -C /var/www/html/wp-content/themes/${THEME_NAME}_tmp
 
 oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- rm -rf /var/www/html/wp-content/themes/${THEME_NAME}_bak
+
+if [ $EXISTING_VER_RESULTS_EXIT_CODE -eq 0 ]; then
 oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- mv /var/www/html/wp-content/themes/$THEME_NAME /var/www/html/wp-content/themes/${THEME_NAME}_bak
+fi
+
 oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- mv /var/www/html/wp-content/themes/${THEME_NAME}_tmp /var/www/html/wp-content/themes/${THEME_NAME}
 oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- rm -rf /var/www/html/wp-content/themes/theme.tar
 
