@@ -42,11 +42,12 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     
     if [ -z "$LATEST_FILE" ]; then
         echo "::error::Missing backup file. Backup number $BACKUP_NUMBER not found."
-        
+
         exit 1
     fi
 
-    echo "Restoring from $LATEST_FILE"
+    echo "Will restore from $LATEST_FILE"
+    echo "Downloading restore file..."
     oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/ai1wm-backups-history/$LATEST_FILE ./wp-backup.wpress
     oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration ./plugins/all-in-one-wp-migration
     oc cp -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/all-in-one-wp-migration-unlimited-extension ./plugins/all-in-one-wp-migration-unlimited-extension

@@ -1,5 +1,5 @@
-# Manual started workflow
-# This is the simplest for of running the Cypress tests in Github actions
+# Manual+Scheduled workflow
+# This is the scheduled workflow to create site backups daily.
 name: Backup
 on:
   workflow_dispatch:
@@ -7,6 +7,15 @@ on:
     # * is a special character in YAML so you have to quote this string
     - cron: '0 2 * * *'
 jobs:
+  keepalive-job:  #From https://github.com/gautamkrishnar/keepalive-workflow, keep as seperate job for security.
+    name: Keepalive Workflow
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gautamkrishnar/keepalive-workflow@2a8ae70f39b79fb50659d17ccc6f372f461813b2  #release 2.0.10. pin to this specific commit to prevent action code from being turned into bad actor later.
+
   deploy:
     runs-on: ubuntu-22.04
     steps:
@@ -14,7 +23,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Log in to OpenShift
         run: |
-          oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TEST_API_TOKEN }} --insecure-skip-tls-verify=true
+          oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TEST_API_TOKEN }}      #--insecure-skip-tls-verify=true
       - name: Replicate Production
         uses: ./.github/actions/replicate_prod
         with:
@@ -26,7 +35,7 @@ jobs:
           prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
       - name: Log in to OpenShift
         run: |
-          oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }} --insecure-skip-tls-verify=true
+          oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }}      #--insecure-skip-tls-verify=true
       # save the backup and delete one oldest backup
       - name: Update backup files
         run: |
@@ -39,4 +48,13 @@ jobs:
           cd .github/workflows
           oc cp backup.sh $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/backup.sh -c $WORDPRESS_CONTAINER_NAME
           oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/backup.sh
-          oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- /bin/sh /tmp/backup.sh
+          CMD1_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- /bin/sh /tmp/backup.sh)
+          echo "${CMD1_RESULTS}"
+
+          #Generate GH Actions summary
+          echo "### Created Backup" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+
+          echo "### Command Results: " >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+          echo "${CMD1_RESULTS}" >> $GITHUB_STEP_SUMMARY
