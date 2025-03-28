@@ -60,7 +60,7 @@ if [ -d "$PLUGIN" ]; then
 	EXISTING_VER_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get $PLUGIN --field=version)
 	EXISTING_VER_RESULTS_EXIT_CODE=$?
 	set -e
-	if [ $ret -eq 0 ]; then
+	if [ $EXISTING_VER_RESULTS_EXIT_CODE -eq 0 ]; then
 		echo "${EXISTING_VER_RESULTS}"
 	else
 		echo "Plugin not found"
@@ -85,9 +85,9 @@ if [ -d "$PLUGIN" ]; then
 	echo "Clearing W3TC Cache"
 	set +e
 	W3TC_VERSION=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get w3-total-cache --field=version)
-	EXISTING_VER_RESULTS_EXIT_CODE=$?
+	W3TC_VERSION_EXIT_CODE=$?
 	set -e
-	if [ $ret -eq 0 ]; then		
+	if [ $W3TC_VERSION_EXIT_CODE -eq 0 ]; then		
 		oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar w3-total-cache flush all
 	else
 		echo "W3TC Not installed"
