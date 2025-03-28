@@ -55,9 +55,12 @@ if [ -d "$PLUGIN" ]; then
 
 
 	#Get installed version
+	set +e
 	echo "Existing installed plugin version:"
 	EXISTING_VER_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get $PLUGIN --field=version)
 	echo "${EXISTING_VER_RESULTS}"
+	set -e
+	
 
 	cd $PLUGIN
 	tar -cf $PLUGIN.tar --exclude=./.github --exclude=node_modules ./*

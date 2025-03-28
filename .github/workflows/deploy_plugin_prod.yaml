@@ -1,4 +1,5 @@
 name: Deploy Plugin to Production
+description: 'Deploy a single plugin from the wordpress-digimod repository to the production environment.'
 on:
   workflow_dispatch:
     inputs:
@@ -12,6 +13,7 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
+
       - name: Deploy plugin
         uses: ./.github/actions/deploy_plugin
         with:
