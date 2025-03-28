@@ -58,9 +58,14 @@ if [ -d "$PLUGIN" ]; then
 	set +e
 	echo "Existing installed plugin version:"
 	EXISTING_VER_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get $PLUGIN --field=version)
-	echo "${EXISTING_VER_RESULTS}"
+	EXISTING_VER_RESULTS_EXIT_CODE=$?
 	set -e
-	
+	if [ $ret -eq 0 ]; then
+		echo "${EXISTING_VER_RESULTS}"
+	else
+		echo "Plugin not found"
+	fi
+
 
 	cd $PLUGIN
 	tar -cf $PLUGIN.tar --exclude=./.github --exclude=node_modules ./*
@@ -78,7 +83,16 @@ if [ -d "$PLUGIN" ]; then
 
 
 	echo "Clearing W3TC Cache"
-	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar w3-total-cache flush all
+	set +e
+	W3TC_VERSION=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get w3-total-cache --field=version)
+	EXISTING_VER_RESULTS_EXIT_CODE=$?
+	set -e
+	if [ $ret -eq 0 ]; then		
+		oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar w3-total-cache flush all
+	else
+		echo "W3TC Not installed"
+	fi
+
 
 	echo $PLUGIN deployed successfully.
 
