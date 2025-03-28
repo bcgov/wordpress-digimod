@@ -24,9 +24,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    # - name: List files in current directory
-    #   run: ls -al
-    #   shell: bash
     - name: Create the instance
       run: |
         chmod +x ./.github/actions/create_wp_instance/deploy.sh

@@ -1,13 +1,14 @@
 name: Site Export from Production
+description: 'Replicates the production instance to the given deployment'
 on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment'
+        description: 'Destination deployment environment'
         required: true
         default: 'test'
       site-name:
-        description: 'Import site name'
+        description: 'Destination site name'
         required: true
         default: 'test'
 jobs:
@@ -16,6 +17,7 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
+
       - name: Replicate Production
         uses: ./.github/actions/replicate_prod
         with:

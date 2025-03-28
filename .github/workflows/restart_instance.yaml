@@ -1,4 +1,5 @@
 name: Restart instance
+description: 'Restart the OpenShift deployment, effectively restarting the target site.'
 on:
   workflow_dispatch:
     inputs:

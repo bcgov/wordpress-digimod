@@ -1,4 +1,5 @@
 name: Reconfigure SSO
+description: 'Update the Miniorange SSO plugin settings to the proper values for the site selected. Usually used after a replicate from production.'
 on:
   workflow_dispatch:
     inputs:

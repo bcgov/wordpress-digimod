@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#Make sure bash exits on any error so that the github action is marked as error
+set -e
+
 ENVIRONMENT=$1
 SITE_NAME=$2
 OPENSHIFT_SERVER=$3
@@ -43,6 +46,11 @@ export NAMESPACE="c0cce6-$ENVIRONMENT"
 export OC_ENV=$ENVIRONMENT
 export OC_SITE_NAME=digital-$SITE_NAME
 
+#Generate GH Actions summary
+echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
+echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+
 # Delete existing deployment, if it exists
 echo "::group::Delete existing deployment"
 export WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
@@ -51,16 +59,13 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     chmod +x site-delete-unix.sh
     ./site-delete-unix.sh
 
-    #Generate GH Actions summary
-    echo "### Deployment Deleted:" >> $GITHUB_STEP_SUMMARY
+    echo "### Deployment Deleted" >> $GITHUB_STEP_SUMMARY
 
 else
     #Generate GH Actions summary
     echo "### Deployment Not Found (nothing deleted):" >> $GITHUB_STEP_SUMMARY
 fi      
 
-echo "Deployment Environment: ${ENVIRONMENT}" >> $GITHUB_STEP_SUMMARY
-echo "Site Name: ${SITE_NAME}"  >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
 echo "::endgroup::"

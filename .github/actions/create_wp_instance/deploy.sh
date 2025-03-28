@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#Make sure bash exits on any error so that the github action is marked as error
+set -e
+
 ENVIRONMENT=$1
 SITE_NAME=$2
 OPENSHIFT_SERVER=$3
@@ -49,8 +52,23 @@ export WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=word
 WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     echo "Found existing site."
-    chmod +x site-delete-unix.sh
-    ./site-delete-unix.sh
+    echo "::endgroup::"
+    
+    #Changed to not delete if it exists, just in case the site has content. Delete should be an active action.
+    #chmod +x site-delete-unix.sh
+    # ./site-delete-unix.sh
+
+	#Generate GH Actions summary
+	echo "### Create WP Instance Error" >> $GITHUB_STEP_SUMMARY
+	echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+	echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
+	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+
+	echo "Site already exists." >> $GITHUB_STEP_SUMMARY
+	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+	
+	exit 1
+
 else
     echo "Existing site not found, nothing to delete."
 fi      

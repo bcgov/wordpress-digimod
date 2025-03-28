@@ -1,5 +1,5 @@
-name: Deployplugin
-description: 'Deployplugin'
+name: Deploy Plugin
+description: 'Deploy a single plugin from the wordpress-digimod repository to the given site.'
 inputs:
   environment:
     description: 'Deployment environment'
