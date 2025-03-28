@@ -63,18 +63,19 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     
 
     # Log in to OpenShift
-    echo "Deploying to $ENVIRONMENT"
     case "$ENVIRONMENT" in
         "dev")
         token=$DEV_TOKEN
+        OC_SITE_NAME=digital-$SITE_NAME
         ;;
         "test")
         token=$TEST_TOKEN
+        OC_SITE_NAME=digital-$SITE_NAME
         ;;
         "prod")
         token=$PROD_TOKEN
-        # echo "For safety reasons, we won't run this action on prod!"
-        # exit 1
+        echo "Cant replicate prod to prod!"
+        exit 1
         ;;
         *)
         echo "Unknown environment: $ENVIRONMENT"
@@ -82,15 +83,15 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
         ;;
     esac
 
+    OC_ENV=$ENVIRONMENT
+    echo "Deploying to the site $OC_SITE_NAME in $OC_ENV"
+
     echo "::group::Login to target OC"
     oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
     echo "::endgroup::"
 
     
-    
     NAMESPACE="c0cce6-$ENVIRONMENT"
-    OC_ENV=$ENVIRONMENT
-    OC_SITE_NAME=digital-$SITE_NAME
     WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
     WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
@@ -153,9 +154,28 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 
     echo "Replicate production finished"
 
+    #Generate GH Actions summary
+    echo "### Replicated Production to " >> $GITHUB_STEP_SUMMARY
+    echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+    echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
+    echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+
+
 else
     echo "Unable to find production"
     echo "Pod Name: $WORDPRESS_POD_NAME"
     echo "Container Name: $WORDPRESS_CONTAINER_NAME"
+
+    echo "error::Unable to find production"
+
+    echo "### Replicate Production Error " >> $GITHUB_STEP_SUMMARY
+    echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+    echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
+    echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+    echo "Pod Name: $WORDPRESS_POD_NAME" >> $GITHUB_STEP_SUMMARY
+    echo "Container Name: $WORDPRESS_CONTAINER_NAME" >> $GITHUB_STEP_SUMMARY
+    echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+    echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+    echo "Unable to find production" >> $GITHUB_STEP_SUMMARY
 
 fi

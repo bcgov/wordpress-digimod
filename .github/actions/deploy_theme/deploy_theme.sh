@@ -60,7 +60,7 @@ if [ $EXISTING_VER_RESULTS_EXIT_CODE -eq 0 ]; then
     echo "${EXISTING_VER_RESULTS}"
 
 else
-    EXISTING_VER_RESULTS = "Block-theme not found"
+    EXISTING_VER_RESULTS="Block-theme not found"
     echo "Block-theme not found"
 
     echo "::warning::Block-theme not found"
