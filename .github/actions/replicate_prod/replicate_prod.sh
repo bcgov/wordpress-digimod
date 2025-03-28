@@ -84,8 +84,8 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     esac
 
     #dont allow live site to live site. do allow prod digital to prod backup.
-    if [[ "$ENVIRONMENT" == "prod"]]; then 
-        if [[ "$OC_SITE_NAME" == "digital"]]; then 
+    if [[ "$ENVIRONMENT" == "prod" ]]; then 
+        if [[ "$OC_SITE_NAME" == "digital" ]]; then 
             echo "::error::Cant replicate to environment: production, site: digital!"
             exit 1
         fi
