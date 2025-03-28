@@ -11,7 +11,6 @@ TEST_TOKEN=$5
 PROD_TOKEN=$6
 KEYCLOAK_TEST_CLIENT_SECRET=$7
 
-echo "Deploying to $ENVIRONMENT"
 case "$ENVIRONMENT" in
     "dev")
     token=$DEV_TOKEN
@@ -31,7 +30,9 @@ case "$ENVIRONMENT" in
     ;;
 esac
 
-echo "Deploying to the site $OC_SITE_NAME in $ENVIRONMENT"
+OC_ENV=$ENVIRONMENT
+
+echo "Deploying to the site $OC_SITE_NAME in $OC_ENV"
 
 oc login $OPENSHIFT_SERVER --token=$token                   #--insecure-skip-tls-verify=true
 
@@ -59,6 +60,7 @@ if [ $EXISTING_VER_RESULTS_EXIT_CODE -eq 0 ]; then
     echo "${EXISTING_VER_RESULTS}"
 
 else
+    EXISTING_VER_RESULTS = "Block-theme not found"
     echo "Block-theme not found"
 
     echo "::warning::Block-theme not found"

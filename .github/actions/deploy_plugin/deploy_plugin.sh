@@ -64,6 +64,7 @@ if [ -d "$PLUGIN" ]; then
 		echo "${EXISTING_VER_RESULTS}"
 
 	else
+		EXISTING_VER_RESULTS="Plugin not found"
 		echo "Plugin not found"
 
 		echo "::warning::Plugin not found"
