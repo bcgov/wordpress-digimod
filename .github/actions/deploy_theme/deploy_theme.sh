@@ -30,7 +30,10 @@ case "$ENVIRONMENT" in
     exit 1
     ;;
 esac
-oc login $OPENSHIFT_SERVER --token=$token --insecure-skip-tls-verify=true
+
+echo "Deploying to the site $OC_SITE_NAME in $ENVIRONMENT"
+
+oc login $OPENSHIFT_SERVER --token=$token                   #--insecure-skip-tls-verify=true
 
 # Deploy theme
 THEME_NAME="bcgov-wordpress-block-theme"
@@ -48,8 +51,17 @@ oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod 
         
 #Get installed version
 echo "Existing installed theme version:"
-oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar theme get $THEME_NAME --field=version
+EXISTING_VER_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar theme get $THEME_NAME --field=version 2>&1)
+EXISTING_VER_RESULTS_EXIT_CODE=$?
+set -e
+if [ $EXISTING_VER_RESULTS_EXIT_CODE -eq 0 ]; then
+    echo "${EXISTING_VER_RESULTS}"
 
+else
+    echo "Block-theme not found"
+
+    echo "::warning::Block-theme not found"
+fi
 
 cd bcgov-wordpress-block-theme-digimod
 
@@ -73,9 +85,32 @@ oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /t
 
 
 echo "Newly installed theme version:"
-oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar theme get $THEME_NAME --field=version
+NEW_VER_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar theme get $THEME_NAME --field=version)
+echo "${NEW_VER_RESULTS}"
 
 
-echo "Clearing W3TC Cache"
 #Perform the clear
-oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar w3-total-cache flush all
+echo "Clearing W3TC Cache"
+set +e
+W3TC_VERSION=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get w3-total-cache --field=version 2>&1)
+W3TC_VERSION_EXIT_CODE=$?
+set -e
+if [ $W3TC_VERSION_EXIT_CODE -eq 0 ]; then		
+    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar w3-total-cache flush all
+
+else
+    echo "W3TC Not installed"
+
+    echo "::warning::W3TC Not installed"
+fi
+
+#Generate GH Actions summary
+echo "### Deployed Block-theme" >> $GITHUB_STEP_SUMMARY
+echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
+echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+
+
+echo "Existing Installed version: ${EXISTING_VER_RESULTS}" >> $GITHUB_STEP_SUMMARY
+echo "Newly Installed version: ${NEW_VER_RESULTS}" >> $GITHUB_STEP_SUMMARY

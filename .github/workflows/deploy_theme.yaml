@@ -1,4 +1,5 @@
 name: Deploy Theme
+description: 'Deploy the block-theme from the bcgov-wordpress-block-theme-digimod repository to the given site.'
 on:
   workflow_dispatch:
     inputs:
@@ -16,6 +17,7 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
+        
       - name: Deploy theme and plugins
         uses: ./.github/actions/deploy_theme
         with:
