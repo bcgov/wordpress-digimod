@@ -287,6 +287,7 @@ function digimod_misc_noindex_protected_pages($robots) {
 function digimod_misc_noindex_protected_pages_aioseo($attributes){
     global $post;
     if ( post_password_required( $post ) ) {
+        echo '<!-- ' . print_r($attributes,true) . ' -->';
         $attributes['noindex']  = 'noindex';
         $attributes['nofollow'] = 'nofollow';
     }
