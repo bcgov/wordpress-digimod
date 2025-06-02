@@ -288,7 +288,7 @@ function digimod_misc_noindex_protected_pages($robots) {
     }
 }
 //add_action( 'wp_head', 'digimod_misc_noindex_protected_pages' );
-add_action( 'wp_robots', 'digimod_misc_noindex_protected_pages' );
+add_filter( 'wp_robots', 'digimod_misc_noindex_protected_pages' );
 
 
 
