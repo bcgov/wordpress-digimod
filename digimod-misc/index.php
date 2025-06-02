@@ -256,7 +256,7 @@ add_action( 'admin_notices', 'digimod_misc_custom_admin_notice' );
 
 
 
-/* Prevent WP Password protected pages from showin in the search 
+/* Prevent WP Password protected pages from showing in the site search 
     From: https://gist.github.com/jchristopher/8af4f64df046d1aeaa659975229c64cb
 */
 add_filter( 'searchwp\query\mods', function( $mods ) {
@@ -274,6 +274,18 @@ add_filter( 'searchwp\query\mods', function( $mods ) {
 	return $mods;
 } );
 
+/* Prevent WP password protected pages from showing in web searches
+*/
+function digimod_misc_noindex_protected_pages($robots) {
+    global $post;
+    if ( post_password_required( $post ) ) {
+        $robots['follow'] = false;
+        $robots['index'] = false;
+        return $robots;
+    }
+}
+//add_action( 'wp_head', 'digimod_misc_noindex_protected_pages' );
+add_action( 'wp_robots', 'digimod_misc_noindex_protected_pages' );
 
 
 
