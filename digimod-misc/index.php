@@ -279,8 +279,8 @@ add_filter( 'searchwp\query\mods', function( $mods ) {
 function digimod_misc_noindex_protected_pages($robots) {
     global $post;
     if ( post_password_required( $post ) ) {
-        $robots['follow'] = false;
-        $robots['index'] = false;
+        $robots['nofollow'] = true;
+        $robots['noindex'] = true;
         return $robots;
     }
 }
