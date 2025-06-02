@@ -3,7 +3,7 @@
 /**
  * Plugin Name: DIGIMOD - miscellaneous
  * Description: Miscellaneous features for DigitalGov; Defines WCAG Tag taxonomy, CLI Keycloak SSO/Miniorange adjuster.
- * Version: 1.2.4
+ * Version: 1.2.5
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -28,6 +28,8 @@ Changelog
 1.2.3 - Added disabling of miniOrange setting that checks for email_verified=1 from IDIR which is not provided and breaks login.
 
 1.2.4 - Split out the code from 1.2.3 into its own CLI function.
+
+1.2.5 - Added hiding of password protected pages from the search results
 */
 
 // Exit if accessed directly
@@ -252,6 +254,25 @@ function digimod_misc_custom_admin_notice() {
 add_action( 'admin_notices', 'digimod_misc_custom_admin_notice' );
 */
 
+
+
+/* Prevent WP Password protected pages from showin in the search 
+    From: https://gist.github.com/jchristopher/8af4f64df046d1aeaa659975229c64cb
+*/
+add_filter( 'searchwp\query\mods', function( $mods ) {
+	global $wpdb;
+
+	$mod = new \SearchWP\Mod();
+	$mod->set_local_table( $wpdb->posts );
+	$mod->on( 'ID', [ 'column' => 'id' ] );
+	$mod->raw_where_sql( function( $runtime ) {
+		return "LENGTH({$runtime->get_local_table_alias()}.post_password) = 0";
+	} );
+
+	$mods[] = $mod;
+
+	return $mods;
+} );
 
 
 
