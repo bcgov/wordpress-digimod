@@ -284,17 +284,15 @@ function digimod_misc_noindex_protected_pages($robots) {
         return $robots;
     }
 }
-
 function digimod_misc_noindex_protected_pages_aioseo($attributes){
     global $post;
-    echo '<!-- xyz -->';
     if ( post_password_required( $post ) ) {
-        echo '<!-- abc -->';
         $attributes['noindex']  = 'noindex';
         $attributes['nofollow'] = 'nofollow';
     }
+
+    return $attributes;
 }
-//add_action( 'wp_head', 'digimod_misc_noindex_protected_pages' );
 add_filter( 'wp_robots', 'digimod_misc_noindex_protected_pages' );
 add_filter( 'aioseo_robots_meta', 'digimod_misc_noindex_protected_pages_aioseo' );
 
