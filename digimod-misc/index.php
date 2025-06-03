@@ -29,7 +29,7 @@ Changelog
 
 1.2.4 - Split out the code from 1.2.3 into its own CLI function.
 
-1.2.5 - Added hiding of password protected pages from the search results
+1.2.5 - Added hiding of password protected pages from the search results and search engines.
 */
 
 // Exit if accessed directly
