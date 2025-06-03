@@ -278,19 +278,18 @@ add_filter( 'searchwp\query\mods', function( $mods ) {
 */
 function digimod_misc_noindex_protected_pages($robots) {
     global $post;
-    if ( post_password_required( $post ) ) {
+    if ( $post && post_password_required( $post ) ) {
         $robots['nofollow'] = true;
         $robots['noindex'] = true;
-        return $robots;
     }
+    return $robots;
 }
 function digimod_misc_noindex_protected_pages_aioseo($attributes){
     global $post;
-    if ( post_password_required( $post ) ) {
+    if ( $post && post_password_required( $post ) ) {
         $attributes['noindex']  = 'noindex';
         $attributes['nofollow'] = 'nofollow';
     }
-
     return $attributes;
 }
 add_filter( 'wp_robots', 'digimod_misc_noindex_protected_pages' );
