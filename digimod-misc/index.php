@@ -371,6 +371,48 @@ if (defined('WP_CLI')) {
         }
     }
 
+    class Digimod_fix_searchwpmetrics extends WP_CLI_Command
+    {
+        public function __invoke($args)
+        {
+            global $wpdb;
+
+            //Check if we need to re-create the searchwp id's table since its not getting backed up.
+            WP_CLI::log('Checking searchwp IDs table exists');
+
+            $metrics = new \SearchWP_Metrics();
+
+            $table = $metrics->get_table_name( 'ids' );
+            $table_sql = $wpdb->get_results( "SHOW TABLES LIKE '{$table}'" , ARRAY_N );
+
+			if ( empty( $table_sql ) ) {
+                // IDS table
+                $ids_table_name = $metrics->get_table_name( 'ids' );
+                $sql = "
+                    CREATE TABLE $ids_table_name (
+                        `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                        `value` char(32) NOT NULL DEFAULT '',
+                        `type` varchar(20) DEFAULT 'hash',
+                        PRIMARY KEY (`id`),
+                            UNIQUE KEY `keyunique` (`value`),
+                            KEY `hash` (`type`)
+                    ) DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci";
+                dbDelta( $sql );
+
+                WP_CLI::log('Created searchwp IDs table');
+
+			}else{
+                WP_CLI::log('Searchwp IDs table already exists');
+            }
+
+            
+
+
+            WP_CLI::success('Re-created the searchwp metrics ids table!');
+        }
+    }
+
     WP_CLI::add_command('digimod-config-mo', 'Digimod_config_mo');
     WP_CLI::add_command('digimod-fix-mo', 'Digimod_fix_mo');
+    WP_CLI::add_command('digimod-fix-searchwpmetrics', 'Digimod_fix_searchwpmetrics');
 }
