@@ -35,7 +35,8 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     # perform the backup
 
     echo "Running backup on prod..."
-    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar ai1wm backup
+    #Exclude cache files and exclude the SearchWP metric ID's table which is huge (400mb+) and is for log of metrics.
+    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar ai1wm backup --exclude-tables=wp_swpext_metrics_ids --exclude-cache
 
     echo "- Grabbing backup file"
     LATEST_FILE=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c 'ls -t /var/www/html/wp-content/ai1wm-backups | head -n 1 ')
