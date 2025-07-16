@@ -161,6 +161,10 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     #Disable site indexing
     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar option set blog_public 0
 
+    #Re-create the SearchWP's id's table that is not backed up.
+    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar digimod-fix-searchwpmetrics
+
+
     echo "::endgroup::"
 
     echo "Replicate production finished"

@@ -3,7 +3,7 @@
 /**
  * Plugin Name: DIGIMOD - miscellaneous
  * Description: Miscellaneous features for DigitalGov; Defines WCAG Tag taxonomy, CLI Keycloak SSO/Miniorange adjuster.
- * Version: 1.2.5
+ * Version: 1.2.6
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -30,6 +30,8 @@ Changelog
 1.2.4 - Split out the code from 1.2.3 into its own CLI function.
 
 1.2.5 - Added hiding of password protected pages from the search results and search engines.
+
+1.2.6 - Added CLI to re-create the searchwp id's table if needed.
 */
 
 // Exit if accessed directly
@@ -378,7 +380,7 @@ if (defined('WP_CLI')) {
             global $wpdb;
 
             //Check if we need to re-create the searchwp id's table since its not getting backed up.
-            WP_CLI::log('Checking searchwp IDs table exists');
+            WP_CLI::log('Checking if searchwp IDs table exists...');
 
             $metrics = new \SearchWP_Metrics();
 
@@ -387,7 +389,7 @@ if (defined('WP_CLI')) {
 
 			if ( empty( $table_sql ) ) {
 		        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-                
+
                 // IDS table
                 $ids_table_name = $metrics->get_table_name( 'ids' );
                 $sql = "
