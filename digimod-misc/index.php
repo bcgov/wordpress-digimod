@@ -386,6 +386,8 @@ if (defined('WP_CLI')) {
             $table_sql = $wpdb->get_results( "SHOW TABLES LIKE '{$table}'" , ARRAY_N );
 
 			if ( empty( $table_sql ) ) {
+		        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+                
                 // IDS table
                 $ids_table_name = $metrics->get_table_name( 'ids' );
                 $sql = "
