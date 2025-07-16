@@ -73,7 +73,7 @@ cd bcgov-wordpress-block-theme-digimod
 #composer install
 
 #Tar up the theme as it exists in the runner from the cloned repo
-tar -cf theme.tar --exclude=./github --exclude=./git ./
+tar -cf theme.tar --exclude=.github --exclude=.git ./
 
 #copy up the theme and extract it to _tmp folder
 oc cp --no-preserve theme.tar $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/themes/theme.tar -c $WORDPRESS_CONTAINER_NAME
