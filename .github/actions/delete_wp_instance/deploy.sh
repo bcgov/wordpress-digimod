@@ -5,10 +5,11 @@ set -e
 
 ENVIRONMENT=$1
 SITE_NAME=$2
-OPENSHIFT_SERVER=$3
-DEV_TOKEN=$4
-TEST_TOKEN=$5
-PROD_TOKEN=$6
+PROJECT_NAME=$3
+OPENSHIFT_SERVER=$4
+DEV_TOKEN=$5
+TEST_TOKEN=$6
+PROD_TOKEN=$7
 
 #NG. no longer grabbing the branch    -b digimod-deploy
 git clone  https://github.com/bcgov/wordpress-deploy-digimod.git
@@ -44,10 +45,11 @@ cd wordpress-deploy-digimod
 #Setup some variables
 export NAMESPACE="c0cce6-$ENVIRONMENT"
 export OC_ENV=$ENVIRONMENT
-export OC_SITE_NAME=digital-$SITE_NAME
+export OC_SITE_NAME=$PROJECT_NAME-$SITE_NAME
 
 #Generate GH Actions summary
 echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+echo "Project: ${PROJECT_NAME}" >> $GITHUB_STEP_SUMMARY
 echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
