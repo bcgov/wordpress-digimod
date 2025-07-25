@@ -18,6 +18,7 @@ jobs:
         uses: ./.github/actions/deploy_plugin
         with:
           environment: prod
+          project-name: digital
           site-name: prod
           openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
           dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}

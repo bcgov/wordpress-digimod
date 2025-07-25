@@ -4,12 +4,13 @@
 set -e
 
 ENVIRONMENT=$1
-SITE_NAME=$2
-OPENSHIFT_SERVER=$3
-DEV_TOKEN=$4
-TEST_TOKEN=$5
-PROD_TOKEN=$6
-BACKUP_NUMBER=$7
+PROJECT_NAME=$2
+SITE_NAME=$3
+OPENSHIFT_SERVER=$4
+DEV_TOKEN=$5
+TEST_TOKEN=$6
+PROD_TOKEN=$7
+BACKUP_NUMBER=$8
 
 # Log in to OpenShift
 echo "::group::Login to Production OC"
@@ -19,7 +20,7 @@ echo "::endgroup::"
 # Export backup file from backup
 NAMESPACE="c0cce6-prod"
 OC_ENV=prod
-OC_SITE_NAME=digital-backup
+OC_SITE_NAME=$PROJECT_NAME-backup
 WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
@@ -81,10 +82,10 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     esac
 
     OC_ENV=$ENVIRONMENT
-    if [ "$SITE_NAME" = "digital" ]; then
-        OC_SITE_NAME="digital"
+    if [ "$SITE_NAME" = "$PROJECT_NAME" ]; then
+        OC_SITE_NAME="$PROJECT_NAME"
     else
-        OC_SITE_NAME="digital-$SITE_NAME"
+        OC_SITE_NAME="$PROJECT_NAME-$SITE_NAME"
     fi
 
     echo "Deploying to the site $OC_SITE_NAME in $OC_ENV"
@@ -149,6 +150,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     #Generate GH Actions summary
 	echo "### Restored Backup" >> $GITHUB_STEP_SUMMARY
 	echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+    echo "Project: ${PROJECT_NAME}" >> $GITHUB_STEP_SUMMARY
 	echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
     echo "Backup number: ${BACKUP_NUMBER}" >> $GITHUB_STEP_SUMMARY
 	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
@@ -160,6 +162,7 @@ else
 	#Generate GH Actions summary
 	echo "### Restore Backup Error" >> $GITHUB_STEP_SUMMARY
 	echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+    echo "Project: ${PROJECT_NAME}" >> $GITHUB_STEP_SUMMARY
 	echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
     echo "Backup number: ${BACKUP_NUMBER}" >> $GITHUB_STEP_SUMMARY
 	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line

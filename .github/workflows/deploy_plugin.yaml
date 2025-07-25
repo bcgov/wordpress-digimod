@@ -7,6 +7,19 @@ on:
         description: 'Deployment environment'
         required: true
         default: 'test'
+        type: choice
+        options:
+        - dev
+        - test
+        #for safety reasons dont run this on production, use the other action for production.
+        #- prod
+      project-name:
+        description: 'Project'
+        required: true
+        type: choice
+        options:
+        - digital
+        - cleanbc
       site-name:
         description: 'Site name'
         required: true
@@ -26,6 +39,7 @@ jobs:
         uses: ./.github/actions/deploy_plugin
         with:
           environment: ${{ github.event.inputs.environment }}
+          project-name: ${{ github.event.inputs.project-name }}
           site-name: ${{ github.event.inputs.site-name }}
           openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
           dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}

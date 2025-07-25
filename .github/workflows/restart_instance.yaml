@@ -7,6 +7,18 @@ on:
         description: 'Deployment environment'
         required: true
         default: 'test'
+        type: choice
+        options:
+        - dev
+        - test
+        - prod
+      project-name:
+        description: 'Project'
+        required: true
+        type: choice
+        options:
+        - digital
+        - cleanbc
       site-name:
         description: 'Site name'
         required: true
@@ -29,7 +41,7 @@ jobs:
       run: |
         ENVIRONMENT=${{ github.event.inputs.ENVIRONMENT }}
         SITE_NAME=${{ github.event.inputs.site-name }}
-        OC_SITE_NAME=digital-${{ github.event.inputs.site-name }}
+        OC_SITE_NAME=${{ github.event.inputs.project-name }}-${{ github.event.inputs.site-name }}
         case "$ENVIRONMENT" in
             "dev")
             token=${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
@@ -40,7 +52,8 @@ jobs:
             "prod")
             token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
             if [ $SITE_NAME == "prod" ]; then
-              OC_SITE_NAME=digital
+              #OC_SITE_NAME=digital
+              OC_SITE_NAME=${{ github.event.inputs.project-name }}
             fi
             ;;
             *)
@@ -48,7 +61,7 @@ jobs:
             exit 1
             ;;
         esac
-        echo "Deploying to the site $OC_SITE_NAME in $ENVIRONMENT"
+        echo "Restarting the site $OC_SITE_NAME in $ENVIRONMENT"
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token             #--insecure-skip-tls-verify=true
         NAMESPACE="c0cce6-$ENVIRONMENT"
         OC_ENV=$ENVIRONMENT
@@ -62,6 +75,7 @@ jobs:
         #Generate GH Actions summary
         echo "### Restarted Deployment/Instance" >> $GITHUB_STEP_SUMMARY
         echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+        echo "Project: ${PROJECT_NAME}" >> $GITHUB_STEP_SUMMARY
         echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 

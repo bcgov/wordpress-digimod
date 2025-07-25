@@ -4,18 +4,20 @@
 set -e
 
 ENVIRONMENT=$1
-SITE_NAME=$2
-OPENSHIFT_SERVER=$3
-DEV_TOKEN=$4
-TEST_TOKEN=$5
-PROD_TOKEN=$6
-KEYCLOAK_TEST_CLIENT_SECRET=$7
+PROJECT_NAME=$2
+SITE_NAME=$3
+OPENSHIFT_SERVER=$4
+DEV_TOKEN=$5
+TEST_TOKEN=$6
+PROD_TOKEN=$7
+KEYCLOAK_TEST_CLIENT_SECRET=$8
 
-PLUGIN=$8
+PLUGIN=$9
 
 NAMESPACE="c0cce6-$ENVIRONMENT"
 OC_ENV=$ENVIRONMENT
-OC_SITE_NAME=digital-$SITE_NAME
+OC_SITE_NAME=$PROJECT_NAME-$SITE_NAME
+
 
 case "$ENVIRONMENT" in
 	"dev")
@@ -26,7 +28,7 @@ case "$ENVIRONMENT" in
 	;;
 	"prod")
 	token=$PROD_TOKEN
-	OC_SITE_NAME=digital
+	OC_SITE_NAME=$PROJECT_NAME
 	;;
 	*)
 	echo "Unknown environment: $ENVIRONMENT"
@@ -107,6 +109,7 @@ if [ -d "$PLUGIN" ]; then
 	#Generate GH Actions summary
 	echo "### Deployed Plugin" >> $GITHUB_STEP_SUMMARY
 	echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+    echo "Project: ${PROJECT_NAME}" >> $GITHUB_STEP_SUMMARY
 	echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
 	echo "Plugin: ${PLUGIN}" >> $GITHUB_STEP_SUMMARY
 	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
@@ -124,6 +127,7 @@ else
 	#Generate GH Actions summary
 	echo "### Deploy Plugin Error" >> $GITHUB_STEP_SUMMARY
 	echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+    echo "Project: ${PROJECT_NAME}" >> $GITHUB_STEP_SUMMARY
 	echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
 	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 

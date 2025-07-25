@@ -6,6 +6,19 @@ on:
         description: 'Deployment environment ("prod" for prod)'
         required: true
         default: 'test'
+        type: choice
+        options:
+        - dev
+        - test
+        #for safety reasons dont run this on production
+        #- prod
+      project-name:
+        description: 'Project'
+        required: true
+        type: choice
+        options:
+        - digital
+        - cleanbc
       site-name:
         description: 'Site name ("digital" for prod)'
         required: true
@@ -24,6 +37,7 @@ jobs:
         uses: ./.github/actions/restore_backup
         with:
           environment: ${{ github.event.inputs.environment }}
+          project-name: ${{ github.event.inputs.project-name }}
           site-name: ${{ github.event.inputs.site-name }}
           openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
           dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}

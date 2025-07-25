@@ -7,6 +7,19 @@ on:
         description: 'Deployment environment'
         required: true
         default: 'test'
+        type: choice
+        options:
+        - dev
+        - test
+        #for safety reasons dont run this on production
+        #- prod
+      project-name:
+        description: 'Project'
+        required: true
+        type: choice
+        options:
+        - digital
+        - cleanbc
       site-name:
         description: 'Site name'
         required: true
@@ -49,7 +62,8 @@ jobs:
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token           #--insecure-skip-tls-verify=true
         NAMESPACE="c0cce6-$ENVIRONMENT"
         OC_ENV=$ENVIRONMENT
-        OC_SITE_NAME=digital-${{ github.event.inputs.SITE-NAME }}
+        OC_PROJECT_NAME=${{ github.event.inputs.PROJECT-NAME }}
+        OC_SITE_NAME=${{ github.event.inputs.PROJECT-NAME }}-${{ github.event.inputs.SITE-NAME }}
         WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
         WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
@@ -96,6 +110,7 @@ jobs:
         #Generate GH Actions summary
         echo "### SSO Configured:" >> $GITHUB_STEP_SUMMARY
         echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+        echo "Project: ${OC_PROJECT_NAME}" >> $GITHUB_STEP_SUMMARY
         echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 

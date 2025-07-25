@@ -4,11 +4,12 @@
 set -e
 
 ENVIRONMENT=$1
-SITE_NAME=$2
-OPENSHIFT_SERVER=$3
-DEV_TOKEN=$4
-TEST_TOKEN=$5
-PROD_TOKEN=$6
+PROJECT_NAME=$2
+SITE_NAME=$3
+OPENSHIFT_SERVER=$4
+DEV_TOKEN=$5
+TEST_TOKEN=$6
+PROD_TOKEN=$7
 
 # Log in to OpenShift
 echo "::group::Login to Production OC"
@@ -18,7 +19,7 @@ echo "::endgroup::"
 # Export site from production
 NAMESPACE="c0cce6-prod"
 OC_ENV=prod
-OC_SITE_NAME=digital
+OC_SITE_NAME=$PROJECT_NAME
 WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
@@ -67,15 +68,15 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     case "$ENVIRONMENT" in
         "dev")
         token=$DEV_TOKEN
-        OC_SITE_NAME=digital-$SITE_NAME
+        OC_SITE_NAME=$PROJECT_NAME-$SITE_NAME
         ;;
         "test")
         token=$TEST_TOKEN
-        OC_SITE_NAME=digital-$SITE_NAME
+        OC_SITE_NAME=$PROJECT_NAME-$SITE_NAME
         ;;
         "prod")
         token=$PROD_TOKEN
-        OC_SITE_NAME=digital-$SITE_NAME
+        OC_SITE_NAME=$PROJECT_NAME-$SITE_NAME
         #echo "Cant replicate prod to prod!"
         #exit 1
         ;;
@@ -90,8 +91,8 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     
     #dont allow live site to live site. do allow prod digital to prod backup.
     if [[ "$ENVIRONMENT" == "prod" ]]; then 
-        if [[ "$OC_SITE_NAME" == "digital-digital" ]]; then 
-            echo "::error::Cant replicate to environment: production, site: digital!"
+        if [[ "$OC_SITE_NAME" == "$PROJECT_NAME-$PROJECT_NAME" ]]; then 
+            echo "::error::Cant replicate to environment: production, site: $PROJECT_NAME!"
             exit 1
         fi
     fi 
@@ -172,6 +173,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     #Generate GH Actions summary
     echo "### Replicated Production" >> $GITHUB_STEP_SUMMARY
     echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+    echo "Project: ${PROJECT_NAME}" >> $GITHUB_STEP_SUMMARY
     echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
     echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
@@ -184,6 +186,7 @@ else
 
     echo "### Replicate Production Error " >> $GITHUB_STEP_SUMMARY
     echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
+    echo "Project: ${PROJECT_NAME}" >> $GITHUB_STEP_SUMMARY
     echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
     echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
     echo "Pod Name: $WORDPRESS_POD_NAME" >> $GITHUB_STEP_SUMMARY
