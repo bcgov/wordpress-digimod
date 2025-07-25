@@ -5,6 +5,10 @@ inputs:
     description: 'Deployment environment'
     required: true
     default: 'test'
+  project-name:
+    description: 'Project name'
+    required: true
+    default: 'digital'
   site-name:
     description: 'Site name'
     required: true
@@ -27,5 +31,5 @@ runs:
     - name: Create the instance
       run: |
         chmod +x ./.github/actions/create_wp_instance/deploy.sh
-        ./.github/actions/create_wp_instance/deploy.sh "${{ inputs.environment }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
+        ./.github/actions/create_wp_instance/deploy.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
       shell: bash
