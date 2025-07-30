@@ -44,6 +44,10 @@ echo "::group::Login to OC"
 oc login $OPENSHIFT_SERVER --token=$token 				#--insecure-skip-tls-verify=true
 echo "::endgroup::"
 
+echo "::group::Cloning plugin repo"
+git clone https://github.com/bcgov/${PLUGIN} -b ${PLUGIN_BRANCH_NAME}
+echo "::endgroup::"
+
 if [ -d "$PLUGIN" ]; then
 	echo "Deploying $PLUGIN to $OC_SITE_NAME"
 
@@ -75,9 +79,6 @@ if [ -d "$PLUGIN" ]; then
 		echo "::warning::Plugin not found"s
 	fi
 
-
-
-	git clone https://github.com/bcgov/${PLUGIN} -b ${PLUGIN_BRANCH_NAME}
 
 	cd $PLUGIN
 	tar -cf $PLUGIN.tar --exclude=./.github --exclude=node_modules --exclude=tests --exclude=Vite-tests ./*
