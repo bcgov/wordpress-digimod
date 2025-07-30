@@ -33,11 +33,12 @@ jobs:
         id: prepare-step
         run: |
           OC_PROJECT_NAME=${{ github.event.inputs.PROJECT-NAME }}
-          
+          OC_SITE_NAME=${{ github.event.inputs.SITE-NAME }}
+
           if [ "$OC_PROJECT_NAME" == "digital" ];  then #legacy key name for digital
             CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_TEST_CLIENT_SECRET"
           else
-            CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${OC_PROJECT_NAME^^}_${{ github.event.inputs.SITE-NAME ^^}}_TEST_CLIENT_SECRET"              
+            CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${OC_PROJECT_NAME^^}_${OC_SITE_NAME^^}_TEST_CLIENT_SECRET"              
           fi
 
           echo "::set-output name=CLIENT_KEYCLOAK_SECRET_NAME::${CLIENT_KEYCLOAK_SECRET_NAME}";
