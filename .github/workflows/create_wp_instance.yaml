@@ -17,8 +17,8 @@ on:
         required: true
         type: choice
         options:
-        - digital
-        - cleanbc
+        - digital        
+        - cleanbc-bh
       site-name:
         description: 'Site name'
         required: true

@@ -44,12 +44,12 @@ echo "::group::Login to OC"
 oc login $OPENSHIFT_SERVER --token=$token 				#--insecure-skip-tls-verify=true
 echo "::endgroup::"
 
-echo "::group::Cloning plugin repo"
+echo "::group::Cloning plugin repo - Branch ${PLUGIN_BRANCH_NAME}"
 git clone https://github.com/bcgov/${PLUGIN} -b ${PLUGIN_BRANCH_NAME}
 echo "::endgroup::"
 
 if [ -d "$PLUGIN" ]; then
-	echo "Deploying $PLUGIN to $OC_SITE_NAME"
+	echo "Deploying $PLUGIN (${PLUGIN_BRANCH_NAME}) to $OC_SITE_NAME"
 
 	WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 	WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
@@ -121,6 +121,7 @@ if [ -d "$PLUGIN" ]; then
     echo "Project: ${PROJECT_NAME}" >> $GITHUB_STEP_SUMMARY
 	echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
 	echo "Plugin: ${PLUGIN}" >> $GITHUB_STEP_SUMMARY
+	echo "Branch: ${PLUGIN_BRANCH_NAME}" >> $GITHUB_STEP_SUMMARY
 	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
 	echo "Existing Installed plugin version: ${EXISTING_VER_RESULTS}" >> $GITHUB_STEP_SUMMARY
