@@ -36,7 +36,7 @@ jobs:
           PROJECT_NAME=${{ github.event.inputs.PROJECT-NAME }}
           SITE_NAME=${{ github.event.inputs.SITE-NAME }}
           
-          #For unknown reason, dev secret doesnt always work. Use test key in dev.
+          #For unknown reason, dev secret doesnt always work. Use test key in dev. Only do this in the prepare step.
           if [ "${ENVIRONMENT}" == "dev" ]; then
             ENVIRONMENT="test"
           fi
@@ -45,7 +45,7 @@ jobs:
             CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${ENVIRONMENT^^}_CLIENT_SECRET"
 
           else
-            #For unknown reason, dev secret doesnt always work. Use test key in dev. 
+            #For unknown reason, dev secret doesnt always work. Use test key in dev. Only do this in the prepare step.
             SITE_NAME=${SITE_NAME//dev/test} 
 
             CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${PROJECT_NAME^^}_${SITE_NAME^^}_CLIENT_SECRET"            
@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs:
           - prepare
-          
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -123,6 +123,7 @@ jobs:
         chmod +x wp-cli.phar
 
         # Copy wp-cli to the WordPress instance 
+        echo "Copying WP-CLI to the Wordpress Instance"
         oc cp --no-preserve wp-cli.phar $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/wp-cli.phar -c $WORDPRESS_CONTAINER_NAME
         oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
 
@@ -146,7 +147,7 @@ jobs:
             ssoURI='https://test.loginproxy.gov.bc.ca/auth'
             ;;
 
-          'prod') #this branch wont run due to above exit.
+          'prod') #this branch wont run due to exit above.
             ssoURI='https://loginproxy.gov.bc.ca/auth'        
             ;;
 
