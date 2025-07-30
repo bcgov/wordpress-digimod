@@ -18,7 +18,7 @@ NAMESPACE="c0cce6-$ENVIRONMENT"
 OC_ENV=$ENVIRONMENT
 OC_SITE_NAME=$PROJECT_NAME-$SITE_NAME
 
-$PLUGIN="bcgov-plugin-cleanbc"
+PLUGIN="bcgov-plugin-cleanbc"
 
 case "$ENVIRONMENT" in
 	"dev")
