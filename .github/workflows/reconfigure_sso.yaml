@@ -65,9 +65,12 @@ jobs:
     outputs:
       CLIENT_KEYCLOAK_SECRET_NAME: ${{ steps.prepare-step.outputs.CLIENT_KEYCLOAK_SECRET_NAME }}
 
+
   deploy:
     runs-on: ubuntu-22.04
-
+    needs:
+          - prepare
+          
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
