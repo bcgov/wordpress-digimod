@@ -45,7 +45,10 @@ jobs:
             CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${ENVIRONMENT^^}_CLIENT_SECRET"
 
           else
-            CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${PROJECT_NAME^^}_${SITE_NAME^^}_${ENVIRONMENT^^}_CLIENT_SECRET"            
+            #For unknown reason, dev secret doesnt always work. Use test key in dev. 
+            SITE_NAME=${SITE_NAME//dev/test} 
+
+            CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${PROJECT_NAME^^}_${SITE_NAME^^}_CLIENT_SECRET"            
             CLIENT_KEYCLOAK_SECRET_NAME=${CLIENT_KEYCLOAK_SECRET_NAME//-/_}  
           fi      
 
