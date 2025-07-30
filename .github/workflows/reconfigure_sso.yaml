@@ -37,7 +37,7 @@ jobs:
           if [ "$OC_PROJECT_NAME" == "digital" ];  then #legacy key name for digital
             CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_TEST_CLIENT_SECRET"
           else
-            CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_$OC_PROJECT_NAME_${{ github.event.inputs.SITE-NAME }}_TEST_CLIENT_SECRET"              
+            CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${OC_PROJECT_NAME^^}_${{ github.event.inputs.SITE-NAME ^^}}_TEST_CLIENT_SECRET"              
           fi
 
           echo "::set-output name=CLIENT_KEYCLOAK_SECRET_NAME::${CLIENT_KEYCLOAK_SECRET_NAME}";
