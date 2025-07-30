@@ -32,14 +32,22 @@ jobs:
       - name: Prepare Keycloak
         id: prepare-step
         run: |
-          OC_PROJECT_NAME=${{ github.event.inputs.PROJECT-NAME }}
-          OC_SITE_NAME=${{ github.event.inputs.SITE-NAME }}
-
-          if [ "$OC_PROJECT_NAME" == "digital" ];  then #legacy key name for digital
-            CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_TEST_CLIENT_SECRET"
-          else
-            CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${OC_PROJECT_NAME^^}_${OC_SITE_NAME^^}_TEST_CLIENT_SECRET"              
+          ENVIRONMENT=${{ github.event.inputs.ENVIRONMENT }}
+          PROJECT_NAME=${{ github.event.inputs.PROJECT-NAME }}
+          SITE_NAME=${{ github.event.inputs.SITE-NAME }}
+          
+          #For unknown reason, dev secret doesnt always work. Use test key in dev.
+          if [ "${ENVIRONMENT}" == "dev" ]; then
+            ENVIRONMENT="test"
           fi
+
+          if [ "${PROJECT_NAME}" == "digital" ];  then #legacy key name for digital
+            CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${ENVIRONMENT^^}_CLIENT_SECRET"
+
+          else
+            CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${PROJECT_NAME^^}_${SITE_NAME^^}_${ENVIRONMENT^^}_CLIENT_SECRET"            
+            CLIENT_KEYCLOAK_SECRET_NAME=${CLIENT_KEYCLOAK_SECRET_NAME//-/_}  
+          fi      
 
           echo "::set-output name=CLIENT_KEYCLOAK_SECRET_NAME::${CLIENT_KEYCLOAK_SECRET_NAME}";
 
@@ -94,7 +102,9 @@ jobs:
             exit 1
             ;;
         esac
+
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token           #--insecure-skip-tls-verify=true
+
         NAMESPACE="c0cce6-$ENVIRONMENT"
         OC_ENV=$ENVIRONMENT
         OC_PROJECT_NAME=${{ github.event.inputs.PROJECT-NAME }}
@@ -113,28 +123,25 @@ jobs:
         siteURL=https://${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca
         ssoURI=''
 
-        echo "Secret Name"
-        echo "$CLIENT_KEYCLOAK_SECRET_NAME"
+        echo "Keycloak Secret Name: ${CLIENT_KEYCLOAK_SECRET_NAME}"
         
         if [ -z "${CLIENT_KEYCLOAK_SECRET_NAME}" ]; then
           echo "Unable to determine keycloak secret name. Exiting."
           exit 1
         fi
 
+        clientSecret=${{ secrets[env.CLIENT_KEYCLOAK_SECRET_NAME] }}
         case $OC_ENV in
           'dev')
             ssoURI='https://test.loginproxy.gov.bc.ca/auth'            
-            clientSecret=${{ secrets[env.CLIENT_KEYCLOAK_SECRET_NAME] }}
             ;;
 
           'test')
             ssoURI='https://test.loginproxy.gov.bc.ca/auth'
-            clientSecret=${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}}
             ;;
 
           'prod') #this branch wont run due to above exit.
-            ssoURI=''
-            clientSecret=${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}}            
+            ssoURI='https://loginproxy.gov.bc.ca/auth'        
             ;;
 
           *)
@@ -142,6 +149,13 @@ jobs:
             exit 1
             ;;
         esac
+
+
+        
+        if [ -z "${clientSecret}" ]; then
+          echo "Unable to determine keycloak secret. Exiting."
+          exit 1
+        fi
 
         #run command to change miniorange plugin variables
         CMD1_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $clientSecret $ssoURI $siteURL ")
