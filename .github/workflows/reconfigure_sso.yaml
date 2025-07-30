@@ -25,6 +25,25 @@ on:
         required: true
         default: 'test'
 jobs:
+  prepare:
+    name: Set Keycloak Secret Name
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Prepare Keycloak
+        run: |
+          OC_PROJECT_NAME=${{ github.event.inputs.PROJECT-NAME }}
+          
+          if [ "$OC_PROJECT_NAME" == "digital" ];  then #legacy key name for digital
+            clientKeycloakSecretName="KEYCLOAK_TEST_CLIENT_SECRET"
+          else
+            clientKeycloakSecretName="KEYCLOAK_$OC_PROJECT_NAME_${{ github.event.inputs.SITE-NAME }}_TEST_CLIENT_SECRET"              
+          fi
+
+          echo "::set-output name=clientKeycloakSecretName::${clientKeycloakSecretName}";
+
+    outputs:
+      clientKeycloakSecretName: ${{ steps.prepare-step.outputs.clientKeycloakSecretName }}
+
   deploy:
     runs-on: ubuntu-22.04
 
@@ -37,21 +56,6 @@ jobs:
         curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz
         tar xvzf openshift-client-linux.tar.gz
         sudo mv oc kubectl /usr/local/bin/
-
-    - name: Set Keycloak Secret Name
-      run: |
-        OC_PROJECT_NAME=${{ github.event.inputs.PROJECT-NAME }}
-        
-        if [ "$OC_PROJECT_NAME" == "digital" ];  then #legacy key name for digital
-          clientKeycloakSecretName="KEYCLOAK_TEST_CLIENT_SECRET"
-        else
-          clientKeycloakSecretName="KEYCLOAK_$OC_PROJECT_NAME_${{ github.event.inputs.SITE-NAME }}_TEST_CLIENT_SECRET"              
-        fi
-
-        echo "::set-output name=clientKeycloakSecretName::${clientKeycloakSecretName}";
-
-      outputs:
-        clientKeycloakSecretName: ${{ steps.prepare-step.outputs.clientKeycloakSecretName }}
 
 
     - name: Rename Miniorange plugin variables and settings
