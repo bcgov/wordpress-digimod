@@ -104,7 +104,7 @@ jobs:
         case $OC_ENV in
           'dev')
             ssoURI='https://test.loginproxy.gov.bc.ca/auth'            
-            clientSecret=${{ secrets[CLIENT_KEYCLOAK_SECRET_NAME] }}
+            clientSecret=${{ secrets[env.CLIENT_KEYCLOAK_SECRET_NAME] }}
             ;;
 
           'test')
