@@ -103,7 +103,8 @@ jobs:
         siteURL=https://${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca
         ssoURI=''
 
-        echo "$CLIENT_KEYCLOAK_SECRET_NAME"
+        echo "Secret Name"
+        echo "${CLIENT_KEYCLOAK_SECRET_NAME}"
 
         case $OC_ENV in
           'dev')
@@ -116,7 +117,7 @@ jobs:
             clientSecret=${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}}
             ;;
 
-          'prod')
+          'prod') #this branch wont run due to above exit.
             ssoURI=''
             clientSecret=${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}}            
             ;;
