@@ -87,7 +87,7 @@ jobs:
         CLIENT_KEYCLOAK_SECRET_NAME: ${{ needs.prepare.outputs.CLIENT_KEYCLOAK_SECRET_NAME }}
       run: |
         ENVIRONMENT=${{ github.event.inputs.ENVIRONMENT }}
-        echo "Deploying to the site $OC_SITE_NAME in $ENVIRONMENT"
+        echo "Deploying to the OC environment $ENVIRONMENT"
         case "$ENVIRONMENT" in
             "dev")
             token=${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
@@ -117,6 +117,8 @@ jobs:
         OC_SITE_NAME=${{ github.event.inputs.PROJECT-NAME }}-${{ github.event.inputs.SITE-NAME }}
         WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
         WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
+
+        echo "Deploying to the site $OC_SITE_NAME" 
 
         # Download wp-cli in the GitHub Actions workspace
         curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar

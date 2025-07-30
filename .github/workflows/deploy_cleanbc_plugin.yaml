@@ -1,0 +1,52 @@
+name: Deploy CleanBC Plugin
+description: 'Deploy the single plugin from the bcgov-plugin-cleanbc repository to the given site.'
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+        - dev
+        - test
+        - prod
+
+      project-name:
+        description: 'Project'
+        required: true
+        type: choice
+        default: 'cleanbc-bh'
+        options:
+        - cleanbc-bh
+
+      site-name:
+        description: 'Site name'
+        required: true
+        default: 'dev'
+
+      plugin-branch-name:
+        description: 'Plugin Feature/Branch'
+        required: true
+        default: 'main'
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+        
+      - name: Deploy plugin
+        uses: ./.github/actions/deploy_cleanbc_plugin
+        with:
+          environment: ${{ github.event.inputs.environment }}
+          project-name: ${{ github.event.inputs.project-name }}
+          site-name: ${{ github.event.inputs.site-name }}
+
+          openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
+          dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
+          test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
+          prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
+
+          plugin-branch-name: ${{ github.event.inputs.plugin-branch-name }}

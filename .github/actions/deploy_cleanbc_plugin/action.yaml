@@ -1,0 +1,40 @@
+name: Deploy Plugin
+description: 'Deploy the single plugin from the bcgov-plugin-cleanbc repository to the given site.'
+inputs:
+  environment:
+    description: 'Deployment environment'
+    required: true
+    default: 'test'
+  project-name:
+    description: 'Project name'
+    required: true
+    default: 'digital'
+  site-name:
+    description: 'Site name'
+    required: true
+    default: 'test'
+  openshift-server:
+    description: 'OpenShift server'
+    required: true
+  dev-token:
+    description: 'Dev token'
+    required: true
+  test-token:
+    description: 'Test token'
+    required: true
+  prod-token:
+    description: 'Prod token'
+    required: true 
+  plugin-branch-name:
+    description: 'Plugin Feature/Branch'
+    required: true
+    default: 'main' 
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Deploy plugin
+      run: |
+        chmod +x ./.github/actions/deploy_cleanbc_plugin/deploy_cleanbc_plugin.sh
+        ./.github/actions/deploy_plugin/deploy_plugin.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.plugin-branch-name }}"
+      shell: bash
