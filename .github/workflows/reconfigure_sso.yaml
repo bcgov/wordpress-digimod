@@ -81,15 +81,31 @@ jobs:
         case $OC_ENV in
           'dev')
             ssoURI='https://test.loginproxy.gov.bc.ca/auth'
-            clientSecret=${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}}
+            if [ "$OC_PROJECT" == "digital" ]; then #legacy key name for digital
+              clientSecret=${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}}
+            else
+              clientSecretName="KEYCLOAK_$OC_PROJECT_NAME_${{ github.event.inputs.SITE-NAME }}_TEST_CLIENT_SECRET"
+              echo clientSecretName
+              clientSecret=${{ secrets[clientSecretName] }}
+            fi
             ;;
           'test')
             ssoURI='https://test.loginproxy.gov.bc.ca/auth'
-            clientSecret=${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}}
+            if [ "$OC_PROJECT" == "digital" ]; then #legacy key name for digital
+              clientSecret=${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}}
+            else
+              clientSecretName="KEYCLOAK_$OC_PROJECT_NAME_${{ github.event.inputs.SITE-NAME }}_TEST_CLIENT_SECRET"
+              clientSecret=${{ secrets[clientSecretName] }}
+            fi
             ;;
           'prod')
             ssoURI=''
-            clientSecret=${{ secrets.KEYCLOAK_PROD_CLIENT_SECRET}}
+            if [ "$OC_PROJECT" == "digital" ]; then #legacy key name for digital
+              clientSecret=${{ secrets.KEYCLOAK_TEST_CLIENT_SECRET}}
+            else
+              clientSecretName="KEYCLOAK_$OC_PROJECT_NAME_${{ github.event.inputs.SITE-NAME }}_PROD_CLIENT_SECRET"
+              clientSecret=${{ secrets[clientSecretName] }}
+            fi
             ;;
           *)
             echo "No SSO integration set up for $SITE_NAME"
