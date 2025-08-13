@@ -81,7 +81,7 @@ if [ -d "$PLUGIN" ]; then
 
 
 	cd $PLUGIN
-	tar -cf $PLUGIN.tar --exclude=./.github --exclude=node_modules --exclude=tests --exclude=Vite-tests ./*
+	tar -cf $PLUGIN.tar --exclude=./.github --exclude=node_modules --exclude=tests --exclude=Vite-tests --exclude=package.json --exclude=package-lock.json ./*
 	oc cp --no-preserve $PLUGIN.tar $NAMESPACE/$WORDPRESS_POD_NAME:/var/www/html/wp-content/plugins/$PLUGIN.tar -c $WORDPRESS_CONTAINER_NAME
 	
 	#TODO remove when finally ready to enable deployment code.
