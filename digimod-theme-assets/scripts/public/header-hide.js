@@ -7,6 +7,7 @@ const domHeaderReady = () => {
 	 */
 	let lastScrollTop = 0;
 	const scrollTopPadding = 100;
+	const body = document.querySelector('body');
 	const header = document.querySelector('header');
 	const nav = document.querySelector('nav');
 	const searchFieldContainer = document.querySelector('#search-field-container');

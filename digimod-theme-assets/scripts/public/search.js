@@ -6,6 +6,7 @@ const digitalGovSearch = () => {
 	 * SafarIE iOS requires window.requestAnimationFrame update.
 	 */
 	window.requestAnimationFrame(() => {
+	  const body = document.querySelector('body');
 	  const searchPage = document.querySelector('body.search');
 	  const toggleSearchBtn = document.querySelector('.toggle-search-btn a');
 	  const searchFieldContainer = document.querySelector('#search-container');
@@ -26,6 +27,7 @@ const digitalGovSearch = () => {
 	   * Helper function: close the search container and return focus
 	   */
 	  function closeSearchContainer() {
+		body.style.position = 'inherit';
 		searchFieldContainer.classList.add('hidden');
 		searchFieldContainer.style.display = 'none';
 		toggleSearchBtn.classList.remove('close');
@@ -43,6 +45,7 @@ const digitalGovSearch = () => {
   
 		if (searchFieldContainer.classList.contains('hidden')) {
 		  // Show container
+		  body.style.position = 'fixed';
 		  searchFieldContainer.classList.remove('hidden');
 		  searchFieldContainer.style.display = 'block';
 		  toggleSearchBtn.classList.add('close');
