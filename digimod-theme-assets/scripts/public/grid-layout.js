@@ -63,15 +63,15 @@ const domReady = () => {
 
 							const headerIndex = index % headerElements.length;
 							const headerElement = headerElements[headerIndex];
-							const headerValue = headerElement.innerText;
-							const headerTagName = headerElement.tagName.toLowerCase();
+							if (headerElement) {
+								const headerValue = headerElement.innerText;
+								const headerTagName = headerElement.tagName.toLowerCase();
 
-
-							const newElement = document.createElement(headerTagName);
-							newElement.innerText = headerValue;
-							newElement.classList.add('wp-block-heading', 'mobile-only');
-
-							flexCard.insertBefore(newElement, flexCard.firstChild);
+								const newElement = document.createElement(headerTagName);
+								headerValue ? newElement.innerText = headerValue : newElement.innerText = "";
+								newElement.classList.add('wp-block-heading', 'mobile-only');
+								flexCard.insertBefore(newElement, flexCard.firstChild);
+							}
 						});
 					}
 				}
@@ -95,7 +95,7 @@ const domReady = () => {
 				}
 
 				// If a heading is found, set it as the aria-label of gridLayout
-				if (nearestHeading) {
+				if (nearestHeading && nearestHeading.innerText) {
 					gridLayout.setAttribute('aria-label', nearestHeading.innerText);
 				}
 			});

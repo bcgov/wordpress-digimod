@@ -126,6 +126,7 @@ header:has(#search-container) {
 	justify-content: flex-end;
 	flex-direction: column;
 	position: relative;
+	transition: 0.3s ease-in-out;
 }
 
 #search-container {
