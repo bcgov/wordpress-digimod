@@ -41,9 +41,9 @@ const domMenuReady = () => {
 		}
 
 		const scrollTopPosition = window.pageYOffset || document.documentElement.scrollTop;
-
+		const shouldEnable = window.innerWidth >= 1360;
 		if (nav) {
-			if (scrollTopPosition < lastScrollTop) {
+			if (scrollTopPosition < lastScrollTop && shouldEnable) {
 				if (scrollTopPosition > scrollTopPadding) {
 					header.style.transform = 'translateY(0%)';
 					header.style.opacity = '1';
@@ -52,7 +52,7 @@ const domMenuReady = () => {
 						searchFieldContainer.style.opacity = '1';
 					}
 				}
-			} else if (scrollTopPosition > scrollTopPadding) {
+			} else if (scrollTopPosition > scrollTopPadding && shouldEnable) {
 				header.style.transform = 'translateY(-100%)';
 				header.style.opacity = '0';
 				if (searchFieldContainer) {

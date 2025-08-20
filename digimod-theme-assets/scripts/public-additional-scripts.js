@@ -4,7 +4,6 @@ import './public/communities-of-practice';
 import './public/continuous-learning';
 import './public/training-cards';
 import './public/grid-layout';
-import './public/header-hide';
 import './public/homepage';
 import './public/menu';
 import './public/navigation';
