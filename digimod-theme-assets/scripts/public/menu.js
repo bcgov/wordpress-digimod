@@ -64,7 +64,7 @@ const domMenuReady = () => {
 			lastScrollTop = Math.max(0, scrollTopPosition);
 		}
 	};
-	document.addEventListener('scroll', throttle(windowScroll, 100), { passive: true });
+	document.addEventListener('scroll', throttle(windowScroll, 50), { passive: true });
 
 	// Primary menu
 	const handlePrimaryPointerEnter = (item) => {
