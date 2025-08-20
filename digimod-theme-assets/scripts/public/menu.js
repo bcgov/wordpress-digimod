@@ -6,7 +6,7 @@ const domMenuReady = () => {
 	const header = document.querySelector('header.header-container');
 	const nav = header;
 	let lastScrollTop = 0;
-	const scrollTopPadding = 0;
+	const scrollTopPadding = 82;
 	const searchFieldContainer = document.querySelector('.search-field-container');
 
 	// Throttle helper
