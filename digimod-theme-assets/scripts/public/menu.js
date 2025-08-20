@@ -59,6 +59,9 @@ const domMenuReady = () => {
 					searchFieldContainer.style.transform = 'translateY(-100%)';
 					searchFieldContainer.style.opacity = '0';
 				}
+			} else {
+				header.style.transform = 'translateY(100%)';
+				header.style.opacity = '1';
 			}
 
 			lastScrollTop = Math.max(0, scrollTopPosition);
