@@ -60,7 +60,7 @@ const domMenuReady = () => {
 					searchFieldContainer.style.opacity = '0';
 				}
 			} else {
-				header.style.transform = 'translateY(100%)';
+				header.style.transform = 'translateY(0%)';
 				header.style.opacity = '1';
 			}
 
