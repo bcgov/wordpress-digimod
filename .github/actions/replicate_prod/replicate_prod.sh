@@ -17,7 +17,8 @@ echo "::group::Login to Production OC"
 
 #Sometimes oc login will fail to connect, so lets re-try on failure.
 set +e
-ret=$(oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN 2>&1)
+oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN
+ret=$?
 set -e
 if [ $ret -eq 0 ]; then
     # The command was successful
