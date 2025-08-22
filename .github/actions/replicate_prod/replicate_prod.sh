@@ -13,8 +13,26 @@ PROD_TOKEN=$7
 
 # Log in to OpenShift
 echo "::group::Login to Production OC"
-oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN              #--insecure-skip-tls-verify=true
+#oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN              #--insecure-skip-tls-verify=true
+
+#Sometimes oc login will fail to connect, so lets re-try on failure.
+ret=0
+oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN_x || ret=$?
+if [ $ret -eq 0 ]; then
+    # The command was successful
+
+else
+    echo "Re-trying oc-login in 5s..."
+
+    sleep 5
+
+    # The command was not successful, lets try again
+    oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN
+
+fi
+
 echo "::endgroup::"
+
 
 # Export site from production
 NAMESPACE="c0cce6-prod"
