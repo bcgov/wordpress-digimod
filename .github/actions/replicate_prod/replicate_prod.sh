@@ -16,10 +16,12 @@ echo "::group::Login to Production OC"
 #oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN              #--insecure-skip-tls-verify=true
 
 #Sometimes oc login will fail to connect, so lets re-try on failure.
-ret=0
-oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN_x || ret=$?
+set +e
+ret=$(oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN_x 2>&1)
+set -e
 if [ $ret -eq 0 ]; then
     # The command was successful
+    echo "Login successful"
 
 else
     echo "Re-trying oc-login in 5s..."
