@@ -73,7 +73,10 @@ if [ -d "$PLUGIN" ]; then
 	if [ $EXISTING_VER_RESULTS_EXIT_CODE -eq 0 ]; then
 		echo "${EXISTING_VER_RESULTS}"
 
-		EXISTING_VER_ENABLED=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin is-active $PLUGIN)
+		EXISTING_VER_ENABLED_STRING=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get $PLUGIN --field=status)
+		if [ $EXISTING_VER_ENABLED_STRING = "active" ]; then
+			EXISTING_VER_ENABLED=1
+		fi
 		echo "Plugin is enabled/disabled: ${EXISTING_VER_ENABLED}"
 
 	else
@@ -101,7 +104,7 @@ if [ -d "$PLUGIN" ]; then
 
 
 	#If plugin was enabled beforehand, lets re-enable it just in case
-	if [ EXISTING_VER_ENABLED -eq 1 ]; then
+	if [ $EXISTING_VER_ENABLED -eq 1 ]; then
 		echo "Re-activating plugin"
 		$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate $PLUGIN)
 	fi
