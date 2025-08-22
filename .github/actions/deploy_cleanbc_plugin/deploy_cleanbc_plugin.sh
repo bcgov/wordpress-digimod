@@ -63,7 +63,8 @@ if [ -d "$PLUGIN" ]; then
 	oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
 
 
-	#Get installed version
+	#Get installed version and check if enabled or not
+	EXISTING_VER_ENABLED=0
 	set +e
 	echo "Existing installed plugin version:"
 	EXISTING_VER_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get $PLUGIN --field=version 2>&1)
@@ -71,6 +72,9 @@ if [ -d "$PLUGIN" ]; then
 	set -e
 	if [ $EXISTING_VER_RESULTS_EXIT_CODE -eq 0 ]; then
 		echo "${EXISTING_VER_RESULTS}"
+
+		EXISTING_VER_ENABLED=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin is-active $PLUGIN)
+		echo "Plugin is enabled/disabled: ${EXISTING_VER_ENABLED}"
 
 	else
 		EXISTING_VER_RESULTS="Plugin not found"
@@ -95,6 +99,12 @@ if [ -d "$PLUGIN" ]; then
 	NEW_VER_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin get $PLUGIN --field=version)
 	echo "${NEW_VER_RESULTS}"
 
+
+	#If plugin was enabled beforehand, lets re-enable it just in case
+	if [ EXISTING_VER_ENABLED -eq 1 ]; then
+		echo "Re-activating plugin"
+		$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate $PLUGIN)
+	fi
 
 
 	echo "Clearing W3TC Cache"
