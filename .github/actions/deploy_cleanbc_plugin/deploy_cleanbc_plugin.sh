@@ -106,7 +106,7 @@ if [ -d "$PLUGIN" ]; then
 	#If plugin was enabled beforehand, lets re-enable it just in case
 	if [ $EXISTING_VER_ENABLED -eq 1 ]; then
 		echo "Re-activating plugin"
-		$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate $PLUGIN)
+		oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate $PLUGIN
 	fi
 
 
