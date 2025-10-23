@@ -11,8 +11,8 @@ on:
         options:
         - dev
         - test
-        #for safety reasons dont run this on production
-        #- prod
+        #for safety reasons dont run this on production, but we need it for recovery reasons.
+        - prod
       project-name:
         description: 'Project'
         required: true
@@ -98,9 +98,9 @@ jobs:
             ;;
 
             "prod")
-            # token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
-            echo "For safety reasons, we won't run this action on prod!"
-            exit 1
+            token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
+            #echo "For safety reasons, we won't run this action on prod!"
+            #exit 1
             ;;
 
             *)
