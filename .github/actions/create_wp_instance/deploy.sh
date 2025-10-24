@@ -87,8 +87,9 @@ echo "::endgroup::"
 
 # Wait for WordPress pod to be running
 
+echo "Waiting for WordPress container to be created...2 minutes timeout"
 WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-oc wait --for=condition=Ready pod/$WORDPRESS_POD_NAME -n $NAMESPACE --timeout=5m
+oc wait --for=condition=Ready pod/$WORDPRESS_POD_NAME -n $NAMESPACE --timeout=2m
 # Wait for the WordPress container to be created
 WORDPRESS_CONTAINER_NAME=null;
 while true; do

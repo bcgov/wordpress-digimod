@@ -168,6 +168,7 @@ jobs:
             siteURL=https://${OC_SITE_NAME}.gov.bc.ca
           else
             echo "Running on prod environment, but not on production site. You will need to manually fix SSO. Use the test/dev settings."
+            exit 1
           fi
         fi
 
