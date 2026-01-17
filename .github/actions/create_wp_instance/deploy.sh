@@ -132,8 +132,7 @@ echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
 echo "### WP Install Results: " >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+echo "Admin Username: tester" >> $GITHUB_STEP_SUMMARY 
 echo "${WP_INSTALL_RESULTS}" >> $GITHUB_STEP_SUMMARY
 
-echo "${WP_INSTALL_RESULTS}" >> $GITHUB_STEP_SUMMARY
 echo "**Change the ADMIN password ASAP!**" >> $GITHUB_STEP_SUMMARY
-echo "${WP_INSTALL_RESULTS}" >> $GITHUB_STEP_SUMMARY
