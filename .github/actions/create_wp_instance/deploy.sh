@@ -66,7 +66,7 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 	echo "### Create WP Instance Error" >> $GITHUB_STEP_SUMMARY
 	echo "Environment: ${OC_ENV}" >> $GITHUB_STEP_SUMMARY
 	echo "Project: ${PROJECT_NAME}" >> $GITHUB_STEP_SUMMARY
-	echo "Site: ${OC_SITE_NAME}" >> $GITHUB_STEP_SUMMARY
+	echo "Site: ${SITE_NAME}" >> $GITHUB_STEP_SUMMARY
 	echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
 	echo "Site already exists." >> $GITHUB_STEP_SUMMARY

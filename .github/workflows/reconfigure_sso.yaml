@@ -162,7 +162,8 @@ jobs:
             ;;
         esac
 
-        if [ "${{ github.event.inputs.PROJECT-NAME }}" == "digital" ];  then 
+        #if [ "${{ github.event.inputs.PROJECT-NAME }}" == "digital" ];  then 
+        if [ "${ENVIRONMENT}" == "prod" ];  then 
           if [ "${{ github.event.inputs.SITE-NAME }}" == "digital" ];  then #production
             echo "Running on production"
             siteURL=https://${OC_SITE_NAME}.gov.bc.ca
