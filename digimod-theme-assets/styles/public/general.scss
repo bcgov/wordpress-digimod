@@ -34,19 +34,19 @@
 }
 
 .gap-quarter, .quarter-gap, .smaller-gap {
-  gap: 0.25rem;
+  gap: 0.25rem !important;
 }
 
 .gap-half, .half-gap, .small-gap {
-  gap: 0.5rem;
+  gap: 0.5rem !important;
 }
 
 .gap-1, .single-gap {
-  gap: 1rem;
+  gap: 1rem !important;
 }
 
 .gap-2, .double-gap {
-  gap: 2rem;
+  gap: 2rem !important;
 }
 
 :where(.is-layout-flex) {
