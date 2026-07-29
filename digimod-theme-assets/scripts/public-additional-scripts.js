@@ -2,6 +2,7 @@ import './public/case-studies';
 import './public/common-components';
 import './public/communities-of-practice';
 import './public/continuous-learning';
+import './public/definitions';
 import './public/training-cards';
 import './public/grid-layout';
 import './public/homepage';

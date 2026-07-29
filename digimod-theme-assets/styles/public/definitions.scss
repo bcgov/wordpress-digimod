@@ -1,0 +1,119 @@
+a.icon-definition.icon-definition {
+	color: var(--wp--preset--color--secondary-brand);
+	text-decoration-style: dashed;
+	text-decoration-color: var(--wp--preset--color--secondary-brand);
+
+	span.last-word {
+
+		&::after {
+			border: 1.5px solid currentcolor;
+			border-radius: 50%;
+			content: "?";
+			color: currentcolor;
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
+			line-height: 1;
+			font-weight: bold;
+			font-style: normal;
+			width: 0.85rem;
+			height: 0.85rem;
+			font-size: 0.66rem;
+			vertical-align: middle;
+			margin-left: 0.25rem;
+			position: relative;
+			top: -0.1rem;
+		}
+	}
+
+	&:is(:hover, :focus-visible) {
+		text-decoration: currentcolor underline 2px dotted;
+		outline: 2px solid currentcolor;
+		outline-offset: 2px;
+		border-radius: 3px;
+	}
+}
+
+body:has(#dialog[open]) {
+	overflow: hidden;
+}
+
+#dialog {
+	background-color: var(--wp--preset--color--white);
+	border: 0;
+	box-shadow: var(--box-shadow);
+	color: var(--wp--preset--color--text-color);
+	max-width: 600px;
+	border-radius: 1rem;
+
+	&.wide {
+		max-width: 1220px;
+	}
+
+	&.pin-to-top {
+		margin-block-start: 1rem;
+	}
+
+
+	&::backdrop {
+		background-color: rgba(0 0 0 / 0.5);
+		backdrop-filter: blur(2px);
+	}
+
+	.dialog-content {
+
+		padding-inline: 1rem;
+
+		h2 {
+			border-bottom: 2px solid var(--wp--preset--color--tertiary);
+			color: var(--wp--preset--color--tertiary);
+			display: inline-block;
+			font-size: 1.5rem;
+			padding-top: 0.5rem;
+			padding-inline: 2rem;
+			padding-bottom: 0.5rem;
+			margin-top: 0;
+			margin-bottom: 0;
+			position: relative;
+			left: -2rem;
+			outline: none;
+		}
+
+		> *:last-child {
+			padding-bottom: 0.5rem;
+		}
+	}
+
+	#close-dialog {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		font-size: 0;
+		background: top;
+		border: thin solid var(--wp--preset--color--transparent);
+		color: var(--wp--preset--color--text-color);
+		padding-inline: 0.5rem;
+		padding-top: 0.25rem;
+
+		&::after {
+			content: var(--closeIcon);
+			font-family: Verdana, Geneva, Tahoma, sans-serif;
+			font-size: 1rem;
+			display: inline-block;
+			padding: 0.25rem;
+			width: 1rem;
+		}
+
+		&:hover,
+		&:focus-visible {
+			border: thin solid var(--wp--preset--color--text-color);
+			border-radius: 0.25rem;
+			outline: none;
+			cursor: pointer;
+		}
+	}
+}
+
+.glossary-content *:first-child {
+	margin-block-start: 0;
+}
