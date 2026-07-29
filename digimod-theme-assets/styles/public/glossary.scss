@@ -1,5 +1,5 @@
 *:has(body.glossary) {
-	--glossary-gap: 2rem;
+	--glossary-gap: 0;
 	--glossary-letter-heading-size: 1.75rem;
 	scroll-padding: 12rem !important;
 }
@@ -8,24 +8,35 @@
 	scroll-padding: calc(12rem + 32px) !important;
 }
 
+body.glossary {
+	#post-content .alignfull {
+		margin-inline: -0;
+		width: 100%;
+		padding-inline: 0;
+	}
+}
+
 .invisible {
 	visibility: hidden;
 }
 
 /* Align the letter beside the first term */
 .glossary-entry-flex {
-	display: flex;
+	display: grid;
 	gap: var(--glossary-gap);
-	align-items: flex-start;
-	flex-wrap: wrap;
+	align-items: unset;
+  	flex-wrap: unset;
 }
 
 .glossary-inline-letter {
+	border-bottom: 1px solid lightgray;
 	color: var(--wp--preset--color--custom-dark-pink);
 	min-width: 2rem;
-	font-size: var(--glossary-letter-heading-size);
-	margin: 0;
+	font-size: 2rem;
 	font-weight: bold;
+	margin: 0;
+	margin-block-end: 1rem;
+	padding-block-end: 0.5rem;
 }
 
 .glossary-entry-group {
