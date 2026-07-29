@@ -1,0 +1,127 @@
+*:has(body.glossary) {
+	--glossary-gap: 2rem;
+	--glossary-letter-heading-size: 1.75rem;
+	scroll-padding: 12rem !important;
+}
+
+*:has(body.glossary.admin-bar) {
+	scroll-padding: calc(12rem + 32px) !important;
+}
+
+.invisible {
+	visibility: hidden;
+}
+
+/* Align the letter beside the first term */
+.glossary-entry-flex {
+	display: flex;
+	gap: var(--glossary-gap);
+	align-items: flex-start;
+	flex-wrap: wrap;
+}
+
+.glossary-inline-letter {
+	color: var(--wp--preset--color--custom-dark-pink);
+	min-width: 2rem;
+	font-size: var(--glossary-letter-heading-size);
+	margin: 0;
+	font-weight: bold;
+}
+
+.glossary-entry-group {
+	margin-top: 2rem;
+}
+
+.glossary-entry {
+	flex: 1;
+}
+
+.glossary-results .type-definitions {
+	padding-left: calc(var(--glossary-letter-heading-size) + var(--glossary-gap) + 5px);
+}
+
+.loading-spinner {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100px;
+	margin-top: 2rem;
+}
+
+.loading-spinner::after {
+	content: "";
+	width: 24px;
+	height: 24px;
+	border: 3px solid #ccc;
+	border-top-color: #333;
+	border-radius: 50%;
+
+	/* animation: spin 0.3s linear infinite; */
+	animation-name: spin;
+	animation-duration: 0.66s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in-out;
+}
+
+@keyframes spin {
+
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.visually-hidden {
+	position: absolute;
+	clip: rect(1px, 1px, 1px, 1px);
+	clip-path: inset(50%);
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+
+a.icon-definition.icon-definition {
+	text-decoration-style: dashed;
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+
+	span.last-word {
+
+		&::after {
+			border: 1.5px solid currentcolor;
+			border-radius: 50%;
+			content: "?";
+			color: currentcolor;
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
+			line-height: 1;
+			font-weight: bold;
+			font-style: normal;
+			width: 0.85rem;
+			height: 0.85rem;
+			font-size: 0.66rem;
+			vertical-align: middle;
+			margin-left: 0.25rem;
+			position: relative;
+			top: -0.1rem;
+		}
+	}
+
+	&:is(:hover, :focus-visible) {
+		text-decoration: currentcolor underline 2px dotted;
+		outline: 2px solid currentcolor;
+		outline-offset: 2px;
+		border-radius: 3px;
+	}
+
+}
+
+.glossary-content *:first-child {
+	margin-block-start: 0;
+}
+
+.glossary-results :is(p, blockquote, li) {
+	font-size: 1.15rem;
+}

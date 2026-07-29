@@ -68,6 +68,9 @@ body:not(body.wp-admin):not(body.editor-styles-wrapper):not(body.error404) {
 	overflow-x: hidden;
 }
 
+a:where(:not(.wp-element-button)) {
+	box-decoration-break: clone;
+}
 
 .banner-content {
 

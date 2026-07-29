@@ -47,6 +47,7 @@ body:has(#dialog[open]) {
 	border: 0;
 	box-shadow: var(--box-shadow);
 	color: var(--wp--preset--color--text-color);
+	min-width: 320px;
 	max-width: 600px;
 	border-radius: 1rem;
 
@@ -66,20 +67,21 @@ body:has(#dialog[open]) {
 
 	.dialog-content {
 
+		padding-block: 2rem;
 		padding-inline: 1rem;
 
 		h2 {
+			border-bottom: 1px solid lightgray;
 			color: currentColor;
 			display: inline-block;
 			font-size: 1.5rem;
 			padding-top: 0.5rem;
-			padding-inline: 2rem;
+			padding-inline: 0;
 			padding-bottom: 0.5rem;
 			margin-top: 0;
 			margin-bottom: 0;
-			position: relative;
-			left: -2rem;
 			outline: none;
+			width: 100%;
 		}
 
 		> *:last-child {
