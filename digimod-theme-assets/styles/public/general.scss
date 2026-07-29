@@ -33,6 +33,13 @@
   background-color: $highlightdark !important;
 }
 
+.gap-quarter, .quarter-gap, .smaller-gap {
+  gap: 0.25rem;
+}
+
+.gap-half, .half-gap, .small-gap {
+  gap: 0.5rem;
+}
 
 .gap-1, .single-gap {
   gap: 1rem;
