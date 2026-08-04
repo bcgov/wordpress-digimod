@@ -6,15 +6,10 @@ export const digmodPluginDefnitions = () => {
      * SafarIE iOS requires window.requestAnimationFrame update.
      */
     window.requestAnimationFrame(() => {
-        const links = document.querySelectorAll(
-            'a:not(#postFilterApp a, [href*="#top"])'
-        );
+        const definitionLinkSelector =
+            'a:not(#postFilterApp a, [href*="#top"])';
         const protectedAreaBlockSelector = '.cleanbcdx-protected-area-block';
         const protectedAreaFormSelector = '.cleanbcdx-protected-area__form';
-
-        const definitionLinks = Array.from(links).filter((link) => {
-            return link.href.includes('definitions');
-        });
 
         const getDefinitionUrl = (triggerElement) => {
             if (!triggerElement?.href) {
@@ -242,6 +237,51 @@ export const digmodPluginDefnitions = () => {
             }
         };
 
+        const initializeDefinitionLinks = (rootElement = document) => {
+            if (!rootElement || 'function' !== typeof rootElement.querySelectorAll) {
+                return [];
+            }
+
+            const definitionLinks = Array.from(
+                rootElement.querySelectorAll(definitionLinkSelector)
+            ).filter((link) => {
+                return link.href.includes('definitions');
+            });
+
+            definitionLinks.forEach((link) => {
+                if ('true' === link.dataset.definitionInit) {
+                    return;
+                }
+
+                link.dataset.definitionInit = 'true';
+                link.classList.add('icon-definition');
+                link.setAttribute(
+                    'aria-label',
+                    'opens definition dialog for this concept'
+                );
+
+                const linkText = link.textContent;
+
+                if (linkText && linkText.trim().length > 0) {
+                    const words = linkText.trim().split(' ');
+                    const lastWord = words.pop();
+                    const restOfText = words.join(' ');
+
+                    // Create a span element for the last word.
+                    const span = document.createElement('span');
+                    span.classList.add('last-word', 'no-wrap');
+                    span.textContent = lastWord;
+
+                    link.innerHTML = `${restOfText} `;
+                    link.appendChild(span);
+                }
+
+                addEventListeners(link);
+            });
+
+            return definitionLinks;
+        };
+
         /**
          * Displays the specified content in a dialog and sets focus on the title.
          *
@@ -271,6 +311,7 @@ export const digmodPluginDefnitions = () => {
             dialogContent.innerHTML =
                 '<h2 tabindex="0">' + title + '</h2>' + content;
 
+            initializeDefinitionLinks(dialogContent);
             syncProtectedAreaForms(dialogContent, definitionUrl);
             showDialog();
 
@@ -470,6 +511,8 @@ export const digmodPluginDefnitions = () => {
             return Boolean(triggerElement.closest('.pin-to-top'));
         };
 
+        const definitionLinks = initializeDefinitionLinks();
+
         if (definitionLinks.length > 0) {
             let dialog = document.getElementById('dialog');
             const needsDialog = !dialog;
@@ -503,36 +546,6 @@ export const digmodPluginDefnitions = () => {
                 dialog.addEventListener('submit', handleProtectedAreaSubmit);
             }
 
-            definitionLinks.forEach((link) => {
-                if ('true' === link.dataset.definitionInit) {
-                    return;
-                }
-
-                link.dataset.definitionInit = 'true';
-                link.classList.add('icon-definition');
-                link.setAttribute(
-                    'aria-label',
-                    'opens definition dialog for this concept'
-                );
-
-                const linkText = link.textContent;
-
-                if (linkText && linkText.trim().length > 0) {
-                    const words = linkText.trim().split(' ');
-                    const lastWord = words.pop();
-                    const restOfText = words.join(' ');
-
-                    // Create a span element for the last word
-                    const span = document.createElement('span');
-                    span.classList.add('last-word', 'no-wrap');
-                    span.textContent = lastWord;
-
-                    link.innerHTML = `${restOfText} `;
-                    link.appendChild(span);
-                }
-
-                addEventListeners(link);
-            });
         }
 
         // Glossary list processor.
