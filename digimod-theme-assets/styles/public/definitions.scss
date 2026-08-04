@@ -2,6 +2,12 @@
 	--closeIcon: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgNTEyIj48IS0tIUZvbnQgQXdlc29tZSBQcm8gNi41LjEgYnkgQGZvbnRhd2Vzb21lIC0gaHR0cHM6Ly9mb250YXdlc29tZS5jb20gTGljZW5zZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tL2xpY2Vuc2UgKENvbW1lcmNpYWwgTGljZW5zZSkgQ29weXJpZ2h0IDIwMjQgRm9udGljb25zLCBJbmMuLS0+PHBhdGggZD0iTTE5My45IDI1NkwyOTYuNSAxNTMuNGwyMS4yLTIxLjJjMy4xLTMuMSAzLjEtOC4yIDAtMTEuM2wtMjIuNi0yMi42Yy0zLjEtMy4xLTguMi0zLjEtMTEuMyAwTDE2MCAyMjIuMSAzNi4zIDk4LjNjLTMuMS0zLjEtOC4yLTMuMS0xMS4zIDBMMi4zIDEyMWMtMy4xIDMuMS0zLjEgOC4yIDAgMTEuM0wxMjYuMSAyNTYgMi4zIDM3OS43Yy0zLjEgMy4xLTMuMSA4LjIgMCAxMS4zbDIyLjYgMjIuNmMzLjEgMy4xIDguMiAzLjEgMTEuMyAwTDE2MCAyODkuOSAyNjIuNiAzOTIuNWwyMS4yIDIxLjJjMy4xIDMuMSA4LjIgMy4xIDExLjMgMGwyMi42LTIyLjZjMy4xLTMuMSAzLjEtOC4yIDAtMTEuM0wxOTMuOSAyNTZ6Ii8+PC9zdmc+);
 }
 
+@keyframes definition-link-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
 a.icon-definition.icon-definition {
 	color: currentColor;
 	text-decoration-style: dashed;
@@ -35,6 +41,21 @@ a.icon-definition.icon-definition {
 		outline: 2px solid currentcolor;
 		outline-offset: 2px;
 		border-radius: 3px;
+	}
+}
+
+a.icon-definition.icon-definition.is-loading-definition {
+	cursor: progress;
+
+	span.last-word {
+
+		&::after {
+			animation: definition-link-spin 0.85s linear infinite;
+			border-color: currentcolor currentcolor currentcolor transparent;
+			box-sizing: border-box;
+			content: "";
+			font-size: 0;
+		}
 	}
 }
 

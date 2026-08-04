@@ -167,6 +167,23 @@ export const digmodPluginDefnitions = () => {
             element.addEventListener('keypress', handleKeypress);
         };
 
+        const setDefinitionLoadingState = (element, isLoading) => {
+            if (!(element instanceof HTMLElement)) {
+                return;
+            }
+
+            element.classList.toggle('is-loading-definition', isLoading);
+
+            if (isLoading) {
+                element.dataset.definitionLoading = 'true';
+                element.setAttribute('aria-busy', 'true');
+                return;
+            }
+
+            delete element.dataset.definitionLoading;
+            element.removeAttribute('aria-busy');
+        };
+
         /**
          * Handles click and keypress events, fetching and displaying content based on a URL.
          *
@@ -190,10 +207,20 @@ export const digmodPluginDefnitions = () => {
                 'click' === event.type ||
                 ('keypress' === event.type && 'Enter' === event.key)
             ) {
+                const triggerElement = event.currentTarget;
+
+                if (!(triggerElement instanceof HTMLElement)) {
+                    return;
+                }
+
+                if ('true' === triggerElement.dataset.definitionLoading) {
+                    return;
+                }
+
                 event.preventDefault();
-                setDialogWideState(shouldUseWideDialog(event.currentTarget));
-                setDialogPinToTopState(shouldPinToTopDialog(event.currentTarget));
-                const url = getDefinitionUrl(event.currentTarget);
+                setDialogWideState(shouldUseWideDialog(triggerElement));
+                setDialogPinToTopState(shouldPinToTopDialog(triggerElement));
+                const url = getDefinitionUrl(triggerElement);
 
                 if (!url) {
                     return;
@@ -204,6 +231,8 @@ export const digmodPluginDefnitions = () => {
                 if (cachedData) {
                     displayContent(cachedData.title, cachedData.content, url);
                 } else {
+                    setDefinitionLoadingState(triggerElement, true);
+
                     try {
                         const definitionData = await fetchDefinitionData(url);
 
@@ -215,6 +244,8 @@ export const digmodPluginDefnitions = () => {
                         );
                     } catch (error) {
                         console.error('Error fetching content:', error);
+                    } finally {
+                        setDefinitionLoadingState(triggerElement, false);
                     }
                 }
             }
