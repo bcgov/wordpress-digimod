@@ -475,6 +475,10 @@ export const digmodPluginDefnitions = () => {
                 return;
             }
 
+            if (event.target !== dialog) {
+                return;
+            }
+
             const rect = dialog.getBoundingClientRect();
             const isInsideDialogBounds =
                 event.clientX >= rect.left &&
