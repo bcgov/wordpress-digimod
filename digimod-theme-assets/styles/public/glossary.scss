@@ -91,6 +91,11 @@ body.glossary {
 	white-space: nowrap;
 }
 
+#glossary-nav a.is-disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
 .glossary-tag {
   padding-block-end: 1rem;
 }
