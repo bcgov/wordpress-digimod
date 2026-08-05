@@ -91,6 +91,19 @@ body.glossary {
 	white-space: nowrap;
 }
 
+.glossary-tag {
+  padding-block-end: 1rem;
+}
+
+.glossary-tag a {
+  background: $white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  text-decoration: none;
+  pointer-events: none;
+  font-size: 0.85rem;
+  border: 1px solid currentColor;
+}
 
 a.icon-definition.icon-definition {
 	text-decoration-style: dashed;
