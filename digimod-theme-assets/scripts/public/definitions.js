@@ -683,6 +683,132 @@ export const digmodPluginDefnitions = () => {
 
         // Remove the original sample button.
         sampleButton.remove();
+
+        if (document.body.classList.contains('glossary')) {
+            document.addEventListener('click', (event) => {
+                const link = event.target.closest(
+                    '.wp-block-categories-list a[data-text]'
+                );
+
+                if (!link) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                const selectedValue = link.dataset.text?.trim();
+
+                document.dispatchEvent(
+                    new CustomEvent('filterDefinitions', {
+                        detail: {
+                            value: selectedValue,
+                        },
+                    })
+                );
+            });
+
+            document.addEventListener('filterDefinitions', (event) => {
+                const selectedValue = event.detail?.value?.trim();
+
+                if (!selectedValue) {
+                    return;
+                }
+
+                const lists = document.querySelectorAll(
+                    '.wp-block-post-template'
+                );
+
+                document
+                    .querySelectorAll('.definitions.type-definitions')
+                    .forEach((definition) => {
+                        definition.style.display = 'block';
+                    });
+
+                document
+                    .querySelectorAll('.glossary-entry-group')
+                    .forEach((group) => {
+                        group.style.display = 'block';
+
+                        const firstDefinition = group.querySelector(
+                            ':scope > .glossary-entry-flex > .glossary-entry'
+                        );
+
+                        if (firstDefinition) {
+                            firstDefinition.style.display = 'block';
+                        }
+                    });
+
+                const hasSelectedCategory = (definition) => {
+                    const categoryLinks = definition.querySelectorAll(
+                        '.taxonomy-glossary_category a[data-text]'
+                    );
+
+                    return [...categoryLinks].some(
+                        (categoryLink) =>
+                            categoryLink.dataset.text?.trim() === selectedValue
+                    );
+                };
+
+                lists.forEach((list) => {
+                    const children = [...list.children];
+
+                    let currentGroup = null;
+                    let currentGroupHasMatch = false;
+
+                    const finishCurrentGroup = () => {
+                        if (!currentGroup) {
+                            return;
+                        }
+
+                        currentGroup.style.display = currentGroupHasMatch
+                            ? 'block'
+                            : 'none';
+                    };
+
+                    children.forEach((child) => {
+                        if (child.matches('.glossary-entry-group')) {
+                            finishCurrentGroup();
+
+                            currentGroup = child;
+                            currentGroupHasMatch = false;
+
+                            const firstDefinition = child.querySelector(
+                                ':scope > .glossary-entry-flex > .glossary-entry'
+                            );
+
+                            if (!firstDefinition) {
+                                return;
+                            }
+
+                            const matches =
+                                hasSelectedCategory(firstDefinition);
+
+                            firstDefinition.style.display = matches
+                                ? 'block'
+                                : 'none';
+
+                            currentGroupHasMatch = matches;
+
+                            return;
+                        }
+
+                        if (child.matches('.definitions.type-definitions')) {
+                            const matches = hasSelectedCategory(child);
+
+                            child.style.display = matches
+                                ? 'block'
+                                : 'none';
+
+                            if (matches) {
+                                currentGroupHasMatch = true;
+                            }
+                        }
+                    });
+
+                    finishCurrentGroup();
+                });
+            });
+        }
     });
 };
 
