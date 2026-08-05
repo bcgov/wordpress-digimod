@@ -1,15 +1,17 @@
 /**
- * General Digimod Definitons dialog generator.
+ * General Digimod Definitions glossary filter.
  */
 export const digmodPluginGlossary = () => {
 	/*
 	 * SafarIE iOS requires window.requestAnimationFrame update.
 	 */
 	window.requestAnimationFrame(() => {
-
 		if (!document.body.classList.contains('glossary')) {
 			return;
 		}
+
+		const categoryLinkSelector =
+			'.wp-block-categories-list a[data-text]';
 
 		const updateGlossaryNavigation = () => {
 			const navLinks = document.querySelectorAll(
@@ -17,21 +19,26 @@ export const digmodPluginGlossary = () => {
 			);
 
 			navLinks.forEach((link) => {
-				const targetId = link.getAttribute('href')?.substring(1);
+				const targetId = link
+					.getAttribute('href')
+					?.substring(1);
+
 				const target = targetId
 					? document.getElementById(targetId)
 					: null;
 
-				const group = target?.closest('.glossary-entry-group');
+				const group = target?.closest(
+					'.glossary-entry-group'
+				);
 
 				const isVisible =
 					group &&
 					getComputedStyle(group).display !== 'none';
 
 				/*
-				* Preserve the link's original tabindex so it can be
-				* restored when the letter becomes available again.
-				*/
+				 * Preserve the link's original tabindex so it can be
+				 * restored when the letter becomes available again.
+				 */
 				if (!link.hasAttribute('data-original-tabindex')) {
 					const originalTabindex =
 						link.getAttribute('tabindex');
@@ -42,10 +49,16 @@ export const digmodPluginGlossary = () => {
 							: originalTabindex;
 				}
 
-				link.classList.toggle('is-disabled', !isVisible);
+				link.classList.toggle(
+					'is-disabled',
+					!isVisible
+				);
 
 				if (!isVisible) {
-					link.setAttribute('aria-disabled', 'true');
+					link.setAttribute(
+						'aria-disabled',
+						'true'
+					);
 					link.setAttribute('tabindex', '-1');
 				} else {
 					link.removeAttribute('aria-disabled');
@@ -65,11 +78,61 @@ export const digmodPluginGlossary = () => {
 			});
 		};
 
+		/**
+		 * Show every glossary definition and letter group.
+		 */
+		const showAllGlossaryItems = () => {
+			document
+				.querySelectorAll(
+					'.definitions.type-definitions'
+				)
+				.forEach((definition) => {
+					definition.style.display = 'block';
+				});
+
+			document
+				.querySelectorAll('.glossary-entry-group')
+				.forEach((group) => {
+					group.style.display = 'block';
+
+					const firstDefinition = group.querySelector(
+						':scope > .glossary-entry-flex > .glossary-entry'
+					);
+
+					if (firstDefinition) {
+						firstDefinition.style.display =
+							'block';
+					}
+				});
+		};
+
+		/**
+		 * Apply the active class to the selected category link.
+		 */
+		const setActiveCategory = (selectedLink = null) => {
+			document
+				.querySelectorAll(categoryLinkSelector)
+				.forEach((categoryLink) => {
+					categoryLink.classList.toggle(
+						'active',
+						categoryLink === selectedLink
+					);
+				});
+		};
+
+		/**
+		 * Reset all glossary filtering.
+		 */
+		const resetGlossary = () => {
+			showAllGlossaryItems();
+			setActiveCategory();
+			updateGlossaryNavigation();
+		};
+
 		/*
-		* Prevent disabled glossary navigation links from activating.
-		* Capture phase ensures navigation is stopped before other
-		* click handlers receive the event.
-		*/
+		 * Prevent disabled glossary navigation links from activating.
+		 * Capture phase stops navigation before other handlers run.
+		 */
 		document.addEventListener(
 			'click',
 			(event) => {
@@ -88,17 +151,40 @@ export const digmodPluginGlossary = () => {
 		);
 
 		document.addEventListener('click', (event) => {
-			const link = event.target.closest(
-				'.wp-block-categories-list a[data-text]'
+			/*
+			 * Clear the current glossary filter.
+			 */
+			const clearLink = event.target.closest(
+				'a[href="#clear"]'
 			);
 
-			if (!link) {
+			if (clearLink) {
+				event.preventDefault();
+				resetGlossary();
+				return;
+			}
+
+			/*
+			 * Apply a category filter.
+			 */
+			const categoryLink = event.target.closest(
+				categoryLinkSelector
+			);
+
+			if (!categoryLink) {
 				return;
 			}
 
 			event.preventDefault();
 
-			const selectedValue = link.dataset.text?.trim();
+			const selectedValue =
+				categoryLink.dataset.text?.trim();
+
+			if (!selectedValue) {
+				return;
+			}
+
+			setActiveCategory(categoryLink);
 
 			document.dispatchEvent(
 				new CustomEvent('filterDefinitions', {
@@ -109,140 +195,134 @@ export const digmodPluginGlossary = () => {
 			);
 		});
 
-		document.addEventListener('filterDefinitions', (event) => {
-			const selectedValue = event.detail?.value?.trim();
+		document.addEventListener(
+			'filterDefinitions',
+			(event) => {
+				const selectedValue =
+					event.detail?.value?.trim();
 
-			if (!selectedValue) {
-				return;
-			}
+				if (!selectedValue) {
+					return;
+				}
 
-			const lists = document.querySelectorAll(
-				'.wp-block-post-template'
-			);
+				const lists = document.querySelectorAll(
+					'.wp-block-post-template'
+				);
 
-			/*
-			* Reset every definition and letter group before applying
-			* the new filter.
-			*/
-			document
-				.querySelectorAll('.definitions.type-definitions')
-				.forEach((definition) => {
-					definition.style.display = 'block';
-				});
+				/*
+				 * Reset everything before applying the new filter.
+				 */
+				showAllGlossaryItems();
 
-			document
-				.querySelectorAll('.glossary-entry-group')
-				.forEach((group) => {
-					group.style.display = 'block';
+				const hasSelectedCategory = (definition) => {
+					const categoryLinks =
+						definition.querySelectorAll(
+							'.taxonomy-glossary_category a[data-text]'
+						);
 
-					const firstDefinition = group.querySelector(
-						':scope > .glossary-entry-flex > .glossary-entry'
+					return [...categoryLinks].some(
+						(categoryLink) =>
+							categoryLink.dataset.text?.trim() ===
+							selectedValue
 					);
-
-					if (firstDefinition) {
-						firstDefinition.style.display = 'block';
-					}
-				});
-
-			const hasSelectedCategory = (definition) => {
-				const categoryLinks = definition.querySelectorAll(
-					'.taxonomy-glossary_category a[data-text]'
-				);
-
-				return [...categoryLinks].some(
-					(categoryLink) =>
-						categoryLink.dataset.text?.trim() ===
-						selectedValue
-				);
-			};
-
-			lists.forEach((list) => {
-				const children = [...list.children];
-
-				let currentGroup = null;
-				let currentGroupHasMatch = false;
-
-				const finishCurrentGroup = () => {
-					if (!currentGroup) {
-						return;
-					}
-
-					currentGroup.style.display =
-						currentGroupHasMatch
-							? 'block'
-							: 'none';
 				};
 
-				children.forEach((child) => {
-					if (
-						child.matches('.glossary-entry-group')
-					) {
-						finishCurrentGroup();
+				lists.forEach((list) => {
+					const children = [...list.children];
 
-						currentGroup = child;
-						currentGroupHasMatch = false;
+					let currentGroup = null;
+					let currentGroupHasMatch = false;
 
-						const firstDefinition =
-							child.querySelector(
-								':scope > .glossary-entry-flex > .glossary-entry'
-							);
-
-						if (!firstDefinition) {
+					const finishCurrentGroup = () => {
+						if (!currentGroup) {
 							return;
 						}
 
-						const matches =
-							hasSelectedCategory(
-								firstDefinition
-							);
+						currentGroup.style.display =
+							currentGroupHasMatch
+								? 'block'
+								: 'none';
+					};
 
-						firstDefinition.style.display = matches
-							? 'block'
-							: 'none';
+					children.forEach((child) => {
+						if (
+							child.matches(
+								'.glossary-entry-group'
+							)
+						) {
+							finishCurrentGroup();
 
-						currentGroupHasMatch = matches;
+							currentGroup = child;
+							currentGroupHasMatch = false;
 
-						return;
-					}
+							const firstDefinition =
+								child.querySelector(
+									':scope > .glossary-entry-flex > .glossary-entry'
+								);
 
-					if (
-						child.matches(
-							'.definitions.type-definitions'
-						)
-					) {
-						const matches =
-							hasSelectedCategory(child);
+							if (!firstDefinition) {
+								return;
+							}
 
-						child.style.display = matches
-							? 'block'
-							: 'none';
+							const matches =
+								hasSelectedCategory(
+									firstDefinition
+								);
 
-						if (matches) {
-							currentGroupHasMatch = true;
+							firstDefinition.style.display =
+								matches
+									? 'block'
+									: 'none';
+
+							currentGroupHasMatch =
+								matches;
+
+							return;
 						}
-					}
+
+						if (
+							child.matches(
+								'.definitions.type-definitions'
+							)
+						) {
+							const matches =
+								hasSelectedCategory(
+									child
+								);
+
+							child.style.display = matches
+								? 'block'
+								: 'none';
+
+							if (matches) {
+								currentGroupHasMatch =
+									true;
+							}
+						}
+					});
+
+					finishCurrentGroup();
 				});
 
-				finishCurrentGroup();
-			});
-
-			updateGlossaryNavigation();
-		});
+				updateGlossaryNavigation();
+			}
+		);
 
 		/*
-		* Establish the initial navigation state.
-		*/
+		 * Establish the initial navigation and category states.
+		 */
+		setActiveCategory();
 		updateGlossaryNavigation();
-    });
+	});
 };
 
 window.digmodPluginGlossary = digmodPluginGlossary;
 
-if ('complete' === document.readyState) {
-    digmodPluginGlossary();
+if (document.readyState === 'complete') {
+	digmodPluginGlossary();
 } else {
-    document.addEventListener(
-        'DOMContentLoaded',
-        digmodPluginGlossary
-    );
+	document.addEventListener(
+		'DOMContentLoaded',
+		digmodPluginGlossary
+	);
 }
