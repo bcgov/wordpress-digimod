@@ -66,6 +66,8 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
 else
     #Generate GH Actions summary
     echo "### Deployment Not Found (nothing deleted)" >> $GITHUB_STEP_SUMMARY
+
+    return 99
 fi      
 
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
