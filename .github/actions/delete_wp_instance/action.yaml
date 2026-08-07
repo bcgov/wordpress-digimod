@@ -28,7 +28,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Create the instance
+    - name: Delete the instance
       run: |
         chmod +x ./.github/actions/delete_wp_instance/deploy.sh
         ./.github/actions/delete_wp_instance/deploy.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"

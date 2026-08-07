@@ -11,8 +11,7 @@ on:
         options:
         - dev
         - test
-        #for safety reasons dont run this on production, use the other action for production.
-        #- prod
+        - prod
       project-name:
         description: 'Project'
         required: true
