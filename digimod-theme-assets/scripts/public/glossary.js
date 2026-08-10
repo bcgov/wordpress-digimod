@@ -13,6 +13,22 @@ export const digmodPluginGlossary = () => {
 		const categoryLinkSelector =
 			'.wp-block-categories-list a[data-text]';
 
+		const updateGlossaryTags = () => {
+			const tagLinks = document.querySelectorAll(
+				'.glossary-tag a[data-text]'
+			);
+			tagLinks.forEach((link) => {
+					link.setAttribute(
+						'aria-disabled',
+						'true'
+					);
+					link.setAttribute(
+						'tabindex',
+						'-1'
+					);
+			});
+		}
+
 		const updateGlossaryNavigation = () => {
 			const navLinks = document.querySelectorAll(
 				'#glossary-nav a[href^="#glossary-"]'
@@ -313,6 +329,7 @@ export const digmodPluginGlossary = () => {
 		 */
 		setActiveCategory();
 		updateGlossaryNavigation();
+		updateGlossaryTags();
 	});
 };
 
