@@ -1,9 +1,13 @@
-const { registerBlockType } = wp.blocks;
-const { createElement, Fragment } = wp.element;
-const { InspectorControls } = wp.blockEditor;
-const { PanelBody, TextControl, SelectControl } = wp.components;
+import { registerBlockType } from '@wordpress/blocks';
+import { InspectorControls } from '@wordpress/block-editor';
+import { Component, createElement, Fragment } from '@wordpress/element';
+import { PanelBody, SelectControl, TextControl } from '@wordpress/components';
 
-class VueAppEditorComponent extends wp.element.Component {
+const APP_NAME = 'wcag-filter';
+const APP_ROOT_CLASS = 'digimod-vue-app-root';
+const APP_BLOCK_CLASS = 'digimod-wcag-filter-app';
+
+class VueAppEditorComponent extends Component {
     componentDidMount() {
         this.initVueApp();
     }
@@ -59,7 +63,18 @@ class VueAppEditorComponent extends wp.element.Component {
                     })
                 )
             ),
-            createElement('div', { id: 'app', className: `${className} has-text-align-center has-gray-40-background-color has-background`, 'data-columns': columns, 'data-post-type': postType, style: { padding: "2rem" }}, `Card Filtering App Placeholder | ${selectedOption ? selectedOption.label : ''}s selected`)
+            createElement(
+                'div',
+                {
+                    className: `${APP_ROOT_CLASS} ${APP_BLOCK_CLASS} ${className} has-text-align-center has-gray-40-background-color has-background`.trim(),
+                    'data-vue-app': APP_NAME,
+                    'data-columns': columns,
+                    'data-post-type': postType,
+                    'data-post-type-label': postTypeLabel,
+                    style: { padding: '2rem' }
+                },
+                `Card Filtering App Placeholder | ${selectedOption ? selectedOption.label : ''}s selected`
+            )
         );
     }
 }
@@ -88,7 +103,14 @@ registerBlockType('digimod-plugin/custom-filter-block', {
     },
     edit: VueAppEditorComponent,
     save: ({ attributes }) => {
-        const { className, columns, postType, postTypeLabel } = attributes; // Access postType from attributes
-        return createElement('div', { id: 'app', className, 'data-columns': columns, 'data-post-type': postType, 'data-post-type-label': postTypeLabel }, 'Loading Card Filtering App...');
+        const { className, columns, postType, postTypeLabel } = attributes;
+
+        return createElement('div', {
+            className: `${APP_ROOT_CLASS} ${APP_BLOCK_CLASS} ${className}`.trim(),
+            'data-vue-app': APP_NAME,
+            'data-columns': columns,
+            'data-post-type': postType,
+            'data-post-type-label': postTypeLabel,
+        }, 'Loading Card Filtering App...');
     },
 });

@@ -185,17 +185,42 @@ function digimod_plugin_modify_block_pattern_categories( $block_pattern_categori
 /**
  * Load the Digimod theme.json and update the provided theme.json object.
  *
- * Retrieves the contents of the 'theme.json' file contains configuration settings for the Digimod theme.
- *
- * @param string $theme_json The Json object to adjust.
- * @return object The updated theme.json object.
+ * @param WP_Theme_JSON_Data $theme_json The theme JSON data object.
+ * @return WP_Theme_JSON_Data The updated theme JSON object.
  */
 function filter_theme_json_theme( $theme_json ) {
 
-    $plugin_theme_json_path = trailingslashit( plugin_dir_path( __FILE__ ) ) . 'theme/theme.json';
-    $plugin_theme_json      = json_decode( wp_remote_retrieve_body( wp_remote_get( $plugin_theme_json_path ) ), true );
+	static $plugin_theme_json = null;
+	static $loaded            = false;
 
-    return $theme_json->update_with( $plugin_theme_json );
+	if ( ! $loaded ) {
+		$loaded = true;
+
+		$plugin_theme_json_path = plugin_dir_path( __FILE__ ) . 'theme/theme.json';
+
+		if ( ! is_readable( $plugin_theme_json_path ) ) {
+			error_log( 'Digimod theme.json not readable: ' . $plugin_theme_json_path );
+			return $theme_json;
+		}
+
+		$plugin_theme_json = wp_json_file_decode(
+			$plugin_theme_json_path,
+			array(
+				'associative' => true,
+			)
+		);
+
+		if ( ! is_array( $plugin_theme_json ) ) {
+			error_log( 'Digimod theme.json could not be decoded.' );
+			$plugin_theme_json = array();
+		}
+	}
+
+	if ( ! empty( $plugin_theme_json ) ) {
+		$theme_json->update_with( $plugin_theme_json );
+	}
+
+	return $theme_json;
 }
 
 add_filter( 'wp_theme_json_data_theme', 'filter_theme_json_theme' );
@@ -204,36 +229,7 @@ add_filter( 'wp_theme_json_data_theme', 'filter_theme_json_theme' );
 // VUE APP.
 
 /**
- * Register block to load the Vue.js app.
- */
-function vuejs_wordpress_block_plugin() {
-    $plugin_dir     = plugin_dir_path( __FILE__ );
-	$plugin_data    = get_plugin_data( $plugin_dir . 'index.php' );
-	$plugin_version = $plugin_data['Version'];
-
-    wp_enqueue_script(
-        'digimod-plugin/custom-filter-block',
-        plugin_dir_url( __FILE__ ) . 'blocks/vue-blocks/custom-filter-vue-block.js',
-        array( 'wp-blocks', 'wp-element', 'wp-editor' ),
-        $plugin_version,
-        true
-    );
-
-    // phpcs:disable
-    /* 
-    wp_enqueue_script(
-     'digimod-plugin/post-filter-block',
-     plugin_dir_url(__FILE__) . 'blocks/vue-blocks/post-filter-vue-block.js',
-     ['wp-blocks', 'wp-element', 'wp-editor']
-    );
-    */
-    // phpcs:enable
-}
-
-add_action( 'enqueue_block_editor_assets', 'vuejs_wordpress_block_plugin' );
-
-/**
- * This loads vue app assets onto the client: todo: this happens for all pages, not just when the block is used.
+ * Load shared Vue block styles in the block editor.
  */
 function vuejs_app_plugin() {
     $plugin_dir = plugin_dir_path( __FILE__ );
@@ -335,6 +331,7 @@ function vuejs_custom_app_dynamic_block_plugin( $attributes ) {
 
 	$plugin_data    = get_plugin_data( $plugin_dir . 'index.php' );
 	$plugin_version = $plugin_data['Version'];
+	$instance_id    = function_exists( 'wp_unique_id' ) ? wp_unique_id( 'digimod-wcag-filter-' ) : uniqid( 'digimod-wcag-filter-', false );
 
     $public_css_files = glob( $assets_dir . 'vue*.css' );
     $public_js_files  = glob( $assets_dir . 'vue*.js' );
@@ -360,8 +357,9 @@ function vuejs_custom_app_dynamic_block_plugin( $attributes ) {
 
     $className = isset( $attributes['className'] ) ? $attributes['className'] : '';
 
-    // Add the 'data-columns' attribute to the output div.
-    return '<div id="app" class="' . esc_attr( $className ) . '" data-columns="' . esc_attr( $columns ) . '"  data-post-type="' . esc_attr( $postType ) . '" data-post-type-label="' . esc_attr( $postTypeLabel ) . '">Loading...</div>';
+    $class_names = trim( 'digimod-vue-app-root digimod-wcag-filter-app ' . $className );
+
+    return '<div class="' . esc_attr( $class_names ) . '" data-vue-app="wcag-filter" data-instance-id="' . esc_attr( $instance_id ) . '" data-columns="' . esc_attr( $columns ) . '" data-post-type="' . esc_attr( $postType ) . '" data-post-type-label="' . esc_attr( $postTypeLabel ) . '">Loading...</div>';
 }
 
 /**

@@ -36,6 +36,8 @@ For production:
 composer production
 ```
 
+Custom Vue block assets under `/blocks/vue-blocks/` are built by the same root commands above. They are no longer managed as standalone sub-projects.
+
 Files from either of these commands will be found in **`/dist/assets/`** – as noted above these files should then be uploaded to the Media Library and enqueued for Public or Admin use (or both) respectively. By default only styles are provided for enqueing on the admin side. You are safe to ignore any other files exported to the `dist` directory. It should also be noted that previous files uploaded and enqueued should be removed/deleted from the Media Library so as to not cause errors or unintended consequences.
 
 ## Helper functions

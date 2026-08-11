@@ -1,25 +1,26 @@
 <template>
-  <div v-if="uniqueTags.length > 0" class='tag-filter-container'>
-    <div role='heading' id="id-group-label" class='sr-only' aria-hidden='true'>Filterable categories</div>
+  <div v-if="uniqueTags.length > 0" class="tag-filter-container">
+    <div :id="groupLabelId" role="heading" class="sr-only">Filterable categories</div>
     <div class="taxonomy-common_component_category wp-block-post-terms" style="float:left;" role="group"
-      aria-labelledby="id-group-label">
-      <template v-for="tag, index in uniqueTags">
+      :aria-labelledby="groupLabelId">
+      <template v-for="(tag, index) in uniqueTags" :key="tag">
         <div class="tag-checkbox">
-          <input type="checkbox" :id="'tag-' + index" :value="tag" v-model="selectedTags" class="tag-input" />
-          <label :for="tag" class="tag-label tag" :tabindex='(0 === index) ? 0 : -1' @click="checkTag(index)"
-            @keydown.space.enter.prevent="checkTag(index)" @keydown="handleKeyNavigation($event, index)" role="checkbox"
+          <input :id="tagInputId(index)" type="checkbox" :value="tag" v-model="selectedTags" class="tag-input" />
+          <label :for="tagInputId(index)" class="tag-label tag" :tabindex="0 === index ? 0 : -1"
+            @keydown.enter.prevent="toggleTagInput(index)" @keydown.space.prevent="toggleTagInput(index)"
+            @keydown="handleKeyNavigation($event, index)" role="checkbox"
             :aria-label="getTagAriaLabel(tag)" :aria-checked="getTagAriaChecked(tag)">
             {{ removePrefix(tag) }}
           </label>
         </div>
       </template>
       <div class="tag-checkbox">
-        <button class="tag clear-filters" @click="clearFilters" @keydown.enter.prevent='clearFilters'
-          aria-label='Show all filterable content. Removes previously set filter options.'>Show all</button>
+        <button class="tag clear-filters" @click="clearFilters" @keydown.enter.prevent="clearFilters"
+          aria-label="Show all filterable content. Removes previously set filter options.">Show all</button>
       </div>
     </div>
   </div>
-  <div v-if="filteredPosts.length > 0" class='num-available' aria-atomic='true' aria-live='polite'>{{ filteredPosts.length }} of {{ posts.length }} results
+  <div v-if="filteredPosts.length > 0" class="num-available" aria-atomic="true" aria-live="polite">{{ filteredPosts.length }} of {{ posts.length }} results
     showing</div>
   <div v-if="filteredPosts.length > 0" class="wp-block-columns card-container">
     <div class="wp-block-query wcag-card-container">
@@ -50,10 +51,10 @@
                   {{ post.acf.short_description ? post.acf.short_description.value : post.acf.description.value
                   }}
                 </span></p>
-              <div role='heading' id="id-tag-group-label" class='sr-only'>Applicable filter categories</div>
+              <div role="heading" class="sr-only">Applicable filter categories</div>
               <ul v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms wcag-card-tags">
                 <template v-for="tag in post.wcag_tag" :key="tag">
-                  <li v-if='tag !== "Active"' :class="{ 'tag': true, 'active': selectedTags.includes(tag) }">{{ removePrefix(tag)
+                  <li v-if="tag !== 'Active'" :class="{ tag: true, active: selectedTags.includes(tag) }">{{ removePrefix(tag)
                     }}</li>
                 </template>
               </ul>
@@ -64,25 +65,48 @@
     </div>
   </div>
 
-  <p v-else-if="showMessage" class="no-results" v-show="showMessage" aria-live='polite'><strong>No results
-      found.</strong><br /><a href="#" @click.prevent="clearFilters" @keydown.enter.prevent='clearFilters'>Reset filters
+  <p v-else-if="showMessage" class="no-results" v-show="showMessage" aria-live="polite"><strong>No results
+      found.</strong><br /><a href="#" @click.prevent="clearFilters" @keydown.enter.prevent="clearFilters">Reset filters
       and try again</a>.</p>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
-const postType = ref('');
-const postTypeLabel = ref('');
+const props = defineProps({
+  columns: {
+    type: Number,
+    default: 3,
+  },
+  postType: {
+    type: String,
+    default: 'wcag-card',
+  },
+  postTypeLabel: {
+    type: String,
+    default: 'WCAG card',
+  },
+  instanceId: {
+    type: String,
+    default: 'wcag-filter',
+  },
+});
+
 const posts = ref([]);
 const selectedTags = ref([]);
-const cssClass = ref('');
-const columns = ref(3);
 const showMessage = ref(false);
-const allTagSelected = ref(true);
+
+const groupLabelId = computed(() => `${props.instanceId}-group-label`);
+const columns = computed(() => props.columns);
+
+const tagInputId = (index) => `${props.instanceId}-tag-${index}`;
 
 const fetchData = async () => {
-  const url = `/wp-json/wp/v2/${postType.value}?_embed&per_page=100`;
+  if (!props.postType) {
+    return;
+  }
+
+  const url = `/wp-json/wp/v2/${props.postType}?_embed&per_page=100`;
   try {
     const response = await fetch(url);
     if (!response.ok) {
@@ -94,25 +118,21 @@ const fetchData = async () => {
       wcag_tag: post._embedded?.['wp:term']?.flatMap((term) => term.map((t) => t.name)) || [],
     }))
       .slice()
-      .sort((a, b) => (a.title.rendered > b.title.rendered) ? 1 : -1);;
+      .sort((a, b) => (a.title.rendered > b.title.rendered) ? 1 : -1);
   } catch (error) {
     console.error(error);
   }
 };
 
-const checkTag = (index) => {
-
-  const tag = uniqueTags.value[index];
-  // console.log('tag:', tag);
-  if (selectedTags.value.includes(tag)) {
-    selectedTags.value = selectedTags.value.filter((selectedTag) => selectedTag !== tag);
-  } else {
-    selectedTags.value.push(tag);
-  }
+const toggleTagInput = (index) => {
+  document.getElementById(tagInputId(index))?.click();
 };
 
 const handleKeyNavigation = (event, index) => {
-  const labels = document.querySelectorAll('.tag-label');
+  const labels = event.currentTarget?.closest('.digimod-vue-app-root')?.querySelectorAll('.tag-label') || [];
+  if (!labels.length) {
+    return;
+  }
 
   const focusNext = () => {
     if (index < labels.length - 1) {
@@ -129,22 +149,6 @@ const handleKeyNavigation = (event, index) => {
       labels[labels.length - 1].focus();
     }
   };
-
-  // const focusNext = () => {
-  //   if (index === labels.length) {
-  //     labels[0].focus();
-  //   } else if (index >= 0) {
-  //     labels[index].focus();
-  //   } 
-  // };
-
-  // const focusPrev = () => {
-  //   if (index === 1) {
-  //     labels[labels.length - 1].focus();
-  //   } else if (index > 1) {
-  //     labels[index - 2].focus();
-  //   }
-  // };
 
   const focusFirst = () => {
     labels[0].focus();
@@ -176,23 +180,6 @@ const handleKeyNavigation = (event, index) => {
   }
 };
 
-// const checkTag = (index) => {
-//   const tag = uniqueTags.value[index];
-//   console.log('tag:', tag);
-
-//   // Check if all selected tags are present
-//   const allSelectedTagsPresent = selectedTags.value.every(selectedTag => uniqueTags.value.includes(selectedTag));
-
-//   // Toggle the selection based on "and" condition
-//   if (allSelectedTagsPresent) {
-//     // Remove the tag if all selected tags are already present
-//     selectedTags.value = selectedTags.value.filter((selectedTag) => selectedTag !== tag);
-//   } else {
-//     // Add the tag if it ensures all selected tags are present
-//     selectedTags.value.push(tag);
-//   }
-// };
-
 const getTagAriaLabel = (tag) => {
   return `${tag} filter ${selectedTags.value.includes(tag) ? 'selected' : 'deselected'}`;
 };
@@ -201,39 +188,29 @@ const getTagAriaChecked = (tag) => {
   return `${selectedTags.value.includes(tag) ? 'true' : 'false'}`;
 };
 
-
-
 const clearFilters = () => {
   selectedTags.value = [];
 };
 
-const uniqueTags = computed(() => [...new Set(posts.value.flatMap((post) => post.wcag_tag || []).filter(tag => tag !== "Active").filter(tag => tag !== "Common component").sort())]); // Remove the Active category so it does not interfere with arrow navigation
+const uniqueTags = computed(() => [...new Set(posts.value.flatMap((post) => post.wcag_tag || []).filter(tag => tag !== 'Active').filter(tag => tag !== 'Common component').sort())]);
 const filteredPosts = computed(() => {
   if (!selectedTags.value.length) {
     return posts.value;
-  } else {
-    // console.log('posts:', posts);
-    return posts.value
-      .filter((post) =>
-        post.wcag_tag && post.wcag_tag.length && selectedTags.value.some((tag) => post.wcag_tag.includes(tag))
-      )
-      .slice()
-      .sort((a, b) => (a.title.rendered > b.title.rendered) ? 1 : -1);
   }
+
+  return posts.value
+    .filter((post) =>
+      post.wcag_tag && post.wcag_tag.length && selectedTags.value.some((tag) => post.wcag_tag.includes(tag))
+    )
+    .slice()
+    .sort((a, b) => (a.title.rendered > b.title.rendered) ? 1 : -1);
 });
 
 const removePrefix = (label) => {
   return label.replace(/^\d+\.\s*/, '');
-}
+};
 
 onMounted(() => {
-
-  const appElement = document.getElementById('app');
-  cssClass.value = appElement.getAttribute('class');
-  columns.value = parseInt(appElement.getAttribute('data-columns'));
-  postType.value = appElement.getAttribute('data-post-type');
-  postTypeLabel.value = appElement.getAttribute('data-post-type-label');
-
   fetchData();
 
   setTimeout(() => {
@@ -280,12 +257,6 @@ onMounted(() => {
   border: 2px solid var(--wp--preset--color--primary-brand);
   padding: calc(0.33rem - 1px) calc(0.66rem - 1px);
 }
-
-/* Sets up colour differentiation for WCAG P.O.U.R. prinicple tags (first four) */
-/* [data-post-type-label="WCAG card"] .tag-checkbox:nth-child(-n+4):has(.tag-input:not(:checked)) label:not(:hover, :focus-visible) {
-  background-color: var(--wp--preset--color--white);
-  color: var(--wp--preset--color--secondary-brand);
-} */
 
 .card-title-link:is(:hover, :focus-visible) {
   outline: 0 !important;

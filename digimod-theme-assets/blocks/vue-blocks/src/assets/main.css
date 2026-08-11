@@ -72,8 +72,6 @@
     display: none !important;
   }
 
-
-
   .tag-input:checked+.tag {
     background-color: var(--wp--preset--color--background);
     color: #313132;
@@ -140,19 +138,4 @@
     scale: 1.75;
     width: 1rem;
     font-size: 0;
-  }
-
-  .wcag-reset-button{
-    font-size: 1rem;
-    padding: 11px;
-    margin-top: -7px;
-    margin-left: 9px;
-  }
-
-  .clearFilters{
-    text-decoration:underline;
-  }
-
-  .clearFilters:hover{
-    text-decoration: none;
   }

@@ -5,9 +5,9 @@ export const digmodPluginDefnitions = () => {
     /*
      * SafarIE iOS requires window.requestAnimationFrame update.
      */
-    window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
         const definitionLinkSelector =
-            'a:not(#postFilterApp a, [href*="#top"])';
+            'a:not(.digimod-vue-app-root a, [href*="#top"])';
         const protectedAreaBlockSelector = '.cleanbcdx-protected-area-block';
         const protectedAreaFormSelector = '.cleanbcdx-protected-area__form';
 

@@ -1,5 +1,5 @@
-
 import '../blocks/search-results/index.js';
+import '../blocks/vue-blocks/custom-filter-vue-block.js';
 
 
 

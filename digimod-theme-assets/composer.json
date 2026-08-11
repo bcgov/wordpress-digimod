@@ -24,12 +24,19 @@
 		}
 	},
 	"scripts": {       
+		"setup": [
+			"npm ci",
+			"@build"
+		],
+		"build": [
+			"npm run build"
+		],
 		"production": [
-            "npm run build"
+	            "npm run build:production"
         ],       
 		"production-proper": [
-            "npm run build",
-            "Bcgov\\Script\\Checklists::postProductionChecks"
+	            "npm run build:production",
+	            "Bcgov\\Script\\Checklists::postProductionChecks"
         ], 
         "phpcs": [
             "Bcgov\\Script\\Standards::phpcs"

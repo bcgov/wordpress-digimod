@@ -7,10 +7,13 @@
   "scripts": {
     "dev": "vite",
     "build:watch": "vite build --watch",
-    "build": "vite build; wp-scripts build 'src/admin.js' --output-path=dist-plugin",
+    "build:vite": "vite build",
+    "build:admin": "wp-scripts build 'Src/admin.js' --output-path=dist-plugin",
+    "build": "npm run build:vite && npm run build:admin",
+    "build:production": "npm run build",
     "preview": "vite preview",
     "test": "vitest",
-    "start": "wp-scripts start 'src/admin.js' --output-path=dist-plugin"
+    "start": "wp-scripts start 'Src/admin.js' --output-path=dist-plugin"
   },
   "dependencies": {
     "vue": "^3.4.19"
