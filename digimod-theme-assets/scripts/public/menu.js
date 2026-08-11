@@ -78,7 +78,7 @@ const domMenuReady = () => {
 			subMenuContainer.style.display = 'block';
 
 			const firstSubMenuItemButton = subMenuContainer.querySelector('.wp-block-navigation-item:first-child button');
-			if (firstSubMenuItemButton && firstSubMenuItemButton.getAttribute('aria-expanded') === 'false') {
+			if (firstSubMenuItemButton && 'false' === firstSubMenuItemButton.getAttribute('aria-expanded')) {
 				firstSubMenuItemButton.focus();
 				firstSubMenuItemButton.click();
 				firstSubMenuItemButton.blur();
@@ -105,6 +105,7 @@ const domMenuReady = () => {
 		}
 	};
 
+	// eslint-disable-next-line no-unused-vars -- Retained for phased menu re-enablement.
 	const initializePrimaryMenuItems = () => {
 		const items = document.querySelectorAll(
 			'header nav > .wp-block-navigation__container > .wp-block-navigation-item.has-child'
@@ -134,6 +135,7 @@ const domMenuReady = () => {
 		}
 	};
 
+	// eslint-disable-next-line no-unused-vars -- Retained for phased menu re-enablement.
 	const initializeSecondaryMenuItems = () => {
 		const items = document.querySelectorAll('.wp-block-navigation__submenu-container .wp-block-navigation__submenu-container');
 		items.forEach((menuItem) => {
@@ -171,6 +173,7 @@ const domMenuReady = () => {
 		});
 	};
 
+	// eslint-disable-next-line no-unused-vars -- Retained for phased menu re-enablement.
 	const initializeSecondaryLevelLinks = () => {
 		setTimeout(() => {
 			const links = document.querySelectorAll(
@@ -190,7 +193,7 @@ const domMenuReady = () => {
 };
 
 // Fire on DOM ready
-if (document.readyState === 'complete') {
+if ('complete' === document.readyState) {
 	domMenuReady();
 } else {
 	document.addEventListener('DOMContentLoaded', domMenuReady);

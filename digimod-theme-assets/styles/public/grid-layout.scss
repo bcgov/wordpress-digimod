@@ -7,14 +7,16 @@
 	.card-container {
 		gap: 0 !important;
 	}
-	
+
 	.wp-block-columns {
 		margin-bottom: 1rem;
+
 		@media (min-width: 782px) {
 			margin-bottom: 0;
 		}
+
 		&.grid-header {
-			
+
 			display: none;
 			background-color: var(--wp--preset--color--primary-brand);
 			border-radius: 0;
@@ -23,6 +25,7 @@
 				display: flex;
 				margin-bottom: 1rem;
 			}
+
 			.wp-block-group {
 				color: var(--wp--preset--color--white);
 				height: 100%;
@@ -34,12 +37,14 @@
 				}
 			}
 		}
+
 		.wp-block-column {
 			padding: 0;
+
 			@media (min-width: 782px) {
-				padding:0 0 1rem 0;
+				padding: 0 0 1rem 0;
 			}
-			
+
 			.wp-block-group {
 
 				box-shadow: none;
@@ -48,7 +53,9 @@
 				.wp-block-heading.mobile-only {
 					margin: 0;
 				}
-				ul, ol {
+
+				ul,
+				ol {
 					padding-left: 1rem;
 				}
 			}
@@ -62,7 +69,7 @@
 		@media (min-width: 782px) {
 			border: 0;
 		}
-		
+
 		.wp-block-column:not(:first-of-type) {
 			border-left: none;
 

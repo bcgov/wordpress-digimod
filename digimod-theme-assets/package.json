@@ -2,7 +2,7 @@
   "name": "digimod-block-theme-supplemental",
   "author": "Nate King",
   "private": true,
-  "version": "1.3.6",
+  "version": "1.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,8 +11,12 @@
     "build:admin": "wp-scripts build 'Src/admin.js' --output-path=dist-plugin",
     "build": "npm run build:vite && npm run build:admin",
     "build:production": "npm run build",
+    "lint:css": "LINT_SEVERITY=warn stylelint 'styles/**/*.scss'",
+    "fix:css": "stylelint 'styles/**/*.scss' --fix",
+    "lint:js": "LINT_SEVERITY=warn eslint 'scripts/**/*.js'",
+    "fix:js": "eslint 'scripts/**/*.js' --fix",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest --run",
     "start": "wp-scripts start 'Src/admin.js' --output-path=dist-plugin"
   },
   "dependencies": {

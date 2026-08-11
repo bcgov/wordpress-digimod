@@ -152,13 +152,15 @@ class Search {
 
 	/**
 	 * Reduce SearchWP's minimum character length to 2 (default is 3).
-	 * 	Tweaked to allow for searches including 'ai' keyword.
-	 * 
-	 * @param int $min The default minimum length
-	 * 
-	 * @return int The new minimum length
+	 *  Tweaked to allow for searches including 'ai' keyword.
+	 *
+	 * @param int $min The default minimum length.
+	 *
+	 * @return int The new minimum length.
 	 */
 	public static function searchwp_adjust_minimum_length( $min ) {
+		unset( $min );
+
 		return 2;
 	}
 }

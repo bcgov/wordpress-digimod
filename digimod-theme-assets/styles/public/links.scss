@@ -1,6 +1,6 @@
 .arrowed.wp-block-button.is-style-underline .wp-block-button__link {
 	display: block;
-	
+
 	&::after {
 		content: $linkArrow;
 		width: 1rem;
@@ -19,16 +19,15 @@
 	margin-top: 2rem;
 	display: flex;
 	gap: 0.25rem;
-	
+
 	a {
 		display: none;
 	}
-	
+
 	.tag {
 		background-color: var(--wp--preset--color--secondary-brand);
-		color: white;
+		color: #fff;
 		padding: 0 0.5rem 0.15rem;
 		border-radius: 0.25rem;
 	}
 }
-

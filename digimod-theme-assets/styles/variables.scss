@@ -22,7 +22,7 @@ $porcelain: #f3f4f5;
 $crimsonred: #d71d24; // was: #e01f26
 
 // Government web colours
-$midnightblue: #003366;
+$midnightblue: #036;
 $menuBlue: #1c2d64;
 $generallink: #1a5a96;
 $sanmarinoblue: #496ea7;
@@ -30,7 +30,7 @@ $headeryellow: #f4bb2d;
 $curiousblue: #1e9dd3;
 
 // Digital Government
-$menuAncestorBackground: #F6F9FC;
+$menuAncestorBackground: #f6f9fc;
 $menuAncestorHighlight: #324166;
 $highlightblue: #c0e6f7;
 $highlightdark: #2a42b3;
@@ -39,7 +39,8 @@ $highlightdark: #2a42b3;
 :root {
 	// Shadows from https://getcssscan.com/css-box-shadow-examples
 	// #39
-	--box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+	--box-shadow: rgba(0, 0, 0, 0.1) 0 20px 25px -5px, rgba(0, 0, 0, 0.04) 0 10px 10px -5px;
+
 	&::selection {
 		background-color: $highlightblue;
 	}

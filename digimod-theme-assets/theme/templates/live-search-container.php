@@ -1,64 +1,21 @@
 <?php
-
 /**
- * The container html for the live-search
+ * The container HTML for live search.
+ *
+ * @package Bcgov\DigitalGov
  */
 ?>
 <div class="live-search-container"></div>
 
-<?php /* same as the content in SearchResultsBlock.php */ ?>
 <div class="live-search-extra">
-	<?php 
-	//Load content for this from a page made to hold the content
+	<?php
+	// Load this content from a page created to hold the live search content.
 
-	$postToLoad = get_page_by_path('live-search-content');
-	if($postToLoad){
-		$content = get_the_content(null,false,$postToLoad->ID);
+	$post_to_load = get_page_by_path( 'live-search-content' );
+	if ( $post_to_load ) {
+		$content = get_the_content( null, false, $post_to_load->ID );
 
-		echo $content;
+		echo wp_kses_post( $content );
 	}
 	?>
-
-
-	<?php 
-	//ORIGINAL Content, moved to Wordpress as a page.
-	/*	
-	<h2>Featured topics</h2>
-	<a href="/policies-standards/digital-plan/progress" title="">
-		<div class="popular-content">
-			<h3>Digital Plan Progress Report</h3>
-			<p>The Digital Plan supports the transformation of services. Our 2024 progress report shares stories from teams who are building inclusive, accessible and connected solutions. </p>
-		</div>
-	</a>
-
-	<a href="/policies-standards/dcop/" title="">
-		<div class="popular-content">
-			<h3>Digital Code of Practice</h3>
-			<p>The Digital Code of Practice is a guidebook for all public service employees and contractors involved in and accountable for digital service delivery. </p>
-		</div>
-	</a>
-
-	<a href="/blog/" title="">
-		<div class="popular-content">
-			<h3>#DigitalBC blog</h3>
-			<p>Our blog explores the challenges and impacts of the digital transformation efforts happening in the B.C. government.</p>
-		</div>
-	</a>
-
-	<div class="searchwp-form-quick-search">
-		<h2 class="popular-searches-header">Popular keywords: </h2>
-		<a href="/?s=agile">Agile</a>
-		<a href="/?s=digital+code+of+practice">Digital Code of Practice</a>
-		<a href="/?s=digital+plan">Digital Plan</a>
-		<a href="/?s=digital+trust">digital trust</a>
-		<a href="/?s=accessibility">accessibility</a>
-		<a href="/?s=chefs">CHEFS</a>
-		<a href="/?s=community+of+practice">Community of practice</a>
-		<a href="/?s=courses">courses</a>
-		<a href="/?s=funding">funding</a>
-		<a href="/?s=saas">SaaS</a>
-		<a href="/?s=cloud">cloud</a>
-		<a href="/?s=common+components">common components</a>
-	</div>
-	*/?>
 </div>

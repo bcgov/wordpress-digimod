@@ -60,7 +60,7 @@ const digitalGovSearch = () => {
   
 	  // Allow keyboard activation (Enter/Space) on toggle button
 	  toggleSearchBtn.addEventListener('keydown', (event) => {
-		if (event.code === 'Space' || event.code === 'Enter') {
+		if ('Space' === event.code || 'Enter' === event.code) {
 		  event.preventDefault();
 		  toggleSearchBtn.click();
 		}
@@ -118,7 +118,7 @@ const digitalGovSearch = () => {
 		const isContainerOpen = !searchFieldContainer.classList.contains('hidden');
 		if (!isContainerOpen) return;
   
-		if (event.key === 'Escape') {
+		if ('Escape' === event.key) {
 		  event.preventDefault();
 		  closeSearchContainer();
 		}
@@ -145,7 +145,7 @@ const digitalGovSearch = () => {
 	});
   };
   
-  if (document.readyState === 'complete') {
+  if ('complete' === document.readyState) {
 	digitalGovSearch();
   } else {
 	document.addEventListener('DOMContentLoaded', digitalGovSearch);

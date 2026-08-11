@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Search Results Block for DigitalGov.
  *
@@ -30,7 +29,7 @@ class SearchResultsBlock {
 	 * @return void
 	 */
 	public function init() {
-		add_filter( 'excerpt_length', [ $this, 'excerpt_length' ], 9223372036854775807 );  // Some other plugin is setting the excerpt length to 100 and using this big int as priority, lets replace it.
+		add_filter( 'excerpt_length', [ $this, 'excerpt_length' ], 9223372036854775807 );  // Some other plugin is setting the excerpt length to 100 and using this big int as priority, so replace it.
 	}
 
 	/**
@@ -52,19 +51,24 @@ class SearchResultsBlock {
 
 
 	/**
-	 * Perform the actual search and return the results
+	 * Perform the actual search and return the results.
+	 *
+	 * @return string
 	 */
 	public function render_search_results() {
 		$is_gb_editor = Blocks::check_is_gb_editor();
 
 		$output = '';
+		$data   = array();
 
 		if ( $is_gb_editor ) {
-			$_GET['s'] = 'digital'; // Provide a search keyword for the blockeditor so you can see it visually.
+			$raw_search_query = 'digital'; // Provide a search keyword for the block editor so you can see it visually.
+		} else {
+			$raw_search_query = isset( $_GET['s'] ) ? wp_unslash( $_GET['s'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public search query parameter.
 		}
 
-		if ( ! isset( $_GET['s'] ) ) {  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return $template;
+		if ( '' === $raw_search_query ) {
+			return $output;
 		}
 
 		$engine = 'default';
@@ -88,13 +92,9 @@ class SearchResultsBlock {
 			'swp-pagination-style'    => '',
 		];
 
-		//Remove the slashes added to the query 
-		$_GET['s'] = stripslashes($_GET['s']);
-		
-
 		// Retrieve applicable query parameters.
-		$search_query = isset( $_GET['s'] ) ? sanitize_text_field( $_GET['s'] ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$search_page  = isset( $_GET['swppg'] ) ? absint( $_GET['swppg'] ) : 1;         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$search_query = sanitize_text_field( $raw_search_query );
+		$search_page  = isset( $_GET['swppg'] ) ? absint( $_GET['swppg'] ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public pagination query parameter.
 
 		// Perform the search.
 		$search_results    = [];
@@ -104,7 +104,7 @@ class SearchResultsBlock {
 		if ( class_exists( '\\SearchWP\\Query' ) ) {
 			$search_args = [
 				'engine' => $engine, // The Engine name.
-				'fields' => 'all',          // Load proper native objects of each result.
+				'fields' => 'all',   // Load proper native objects of each result.
 				'page'   => $search_page,
 			];
 
@@ -150,9 +150,9 @@ class SearchResultsBlock {
 
 					$display_data = $this->get_display_data( $search_result, $search_query );
 
-					$search_categories = wp_list_pluck( get_the_terms( $search_result, 'search-category' ), 'name' );
-					// print_r($search_categories); //phpcs:ignore
-					$private = ( $post_is_restricted ) ? 'private' : '';
+					$search_categories      = wp_list_pluck( get_the_terms( $search_result, 'search-category' ), 'name' );
+					$search_categories_text = implode( ',', $search_categories );
+					$private                = ( $post_is_restricted ) ? 'private' : '';
 					?>
 					<a class="swp-result-item-link" href="<?php echo esc_url( $display_data['permalink'] ); ?>" data-reveal="<?php echo esc_attr( $private ); ?>">
 						<article id="post-<?php echo esc_attr( $search_result->ID ); ?>" class="swp-result-item post-<?php echo esc_attr( $search_result->ID ); ?> post type-post status-publish format-standard hentry category-uncategorized entry">
@@ -165,12 +165,12 @@ class SearchResultsBlock {
 							<?php endif; ?>
 
 							<div class="swp-result-item--info-container">
-								<h2 class="entry-title" aria-label="page title: <?php echo strip_tags( $display_data['title'] ); ?>:">
+								<h2 class="entry-title" aria-label="<?php echo esc_attr( 'page title: ' . wp_strip_all_tags( $display_data['title'] ) . ':' ); ?>">
 									<?php echo wp_kses_post( $display_data['title'] ); ?>
 								</h2>
 
 								<?php if ( count( $search_categories ) ) { ?>
-									<div class="decorator" aria-label="content type: <?php echo wp_kses_post( implode( ',', $search_categories ) ); ?>:"><?php echo wp_kses_post( implode( ',', $search_categories ) ); ?></div>
+									<div class="decorator" aria-label="<?php echo esc_attr( 'content type: ' . $search_categories_text . ':' ); ?>"><?php echo esc_html( $search_categories_text ); ?></div>
 								<?php } ?>
 
 								<?php if ( ! empty( $settings['swp-description-enabled'] ) ) : ?>
@@ -184,16 +184,16 @@ class SearchResultsBlock {
 											$content         = 'There is no excerpt because this is a protected post.';
 										}
 									} else {
-										$content_without_mark = strip_tags( $display_data['content'] );
-										$contentForLabel      = 'excerpt: ' . wp_kses_post( $content_without_mark );
+										$content_without_mark = wp_strip_all_tags( $display_data['content'] );
+										$contentForLabel      = 'excerpt: ' . $content_without_mark;
 
 										$content = $display_data['content'];
 									}
 									?>
-									<p class="swp-result-item--desc" aria-label="<?php echo $contentForLabel; ?>">
-										<?php echo wp_kses_post( $content ); ?>
-									</p>
-								<?php endif; ?>
+								<p class="swp-result-item--desc" aria-label="<?php echo esc_attr( $contentForLabel ); ?>">
+									<?php echo wp_kses_post( $content ); ?>
+								</p>
+							<?php endif; ?>
 
 								<?php if ( ! empty( $settings['swp-button-enabled'] ) ) : ?>
 									<a href="<?php echo esc_url( $display_data['permalink'] ); ?>" class="swp-result-item--button">
@@ -244,64 +244,16 @@ class SearchResultsBlock {
 			</div>
 
 
-			<?php 
-			//Load content for this from a page made to hold the content
+					<?php
+					// Load this content from a page created to hold the live search content.
 
-			$postToLoad = get_page_by_path('live-search-content');
-			if($postToLoad){
-				$content = get_the_content(null,false,$postToLoad->ID);
+					$post_to_load = get_page_by_path( 'live-search-content' );
+					if ( $post_to_load ) {
+						$content = get_the_content( null, false, $post_to_load->ID );
 
-				echo $content;
-			}
-			?>
-			<?php /* same as the content in live-search-container.php */ ?>
-			<?php 
-			//ORIGINAL Content, moved to Wordpress as a page.
-			/*	
-			<div class="live-search-extra hidden">
-				<h2>Featured topics</h2>
-				<a href="/policies-standards/digital-plan/" title="">
-					<div class="popular-content">
-						<h3>Digital Plan</h3>
-						<p>The Digital Plan has 4 missions to achieve the next phase of digital transformation in government.</p>
-					</div>
-				</a>
-
-				<a href="/policies-standards/dcop/" title="">
-					<div class="popular-content">
-						<h3>Digital Code of Practice</h3>
-						<p>The Digital Code of Practice is a guidebook for all public service employees and contractors involved in and accountable for digital service delivery. </p>
-					</div>
-				</a>
-
-				<a href="/blog/" title="">
-					<div class="popular-content">
-						<h3>#DigitalBC blog</h3>
-						<p>Our blog explores the challenges and impacts of the digital modernization efforts happening in the B.C. government.</p>
-					</div>
-				</a>
-
-			</div>
-			<div class="live-search-extra">
-				<div class="searchwp-form-quick-search">
-					<h2 class="popular-searches-header">Popular keywords: </h2>
-					<a href="/?s=agile">Agile</a>				
-					<a href="/?s=artificial+intelligence">Artificial Intelligence</a>	
-					<a href="/?s=digital+code+of+practice">Digital Code of Practice</a>
-					<a href="/?s=digital+plan">Digital Plan</a>
-					<a href="/?s=digital+trust">Digital Trust</a>
-					<a href="/?s=accessibility">Accessibility</a>
-					<a href="/?s=chefs">CHEFS</a>
-					<a href="/?s=community+of+practice">Community of practice</a>
-					<a href="/?s=courses">Courses</a>
-					<a href="/?s=funding">Funding</a>
-					<a href="/?s=saas">SaaS</a>
-					<a href="/?s=cloud">Cloud</a>
-					<a href="/?s=common+components">Common Components</a>
-				</div>
-				<p style="color: var(--wp--preset--color--gray-80);">Still can't find what you are looking for? <a href="/about/#contact" style="color: var(--wp--preset--color--secondary-brand); text-decoration: underline !important;">Contact us</a>.</p>
-			</div>
-			*/?>
+						echo wp_kses_post( $content );
+					}
+					?>
 
 		<?php } ?>
 	<?php } ?>
@@ -318,17 +270,20 @@ class SearchResultsBlock {
 
 
 	/**
-	 * Helper function to get the various pieces needed to render the search results items
+	 * Helper function to get the various pieces needed to render the search results items.
 	 *
 	 * @param object $result The search results individual result item.
 	 * @param string $search_query The search query used.
+	 *
+	 * @return array<string, mixed>
 	 */
 	private function get_display_data( $result, $search_query ) {
+		$data = array();
 
 		if ( $result instanceof \WP_Post ) {
 			$post_title = Search::get_final_title( $result, true, $search_query );
 
-			$thePost = get_post($result->ID);
+			$thePost = get_post( $result->ID );
 
 			$data = [
 				'id'         => absint( $result->ID ),
@@ -336,7 +291,7 @@ class SearchResultsBlock {
 				'title'      => $post_title,
 				'permalink'  => get_the_permalink( $result ),
 				'image_html' => get_the_post_thumbnail( $result ),
-				'content'    => $thePost->post_excerpt ? $thePost->post_excerpt : get_the_excerpt( $result ),	//Search sets up the excerpt for highlighting, and thus doesnt use the manually set one. by passing the post id it forces the manually set one.
+				'content'    => $thePost->post_excerpt ? $thePost->post_excerpt : get_the_excerpt( $result ),   // Search sets up the excerpt for highlighting and does not use the manually set one. Passing the post ID forces the manually set one.
 			];
 		}
 
@@ -373,7 +328,7 @@ class SearchResultsBlock {
 
 		$data = apply_filters( 'searchwp\results\entry\data', $data, $result );
 
-		// Make sure that default array structure is preserved.
+		// Make sure that the default array structure is preserved.
 		return is_array( $data ) ? array_merge( $defaults, $data ) : $defaults;
 	}
 

@@ -1,27 +1,27 @@
-@import './variables.scss';
-@import './public/_digimod_variables.scss';
-@import './public/additional-css.scss';
-@import './public/blocks.scss';
-@import './public/card-containers.scss';
-@import './public/common-components.scss';
-@import './public/communities-of-practice.scss';
-@import './public/definitions.scss';
-@import './public/footer.scss';
-@import './public/general.scss';
-@import './public/glossary.scss';
-@import './public/gravity-forms.scss';
-@import './public/grid-layout.scss';
-@import './public/header.scss';
-@import './public/homepage.scss';
-@import './public/links.scss';
+@import "./variables";
+@import "./public/digimod_variables";
+@import "./public/additional-css";
+@import "./public/blocks";
+@import "./public/card-containers";
+@import "./public/common-components";
+@import "./public/communities-of-practice";
+@import "./public/definitions";
+@import "./public/footer";
+@import "./public/general";
+@import "./public/glossary";
+@import "./public/gravity-forms";
+@import "./public/grid-layout";
+@import "./public/header";
+@import "./public/homepage";
+@import "./public/links";
 // @import './public/mega-menu.scss';
-@import './public/mobile.scss';
-@import './public/navigation.scss';
-@import './public/patterns.scss';
-@import './public/plugins.scss';
-@import './public/search.scss';
-@import './public/sticky-side-navigation.scss';
-@import './public/block-theme-overrides.scss';
+@import "./public/mobile";
+@import "./public/navigation";
+@import "./public/patterns";
+@import "./public/plugins";
+@import "./public/search";
+@import "./public/sticky-side-navigation";
+@import "./public/block-theme-overrides";
 
 // CSS console.log
 // body.home * {
@@ -36,7 +36,7 @@
 	background-color: $mineshaft;
 
 	font-synthesis: none;
-	text-rendering: optimizeLegibility;
+	text-rendering: optimizelegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-text-size-adjust: 100%;
@@ -57,7 +57,7 @@ body {
 }
 
 body .bcgov-body-content ol:not(.is-style-custom) li {
-	font-size: clamp(1rem, .25rem + 3.3333vw, 1.25rem);
+	font-size: clamp(1rem, 0.25rem + 3.3333vw, 1.25rem);
 	line-height: 1.5;
 	min-height: 0;
 }
@@ -72,7 +72,9 @@ body:not(body.wp-admin):not(body.editor-styles-wrapper):not(body.error404) {
 
 
 .banner-content {
+
 	&.has-media-on-the-right {
+
 		.wp-block-media-text__content {
 			padding-left: 0;
 		}

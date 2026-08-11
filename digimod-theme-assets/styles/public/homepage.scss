@@ -35,7 +35,7 @@ body.home {
 
 
 		input[type="email"] {
-			border-radius: .33rem 0 0 .33rem;
+			border-radius: 0.33rem 0 0 0.33rem;
 			outline-offset: -1px;
 			outline: 1px solid var(--wp--preset--color--white);
 
@@ -86,7 +86,7 @@ body.home {
 
 		.gform-button {
 			background-color: var(--wp--preset--color--primary-brand);
-			border-radius: 0 .33rem .33rem 0;
+			border-radius: 0 0.33rem 0.33rem 0;
 			border: 0;
 			color: var(--wp--preset--color--white);
 			cursor: pointer;
@@ -96,7 +96,7 @@ body.home {
 		}
 
 		.gform_validation_errors {
-			padding: 1rem 1rem .5rem;
+			padding: 1rem 1rem 0.5rem;
 			display: inline-block;
 			width: auto;
 			margin-bottom: 1rem;
@@ -108,12 +108,12 @@ body.home {
 		}
 
 		.gform_confirmation_message {
-			color: #1A5822;
-			border: 2px solid #1A5822;
+			color: #1a5822;
+			border: 2px solid #1a5822;
 			display: inline-block;
 			padding: 0 1rem;
 			border-radius: 3px;
-			background-color: #F6FFF8;
+			background-color: #f6fff8;
 
 			p {
 				margin: 0.5rem;

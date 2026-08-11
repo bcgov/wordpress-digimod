@@ -95,7 +95,7 @@
 				&.active {
 					background-color: #4a81e71a;
 					color: var(--wp--preset--color--primary-brand);
-					font-weight: 700;
+					font-weight: bold;
 					margin-bottom: 0;
 					padding-top: 6px;
 				}
@@ -182,7 +182,7 @@
 	}
 }
 
-.card-container:not(.no-shadow) .wp-block-column .has-icon>.wp-block-group {
+.card-container:not(.no-shadow) .wp-block-column .has-icon > .wp-block-group {
 	flex-direction: row;
 }
 

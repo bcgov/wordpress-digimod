@@ -148,7 +148,7 @@ const domReady = () => {
 					});
 
 					if (concatenatedHeadlineText.trim()) {
-						if (index === 0) {
+						if (0 === index) {
 							// Determine heading level on the first row
 							let nearestHeading = null;
 							let currentElement = detailContainer.previousElementSibling;
@@ -210,7 +210,7 @@ const domReady = () => {
 					}
 				}
 
-				if (index === 0) {
+				if (0 === index) {
 					let nearestHeading = null;
 					let currentElement = detailContainer.previousElementSibling;
 
@@ -265,7 +265,7 @@ const domReady = () => {
 			// Add keyboard navigation
 			gridGroupDiv.addEventListener('keydown', function (event) {
 				const activeElement = document.activeElement;
-				if (activeElement.getAttribute('role') === 'gridcell') {
+				if ('gridcell' === activeElement.getAttribute('role')) {
 					const row = activeElement.parentElement;
 					const rows = Array.from(gridGroupDiv.querySelectorAll('[role="row"]'));
 					const cells = Array.from(row.querySelectorAll('[role="gridcell"]'));
@@ -311,10 +311,12 @@ const domReady = () => {
 
 						case 'End':
 							// Move focus to the last cell in the last row
-							const lastRow = rows[rows.length - 1];
-							lastRow.querySelector('[role="gridcell"]:last-child').focus();
-							event.preventDefault();
-							break;
+							{
+								const lastRow = rows[rows.length - 1];
+								lastRow.querySelector('[role="gridcell"]:last-child').focus();
+								event.preventDefault();
+								break;
+							}
 					}
 				}
 			});
@@ -328,4 +330,3 @@ if ('complete' === document.readyState) {
 } else {
 	document.addEventListener('DOMContentLoaded', domReady);
 }
-

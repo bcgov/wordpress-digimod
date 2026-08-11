@@ -16,42 +16,46 @@ body.custom-digitalgov.has-ribbon-menu {
 	}
 
 	@media (min-width: 1360px) {
+
 		#main-menu nav {
 			display: block;
 		}
 	}
 
 	nav {
+
 		&[aria-label="Main menu"] {
 			gap: 0;
 		}
+
 		>ul {
-	
+
 			>li {
 
 				padding: 0.5rem 0.125rem !important;
 
 				> ul,
 				> ul ul {
-					box-shadow: 0 0.6000000238418579px 1.7999999523162842px 0 #0000001a,0 3.200000047683716px 7.199999809265137px 0 #00000021;
+					box-shadow: 0 0.6000000238418579px 1.7999999523162842px 0 #0000001a, 0 3.200000047683716px 7.199999809265137px 0 #00000021;
 				}
-				
+
 				> ul,
 				> ul li,
 				> ul ul,
-				> ul ul li { 
-					min-width: 300px; 
-					width: 300px; 
+				> ul ul li {
+					min-width: 300px;
+					width: 300px;
+
 					a {
-						width: 100%; 
+						width: 100%;
 					}
 				}
-	
+
 				&:focus-within,
 				&:hover {
 					background-color: var(--bg-highlight);
 				}
-	
+
 				a[title="private"]::after,
 				a[data-reveal="private"]::after {
 					background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDQ0OCA1MTIiICBmaWxsPSIjOWE5YTlhIj48cGF0aCBkPSJNNDAwIDIyNGgtMjR2LTcyQzM3NiA2OC4yIDMwNy44IDAgMjI0IDBTNzIgNjguMiA3MiAxNTJ2NzJINDhjLTI2LjUgMC00OCAyMS41LTQ4IDQ4djE5MmMwIDI2LjUgMjEuNSA0OCA0OCA0OGgzNTJjMjYuNSAwIDQ4LTIxLjUgNDgtNDhWMjcyYzAtMjYuNS0yMS41LTQ4LTQ4LTQ4ek0yNjQgMzkyYzAgMjIuMS0xNy45IDQwLTQwIDQwcy00MC0xNy45LTQwLTQwdi00OGMwLTIyLjEgMTcuOS00MCA0MC00MHM0MCAxNy45IDQwIDQwdjQ4em0zMi0xNjhIMTUydi03MmMwLTM5LjcgMzIuMy03MiA3Mi03MnM3MiAzMi4zIDcyIDcydjcyeiIvPjwvc3ZnPg==);
@@ -66,23 +70,23 @@ body.custom-digitalgov.has-ribbon-menu {
 					margin-left: 0.5rem;
 				}
 			}
-	
+
 			>.current-menu-item {
 				background-color: var(--bg-highlight);
-	
+
 				&.has-secondary-accent-background-color {
 					background-color: $menuAncestorHighlight !important;
 					color: var(--wp--preset--color--white) !important;
 				}
 			}
 		}
-	    
+
 		.wp-block-navigation.wp-block-navigation { // highlighting.
-	
+
 			li:has(:hover, :focus-within) {
 				background-color: var(--bg-highlight);
 			}
-			
+
 			a.wp-block-navigation-item__content {
 				background-color: transparent;
 
@@ -91,8 +95,9 @@ body.custom-digitalgov.has-ribbon-menu {
 				&:focus-visible {
 					text-decoration: underline !important;
 					text-underline-offset: 3px;
-  					text-decoration-color: #858585 !important;
+					text-decoration-color: #858585 !important;
 				}
+
 				&:focus-visible {
 					outline: 1px solid #858585;
 					outline-offset: -0.25rem;
@@ -100,6 +105,7 @@ body.custom-digitalgov.has-ribbon-menu {
 			}
 
 			button {
+
 				&:focus-visible {
 					color: #000;
 					outline: 1px solid #858585;
@@ -115,6 +121,20 @@ body.custom-digitalgov.has-ribbon-menu {
 					// 	background-color: var(--bg-highlight);
 					// }
 				}
+
+				.wp-block-navigation {
+
+					&-submenu {
+
+						a {
+
+							&:hover,
+							&:focus-visible {
+								background-color: transparent;
+							}
+						}
+					}
+				}
 			}
 
 			li.current-menu-item {
@@ -125,11 +145,11 @@ body.custom-digitalgov.has-ribbon-menu {
 					font-weight: bold;
 				}
 
-				>a.wp-block-navigation-item__content[href*="#"]  {
+				>a.wp-block-navigation-item__content[href*="#"] {
 					background-color: #fff;
 					font-weight: normal;
 				}
-				
+
 			}
 
 			li:has(li.current-menu-item) {
@@ -171,22 +191,6 @@ body.custom-digitalgov.has-ribbon-menu {
 				}
 			}
 
-			&__container {
-
-				.wp-block-navigation {
-
-					&-submenu {
-
-						a {
-
-							&:hover,
-							&:focus-visible {
-								background-color: transparent;
-							}
-						}
-					}
-				}
-			}
 		}
 
 	}
@@ -312,7 +316,7 @@ body.home {
 		display: none;
 	}
 
-	#post-content>div:first-of-type {
+	#post-content > div:first-of-type {
 		border-top-width: 0 !important;
 	}
 }

@@ -60,7 +60,7 @@ export const digmodPluginGlossary = () => {
 						link.getAttribute('tabindex');
 
 					link.dataset.originalTabindex =
-						originalTabindex === null
+						null === originalTabindex
 							? '__none__'
 							: originalTabindex;
 				}
@@ -80,8 +80,8 @@ export const digmodPluginGlossary = () => {
 					link.removeAttribute('aria-disabled');
 
 					if (
-						link.dataset.originalTabindex ===
-						'__none__'
+						'__none__' ===
+						link.dataset.originalTabindex
 					) {
 						link.removeAttribute('tabindex');
 					} else {
@@ -124,6 +124,7 @@ export const digmodPluginGlossary = () => {
 
 		/**
 		 * Apply the active class to the selected category link.
+		 * @param selectedLink
 		 */
 		const setActiveCategory = (selectedLink = null) => {
 			document
@@ -335,7 +336,7 @@ export const digmodPluginGlossary = () => {
 
 window.digmodPluginGlossary = digmodPluginGlossary;
 
-if (document.readyState === 'complete') {
+if ('complete' === document.readyState) {
 	digmodPluginGlossary();
 } else {
 	document.addEventListener(

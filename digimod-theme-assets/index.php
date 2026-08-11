@@ -2,13 +2,15 @@
 /**
  * Plugin Name: DIGIMOD - Block Theme Frontend Enhancements
  * Description: A plugin to load custom scripts, styles and theme settings to augment the default BCGov Block Theme capabilities
- * Version: 1.3.6
+ * Version: 1.4.0
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Repository: https://github.com/bcgov/wordpress-digimod/tree/main/digimod-theme-assets
  * Plugin URI: https://github.com/bcgov/wordpress-digimod/tree/main/digimod-theme-assets
  * Update URI: https://raw.githubusercontent.com/bcgov/wordpress-digimod/main/digimod-theme-assets/index.php
+ *
+ * @package Bcgov\DigitalGov
  */
 
 
@@ -199,7 +201,7 @@ function filter_theme_json_theme( $theme_json ) {
 		$plugin_theme_json_path = plugin_dir_path( __FILE__ ) . 'theme/theme.json';
 
 		if ( ! is_readable( $plugin_theme_json_path ) ) {
-			error_log( 'Digimod theme.json not readable: ' . $plugin_theme_json_path );
+			$plugin_theme_json = array();
 			return $theme_json;
 		}
 
@@ -211,7 +213,6 @@ function filter_theme_json_theme( $theme_json ) {
 		);
 
 		if ( ! is_array( $plugin_theme_json ) ) {
-			error_log( 'Digimod theme.json could not be decoded.' );
 			$plugin_theme_json = array();
 		}
 	}
@@ -452,19 +453,22 @@ function custom_api_posts_routes() {
 // add_action('rest_api_init', 'custom_api_posts_routes');
 
 
-//Disable the conversion of unicode moji to html by WP.
-//From https://wordpress.stackexchange.com/questions/185577/disable-emojicons-introduced-with-wp-4-2/185578#185578
+// Disable the conversion of unicode emoji to HTML by WordPress.
+// Based on https://wordpress.stackexchange.com/questions/185577/disable-emojicons-introduced-with-wp-4-2/185578#185578.
+/**
+ * Disable WordPress emoji scripts and styles.
+ */
 function disable_wp_emojicons() {
-    // all actions related to emojis
-    remove_action( 'admin_print_styles', 'print_emoji_styles' );
-    remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
-    remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
+	// Remove all actions related to emojis.
+	remove_action( 'admin_print_styles', 'print_emoji_styles' );
+	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+	remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
     remove_action( 'wp_print_styles', 'print_emoji_styles' );
     remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
-    remove_filter( 'the_content_feed', 'wp_staticize_emoji' );
-    remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
-  }
-  add_action( 'init', 'disable_wp_emojicons' );
+	remove_filter( 'the_content_feed', 'wp_staticize_emoji' );
+	remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
+}
+add_action( 'init', 'disable_wp_emojicons' );
 
 
 

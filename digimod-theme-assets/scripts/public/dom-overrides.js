@@ -8,11 +8,9 @@ const windowLoad = () => {
  * Manage events after window resize.
  */
 const windowResize = () => {
-    /**
-     * Set orientation helper classes on body.
-     */
-    const height = window.innerHeight;
-    const width = document.body.clientWidth;
+	/**
+	 * Set orientation helper classes on body.
+	 */
 	setTimeout(() => {
 
 		document.body.classList.remove( 'largeScreen' );

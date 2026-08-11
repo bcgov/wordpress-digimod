@@ -88,7 +88,7 @@
 					color: var(--wp--preset--color--primary-brand);
 					font-size: 1rem;
 					counter-increment: list-number;
-					content: counter(list-number)".";
+					content: counter(list-number) ".";
 					display: inline-flex;
 					border-radius: 50%;
 					position: absolute;
@@ -106,6 +106,7 @@
 					>a {
 						padding: 0.35rem calc(1rem - 4px) 0.25rem;
 					}
+
 					&::before {
 						top: 0.66rem;
 						font-weight: 700;

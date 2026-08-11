@@ -13,6 +13,13 @@
  * @param {Element} [parent=document] - The parent element to attach the event listener to (defaults to document)
  */
 
+/**
+ *
+ * @param type
+ * @param selector
+ * @param callback
+ * @param parent
+ */
 export function addGlobalEventListener(
 	type,
 	selector,
@@ -57,7 +64,7 @@ export function addGlobalEventListener(
 export function createElement(type, options = {}) {
 	const element = document.createElement(type);
 	Object.entries(options).forEach(([key, value]) => {
-		if (key === 'class') {
+		if ('class' === key) {
 			value.split(' ').forEach((className) => {
 				if ('' !== className) {
 					element.classList.add(className);
@@ -66,19 +73,19 @@ export function createElement(type, options = {}) {
 			return;
 		}
 
-		if (key === 'dataset') {
+		if ('dataset' === key) {
 			Object.entries(value).forEach(([dataKey, dataValue]) => {
 				element.dataset[dataKey] = dataValue;
 			});
 			return;
 		}
 
-		if (key === 'text') {
+		if ('text' === key) {
 			element.textContent = value;
 			return;
 		}
 
-		if (key === 'html') {
+		if ('html' === key) {
 			element.innerHTML = value;
 			return;
 		}
@@ -177,6 +184,9 @@ export function createBreadcrumbs(paths) {
  * Creates a breadcrumb navigation element based on an array of breadcrumb paths. 
  * 
  * @param {Array} paths - An array of objects or arrays, where each object or array represents a breadcrumb path. Each object or array should have a 'name' property (the readable name of the breadcrumb) and a 'url' property (the URL of the breadcrumb, if any).
+ * @param text
+ * @param href
+ * @param isLast
  * @returns {HTMLElement} - The breadcrumb navigation element, represented as an HTML div element with class 'aioseo-breadcrumbs'.
  */
 function createBreadcrumb(text, href, isLast) {
@@ -227,7 +237,7 @@ function createBreadcrumbSeparator() {
  * @throws {Error} Throws an error if the target is not a valid element or if it doesn't support addEventListener.
  */
 export function addSafeEventListenerPlugin( el = document, event, handler, options ) {
-    if ( el && typeof el.addEventListener === 'function' ) {
+    if ( el && 'function' === typeof el.addEventListener ) {
         // Call the original function
         el.addEventListener( event, handler, options );
     } else {

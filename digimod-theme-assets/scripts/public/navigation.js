@@ -44,6 +44,7 @@ const domReady = () => {
 
 		/**
 		 * Check if the current page is a subpage of the given top-level navigation item.
+		 * @param urlSubstring
 		 */
 		const hasSubPage = (urlSubstring) => {
 			const links = document.querySelectorAll(
@@ -59,6 +60,7 @@ const domReady = () => {
 
 		/**
 		 * Highlight the main navigation item if the current page is a subpage of the given top-level navigation item.
+		 * @param urlSubstring
 		 */
 		const highlightMainNavItem = (urlSubstring) => {
 			if (hasSubPage(urlSubstring)) {
@@ -111,6 +113,7 @@ const domReady = () => {
 
 		/**
 		 * Check for menu items being out of viewport and adjust positioning if needed.
+		 * @param targetEl
 		 */
 		const doBoundsCheck = (targetEl) => {
 			const container = targetEl;
@@ -237,7 +240,7 @@ const domReady = () => {
 						event.stopImmediatePropagation(); // block WP click handler
 						event.preventDefault(); // block default link/button behavior
 
-						const wasOpen = toggle.getAttribute('aria-expanded') === 'true';
+						const wasOpen = 'true' === toggle.getAttribute('aria-expanded');
 
 						if (!wasOpen) {
 							toggle.setAttribute('aria-expanded', 'true');
@@ -318,7 +321,7 @@ const domReady = () => {
 						event.stopImmediatePropagation();
 						event.preventDefault();
 
-						const wasOpen = toggle.getAttribute('aria-expanded') === 'true';
+						const wasOpen = 'true' === toggle.getAttribute('aria-expanded');
 						// Close all nested toggles.
 						nestedToggles.forEach((other) => {
 							other.setAttribute('aria-expanded', 'false');
@@ -345,6 +348,8 @@ const domReady = () => {
 
 		/**
 		 * ARIA Menu Helpers.
+		 * @param items
+		 * @param index
 		 */
 		const focusMenuItem = (items, index) => {
 			// Simple wrap.
@@ -404,6 +409,7 @@ const domReady = () => {
 
 		/**
 		 * Move focus to the fiirst menu item in the same <ul> container as `currentItem`.
+		 * @param currentItem
 		 */
 		const focusFirstElementOfMenu = (currentItem) => {
 			const parentUl = currentItem.closest('ul');
@@ -420,6 +426,8 @@ const domReady = () => {
 
 		/**
 		 * Move the focus into the first item of a sibling submenu.
+		 * @param currentItem
+		 * @param event
 		 */
 		const focusFirstElementOfSiblingMenu = (currentItem, event) => {
 			event.preventDefault();
@@ -442,20 +450,21 @@ const domReady = () => {
 
 		/**
 		 * Move focus to the last menu item in the same <ul> container as `currentItem`.
+		 * @param currentItem
 		 */
 		const focusLastElementOfMenu = (currentItem) => {
 			const parentUl = currentItem.closest('ul');
 			if (!parentUl) return;
 
 			const directLis = Array.from(parentUl.children).filter(
-				(el) => el.tagName.toLowerCase() === 'li'
+				(el) => 'li' === el.tagName.toLowerCase()
 			);
 			if (!directLis.length) return;
 
 			const lastLi = directLis[directLis.length - 1];
 
 			const directMenuItems = Array.from(lastLi.children).filter(
-				(el) => el.getAttribute('role') === 'menuitem'
+				(el) => 'menuitem' === el.getAttribute('role')
 			);
 			if (!directMenuItems.length) return;
 
@@ -466,12 +475,13 @@ const domReady = () => {
 
 		/**
 		 * Move "down" through siblings in an anchor → button → anchor → button pattern.
+		 * @param currentItem
 		 */
 		const moveDownSiblingMenu = (currentItem) => {
 			const parentLi = currentItem.closest('li');
 			if (!parentLi) return;
 
-			if (currentItem.localName === 'a') {
+			if ('a' === currentItem.localName) {
 				const sameLiButton = parentLi.querySelector('button[role="menuitem"]');
 				// If we find a different button in the same <li>, focus it and stop.
 				if (sameLiButton && sameLiButton !== currentItem) {
@@ -519,17 +529,6 @@ const domReady = () => {
 			}
 		};
 
-
-		/**
-		 * Returns the .wp-block-navigation-submenu__toggle if `menuItemEl` has a parent
-		 * submenu container. Otherwise returns null.
-		 */
-		const getSubmenuToggle = (menuItemEl) => {
-			const submenu = menuItemEl.closest('.wp-block-navigation-submenu');
-			if (!submenu) return null;
-			return submenu.querySelector('.wp-block-navigation-submenu__toggle');
-		};
-
 		if (navContainer) {
 			const allMenuItems = Array.from(
 				navContainer.querySelectorAll('[role="menuitem"]')
@@ -556,12 +555,12 @@ const domReady = () => {
 
 				// Prevent browser defaults for these navigation keys.
 				if (
-					key === 'ArrowDown' ||
-					key === 'ArrowUp' ||
-					key === 'ArrowLeft' ||
-					key === 'ArrowRight' ||
-					key === 'Home' ||
-					key === 'End'
+					'ArrowDown' === key ||
+					'ArrowUp' === key ||
+					'ArrowLeft' === key ||
+					'ArrowRight' === key ||
+					'Home' === key ||
+					'End' === key
 				) {
 					event.preventDefault();
 				}
@@ -608,7 +607,7 @@ const domReady = () => {
 					}
 					case 'ArrowUp': {
 						// If current item is a button, just go to the previous item.
-						if (currentItem.localName === 'button') {
+						if ('button' === currentItem.localName) {
 							focusMenuItem(allMenuItems, currentIndex - 1);
 						} else {
 							const parentLi = currentItem.closest('li');
@@ -618,7 +617,7 @@ const domReady = () => {
 							if (!parentUl) break;
 					
 							const directLis = Array.from(parentUl.children).filter(
-								(el) => el.tagName.toLowerCase() === 'li'
+								(el) => 'li' === el.tagName.toLowerCase()
 							);
 					
 							if (directLis.length && directLis[0] !== parentLi) {
@@ -655,14 +654,14 @@ const domReady = () => {
 							const containerUl = currentItem.closest('ul');
 							if (!containerUl) return;
 							const directLis = Array.from(containerUl.children).filter(
-								(node) => node.tagName.toLowerCase() === 'li'
+								(node) => 'li' === node.tagName.toLowerCase()
 							);
 							if (!directLis.length) return;
 							const firstMenuItem = directLis[0].querySelector('a[role="menuitem"]');
 							if ('button' === currentItem.localName) {
 								focusMenuItem(allMenuItems, currentIndex - 1);
 								closeSubmenu(currentItem);
-							} else if (currentItem.localName === 'a') {
+							} else if ('a' === currentItem.localName) {
 								if (firstMenuItem === currentItem) {
 									closeSubmenu(currentItem, true);
 									focusFirstElementOfSiblingMenu(currentItem, event);
@@ -700,7 +699,7 @@ const domReady = () => {
 	}, 0);
 }
 
-if (document.readyState === 'complete') {
+if ('complete' === document.readyState) {
 	domReady();
 } else {
 	document.addEventListener('DOMContentLoaded', domReady);
