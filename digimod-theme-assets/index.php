@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DIGIMOD - Block Theme Frontend Enhancements
  * Description: A plugin to load custom scripts, styles and theme settings to augment the default BCGov Block Theme capabilities
- * Version: 1.4.0
+ * Version: 1.4.1
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -322,32 +322,83 @@ function script_type_module( $script_handle = false ): string {
 
 
 /**
- * Enqueue files for the vue app.
+ * Enqueue the shared Vue bundle assets.
  *
- * @param array $attributes The attributes.
+ * @param string $plugin_dir Plugin directory path.
+ * @param string $plugin_version Plugin version.
  */
-function vuejs_custom_app_dynamic_block_plugin( $attributes ) {
-    $plugin_dir = plugin_dir_path( __FILE__ );
+function digimod_enqueue_vue_bundle_assets( $plugin_dir, $plugin_version ) {
     $assets_dir = $plugin_dir . 'dist/assets/';
-
-	$plugin_data    = get_plugin_data( $plugin_dir . 'index.php' );
-	$plugin_version = $plugin_data['Version'];
-	$instance_id    = function_exists( 'wp_unique_id' ) ? wp_unique_id( 'digimod-wcag-filter-' ) : uniqid( 'digimod-wcag-filter-', false );
 
     $public_css_files = glob( $assets_dir . 'vue*.css' );
     $public_js_files  = glob( $assets_dir . 'vue*.js' );
 
     foreach ( $public_css_files as $file ) {
         $file_url = plugins_url( str_replace( $plugin_dir, '', $file ), __FILE__ );
-        wp_enqueue_style( 'vue-app-' . basename( $file, '.css' ), $file_url, [], $plugin_version );
+        wp_enqueue_style( 'vue-app-' . basename( $file, '.css' ), $file_url, array(), $plugin_version );
     }
 
     foreach ( $public_js_files as $file ) {
         $file_url = plugins_url( str_replace( $plugin_dir, '', $file ), __FILE__ );
-        wp_enqueue_script( 'vue-app-' . basename( $file, '.js' ), $file_url, [], $plugin_version, true );
+        $handle   = 'vue-app-' . basename( $file, '.js' );
 
-        script_type_module( 'vue-app-' . basename( $file, '.js' ) );
+        wp_enqueue_script( $handle, $file_url, array(), $plugin_version, true );
+        script_type_module( $handle );
     }
+}
+
+/**
+ * Sanitize limited glossary block HTML input.
+ *
+ * @param string $content Glossary block field content.
+ *
+ * @return string
+ */
+function digimod_prepare_limited_glossary_markup( $content ) {
+    if ( ! is_string( $content ) ) {
+        return '';
+    }
+
+    $content = trim( $content );
+
+    if ( '' === $content ) {
+        return '';
+    }
+
+    if ( ! preg_match( '/<[a-z!\/]/i', $content ) ) {
+        $content = wpautop( $content );
+    }
+
+    $allowed_tags = array(
+        'p'    => array(),
+        'div'  => array(),
+        'span' => array(),
+        'br'   => array(),
+        'a'    => array(
+            'href'   => true,
+            'target' => true,
+            'rel'    => true,
+            'title'  => true,
+        ),
+    );
+
+    return wp_kses( $content, $allowed_tags, array( 'http', 'https', 'mailto', 'tel' ) );
+}
+
+
+/**
+ * Enqueue files for the vue app.
+ *
+ * @param array $attributes The attributes.
+ */
+function vuejs_custom_app_dynamic_block_plugin( $attributes ) {
+    $plugin_dir = plugin_dir_path( __FILE__ );
+
+	$plugin_data    = get_plugin_data( $plugin_dir . 'index.php' );
+	$plugin_version = $plugin_data['Version'];
+	$instance_id    = function_exists( 'wp_unique_id' ) ? wp_unique_id( 'digimod-wcag-filter-' ) : uniqid( 'digimod-wcag-filter-', false );
+
+    digimod_enqueue_vue_bundle_assets( $plugin_dir, $plugin_version );
 
     // Access the 'columns' attribute.
     $columns = isset( $attributes['columns'] ) ? $attributes['columns'] : 3;  // Fallback to '3' if not set.
@@ -364,6 +415,47 @@ function vuejs_custom_app_dynamic_block_plugin( $attributes ) {
 }
 
 /**
+ * Enqueue files for the glossary Vue app.
+ *
+ * @param array $attributes Block attributes.
+ *
+ * @return string
+ */
+function digimod_glossary_dynamic_block_plugin( $attributes ) {
+    $plugin_dir = plugin_dir_path( __FILE__ );
+
+	$plugin_data    = get_plugin_data( $plugin_dir . 'index.php' );
+	$plugin_version = $plugin_data['Version'];
+	$instance_id    = function_exists( 'wp_unique_id' ) ? wp_unique_id( 'digimod-glossary-' ) : uniqid( 'digimod-glossary-', false );
+
+    digimod_enqueue_vue_bundle_assets( $plugin_dir, $plugin_version );
+
+    $default_attributes = array(
+		'title'             => 'Glossary',
+		'titleHeadingLevel' => 'h1',
+		'intro'             => "It's important to have a shared vocabulary. The official CSBC glossary is the definitive guide for all BC Public Service employees.",
+		'searchToolsTitle'  => 'Search tools',
+		'showAllLabel'      => 'Show all',
+		'showTagCounts'     => true,
+		'filterTitle'       => 'Filter: tags',
+		'browseTitle'       => 'Jump to',
+		'suggestTitle'      => 'Suggest a new glossary term',
+		'suggestBody'       => 'Send us your submission for review.',
+		'suggestEmail'      => 'do.contentdesign@gov.bc.ca',
+		'className'         => '',
+    );
+
+	$attributes          = wp_parse_args( $attributes, $default_attributes );
+	$class_names         = trim( 'digimod-vue-app-root digimod-glossary-block ' . $attributes['className'] );
+	$show_tag_counts     = ! empty( $attributes['showTagCounts'] ) ? 'true' : 'false';
+	$title_heading_level = in_array( $attributes['titleHeadingLevel'], array( 'h1', 'h2', 'h3', 'h4' ), true ) ? $attributes['titleHeadingLevel'] : 'h1';
+	$intro_markup        = digimod_prepare_limited_glossary_markup( $attributes['intro'] );
+	$suggest_body_markup = digimod_prepare_limited_glossary_markup( $attributes['suggestBody'] );
+
+	return '<div class="' . esc_attr( $class_names ) . '" data-vue-app="glossary" data-instance-id="' . esc_attr( $instance_id ) . '" data-title="' . esc_attr( $attributes['title'] ) . '" data-title-heading-level="' . esc_attr( $title_heading_level ) . '" data-intro="' . esc_attr( $intro_markup ) . '" data-search-tools-title="' . esc_attr( $attributes['searchToolsTitle'] ) . '" data-show-all-label="' . esc_attr( $attributes['showAllLabel'] ) . '" data-show-tag-counts="' . esc_attr( $show_tag_counts ) . '" data-browse-title="' . esc_attr( $attributes['browseTitle'] ) . '" data-filter-title="' . esc_attr( $attributes['filterTitle'] ) . '" data-suggest-title="' . esc_attr( $attributes['suggestTitle'] ) . '" data-suggest-body="' . esc_attr( $suggest_body_markup ) . '" data-suggest-email="' . esc_attr( $attributes['suggestEmail'] ) . '">Loading glossary...</div>';
+}
+
+/**
  * Initialize the blocks for the vue app.
  */
 function vuejs_app_plugin_block_init() {
@@ -373,6 +465,13 @@ function vuejs_app_plugin_block_init() {
         [
 			'render_callback' => 'vuejs_custom_app_dynamic_block_plugin',
 		]
+    );
+
+    register_block_type(
+        'digimod-plugin/glossary-block',
+        array(
+			'render_callback' => 'digimod_glossary_dynamic_block_plugin',
+		)
     );
 
     // phpcs:disable
@@ -435,6 +534,73 @@ function custom_api_post_filter_callback() {
 }
 
 /**
+ * Return glossary entries for the Vue glossary block.
+ *
+ * @param WP_REST_Request $request Request object.
+ *
+ * @return WP_REST_Response
+ */
+function digimod_glossary_api_callback( $request ) {
+    unset( $request );
+
+    $query_args = array(
+        'post_type'      => 'definitions',
+        'posts_per_page' => -1,
+        'post_status'    => 'publish',
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+    );
+
+    if ( taxonomy_exists( 'glossary_settings' ) ) {
+        $show_in_glossary_term = get_term_by( 'slug', 'show-in-glossary', 'glossary_settings' );
+
+        if ( $show_in_glossary_term && ! is_wp_error( $show_in_glossary_term ) ) {
+            $query_args['tax_query'] = array(
+                array(
+                    'taxonomy' => 'glossary_settings',
+                    'field'    => 'slug',
+                    'terms'    => array( 'show-in-glossary' ),
+                ),
+            );
+        }
+    }
+
+    $definitions = get_posts( $query_args );
+
+    $entries = array();
+
+    foreach ( $definitions as $definition ) {
+        setup_postdata( $definition );
+
+        $terms      = get_the_terms( $definition, 'glossary_category' );
+        $categories = array();
+
+        if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+            foreach ( $terms as $term ) {
+                $categories[] = array(
+                    'id'   => (int) $term->term_id,
+                    'name' => $term->name,
+                    'slug' => $term->slug,
+                );
+            }
+        }
+
+        $entries[] = array(
+            'id'         => (int) $definition->ID,
+            'title'      => get_the_title( $definition->ID ),
+            'slug'       => $definition->post_name,
+            'link'       => get_permalink( $definition->ID ),
+            'content'    => apply_filters( 'the_content', $definition->post_content ),
+            'categories' => $categories,
+        );
+    }
+
+    wp_reset_postdata();
+
+    return rest_ensure_response( $entries );
+}
+
+/**
  * Custom API routes for the VUE app
  */
 function custom_api_posts_routes() {
@@ -449,8 +615,24 @@ function custom_api_posts_routes() {
     );
 }
 
+/**
+ * Register REST routes for the Vue glossary block.
+ */
+function digimod_glossary_routes() {
+    register_rest_route(
+        'digimod/v1',
+        '/glossary',
+        array(
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => 'digimod_glossary_api_callback',
+            'permission_callback' => '__return_true',
+        )
+    );
+}
+
 // phpcs:ignore
 // add_action('rest_api_init', 'custom_api_posts_routes');
+add_action( 'rest_api_init', 'digimod_glossary_routes' );
 
 
 // Disable the conversion of unicode emoji to HTML by WordPress.

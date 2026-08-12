@@ -7,6 +7,7 @@
         <div class="tag-checkbox">
           <input :id="tagInputId(index)" type="checkbox" :value="tag" v-model="selectedTags" class="tag-input" />
           <label :for="tagInputId(index)" class="tag-label tag" :tabindex="0 === index ? 0 : -1"
+            @pointerup.prevent="handleTagPointerUp(index, $event)" @click.prevent="suppressTagClick"
             @keydown.enter.prevent="toggleTagInput(index)" @keydown.space.prevent="toggleTagInput(index)"
             @keydown="handleKeyNavigation($event, index)" role="checkbox"
             :aria-label="getTagAriaLabel(tag)" :aria-checked="getTagAriaChecked(tag)">
@@ -126,6 +127,20 @@ const fetchData = async () => {
 
 const toggleTagInput = (index) => {
   document.getElementById(tagInputId(index))?.click();
+};
+
+const suppressTagClick = () => {};
+
+const handleTagPointerUp = (index, event) => {
+  if ('mouse' === event.pointerType && 0 !== event.button) {
+    return;
+  }
+
+  if ('function' === typeof event.currentTarget?.focus) {
+    event.currentTarget.focus();
+  }
+
+  toggleTagInput(index);
 };
 
 const handleKeyNavigation = (event, index) => {

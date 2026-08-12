@@ -8,6 +8,7 @@ export const digmodPluginDefnitions = () => {
         window.requestAnimationFrame(() => {
         const definitionLinkSelector =
             'a:not(.digimod-vue-app-root a, [href*="#top"])';
+        const vueDefinitionLinkSelector = 'a:not([href*="#top"])';
         const protectedAreaBlockSelector = '.cleanbcdx-protected-area-block';
         const protectedAreaFormSelector = '.cleanbcdx-protected-area__form';
 
@@ -268,13 +269,20 @@ export const digmodPluginDefnitions = () => {
             }
         };
 
-        const initializeDefinitionLinks = (rootElement = document) => {
+        const initializeDefinitionLinks = (
+            rootElement = document,
+            includeVueLinks = false
+        ) => {
             if (!rootElement || 'function' !== typeof rootElement.querySelectorAll) {
                 return [];
             }
 
+            const activeDefinitionLinkSelector = includeVueLinks
+                ? vueDefinitionLinkSelector
+                : definitionLinkSelector;
+
             const definitionLinks = Array.from(
-                rootElement.querySelectorAll(definitionLinkSelector)
+                rootElement.querySelectorAll(activeDefinitionLinkSelector)
             ).filter((link) => {
                 return link.href.includes('definitions');
             });
@@ -309,6 +317,52 @@ export const digmodPluginDefnitions = () => {
 
                 addEventListeners(link);
             });
+
+            return definitionLinks;
+        };
+
+        const initializeDefinitionExperience = (
+            rootElement = document,
+            includeVueLinks = false
+        ) => {
+            const definitionLinks = initializeDefinitionLinks(
+                rootElement,
+                includeVueLinks
+            );
+
+            if (definitionLinks.length > 0) {
+                let dialog = document.getElementById('dialog');
+                const needsDialog = !dialog;
+
+                if (needsDialog) {
+                    dialog = document.createElement('dialog');
+                    dialog.id = 'dialog';
+                    dialog.className = 'dialog';
+                    dialog.setAttribute('aria-modal', true);
+                    dialog.setAttribute('aria-live', 'polite');
+                    dialog.innerHTML =
+                        '<div class="dialog-content"></div><button id="close-dialog" aria-label="closes defintion dialog">Close</button>';
+                    document.body.appendChild(dialog);
+
+                    const closeDialogButton =
+                        document.getElementById('close-dialog');
+
+                    closeDialogButton.addEventListener('click', () => {
+                        dialog.close();
+                        setDialogWideState(false);
+                        setDialogPinToTopState(false);
+                    });
+
+                    dialog.addEventListener('close', () => {
+                        setDialogWideState(false);
+                        setDialogPinToTopState(false);
+                        setBodyScrollLock(false);
+                    });
+
+                    dialog.addEventListener('click', closeDialogOnBackdropClick);
+                    dialog.addEventListener('submit', handleProtectedAreaSubmit);
+                }
+            }
 
             return definitionLinks;
         };
@@ -546,42 +600,10 @@ export const digmodPluginDefnitions = () => {
             return Boolean(triggerElement.closest('.pin-to-top'));
         };
 
-        const definitionLinks = initializeDefinitionLinks();
+        initializeDefinitionExperience();
 
-        if (definitionLinks.length > 0) {
-            let dialog = document.getElementById('dialog');
-            const needsDialog = !dialog;
-
-            if (needsDialog) {
-                dialog = document.createElement('dialog');
-                dialog.id = 'dialog';
-                dialog.className = 'dialog';
-                dialog.setAttribute('aria-modal', true);
-                dialog.setAttribute('aria-live', 'polite');
-                dialog.innerHTML =
-                    '<div class="dialog-content"></div><button id="close-dialog" aria-label="closes defintion dialog">Close</button>';
-                document.body.appendChild(dialog);
-
-                const closeDialogButton =
-                    document.getElementById('close-dialog');
-
-                closeDialogButton.addEventListener('click', () => {
-                    dialog.close();
-                    setDialogWideState(false);
-                    setDialogPinToTopState(false);
-                });
-
-                dialog.addEventListener('close', () => {
-                    setDialogWideState(false);
-                    setDialogPinToTopState(false);
-                    setBodyScrollLock(false);
-                });
-
-                dialog.addEventListener('click', closeDialogOnBackdropClick);
-                dialog.addEventListener('submit', handleProtectedAreaSubmit);
-            }
-
-        }
+        window.digmodInitializeDefinitionExperience =
+            initializeDefinitionExperience;
 
         // Glossary list processor.
         const glossaryList = document.querySelector('.glossary-results ul');

@@ -97,7 +97,6 @@ body.glossary {
 }
 
 .glossary-tag a {
-	display: contents;
 	background: $white;
 	cursor: not-allowed;
 	padding: 0.25rem 0.5rem;
@@ -118,21 +117,23 @@ a.icon-definition.icon-definition {
 		&::after {
 			border: 1.5px solid currentcolor;
 			border-radius: 50%;
-			content: "?";
 			color: currentcolor;
+			content: "i";
 			display: inline-flex;
 			justify-content: center;
 			align-items: center;
 			line-height: 1;
+			font-family: monospace;
 			font-weight: bold;
-			font-style: normal;
+			font-style: italic;
 			width: 0.85rem;
 			height: 0.85rem;
-			font-size: 0.66rem;
+			font-size: 0.6rem;
 			vertical-align: middle;
 			margin-left: 0.25rem;
 			position: relative;
-			top: -0.1rem;
+			top: 0;
+			opacity: 0.66;
 		}
 	}
 

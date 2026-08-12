@@ -393,6 +393,17 @@ body:has(.searchwp-live-search-results[aria-expanded="true"]) .live-search-extra
 	padding-block: 0.5rem;
 	font-size: 1rem;
 
+	.flex-list-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem;
+		padding: 1rem;
+
+		li {
+			list-style: none;
+		}
+	}
+
 	.popular-searches-header {
 		display: inline-block;
 		font-size: 1rem;

@@ -2,11 +2,13 @@
   "name": "digimod-block-theme-supplemental",
   "author": "Nate King",
   "private": true,
-  "version": "1.4.0",
+  "version": "1.4.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build:watch": "vite build --watch",
+    "watch:vite": "vite build --watch",
+    "watch:admin": "wp-scripts start 'Src/admin.js' --output-path=dist-plugin",
+    "build:watch": "concurrently \"npm:watch:vite\" \"npm:watch:admin\"",
     "build:vite": "vite build",
     "build:admin": "wp-scripts build 'Src/admin.js' --output-path=dist-plugin",
     "build": "npm run build:vite && npm run build:admin",
@@ -17,7 +19,7 @@
     "fix:js": "eslint 'scripts/**/*.js' --fix",
     "preview": "vite preview",
     "test": "vitest --run",
-    "start": "wp-scripts start 'Src/admin.js' --output-path=dist-plugin"
+    "start": "npm run watch:admin"
   },
   "dependencies": {
     "vue": "^3.4.19"
@@ -29,6 +31,7 @@
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/eslint-config-prettier": "^7.1.0",
     "@wordpress/scripts": "^26.19.0",
+    "concurrently": "^9.2.1",
     "eslint": "^8.39.0",
     "eslint-plugin-vue": "^9.11.0",
     "jsdom": "^21.1.0",

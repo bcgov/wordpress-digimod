@@ -45,7 +45,7 @@ const digitalGovSearch = () => {
   
 		if (searchFieldContainer.classList.contains('hidden')) {
 		  // Show container
-		  body.style.position = 'fixed';
+		  // body.style.position = 'fixed';
 		  searchFieldContainer.classList.remove('hidden');
 		  searchFieldContainer.style.display = 'block';
 		  toggleSearchBtn.classList.add('close');
