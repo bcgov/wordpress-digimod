@@ -1,5 +1,15 @@
 <template>
   <div ref="appRoot" class="digimod-glossary">
+
+    <div class='is-small-screen intro'>
+      <component :is="headingCascade.title" class="digimod-glossary__title">{{ title }}</component>
+      <div v-if="intro" class="digimod-glossary__intro" v-html="intro"></div>
+
+      <p v-if="!isLoading && filteredEntries.length > 0" class="digimod-glossary__count" aria-live="polite">
+            {{ filteredEntries.length }} of {{ entries.length }} terms showing
+      </p>
+    </div>
+
     <div class="digimod-glossary__layout">
       <aside class="digimod-glossary__sidebar">
         <section class="digimod-glossary__panel is-flex-row">
@@ -57,12 +67,14 @@
       </aside>
 
       <div class="digimod-glossary__content">
-        <component :is="headingCascade.title" class="digimod-glossary__title">{{ title }}</component>
-        <div v-if="intro" class="digimod-glossary__intro" v-html="intro"></div>
-
-        <p v-if="!isLoading && filteredEntries.length > 0" class="digimod-glossary__count" aria-live="polite">
-              {{ filteredEntries.length }} of {{ entries.length }} terms showing
-        </p>
+        <div class='is-large-screen'>
+          <component :is="headingCascade.title" class="digimod-glossary__title">{{ title }}</component>
+          <div v-if="intro" class="digimod-glossary__intro" v-html="intro"></div>
+  
+          <p v-if="!isLoading && filteredEntries.length > 0" class="digimod-glossary__count" aria-live="polite">
+                {{ filteredEntries.length }} of {{ entries.length }} terms showing
+          </p>
+        </div>
 
         <div v-if="groupedEntries.length > 0" class="digimod-glossary__results">
           <section v-for="group in groupedEntries" :id="letterId(group.letter)" :key="group.letter"
@@ -434,6 +446,8 @@ onMounted(async () => {
 }
 
 .digimod-glossary__sidebar {
+  border: 1px solid #ccc;
+  border-radius: 1rem;
   display: grid;
   gap: var(--glossary-panel-gap);
   align-content: start;
@@ -694,13 +708,31 @@ onMounted(async () => {
   }
 }
 
+.is-large-screen {
+    display: none;
+}
+
+.is-small-screen.intro {
+  margin-block-end: 2rem;
+}
+
 @media (min-width: 900px) {
+
+  .is-large-screen {
+    display: block;
+  }
+
+  .is-small-screen {
+    display: none;
+  }
+
   .digimod-glossary__layout {
     align-items: start;
     grid-template-columns: minmax(220px, 25%) minmax(0, 1fr);
   }
 
   .digimod-glossary__sidebar {
+    border: none;
     position: sticky;
     top: 2rem;
   }
