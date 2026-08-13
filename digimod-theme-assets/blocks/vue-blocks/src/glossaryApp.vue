@@ -83,7 +83,7 @@
               <component :is="headingCascade.letter" class="glossary-inline-letter">{{ group.letter }}</component>
               <div class="glossary-entry">
                 <article v-for="entry in group.entries" :key="entry.id"
-                  class="digimod-glossary__entry has-secondary-accent-background-color has-background">
+                  class="digimod-glossary__entry has-background">
                   <component :is="headingCascade.entry" :id="entry.slug" class="digimod-glossary__term">{{ entry.title }}</component>
                   <div class="entry-content glossary-content digimod-glossary__entry-content" v-html="entry.content"></div>
                   <ul v-if="entry.categories.length > 0" class="digimod-glossary__entry-tags taxonomy-glossary_category wp-block-post-terms"
@@ -608,7 +608,7 @@ onMounted(async () => {
 }
 
 .digimod-glossary__title {
-  color: var(--wp--preset--color--primary-brand, currentcolor);
+  color: var(--bcds-typography-color-primary, currentcolor);
   font-size: 2rem;
   font-weight: 700;
   margin: 0;
@@ -618,7 +618,7 @@ onMounted(async () => {
 
 .glossary-inline-letter {
   border-bottom: 1px solid #d3d3d3;
-  color: var(--wp--preset--color--primary-brand, currentcolor);
+  color: var(--bcds-typography-color-primary, currentcolor);
   font-size: 1.75rem;
   font-weight: 700;
   margin: 0;
@@ -633,12 +633,13 @@ onMounted(async () => {
 }
 
 .digimod-glossary__entry {
+  background-color: var(--bcds-surface-brand-blue-10, #F1F8FE);
   border-radius: 0.25rem;
   padding: 1rem;
 }
 
 .digimod-glossary__term {
-  color: var(--wp--preset--color--primary-brand, currentcolor);
+  color: var(--bcds-typography-color-primary, currentcolor);
   font-size: clamp(0.984rem, 0.984rem + ((1vw - 0.2rem) * 0.817), 1.5rem);
   font-weight: 700;
   margin: 0 0 0.5rem;
