@@ -25,7 +25,7 @@ case $CHOICE in
   1) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
   2) MAJOR=$MAJOR ; MINOR=$((MINOR + 1)); PATCH=0 ;;
   3) MAJOR=$MAJOR ; MINOR=$MINOR; PATCH=$((PATCH + 1)) ;;
-  4) echo "You chose not to make any changes to the version."; exit 0 ;;
+  4|"") echo "You chose not to make any changes to the version."; exit 0 ;;
   *) echo "Invalid choice. Exiting."; exit 1 ;;
 esac
 

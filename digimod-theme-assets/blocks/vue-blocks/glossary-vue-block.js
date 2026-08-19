@@ -15,7 +15,10 @@ const APP_BLOCK_CLASS = 'digimod-glossary-block';
 const HEADING_LEVELS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 const ALLOWED_HTML_TAGS = new Set(['p', 'div', 'span', 'strong', 'br', 'a']);
 const ALLOWED_HTML_ATTRIBUTES = {
-    a: new Set(['href', 'target', 'rel', 'title', 'aria-label']),
+    p: new Set(['style']),
+    div: new Set(['style']),
+    span: new Set(['style']),
+    a: new Set(['href', 'target', 'rel', 'title', 'aria-label', 'style']),
 };
 const TITLE_HEADING_OPTIONS = [
     { label: 'H1', value: 'h1' },

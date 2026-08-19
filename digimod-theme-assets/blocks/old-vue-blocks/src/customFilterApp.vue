@@ -137,17 +137,7 @@
   outline-offset: -1px;
 }
 
-.card-title-link:hover {
-  outline: 0 !important;
-  border-radius: 1rem !important;
-}
-
-.card-title-link:hover .custom-card-content {
-  outline: 2px solid var(--wp--preset--color--primary-brand);
-}
-
-.clear-filters {
-  background: unset;
+:is(button).clear-filters {
   border: unset;
   border-radius: 1rem;
   color: var(--wp--preset--color--secondary-brand);
@@ -157,11 +147,20 @@
   overflow: hidden;
   font-size: 1rem;
 }
-.clear-filters:hover,
-.clear-filters:focus-visible {
+
+:is(button).clear-filters:is(:hover, :focus-visible) {
   outline: 2px solid var(--wp--preset--color--gray-80);
   outline-offset: 0px;
   background-color: #fcfcfc;
+}
+
+.card-title-link:hover {
+  outline: 0 !important;
+  border-radius: 1rem !important;
+}
+
+.card-title-link:hover .custom-card-content {
+  outline: 2px solid var(--wp--preset--color--primary-brand);
 }
 
 .filter-card {

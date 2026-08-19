@@ -107,8 +107,9 @@ body.glossary {
 	border: 1px solid currentcolor;
 }
 
-a.icon-definition.icon-definition {
-	text-decoration-style: dashed;
+.glossary-content a.icon-definition.icon-definition {
+	color: currentcolor;
+	text-decoration: currentcolor underline 2px dotted;
 	-webkit-box-decoration-break: clone;
 	box-decoration-break: clone;
 
@@ -134,14 +135,34 @@ a.icon-definition.icon-definition {
 			position: relative;
 			top: 0;
 			opacity: 0.66;
+
+		}
+
+		&:is(:hover, :focus-visible)::after {
+			opacity: 1;
 		}
 	}
 
-	&:is(:hover, :focus-visible) {
+	&:hover {
+		text-decoration: currentcolor underline 2px solid;
+		background-color: color-mix(in srgb, currentcolor 10%, transparent);
+		outline: 4px solid color-mix(in srgb, currentcolor 10%, transparent);
+		border-radius: 3px;
+
+		&::after {
+			opacity: 1;
+		}
+	}
+
+	&:focus-visible {
 		text-decoration: currentcolor underline 2px dotted;
 		outline: 2px solid currentcolor;
 		outline-offset: 2px;
 		border-radius: 3px;
+
+		&::after {
+			opacity: 1;
+		}
 	}
 
 }

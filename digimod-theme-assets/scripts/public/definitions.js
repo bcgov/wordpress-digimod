@@ -11,6 +11,11 @@ export const digmodPluginDefnitions = () => {
         const vueDefinitionLinkSelector = 'a:not([href*="#top"])';
         const protectedAreaBlockSelector = '.cleanbcdx-protected-area-block';
         const protectedAreaFormSelector = '.cleanbcdx-protected-area__form';
+        const glossaryPath = '/glossary';
+        const glossaryApiPath = '/wp-json/digimod/v1/glossary?_fields=link';
+        const glossaryDefinitionUrlsStorageKey =
+            'digimodGlossaryDefinitionUrls';
+        let glossaryDefinitionUrlsPromise = null;
 
         const getDefinitionUrl = (triggerElement) => {
             if (!triggerElement?.href) {
@@ -23,6 +28,114 @@ export const digmodPluginDefnitions = () => {
             } catch {
                 return '';
             }
+        };
+
+        const normalizeDefinitionUrl = (url) => {
+            if (!url) {
+                return '';
+            }
+
+            try {
+                const normalizedUrl = new window.URL(url, window.location.href);
+
+                normalizedUrl.hash = '';
+                normalizedUrl.search = '';
+
+                const normalizedPath =
+                    normalizedUrl.pathname.replace(/\/+$/, '') || '/';
+
+                return `${normalizedUrl.origin}${normalizedPath}`;
+            } catch {
+                return '';
+            }
+        };
+
+        const getCachedGlossaryDefinitionUrls = () => {
+            const cachedData = window.sessionStorage.getItem(
+                glossaryDefinitionUrlsStorageKey
+            );
+
+            if (!cachedData) {
+                return null;
+            }
+
+            try {
+                const parsedData = JSON.parse(cachedData);
+
+                if (!Array.isArray(parsedData)) {
+                    throw new Error('Invalid glossary definition URL cache.');
+                }
+
+                return new Set(
+                    parsedData
+                        .map((definitionUrl) =>
+                            normalizeDefinitionUrl(definitionUrl)
+                        )
+                        .filter(Boolean)
+                );
+            } catch {
+                window.sessionStorage.removeItem(
+                    glossaryDefinitionUrlsStorageKey
+                );
+
+                return null;
+            }
+        };
+
+        const cacheGlossaryDefinitionUrls = (definitionUrls) => {
+            if (!(definitionUrls instanceof Set)) {
+                return;
+            }
+
+            window.sessionStorage.setItem(
+                glossaryDefinitionUrlsStorageKey,
+                JSON.stringify(Array.from(definitionUrls))
+            );
+        };
+
+        const fetchGlossaryDefinitionUrls = async () => {
+            const response = await fetch(glossaryApiPath);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const glossaryEntries = await response.json();
+            const glossaryDefinitionUrls = new Set(
+                (Array.isArray(glossaryEntries) ? glossaryEntries : [])
+                    .map((entry) => normalizeDefinitionUrl(entry?.link))
+                    .filter(Boolean)
+            );
+
+            cacheGlossaryDefinitionUrls(glossaryDefinitionUrls);
+
+            return glossaryDefinitionUrls;
+        };
+
+        const getGlossaryDefinitionUrls = () => {
+            if (glossaryDefinitionUrlsPromise) {
+                return glossaryDefinitionUrlsPromise;
+            }
+
+            const cachedGlossaryDefinitionUrls =
+                getCachedGlossaryDefinitionUrls();
+
+            if (cachedGlossaryDefinitionUrls) {
+                glossaryDefinitionUrlsPromise = Promise.resolve(
+                    cachedGlossaryDefinitionUrls
+                );
+
+                return glossaryDefinitionUrlsPromise;
+            }
+
+            glossaryDefinitionUrlsPromise = fetchGlossaryDefinitionUrls().catch(
+                (error) => {
+                    glossaryDefinitionUrlsPromise = null;
+                    throw error;
+                }
+            );
+
+            return glossaryDefinitionUrlsPromise;
         };
 
         const contentHasProtectedArea = (content) => {
@@ -57,6 +170,47 @@ export const digmodPluginDefnitions = () => {
             };
         };
 
+        const buildDefinitionDialogData = async (
+            definitionData,
+            fallbackUrl = '',
+            glossaryDefinitionUrlsRequest = null
+        ) => {
+            const resolvedDefinitionUrl = definitionData?.url || fallbackUrl;
+
+            if ('boolean' === typeof definitionData?.showInGlossary) {
+                return {
+                    ...definitionData,
+                    url: resolvedDefinitionUrl,
+                };
+            }
+
+            try {
+                const glossaryDefinitionUrls = await (
+                    glossaryDefinitionUrlsRequest ||
+                    getGlossaryDefinitionUrls()
+                );
+
+                return {
+                    ...definitionData,
+                    url: resolvedDefinitionUrl,
+                    showInGlossary: glossaryDefinitionUrls.has(
+                        normalizeDefinitionUrl(resolvedDefinitionUrl)
+                    ),
+                };
+            } catch (error) {
+                console.error(
+                    'Error fetching glossary definition URLs:',
+                    error
+                );
+
+                return {
+                    ...definitionData,
+                    url: resolvedDefinitionUrl,
+                    showInGlossary: false,
+                };
+            }
+        };
+
         const getCachedDefinitionData = (url) => {
             const cachedData = window.sessionStorage.getItem(url);
 
@@ -69,7 +223,9 @@ export const digmodPluginDefnitions = () => {
 
                 if (
                     'string' !== typeof parsedData?.title ||
-                    'string' !== typeof parsedData?.content
+                    'string' !== typeof parsedData?.content ||
+                    ('showInGlossary' in parsedData &&
+                        'boolean' !== typeof parsedData.showInGlossary)
                 ) {
                     window.sessionStorage.removeItem(url);
                     return null;
@@ -102,6 +258,7 @@ export const digmodPluginDefnitions = () => {
                 JSON.stringify({
                     title: definitionData.title,
                     content: definitionData.content,
+                    showInGlossary: Boolean(definitionData.showInGlossary),
                 })
             );
         };
@@ -131,6 +288,20 @@ export const digmodPluginDefnitions = () => {
                 .forEach((form) => {
                     form.setAttribute('action', definitionUrl);
                 });
+        };
+
+        const getGlossaryFooterMarkup = (showInGlossary) => {
+            if (!showInGlossary) {
+                return '';
+            }
+
+            return (
+                '<footer class="definition-dialog-footer">' +
+                '<a class="definition-dialog-footer__link" href="' +
+                glossaryPath +
+                '">Explore the glossary</a>' +
+                '</footer>'
+            );
         };
 
         const setDialogWideState = (isWide) => {
@@ -230,18 +401,35 @@ export const digmodPluginDefnitions = () => {
                 const cachedData = getCachedDefinitionData(url);
 
                 if (cachedData) {
-                    displayContent(cachedData.title, cachedData.content, url);
+                    const definitionDialogData =
+                        await buildDefinitionDialogData(cachedData, url);
+
+                    displayContent(
+                        definitionDialogData.title,
+                        definitionDialogData.content,
+                        definitionDialogData.url,
+                        definitionDialogData.showInGlossary
+                    );
                 } else {
                     setDefinitionLoadingState(triggerElement, true);
 
                     try {
+                        const glossaryDefinitionUrls =
+                            getGlossaryDefinitionUrls();
                         const definitionData = await fetchDefinitionData(url);
+                        const definitionDialogData =
+                            await buildDefinitionDialogData(
+                                definitionData,
+                                url,
+                                glossaryDefinitionUrls
+                            );
 
-                        cacheDefinitionData(url, definitionData);
+                        cacheDefinitionData(url, definitionDialogData);
                         displayContent(
-                            definitionData.title,
-                            definitionData.content,
-                            definitionData.url
+                            definitionDialogData.title,
+                            definitionDialogData.content,
+                            definitionDialogData.url,
+                            definitionDialogData.showInGlossary
                         );
                     } catch (error) {
                         console.error('Error fetching content:', error);
@@ -373,6 +561,7 @@ export const digmodPluginDefnitions = () => {
          * @param {string} title - The title to be displayed in the dialog.
          * @param {string} content - The HTML content to be displayed in the dialog.
          * @param {string} definitionUrl - The definition page URL used for protected-area form submissions.
+         * @param {boolean} showInGlossary - Whether the glossary footer link should be shown.
          *
          * @description
          * - Updates the content of the dialog's `.dialog-content` element.
@@ -380,7 +569,12 @@ export const digmodPluginDefnitions = () => {
          * - Calls `showDialog()` to display the dialog.
          * - Moves focus to the title (`<h2>` element) after rendering.
          */
-        const displayContent = (title, content, definitionUrl = '') => {
+        const displayContent = (
+            title,
+            content,
+            definitionUrl = '',
+            showInGlossary = false
+        ) => {
             const dialog = document.getElementById('dialog');
             const dialogContent = document.querySelector(
                 '#dialog .dialog-content'
@@ -391,10 +585,17 @@ export const digmodPluginDefnitions = () => {
             }
 
             dialog.dataset.definitionUrl = definitionUrl;
+            dialog.dataset.definitionShowInGlossary = showInGlossary
+                ? 'true'
+                : 'false';
             setDialogWidth('true' === dialog.dataset.definitionWide);
             setDialogPinned('true' === dialog.dataset.definitionPinned);
             dialogContent.innerHTML =
-                '<h2 tabindex="0">' + title + '</h2>' + content;
+                '<h2 tabindex="0">' +
+                title +
+                '</h2>' +
+                content +
+                getGlossaryFooterMarkup(showInGlossary);
 
             initializeDefinitionLinks(dialogContent);
             syncProtectedAreaForms(dialogContent, definitionUrl);
@@ -475,19 +676,23 @@ export const digmodPluginDefnitions = () => {
             }
 
             try {
-                const definitionData = await fetchDefinitionData(
+                const glossaryDefinitionUrls = getGlossaryDefinitionUrls();
+                const definitionData = await fetchDefinitionData(definitionUrl, {
+                    method: 'POST',
+                    body: new window.FormData(form),
+                });
+                const definitionDialogData = await buildDefinitionDialogData(
+                    definitionData,
                     definitionUrl,
-                    {
-                        method: 'POST',
-                        body: new window.FormData(form),
-                    }
+                    glossaryDefinitionUrls
                 );
 
-                cacheDefinitionData(definitionUrl, definitionData);
+                cacheDefinitionData(definitionUrl, definitionDialogData);
                 displayContent(
-                    definitionData.title,
-                    definitionData.content,
-                    definitionData.url
+                    definitionDialogData.title,
+                    definitionDialogData.content,
+                    definitionDialogData.url,
+                    definitionDialogData.showInGlossary
                 );
             } catch (error) {
                 console.error(

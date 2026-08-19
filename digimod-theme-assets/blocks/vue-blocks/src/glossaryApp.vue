@@ -547,6 +547,29 @@ onMounted(async () => {
   gap: 0.5rem;
 }
 
+:is(button).clear-filters {
+  border: unset;
+  border-radius: 1rem;
+  color: var(--wp--preset--color--secondary-brand);
+  cursor: pointer;
+  padding: 0 0.66rem;
+  margin: 0 0.33rem;
+  overflow: hidden;
+  font-size: 1rem;
+}
+
+:is(button[disabled]).clear-filters {
+  pointer-events: none;
+}
+
+:is(button).clear-filters:is(:hover, :focus-visible) {
+  outline: 2px solid var(--wp--preset--color--secondary-brand);
+  outline-offset: 2px;
+  background-color: var(--wp--preset--color--secondary-brand);
+  color: var(--wp--preset--color--white, #fff) !important;
+  text-decoration: none !important;
+}
+
 .digimod-glossary__filters .tag {
   border-radius: 999px;
   font-size: 0.9rem;

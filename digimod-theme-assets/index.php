@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DIGIMOD - Block Theme Frontend Enhancements
  * Description: A plugin to load custom scripts, styles and theme settings to augment the default BCGov Block Theme capabilities
- * Version: 1.4.1
+ * Version: 1.4.2
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -348,6 +348,56 @@ function digimod_enqueue_vue_bundle_assets( $plugin_dir, $plugin_version ) {
 }
 
 /**
+ * Extend the glossary block safe CSS property allowlist.
+ *
+ * WordPress sanitizes inline style values separately from allowed tag
+ * attributes, so this keeps commonly used logical and layout properties
+ * available on visitor-facing output.
+ *
+ * @param array $styles Allowed safe CSS properties.
+ *
+ * @return array
+ */
+function digimod_glossary_safe_style_css( $styles ) {
+    $glossary_styles = array(
+        'align-content',
+        'align-items',
+        'align-self',
+        'column-gap',
+        'gap',
+        'inset',
+        'inset-block',
+        'inset-block-end',
+        'inset-block-start',
+        'inset-inline',
+        'inset-inline-end',
+        'inset-inline-start',
+        'justify-content',
+        'justify-items',
+        'justify-self',
+        'margin-block',
+        'margin-block-end',
+        'margin-block-start',
+        'margin-inline',
+        'margin-inline-end',
+        'margin-inline-start',
+        'padding-block',
+        'padding-block-end',
+        'padding-block-start',
+        'padding-inline',
+        'padding-inline-end',
+        'padding-inline-start',
+        'place-content',
+        'place-items',
+        'place-self',
+        'row-gap',
+        'text-wrap',
+    );
+
+    return array_unique( array_merge( $styles, $glossary_styles ) );
+}
+
+/**
  * Sanitize limited glossary block HTML input.
  *
  * @param string $content Glossary block field content.
@@ -370,19 +420,32 @@ function digimod_prepare_limited_glossary_markup( $content ) {
     }
 
     $allowed_tags = array(
-        'p'    => array(),
-        'div'  => array(),
-        'span' => array(),
+        'p'    => array(
+            'style' => true,
+        ),
+        'div'  => array(
+            'style' => true,
+        ),
+        'span' => array(
+            'style' => true,
+        ),
         'br'   => array(),
         'a'    => array(
             'href'   => true,
             'target' => true,
             'rel'    => true,
             'title'  => true,
+            'style'  => true,
         ),
     );
 
-    return wp_kses( $content, $allowed_tags, array( 'http', 'https', 'mailto', 'tel' ) );
+    add_filter( 'safe_style_css', 'digimod_glossary_safe_style_css' );
+
+    $sanitized_content = wp_kses( $content, $allowed_tags, array( 'http', 'https', 'mailto', 'tel' ) );
+
+    remove_filter( 'safe_style_css', 'digimod_glossary_safe_style_css' );
+
+    return $sanitized_content;
 }
 
 

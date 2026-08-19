@@ -11,33 +11,47 @@
 
 a.icon-definition.icon-definition {
 	color: currentcolor;
-	text-decoration-style: dashed;
-	text-decoration-color: currentcolor;
+	text-decoration: currentcolor underline 2px dotted;
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
 
 	span.last-word {
 
 		&::after {
 			border: 1.5px solid currentcolor;
 			border-radius: 50%;
-			content: "?";
 			color: currentcolor;
+			content: "i";
 			display: inline-flex;
 			justify-content: center;
 			align-items: center;
 			line-height: 1;
+			font-family: monospace;
 			font-weight: bold;
-			font-style: normal;
+			font-style: italic;
 			width: 0.85rem;
 			height: 0.85rem;
-			font-size: 0.66rem;
+			font-size: 0.6rem;
 			vertical-align: middle;
 			margin-left: 0.25rem;
 			position: relative;
-			top: -0.1rem;
+			top: 0;
+			opacity: 0.66;
+		}
+
+		&:is(:hover, :focus-visible)::after {
+			opacity: 1;
 		}
 	}
 
-	&:is(:hover, :focus-visible) {
+	&:hover {
+		text-decoration: currentcolor underline 2px solid;
+		background-color: color-mix(in srgb, currentcolor 10%, transparent);
+		outline: 4px solid color-mix(in srgb, currentcolor 10%, transparent);
+		border-radius: 3px;
+	}
+
+	&:focus-visible {
 		text-decoration: currentcolor underline 2px dotted;
 		outline: 2px solid currentcolor;
 		outline-offset: 2px;
@@ -113,6 +127,26 @@ body:has(#dialog[open]) {
 		}
 	}
 
+	.definition-dialog-footer {
+		// border-top: 1px solid #d3d3d3;
+		margin-block-start: 0;
+		margin-block-end: -1.5rem;
+		padding-block-start: 1rem;
+
+		.definition-dialog-footer__link {
+			display: inline-flex;
+			font-size: 1.05rem;
+			font-weight: bold;
+			text-underline-offset: 0.15rem;
+
+			&:is(:hover, :focus-visible) {
+				outline: 2px solid currentcolor;
+				outline-offset: 2px;
+				border-radius: 0.2rem;
+			}
+		}
+	}
+
 	#close-dialog {
 		position: absolute;
 		top: 1rem;
@@ -141,6 +175,11 @@ body:has(#dialog[open]) {
 			cursor: pointer;
 		}
 	}
+}
+
+/* Fallback: only needed for footer links on pages with a Glossary block */
+body:has([data-vue-app="glossary"]) #dialog footer.definition-dialog-footer {
+	display: none !important;
 }
 
 .glossary-content *:first-child {
