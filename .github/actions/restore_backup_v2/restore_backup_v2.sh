@@ -66,8 +66,12 @@ set -e
 echo "${CMD1_EXIT_CODE}"
 echo "${CMD1_RESULTS}"
 
-    
+
+
+
 if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then 
+    echo "Using environment: $ENVIRONMENT"
+
     case "$ENVIRONMENT" in
         "dev")
         token=$DEV_TOKEN
@@ -100,7 +104,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
     echo "::group::Login to target OC"
     #Sometimes oc login will fail to connect, so lets re-try on failure.
     set +e
-    oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN
+    oc login $OPENSHIFT_SERVER --token=$token
     ret=$?
     set -e
     if [ $ret -eq 0 ]; then
@@ -113,7 +117,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         sleep 10
 
         # The command was not successful, lets try again
-        oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN
+        oc login $OPENSHIFT_SERVER --token=$token
 
     fi
 

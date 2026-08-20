@@ -45,29 +45,6 @@ echo "Getting list of backups for ${PROJECT_NAME}"
 echo "Searching for: ${FILENAME_SEARCH}"
 
 
-# echo "::group::Login to OC"
-#Sometimes oc login will fail to connect, so lets re-try on failure.
-# set +e
-# oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN
-# ret=$?
-# set -e
-# if [ $ret -eq 0 ]; then
-#     # The command was successful
-#     echo "Login successful"
-
-# else
-#     echo "Re-trying oc-login in 10s..."
-
-#     sleep 10
-
-#     # The command was not successful, lets try again
-#     oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN
-
-# fi
-
-# echo "::endgroup::"
-
-
 CMD_RESULTS=$(rclone lsf :s3:webbackup/oc-sites-bk --include "${FILENAME_SEARCH}" --files-only --s3-provider Other --s3-access-key-id "webbkaki" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "https://digital-gov.objectstore.gov.bc.ca"  --contimeout "15s" --retries 3 | sort | tail -n 20 2>&1)
 CMD_EXIT_CODE=$?
 

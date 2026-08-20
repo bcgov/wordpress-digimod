@@ -40,7 +40,7 @@ echo "::group::Login to OC"
 
 #Sometimes oc login will fail to connect, so lets re-try on failure.
 set +e
-oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN
+oc login $OPENSHIFT_SERVER --token=$token
 ret=$?
 set -e
 if [ $ret -eq 0 ]; then
@@ -53,7 +53,7 @@ else
     sleep 10
 
     # The command was not successful, lets try again
-    oc login $OPENSHIFT_SERVER --token=$PROD_TOKEN
+    oc login $OPENSHIFT_SERVER --token=$token
 
 fi
 
