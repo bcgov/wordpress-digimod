@@ -66,6 +66,8 @@ NAMESPACE="$OC_NAMEPLATE-$ENVIRONMENT"
 OC_ENV=$ENVIRONMENT
 OC_SITE_NAME=$PROJECT_NAME-$SITE_NAME
 
+echo "OC Nameplate: $OC_NAMEPLATE"
+echo "OC Site Name: $OC_SITE_NAME"
 
 WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
