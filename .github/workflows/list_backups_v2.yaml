@@ -22,19 +22,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
           
-      - name: Install Rclone
-        run: |
-          if command -v rclone &> /dev/null; then
-            echo "rclone is already installed"
-          else
-            echo "rclone not found, installing..."
-            sudo -v ; curl https://rclone.org/install.sh | sudo bash ; rclone config touch
-          fi
-        shell: bash
+      # - name: Install Rclone
+      #   run: |
+      #     if command -v rclone &> /dev/null; then
+      #       echo "rclone is already installed"
+      #     else
+      #       echo "rclone not found, installing..."
+      #       sudo -v ; curl https://rclone.org/install.sh | sudo bash ; rclone config touch
+      #     fi
+      #   shell: bash
 
-      - name: Verify Installation
-        run: rclone version
-        shell: bash
+      # - name: Verify Installation
+      #   run: rclone version
+      #   shell: bash
 
       # - name: Install OC CLI
       #   run: |
