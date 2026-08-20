@@ -68,10 +68,7 @@ runs:
         CMD_EXIT_CODE=$?
         set -e
 
-        if [[ $CMD_EXIT_CODE -eq 0 ]]; then
-
-        else
-
+        if [[ $CMD_EXIT_CODE -ne 0 ]]; then
           echo "::endgroup::" #close the group started in list_backups_v2.sh
 
           echo "Error listing backups"
