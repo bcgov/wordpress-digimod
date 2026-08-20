@@ -12,6 +12,7 @@ DEV_TOKEN=$5
 TEST_TOKEN=$6
 PROD_TOKEN=$7
 S3_TOKEN=$8
+OC_NAMEPLATE=$9
 
 
 echo "Accessing environment: $ENVIRONMENT"
