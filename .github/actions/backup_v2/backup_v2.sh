@@ -12,7 +12,12 @@ DEV_TOKEN=$5
 TEST_TOKEN=$6
 PROD_TOKEN=$7
 S3_TOKEN=$8
+OC_NAMEPLATE=$9
 
+
+S3_AKI="webbkaki"
+S3_ENDPOINT_URL="https://digital-gov.objectstore.gov.bc.ca"
+S3_BUCKET_NAME="webbackup"
 
 echo "Backing up from environment: $ENVIRONMENT"
 case "$ENVIRONMENT" in
@@ -57,7 +62,7 @@ echo "::endgroup::"
 
 
 
-NAMESPACE="f181a8-$ENVIRONMENT"
+NAMESPACE="$OC_NAMEPLATE-$ENVIRONMENT"
 OC_ENV=$ENVIRONMENT
 OC_SITE_NAME=$PROJECT_NAME-$SITE_NAME
 
@@ -141,7 +146,7 @@ echo "::endgroup::"
 rm files.tar.gz          
 
 echo "Uploading backup archive to BCGov S3"
-CMD4_RESULTS=$(rclone copy ${BACKUP_FILENAME} :s3:webbackup/oc-sites-bk/ --s3-provider Other --s3-access-key-id "webbkaki" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "https://digital-gov.objectstore.gov.bc.ca" -P --stats-log-level NOTICE --stats 60s --contimeout "15s" --retries 3 2>&1)
+CMD4_RESULTS=$(rclone copy ${BACKUP_FILENAME} :s3:$S3_BUCKET_NAME/oc-sites-bk/ --s3-provider Other --s3-access-key-id "$S3_AKI" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "$S3_ENDPOINT_URL" -P --stats-log-level NOTICE --stats 60s --contimeout "15s" --retries 3 2>&1)
 CMD4_EXIT_CODE=$?
 echo "${CMD4_RESULTS}"
 
@@ -152,8 +157,8 @@ BACKUP_DB_FILENAME=${OC_SITE_NAME}_${OC_ENV}_${timestamp}_db-backup.tar
 mv db.sql.gz ${BACKUP_DB_FILENAME}
    
 
-echo "Uploading backup database arvhice to BCGov S3"
-CMD5_RESULTS=$(rclone copy ${BACKUP_DB_FILENAME} :s3:webbackup/oc-sites-bk/ --s3-provider Other --s3-access-key-id "webbkaki" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "https://digital-gov.objectstore.gov.bc.ca" -P --stats-log-level NOTICE --stats 60s --contimeout "15s" --retries 3 2>&1)
+echo "Uploading backup database archive to BCGov S3"
+CMD5_RESULTS=$(rclone copy ${BACKUP_DB_FILENAME} :s3:$S3_BUCKET_NAME/oc-sites-bk/ --s3-provider Other --s3-access-key-id "$S3_AKI" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "$S3_ENDPOINT_URL" -P --stats-log-level NOTICE --stats 60s --contimeout "15s" --retries 3 2>&1)
 CMD5_EXIT_CODE=$?
 echo "${CMD5_RESULTS}"
 
@@ -161,8 +166,8 @@ echo "${CMD5_RESULTS}"
 
 #Generate GH Actions summary
 echo "### Created Backup" >> $GITHUB_STEP_SUMMARY
-echo "Backup File: webbackup/oc-sites-bk/${BACKUP_FILENAME}" >> $GITHUB_STEP_SUMMARY
-echo "Backup File: webbackup/oc-sites-bk/${BACKUP_DB_FILENAME}" >> $GITHUB_STEP_SUMMARY
+echo "Backup File: $S3_BUCKET_NAME/oc-sites-bk/${BACKUP_FILENAME}" >> $GITHUB_STEP_SUMMARY
+echo "Backup File: $S3_BUCKET_NAME/oc-sites-bk/${BACKUP_DB_FILENAME}" >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
 echo "### Command Results: " >> $GITHUB_STEP_SUMMARY

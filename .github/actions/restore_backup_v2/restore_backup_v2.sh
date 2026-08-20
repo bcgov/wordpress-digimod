@@ -12,7 +12,12 @@ TEST_TOKEN=$6
 PROD_TOKEN=$7
 BACKUP_NUMBER=$8
 S3_TOKEN=$9
+OC_NAMEPLATE=$10
 
+
+S3_AKI="webbkaki"
+S3_ENDPOINT_URL="https://digital-gov.objectstore.gov.bc.ca"
+S3_BUCKET_NAME="webbackup"
 
 
 #only allow restore on prod to the -backup instances
@@ -28,7 +33,7 @@ fi
 
 #copy down the backup file from s3
 echo "Grabbing the backup filename for backup #$BACKUP_NUMBER"
-CMD_RESULTS=$(rclone lsf :s3:webbackup/oc-sites-bk --include "$PROJECT_NAME-prod_prod_*_backup.tar*" --files-only --s3-provider Other --s3-access-key-id "webbkaki" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "https://digital-gov.objectstore.gov.bc.ca"  --contimeout "15s" --retries 3 | sort | tail -n ${BACKUP_NUMBER} | sed -n "1p")
+CMD_RESULTS=$(rclone lsf :s3:$S3_BUCKET_NAME/oc-sites-bk --include "$PROJECT_NAME-prod_prod_*_backup.tar*" --files-only --s3-provider Other --s3-access-key-id "$S3_AKI" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "$S3_ENDPOINT_URL"  --contimeout "15s" --retries 3 | sort | tail -n ${BACKUP_NUMBER} | sed -n "1p")
 
 if [ -z "$CMD_RESULTS" ]; then
     echo "::error::Unknown backup file name: ${CMD_RESULTS}"
@@ -46,7 +51,7 @@ fi
 
 echo "Grabbing backup file: $S3_FILENAME"
 set +e
-CMD1_RESULTS=$(rclone copy :s3:webbackup/oc-sites-bk/$S3_FILENAME . --s3-provider Other --s3-access-key-id "webbkaki" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "https://digital-gov.objectstore.gov.bc.ca" -P --stats-log-level NOTICE --stats 60s 2>&1)
+CMD1_RESULTS=$(rclone copy :s3:$S3_BUCKET_NAME/oc-sites-bk/$S3_FILENAME . --s3-provider Other --s3-access-key-id "$S3_AKI" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "$S3_ENDPOINT_URL" -P --stats-log-level NOTICE --stats 60s 2>&1)
 CMD1_EXIT_CODE=$?
 set -e
 echo "${CMD1_EXIT_CODE}"
@@ -105,7 +110,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
     echo "::endgroup::"
 
 
-    NAMESPACE="f181a8-$ENVIRONMENT"
+    NAMESPACE="$OC_NAMEPLATE-$ENVIRONMENT"
     WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
     WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
@@ -198,7 +203,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         if [[ "$S3_FILENAME" != *".problem"* ]]; then
             #update the filename of the backup to mark it as such
             echo "Renaming the backup file to mark it as problematic"
-            rclone moveto :s3:webbackup/oc-sites-bk/$S3_FILENAME :s3:webbackup/oc-sites-bk/$S3_FILENAME.problem  --s3-provider Other --s3-access-key-id "webbkaki" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "https://digital-gov.objectstore.gov.bc.ca" -P --stats-log-level NOTICE --stats 60s
+            rclone moveto :s3:$S3_BUCKET_NAME/oc-sites-bk/$S3_FILENAME :s3:$S3_BUCKET_NAME/oc-sites-bk/$S3_FILENAME.problem  --s3-provider Other --s3-access-key-id "$S3_AKI" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "$S3_ENDPOINT_URL" -P --stats-log-level NOTICE --stats 60s
         fi
 
         exit 99

@@ -31,6 +31,10 @@ inputs:
   s3-token:
     description: 'BCGov S3 token'
     required: true
+  oc_nameplate:
+    description: 'OpenShift nameplate'
+    required: true
+
 runs:
   using: 'composite'
   steps:
@@ -51,5 +55,5 @@ runs:
     - name: Restore Backup
       run: |
         chmod +x ./.github/actions/restore_backup_v2/restore_backup_v2.sh
-        ./.github/actions/restore_backup_v2/restore_backup_v2.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.backup-number }}" "${{ inputs.s3-token }}"
+        ./.github/actions/restore_backup_v2/restore_backup_v2.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.backup-number }}" "${{ inputs.s3-token }}" "${{ inputs.oc_nameplate }}"
       shell: bash

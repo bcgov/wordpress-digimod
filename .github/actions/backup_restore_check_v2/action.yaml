@@ -25,6 +25,9 @@ inputs:
   prod-token:
     description: 'Prod token'
     required: true
+  oc_nameplate:
+    description: 'OpenShift nameplate'
+    required: true
 
 runs:
   using: 'composite'
@@ -34,7 +37,7 @@ runs:
         chmod +x ./.github/actions/backup_restore_check_v2/backup_restore_check_v2.sh
 
         set +e
-        ./.github/actions/backup_restore_check_v2/backup_restore_check_v2.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
+        ./.github/actions/backup_restore_check_v2/backup_restore_check_v2.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.oc_nameplate }}"
         CMD_EXIT_CODE=$?
         set -e
 

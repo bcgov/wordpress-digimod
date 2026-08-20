@@ -1,6 +1,6 @@
 # Manual+Scheduled workflow
 # This is the scheduled workflow to create site backups daily.
-name: Backup V2 BB
+name: Backup V2
 on:
   workflow_dispatch:
     inputs:
@@ -56,3 +56,4 @@ jobs:
           prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
           s3-token: "${{ secrets.BCGOV_S3_SECRET_ACCESS_KEY }}"
           restore-check: ${{ github.event.inputs.restore-check || true }}
+          oc_nameplate: "f181a8"

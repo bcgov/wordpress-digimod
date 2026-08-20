@@ -45,6 +45,7 @@ jobs:
           prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
           backup-number: ${{ github.event.inputs.backup-number }}
           s3-token: "${{ secrets.BCGOV_S3_SECRET_ACCESS_KEY }}"
+          oc_nameplate: "f181a8"
 
       - name: Backup Restore Check V2
         uses: ./.github/actions/backup_restore_check_v2
@@ -56,3 +57,4 @@ jobs:
           dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
           test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
           prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
+          oc_nameplate: "f181a8"
