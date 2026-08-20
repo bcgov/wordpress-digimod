@@ -7,11 +7,8 @@ on:
         required: true
         type: choice
         options:      
-        - cleanbcdx-bh
-        - cleanbcdx-ge
-        - cleanbcdx-bb
-        - cleanbc
-        default: 'cleanbcdx-bh'
+        - digital
+        default: 'digital'
 
       site-name:
         description: 'Site name'
