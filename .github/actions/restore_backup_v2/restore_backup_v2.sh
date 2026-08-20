@@ -93,6 +93,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         OC_SITE_NAME="$PROJECT_NAME-$SITE_NAME"
     fi
 
+
     echo "Deploying to the site $OC_SITE_NAME in $OC_ENV"
 
     # Log in to OpenShift
