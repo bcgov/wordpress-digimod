@@ -31,7 +31,7 @@ fi
 
 
 if [ "$OC_NAMEPLATE" = "c0cce6" ]; then
-	FILENAME_SEARCH="$PROJECT_NAME_prod_*_backup.tar*"
+	FILENAME_SEARCH="${PROJECT_NAME}_prod_*_backup.tar*"
 else
     FILENAME_SEARCH="$PROJECT_NAME-prod_prod_*_backup.tar*"
 fi

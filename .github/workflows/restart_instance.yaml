@@ -22,6 +22,11 @@ on:
         description: 'Site name'
         required: true
         default: 'test'
+
+env:
+  # Change this per project.
+  OC_NAMEPLATE: "c0cce6" 
+
 jobs:
   deploy:
     runs-on: ubuntu-22.04
@@ -62,7 +67,7 @@ jobs:
         esac
         echo "Restarting the site $OC_SITE_NAME in $ENVIRONMENT"
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token             #--insecure-skip-tls-verify=true
-        NAMESPACE="c0cce6-$ENVIRONMENT"
+        NAMESPACE="${{ env.OC_NAMEPLATE }}-$ENVIRONMENT"
         OC_ENV=$ENVIRONMENT
         DEPLOYMENT=$(oc get deployment -n $NAMESPACE -l app=wordpress,site=$OC_SITE_NAME -o jsonpath='{.items[0].metadata.name}')
 
