@@ -141,7 +141,6 @@ class GlossaryVueBlockEditorComponent extends Component {
             intro,
             searchToolsTitle,
             showAllLabel,
-            filterTitle,
             showTagCounts,
             browseTitle,
             suggestTitle,
@@ -188,13 +187,6 @@ class GlossaryVueBlockEditorComponent extends Component {
                             value={showAllLabel}
                             onChange={(value) =>
                                 this.props.setAttributes({ showAllLabel: value })
-                            }
-                        />
-                        <TextControl
-                            label="Filter tag section title"
-                            value={filterTitle}
-                            onChange={(value) =>
-                                this.props.setAttributes({ filterTitle: value })
                             }
                         />
                         <ToggleControl
@@ -274,30 +266,6 @@ class GlossaryVueBlockEditorComponent extends Component {
                         >
                             <div
                                 style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    background: '#f5f5f5',
-                                    borderRadius: '0.25rem',
-                                    padding: '1rem',
-                                }}
-                            >
-                                <div style={{ fontSize: '1.15rem', marginBottom: '0.5rem' }}>
-                                    {searchToolsTitle}
-                                </div>
-                                <div
-                                    style={{
-                                        textDecoration: 'underline',
-                                        fontSize: '1rem',
-                                        margin: 0,
-                                        padding: '4px 0 0',
-                                    }}
-                                >
-                                    {showAllLabel}
-                                </div>
-                            </div>
-
-                            <div
-                                style={{
                                     background: '#fff',
                                     borderRadius: '0.75rem',
                                     padding: '1rem',
@@ -305,18 +273,41 @@ class GlossaryVueBlockEditorComponent extends Component {
                             >
                                 <div
                                     style={{
-                                        fontSize: '1.15rem',
-                                        borderBottom: '1px solid rgb(231, 231, 231)',
-                                        paddingBlockEnd: '0.5rem',
+                                        alignItems: 'flex-start',
+                                        background: '#fff',
+                                        borderBottom: '1px solid rgb(241,241,241)',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        paddingBlock: '1rem 0.5rem',
+                                        paddingInline: 0,
                                     }}
                                 >
-                                    {filterTitle}
+                                    <div style={{ fontSize: '1.15rem', margin: 0 }}>
+                                        {searchToolsTitle}
+                                    </div>
+                                    <button
+                                        type="button"
+                                        style={{
+                                            background: 'transparent',
+                                            border: 0,
+                                            color: '#003366',
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem',
+                                            fontWeight: 700,
+                                            margin: '0 0.33rem',
+                                            padding: '0 0.66rem',
+                                            textDecoration: 'underline',
+                                        }}
+                                    >
+                                        {showAllLabel}
+                                    </button>
                                 </div>
                                 <p
                                     style={{
                                         color: 'rgb(162, 0, 0)',
                                         fontWeight: 'bold',
                                         marginBottom: 0,
+                                        marginTop: '1rem',
                                     }}
                                 >
                                     Auto-generated filterable tags chips{' '}
@@ -507,10 +498,6 @@ registerBlockType('digimod-plugin/glossary-block', {
         showAllLabel: {
             type: 'string',
             default: 'Show all',
-        },
-        filterTitle: {
-            type: 'string',
-            default: 'Filter: tag',
         },
         showTagCounts: {
             type: 'boolean',

@@ -12,20 +12,18 @@
 
     <div class="digimod-glossary__layout">
       <aside class="digimod-glossary__sidebar">
-        <section class="digimod-glossary__panel is-flex-row">
-          <h2 class="digimod-glossary__filter-title">{{ searchToolsTitle }}</h2>
-          <div class="tag-checkbox">
-            <button class="tag clear-filters" :disabled="!hasActiveFilters" @click="clearFilters"
-              @keydown.enter.prevent="clearFilters"
-              :aria-disabled="!hasActiveFilters ? 'true' : 'false'"
-              aria-label="Show all glossary terms and remove previously selected filters.">{{ showAllLabel }}</button>
-          </div>
-        </section>
-
         <section v-if="uniqueTags.length > 0" class="digimod-glossary__controls">
-          <h3 :id="tagGroupLabelId" class="digimod-glossary__filter-title">{{ filterTitle }}</h3>
+          <div class="digimod-glossary__panel digimod-glossary__tags is-flex-row">
+            <h2 class="digimod-glossary__sidebar-title">{{ searchToolsTitle }}</h2>
+            <div class="tag-checkbox">
+              <button class="tag clear-filters" :disabled="!hasActiveFilters" @click="clearFilters"
+                @keydown.enter.prevent="clearFilters"
+                :aria-disabled="!hasActiveFilters ? 'true' : 'false'"
+                aria-label="Show all glossary terms and remove previously selected filters.">{{ showAllLabel }}</button>
+            </div>
+          </div>
           <div class="taxonomy-glossary_category wp-block-post-terms digimod-glossary__filters" role="group"
-            :aria-labelledby="tagGroupLabelId">
+            aria-label="Filter glossary terms by tag">
             <template v-for="(tag, index) in uniqueTags" :key="tag.slug">
               <div class="tag-checkbox">
                 <input :id="tagInputId(index)" v-model="selectedTags" class="tag-input" type="checkbox" :value="tag.slug" />
@@ -148,10 +146,6 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  filterTitle: {
-    type: String,
-    default: 'Filter: tags',
-  },
   browseTitle: {
     type: String,
     default: 'Jump to',
@@ -181,7 +175,6 @@ const isLoading = ref(true);
 const selectedTags = ref([]);
 
 const browseTitleId = computed(() => `${props.instanceId}-browse-title`);
-const tagGroupLabelId = computed(() => `${props.instanceId}-tag-group-label`);
 const hasSuggestionCard = computed(() => Boolean(props.suggestTitle || props.suggestBody || props.suggestEmail));
 const hasActiveFilters = computed(() => selectedTags.value.length > 0);
 const headingCascade = computed(() => {
@@ -474,6 +467,13 @@ onMounted(async () => {
   justify-content: space-between;
 }
 
+.digimod-glossary__panel.digimod-glossary__tags {
+  background-color: var(--wp--preset--color--white, #fff);
+  border-bottom: 1px solid rgb(241,241,241);
+  padding-inline: 0;
+  padding-block-end: .5rem;
+}
+
 .digimod-glossary__panel.is-flex-row .tag {
   border: 0;
   color: var(--wp--preset--color--secondary-brand, #003366);
@@ -498,12 +498,12 @@ onMounted(async () => {
   font-weight: 400;
 }
 
-.digimod-glossary__filter-title.pen-line::before {
+/* .digimod-glossary__filter-title.pen-line::before {
   content: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1NzYgNTEyIj48cGF0aCBkPSJNIDQyOS44IDM5LjYgYyAtOS40IC05LjQgLTI0LjYgLTkuNCAtMzMuOSAwIEwgMzE5IDExOCBMIDQxOCAxNzEgbCA1NC44IC01NC44IGMgOS40IC05LjQgOS40IC0yNC42IDAgLTMzLjkgTCA0MjkuOCAzOS42IHogTSA4My4xIDM1Mi40IGMgLTcuNiA3LjYgLTEzLjEgMTYuOSAtMTYuMSAyNy4yIEwgMzkuNiA0NzIuNCBsIDkyLjggLTI3LjMgYyAxMC4zIC0zIDE5LjYgLTguNiAyNy4yIC0xNi4xIEwgNDE4IDE3MSBMIDMxOSAxMTggTCA4My4xIDM1Mi40IHogTSAzNzMuMiAxNyBjIDIxLjkgLTIxLjkgNTcuMyAtMjEuOSA3OS4yIDAgTCA0OTUgNTkuNiBjIDIxLjkgMjEuOSAyMS45IDU3LjMgMCA3OS4yIEwgMTgyLjMgNDUxLjYgYyAtMTEuNCAxMS40IC0yNS40IDE5LjcgLTQwLjggMjQuMiBsIC0xMjEgMzUuNiBjIC01LjYgMS43IC0xMS43IDAuMSAtMTUuOCAtNCBzIC01LjcgLTEwLjIgLTQgLTE1LjggbCAzNS42IC0xMjEgYyA0LjUgLTE1LjQgMTIuOSAtMjkuNCAyNC4yIC00MC44IEwgMzczLjIgMTcgeiBNIDI0MCA0ODAgbCAzMjAgMCBjIDguOCAwIDE2IDcuMiAxNiAxNiBzIC03LjIgMTYgLTE2IDE2IGwgLTMyMCAwIGMgLTguOCAwIC0xNiAtNy4yIC0xNiAtMTYgcyA3LjIgLTE2IDE2IC0xNiB6Ii8+PC9zdmc+);
   display: block;
   width: 2rem;
   height: 2rem;
-}
+} */
 
 .digimod-glossary__letters {
   display: flex;

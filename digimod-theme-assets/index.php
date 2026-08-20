@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DIGIMOD - Block Theme Frontend Enhancements
  * Description: A plugin to load custom scripts, styles and theme settings to augment the default BCGov Block Theme capabilities
- * Version: 1.4.2
+ * Version: 1.4.3
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -500,7 +500,6 @@ function digimod_glossary_dynamic_block_plugin( $attributes ) {
 		'searchToolsTitle'  => 'Search tools',
 		'showAllLabel'      => 'Show all',
 		'showTagCounts'     => true,
-		'filterTitle'       => 'Filter: tags',
 		'browseTitle'       => 'Jump to',
 		'suggestTitle'      => 'Suggest a new glossary term',
 		'suggestBody'       => 'Send us your submission for review.',
@@ -515,7 +514,7 @@ function digimod_glossary_dynamic_block_plugin( $attributes ) {
 	$intro_markup        = digimod_prepare_limited_glossary_markup( $attributes['intro'] );
 	$suggest_body_markup = digimod_prepare_limited_glossary_markup( $attributes['suggestBody'] );
 
-	return '<div class="' . esc_attr( $class_names ) . '" data-vue-app="glossary" data-instance-id="' . esc_attr( $instance_id ) . '" data-title="' . esc_attr( $attributes['title'] ) . '" data-title-heading-level="' . esc_attr( $title_heading_level ) . '" data-intro="' . esc_attr( $intro_markup ) . '" data-search-tools-title="' . esc_attr( $attributes['searchToolsTitle'] ) . '" data-show-all-label="' . esc_attr( $attributes['showAllLabel'] ) . '" data-show-tag-counts="' . esc_attr( $show_tag_counts ) . '" data-browse-title="' . esc_attr( $attributes['browseTitle'] ) . '" data-filter-title="' . esc_attr( $attributes['filterTitle'] ) . '" data-suggest-title="' . esc_attr( $attributes['suggestTitle'] ) . '" data-suggest-body="' . esc_attr( $suggest_body_markup ) . '" data-suggest-email="' . esc_attr( $attributes['suggestEmail'] ) . '">Loading glossary...</div>';
+	return '<div class="' . esc_attr( $class_names ) . '" data-vue-app="glossary" data-instance-id="' . esc_attr( $instance_id ) . '" data-title="' . esc_attr( $attributes['title'] ) . '" data-title-heading-level="' . esc_attr( $title_heading_level ) . '" data-intro="' . esc_attr( $intro_markup ) . '" data-search-tools-title="' . esc_attr( $attributes['searchToolsTitle'] ) . '" data-show-all-label="' . esc_attr( $attributes['showAllLabel'] ) . '" data-show-tag-counts="' . esc_attr( $show_tag_counts ) . '" data-browse-title="' . esc_attr( $attributes['browseTitle'] ) . '" data-suggest-title="' . esc_attr( $attributes['suggestTitle'] ) . '" data-suggest-body="' . esc_attr( $suggest_body_markup ) . '" data-suggest-email="' . esc_attr( $attributes['suggestEmail'] ) . '">Loading glossary...</div>';
 }
 
 /**
