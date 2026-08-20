@@ -1,0 +1,130 @@
+# Manual Action Doing the heavy lifting
+name: Backup V2 
+inputs:
+  environment:
+    description: 'Deployment environment'
+    required: true
+    default: 'prod'
+  project-name:
+    description: 'Project name'
+    required: true
+    default: 'digital'
+  site-name:
+    description: 'Site name'
+    required: true
+    default: 'prod'
+  openshift-server:
+    description: 'OpenShift server'
+    required: true
+  dev-token:
+    description: 'Dev token'
+    required: true
+  test-token:
+    description: 'Test token'
+    required: true
+  prod-token:
+    description: 'Prod token'
+    required: true
+  s3-token:
+    description: 'BCGov S3 token'
+    required: true
+  restore-check:
+    description: 'Check backup via restore'
+    required: true
+    type: boolean
+    default: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Rclone
+      run: |
+        if command -v rclone &> /dev/null; then
+          echo "rclone is already installed"
+        else
+          echo "rclone not found, installing..."
+          sudo -v ; curl https://rclone.org/install.sh | sudo bash ; rclone config touch
+        fi
+      shell: bash
+
+    - name: Verify Installation
+      run: rclone version
+      shell: bash
+
+    # Not needed since base linux image being used has OC built in.
+    # - name: Install OC CLI
+    #   run: |
+    #     curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz
+    #     tar xvzf openshift-client-linux.tar.gz
+    #     sudo mv oc kubectl /usr/local/bin/
+
+    - name: Perform the backup and push to S3
+      run: |
+        chmod +x ./.github/actions/backup_v2/backup_v2.sh
+
+        set +e
+        ./.github/actions/backup_v2/backup_v2.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.s3-token }}"
+        CMD_EXIT_CODE=$?
+        set -e
+
+        if [[ $CMD_EXIT_CODE -eq 0 ]]; then
+          echo "Success creating backup"
+
+        else
+
+          echo "::endgroup::" #close the group started in backup_v2.sh
+
+          #try a 2nd time
+          echo "Error creating backup 1st time, "
+          echo "Code: $CMD_EXIT_CODE"
+
+          echo "Retrying in 30s..."
+
+          sleep 30
+          
+          set +e
+          ./.github/actions/backup_v2/backup_v2.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.s3-token }}"
+          CMD_EXIT_CODE=$?
+          set -e
+
+          if [[ $CMD_EXIT_CODE -eq 0 ]]; then
+            echo "Success creating backup on 2nd try."
+
+          else
+            echo "::endgroup::" #close the group started in backup_v2.sh
+
+            echo "Error creating backup 2nd time, "
+            echo "Code: $CMD_EXIT_CODE"
+
+            exit $CMD_EXIT_CODE
+          fi
+        fi
+
+      shell: bash
+          
+
+    - name: Restore Backup V2
+      if: inputs.restore-check == 'true'
+      uses: ./.github/actions/restore_backup_v2
+      with:
+        environment: ${{ inputs.environment }}
+        project-name: ${{ inputs.project-name }}
+        site-name: backup
+        openshift-server: ${{ inputs.openshift-server }}
+        dev-token: ${{ inputs.dev-token }}
+        test-token: ${{ inputs.test-token }}
+        prod-token: ${{ inputs.prod-token }}
+        backup-number: 1
+        s3-token: "${{ inputs.s3-token }}"
+
+    - name: Backup Restore Check V2
+      if: inputs.restore-check == 'true' 
+      uses: ./.github/actions/backup_restore_check_v2
+      with:
+        environment: ${{ inputs.environment }}
+        project-name: ${{ inputs.project-name }}
+        site-name: backup
+        openshift-server: ${{ inputs.openshift-server }}
+        dev-token: ${{ inputs.dev-token }}
+        test-token: ${{ inputs.test-token }}
+        prod-token: ${{ inputs.prod-token }}

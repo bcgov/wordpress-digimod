@@ -1,0 +1,58 @@
+name: List Backups V2
+on:
+  workflow_dispatch:
+    inputs:
+      project-name:
+        description: 'Project'
+        required: true
+        type: choice
+        options:      
+        - digital
+        default: 'digital'
+
+      site-name:
+        description: 'Site name'
+        required: true
+        default: 'prod'
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+          
+      - name: Install Rclone
+        run: |
+          if command -v rclone &> /dev/null; then
+            echo "rclone is already installed"
+          else
+            echo "rclone not found, installing..."
+            sudo -v ; curl https://rclone.org/install.sh | sudo bash ; rclone config touch
+          fi
+        shell: bash
+
+      - name: Verify Installation
+        run: rclone version
+        shell: bash
+
+      # - name: Install OC CLI
+      #   run: |
+      #     curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz
+      #     tar xvzf openshift-client-linux.tar.gz
+      #     sudo mv oc kubectl /usr/local/bin/
+
+
+      - name: Get list of backups
+        uses: ./.github/actions/list_backups_v2
+        with:
+          environment: ${{ github.event.inputs.environment || 'prod' }}
+          project-name: ${{ github.event.inputs.project-name || 'digital' }}
+          site-name: ${{ github.event.inputs.site-name || 'prod' }}
+          openshift-server: ${{ secrets.OPENSHIFT_SERVER }}
+          dev-token: ${{ secrets.OPENSHIFT_DEV_API_TOKEN }}
+          test-token: ${{ secrets.OPENSHIFT_TEST_API_TOKEN }}
+          prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
+          s3-token: "${{ secrets.BCGOV_S3_SECRET_ACCESS_KEY }}"
+          restore-check: ${{ github.event.inputs.restore-check || true }}
+      
