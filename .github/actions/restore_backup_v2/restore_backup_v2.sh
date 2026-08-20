@@ -12,7 +12,7 @@ TEST_TOKEN=$6
 PROD_TOKEN=$7
 BACKUP_NUMBER=$8
 S3_TOKEN=$9
-OC_NAMEPLATE=$10
+OC_NAMEPLATE=${10}
 
 
 S3_AKI="webbkaki"
@@ -35,6 +35,9 @@ if [ "$OC_NAMEPLATE" = "c0cce6" ]; then
 else
     FILENAME_SEARCH="$PROJECT_NAME-prod_prod_*_backup.tar*"
 fi
+
+echo "OC Nameplate: $OC_NAMEPLATE"
+echo "Project Name: $PROJECT_NAME"
 
 
 #copy down the backup file from s3
