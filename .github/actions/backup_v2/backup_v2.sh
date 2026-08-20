@@ -71,6 +71,9 @@ else
 	OC_SITE_NAME="$PROJECT_NAME-$SITE_NAME"
 fi
 
+if [ "$OC_NAMEPLATE" = "c0cce6" ]; then
+	OC_SITE_NAME="$PROJECT_NAME"
+fi
 
 echo "OC Nameplate: $OC_NAMEPLATE"
 echo "OC Site Name: $OC_SITE_NAME"
