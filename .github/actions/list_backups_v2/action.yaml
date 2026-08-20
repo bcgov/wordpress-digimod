@@ -58,7 +58,8 @@ runs:
     #     tar xvzf openshift-client-linux.tar.gz
     #     sudo mv oc kubectl /usr/local/bin/
 
-    - name: Perform the backup and push to S3
+    - name: List Backups
+      shell: bash
       run: |
         chmod +x ./.github/actions/list_backups_v2/list_backups_v2.sh
 
