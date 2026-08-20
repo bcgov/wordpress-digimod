@@ -7,6 +7,11 @@ on:
         required: true
         default: 'test'
 
+env:
+  # Change this per project.
+  OC_NAMEPLATE: "c0cce6" 
+
+
 jobs:
   deploy:
     runs-on: ubuntu-22.04
@@ -23,11 +28,13 @@ jobs:
 
       - name: Rename latest mariadb tag
         run: |
+          OC_NAMEPLATE="${{ env.OC_NAMEPLATE }}"
+
           ENVIRONMENT=tools
           RENAME_TARGET=${{ github.event.inputs.rename-target }}
           token=${{ secrets.OPENSHIFT_TOOLS_API_TOKEN  }}
           oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token                 #--insecure-skip-tls-verify=true
-          NAMESPACE="c0cce6-$ENVIRONMENT"
+          NAMESPACE="$OC_NAMEPLATE-$ENVIRONMENT"
 
           #run command to assign tag to the latest tagged image
           TAG_RESULTS=$(oc -n $NAMESPACE tag wordpress-mariadb-run:latest wordpress-mariadb-run:$RENAME_TARGET)
