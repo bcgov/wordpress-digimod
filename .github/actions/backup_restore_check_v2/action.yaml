@@ -1,0 +1,59 @@
+# Manual Action Doing the heavy lifting
+name: Backup Restore Check V2 
+inputs:
+  environment:
+    description: 'Deployment environment'
+    required: true
+    default: 'prod'
+  project-name:
+    description: 'Project name'
+    required: true
+    default: 'digital'
+  site-name:
+    description: 'Site name'
+    required: true
+    default: 'prod'
+  openshift-server:
+    description: 'OpenShift server'
+    required: true
+  dev-token:
+    description: 'Dev token'
+    required: true
+  test-token:
+    description: 'Test token'
+    required: true
+  prod-token:
+    description: 'Prod token'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Perform the checks
+      run: |
+        chmod +x ./.github/actions/backup_restore_check_v2/backup_restore_check_v2.sh
+
+        set +e
+        ./.github/actions/backup_restore_check_v2/backup_restore_check_v2.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
+        CMD_EXIT_CODE=$?
+        set -e
+
+        if [[ $CMD_EXIT_CODE -eq 0 ]]; then
+          echo "Checking on restore completed."
+
+        else
+
+          echo "::endgroup::" #close the group started in backup_restore_check_v2.sh
+
+          #try a 2nd time
+          echo "Error checking restore, "
+          echo "Code: $CMD_EXIT_CODE"
+
+          exit $CMD_EXIT_CODE
+
+        fi
+
+        
+
+      shell: bash
+          

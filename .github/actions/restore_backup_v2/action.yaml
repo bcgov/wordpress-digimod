@@ -1,0 +1,55 @@
+name: Restore Backup V2
+description: 'Restores a backup file from the backup storage on the given deployment'
+inputs:
+  environment:
+    description: 'Deployment environment'
+    required: true
+    default: 'test'
+  project-name:
+    description: 'Project name'
+    required: true
+    default: 'digital'
+  site-name:
+    description: 'Site name'
+    required: true
+    default: 'test'
+  openshift-server:
+    description: 'OpenShift server'
+    required: true
+  dev-token:
+    description: 'Dev token'
+    required: true
+  test-token:
+    description: 'Test token'
+    required: true
+  prod-token:
+    description: 'Prod token'
+    required: true
+  backup-number:
+    description: 'Backup number'
+    required: true
+  s3-token:
+    description: 'BCGov S3 token'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Rclone
+      run: |
+        if command -v rclone &> /dev/null; then
+          echo "rclone is already installed"
+        else
+          echo "rclone not found, installing..."
+          sudo -v ; curl https://rclone.org/install.sh | sudo bash ; rclone config touch
+        fi
+      shell: bash
+
+    - name: Verify Installation
+      run: rclone version
+      shell: bash
+      
+    - name: Restore Backup
+      run: |
+        chmod +x ./.github/actions/restore_backup_v2/restore_backup_v2.sh
+        ./.github/actions/restore_backup_v2/restore_backup_v2.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.backup-number }}" "${{ inputs.s3-token }}"
+      shell: bash
