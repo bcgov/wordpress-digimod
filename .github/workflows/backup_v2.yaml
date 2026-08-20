@@ -56,4 +56,4 @@ jobs:
           prod-token: ${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
           s3-token: "${{ secrets.BCGOV_S3_SECRET_ACCESS_KEY }}"
           restore-check: ${{ github.event.inputs.restore-check || true }}
-          oc_nameplate: "f181a8"
+          oc_nameplate: "c0cce6"
