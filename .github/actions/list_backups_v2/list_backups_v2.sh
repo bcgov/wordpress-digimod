@@ -32,10 +32,16 @@ case "$ENVIRONMENT" in
 esac
 
 
+if [ "$OC_NAMEPLATE" = "c0cce6" ]; then
+	FILENAME_SEARCH="${PROJECT_NAME}-${SITE_NAME}_${ENVIRONMENT}_*_backup.tar*"
+else
+    FILENAME_SEARCH="${PROJECT_NAME}_${ENVIRONMENT}_*_backup.tar*"
+fi
+
 
 
 echo "Getting list of backups for ${PROJECT_NAME}"
-echo "Searching for: ${PROJECT_NAME}-${SITE_NAME}_${ENVIRONMENT}_*_backup.tar*"
+echo "Searching for: ${FILENAME_SEARCH}"
 
 
 # echo "::group::Login to OC"
@@ -61,7 +67,7 @@ echo "Searching for: ${PROJECT_NAME}-${SITE_NAME}_${ENVIRONMENT}_*_backup.tar*"
 # echo "::endgroup::"
 
 
-CMD_RESULTS=$(rclone lsf :s3:webbackup/oc-sites-bk --include "${PROJECT_NAME}-${SITE_NAME}_${ENVIRONMENT}_*_backup.tar*" --files-only --s3-provider Other --s3-access-key-id "webbkaki" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "https://digital-gov.objectstore.gov.bc.ca"  --contimeout "15s" --retries 3 | sort | tail -n 20 2>&1)
+CMD_RESULTS=$(rclone lsf :s3:webbackup/oc-sites-bk --include "${FILENAME_SEARCH}" --files-only --s3-provider Other --s3-access-key-id "webbkaki" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "https://digital-gov.objectstore.gov.bc.ca"  --contimeout "15s" --retries 3 | sort | tail -n 20 2>&1)
 CMD_EXIT_CODE=$?
 
 echo "$CMD_RESULTS"
