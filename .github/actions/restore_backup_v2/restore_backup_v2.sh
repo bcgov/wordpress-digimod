@@ -38,7 +38,7 @@ fi
 
 
 #copy down the backup file from s3
-echo "Grabbing the backup filename for backup #$BACKUP_NUMBER"
+echo "Grabbing the backup filename for backup #$BACKUP_NUMBER - pattern ${FILENAME_SEARCH}"
 CMD_RESULTS=$(rclone lsf :s3:$S3_BUCKET_NAME/oc-sites-bk --include "$FILENAME_SEARCH" --files-only --s3-provider Other --s3-access-key-id "$S3_AKI" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "$S3_ENDPOINT_URL"  --contimeout "15s" --retries 3 | sort | tail -n ${BACKUP_NUMBER} | sed -n "1p")
 
 if [ -z "$CMD_RESULTS" ]; then
