@@ -69,7 +69,6 @@ runs:
         set -e
 
         if [[ $CMD_EXIT_CODE -eq 0 ]]; then
-          echo "Success listing backups"
 
         else
 

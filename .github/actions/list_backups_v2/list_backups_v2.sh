@@ -14,7 +14,7 @@ PROD_TOKEN=$7
 S3_TOKEN=$8
 
 
-echo "Backing up from environment: $ENVIRONMENT"
+echo "Accessing environment: $ENVIRONMENT"
 case "$ENVIRONMENT" in
     "dev")
     token=$DEV_TOKEN
@@ -61,7 +61,7 @@ echo "Searching for: ${PROJECT_NAME}-${SITE_NAME}_${ENVIRONMENT}_*_backup.tar*"
 # echo "::endgroup::"
 
 
-CMD_RESULTS=$(rclone lsf :s3:webbackup/oc-sites-bk --include "${PROJECT_NAME}-${SITE_NAME}_${ENVIRONMENT}_*_backup.tar*" --files-only --s3-provider Other --s3-access-key-id "webbkaki" --s3-secret-access-key "${{ secrets.BCGOV_S3_SECRET_ACCESS_KEY }}" --s3-endpoint "https://digital-gov.objectstore.gov.bc.ca"  --contimeout "15s" --retries 3 | sort | tail -n 20 2>&1)
+CMD_RESULTS=$(rclone lsf :s3:webbackup/oc-sites-bk --include "${PROJECT_NAME}-${SITE_NAME}_${ENVIRONMENT}_*_backup.tar*" --files-only --s3-provider Other --s3-access-key-id "webbkaki" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "https://digital-gov.objectstore.gov.bc.ca"  --contimeout "15s" --retries 3 | sort | tail -n 20 2>&1)
 CMD_EXIT_CODE=$?
 
 echo "$CMD_RESULTS"
