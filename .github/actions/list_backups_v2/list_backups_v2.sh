@@ -33,9 +33,9 @@ esac
 
 
 if [ "$OC_NAMEPLATE" = "c0cce6" ]; then
-	FILENAME_SEARCH="${PROJECT_NAME}-${SITE_NAME}_${ENVIRONMENT}_*_backup.tar*"
-else
     FILENAME_SEARCH="${PROJECT_NAME}_${ENVIRONMENT}_*_backup.tar*"
+else
+	FILENAME_SEARCH="${PROJECT_NAME}-${SITE_NAME}_${ENVIRONMENT}_*_backup.tar*"
 fi
 
 
