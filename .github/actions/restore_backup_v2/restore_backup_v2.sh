@@ -192,18 +192,19 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         echo "::group::Restore DB backup"
 
         echo "DB sql size uncompressed:"
-        CMD_RESULTS=$(gzip -l db.sql.gz | tail -n 1)
+        CMD_RESULTS=$(gzip -l db.sql.gz | tail -n 1 | | awk 'NR>1 {print "Compressed:", $1, "| Uncompressed:", $2, "| Ratio:", $3, "| File:", $4}' | numfmt --field=2,5 --to=iec-i --suffix=B)
         echo $CMD_RESULTS;
 
 
-        echo "Free space on db pod:"
-        CMD_RESULTS=$(oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'df -h .')
+        echo "Space usage on db pod:"
+        CMD_RESULTS=$(oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'df -h /var/lib/mysql')
         echo "$CMD_RESULTS"
         
         
         #need to copy the file then do restore.
         oc cp db.sql.gz -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME:/tmp/db.sql.gz
         
+        echo "Performing actual db restore...please wait"
         set +e
         CMD1_RESULTS=$( (oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'gunzip < /tmp/db.sql.gz | mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) $MYSQL_DATABASE' ) 2>&1)
         CMD1_EXIT_CODE=$?
