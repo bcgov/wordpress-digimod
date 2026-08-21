@@ -192,7 +192,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         echo "::group::Restore DB backup"
 
         echo "DB sql size uncompressed:"
-        CMD_RESULTS=$(gzip -l db.sql.gz | tail -n 1 | awk 'NR>1 {print "Compressed:", $1, "| Uncompressed:", $2, "| Ratio:", $3, "| File:", $4}' | numfmt --field=2,5 --to=iec-i --suffix=B)
+        CMD_RESULTS=$(gzip -l db.sql.gz | tail -n 1)
         echo $CMD_RESULTS;
 
 
@@ -234,12 +234,17 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         echo "::endgroup::"
     fi
 
+
     if [ "$RESTORE_FILES" = "true" ]; then
         echo "::group::Restore Files"
 
         echo "Files archive size uncompressed:"
         CMD_RESULTS=$(gzip -l files.tar.gz | tail -n 1)
         echo $CMD_RESULTS;
+
+        echo "Space usage on wp pod:"
+        CMD_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- sh -c 'df -h /var/www/html/wp-content')
+        echo "$CMD_RESULTS"
 
         #move the destination wp-content to wp-content-bk
         echo "Moving wp-content to wp-content-bk"

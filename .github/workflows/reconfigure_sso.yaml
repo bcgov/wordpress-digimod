@@ -23,6 +23,14 @@ on:
         description: 'Site name'
         required: true
         default: 'test'
+
+env:
+  # Change this per project.
+  OC_NAMEPLATE: "c0cce6" 
+  OC_TIER: "silver"   #gold, silver
+  PLUGIN_NAME_CONFIG_MO: "digimod-config-mo"
+  PLUGIN_NAME_FIX_MO: "digimod-fix-mo"
+
 jobs:
   prepare:
     name: Set Keycloak Secret Name
@@ -47,11 +55,13 @@ jobs:
             #For unknown reason, dev secret doesnt always work. Use test key in dev. Only do this in the prepare step.
             SITE_NAME=${SITE_NAME//dev/test} 
 
-            CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${PROJECT_NAME^^}_${SITE_NAME^^}_CLIENT_SECRET"            
+            CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${PROJECT_NAME^^}_${ENVIRONMENT^^}_CLIENT_SECRET"            
             CLIENT_KEYCLOAK_SECRET_NAME=${CLIENT_KEYCLOAK_SECRET_NAME//-/_}  
-          fi      
+          fi
+                
 
-          echo "::set-output name=CLIENT_KEYCLOAK_SECRET_NAME::${CLIENT_KEYCLOAK_SECRET_NAME}";
+          #echo "::set-output name=CLIENT_KEYCLOAK_SECRET_NAME::${CLIENT_KEYCLOAK_SECRET_NAME}";
+          echo "CLIENT_KEYCLOAK_SECRET_NAME=${CLIENT_KEYCLOAK_SECRET_NAME}" >> "$GITHUB_OUTPUT"
 
           echo "Secret Name"
           echo "$CLIENT_KEYCLOAK_SECRET_NAME"
@@ -72,7 +82,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v5
 
     - name: Install OC CLI
       run: |
@@ -85,6 +95,12 @@ jobs:
       env:
         CLIENT_KEYCLOAK_SECRET_NAME: ${{ needs.prepare.outputs.CLIENT_KEYCLOAK_SECRET_NAME }}
       run: |
+
+        OC_NAMEPLATE="${{ env.OC_NAMEPLATE }}"
+        OC_TIER="${{ env.OC_TIER }}"
+        PLUGIN_NAME_CONFIG_MO="${{ env.PLUGIN_NAME_CONFIG_MO }}"
+        PLUGIN_NAME_FIX_MO="${{ env.PLUGIN_NAME_FIX_MO }}"
+
         ENVIRONMENT=${{ github.event.inputs.ENVIRONMENT }}
         echo "Deploying to the OC environment $ENVIRONMENT"
         case "$ENVIRONMENT" in
@@ -100,7 +116,11 @@ jobs:
 
             "prod")
             token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
-            OC_SITE_NAME=${{ github.event.inputs.SITE-NAME }}
+            if [ "$OC_NAMEPLATE" = "c0cce6" ]; then
+              OC_SITE_NAME=${{ github.event.inputs.SITE-NAME }}
+            else
+              OC_SITE_NAME=${{ github.event.inputs.PROJECT-NAME }}-${{ github.event.inputs.SITE-NAME }}
+            fi
             #echo "For safety reasons, we won't run this action on prod!"
             #exit 1
             ;;
@@ -113,7 +133,7 @@ jobs:
 
         oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token           #--insecure-skip-tls-verify=true
 
-        NAMESPACE="c0cce6-$ENVIRONMENT"
+        NAMESPACE="$OC_NAMEPLATE-$ENVIRONMENT"
         OC_ENV=$ENVIRONMENT
         OC_PROJECT_NAME=${{ github.event.inputs.PROJECT-NAME }}
         
@@ -131,7 +151,7 @@ jobs:
         oc cp --no-preserve wp-cli.phar $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/wp-cli.phar -c $WORDPRESS_CONTAINER_NAME
         oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
 
-        siteURL=https://${OC_SITE_NAME}.apps.silver.devops.gov.bc.ca
+        siteURL=https://${OC_SITE_NAME}.apps.${OC_TIER}.devops.gov.bc.ca
         ssoURI=''
 
         echo "Keycloak Secret Name: ${CLIENT_KEYCLOAK_SECRET_NAME}"
@@ -161,14 +181,40 @@ jobs:
             ;;
         esac
 
-        #if [ "${{ github.event.inputs.PROJECT-NAME }}" == "digital" ];  then 
-        if [ "${ENVIRONMENT}" == "prod" ];  then 
-          if [ "${{ github.event.inputs.SITE-NAME }}" == "digital" ];  then #production
-            echo "Running on production"
-            siteURL=https://${OC_SITE_NAME}.gov.bc.ca
-          else
-            echo "Running on prod environment, but not on production site. You will need to manually fix SSO. Use the test/dev settings."
-            exit 1
+         
+        if [ "c0cce6" = "$OC_NAMEPLATE" ]; then
+          if [ "${ENVIRONMENT}" == "prod" ];  then 
+            if [ "${{ github.event.inputs.SITE-NAME }}" == "digital" ];  then #production
+              echo "Running on production"
+              siteURL=https://${OC_SITE_NAME}.gov.bc.ca
+            else
+              echo "Running on prod environment, but not on production site. You will need to manually fix SSO. Use the test/dev settings."
+              exit 1
+            fi
+          fi
+
+        else
+          if [ "${ENVIRONMENT}" == "prod" ];  then 
+            if [ "${{ github.event.inputs.SITE-NAME }}" == "cleanbcdx-bh-prod" ];  then #production
+              echo "Running on production"
+              siteURL=https://betterhomesbc.ca
+
+            elif [ "${{ github.event.inputs.SITE-NAME }}" == "cleanbcdx-ge-prod" ];  then #production
+              echo "Running on production"
+              siteURL=https://goelectricbc.gov.bc.ca
+
+            elif [ "${{ github.event.inputs.SITE-NAME }}" == "cleanbcdx-bb-prod" ];  then #production
+              echo "Running on production"
+              siteURL=https://betterbuildingsbc.ca
+
+            elif [ "${{ github.event.inputs.SITE-NAME }}" == "cleanbc-prod" ];  then #production
+              echo "Running on production"
+              siteURL=https://cleanbc.gov.bc.ca
+
+            else
+              echo "Running on prod environment, but not on production site. You will need to manually fix SSO. Use the test/dev settings."
+              exit 1
+            fi
           fi
         fi
 
@@ -178,12 +224,19 @@ jobs:
           exit 1
         fi
 
+        if [ "$OC_NAMEPLATE" = "c0cce6" ]; then
+          echo "Activating cleanbcdx-misc plugin"
+          oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate cleanbcdx-misc
+        fi
+
+
+
         #run command to change miniorange plugin variables
-        CMD1_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-config-mo $clientSecret $ssoURI $siteURL ")
+        CMD1_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar $PLUGIN_NAME_CONFIG_MO $clientSecret $ssoURI $siteURL ")
         echo "${CMD1_RESULTS}"
 
         #run command to fix any miniorange plugin settings
-        CMD2_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar digimod-fix-mo ")
+        CMD2_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar $PLUGIN_NAME_FIX_MO ")
         echo "${CMD2_RESULTS}"
 
 

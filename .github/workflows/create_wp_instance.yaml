@@ -11,7 +11,8 @@ on:
         - dev
         - test
         #for safety reasons dont run this on production
-        #- prod
+        #todo re-disable
+        - prod
       project-name:
         description: 'Project'
         required: true
@@ -27,7 +28,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
         
       - name: Create a new Wordpress Instance
         uses: ./.github/actions/create_wp_instance

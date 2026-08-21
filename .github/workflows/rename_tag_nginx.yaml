@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
 
       - name: Install OC CLI
         run: |
@@ -35,6 +35,8 @@ jobs:
           oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token                 #--insecure-skip-tls-verify=true
           NAMESPACE="$OC_NAMEPLATE-$ENVIRONMENT"
 
+          oc project $OC_NAMEPLATE-$ENVIRONMENT
+          
           #run command to assign tag to the latest tagged image
           TAG_RESULTS=$(oc -n $NAMESPACE tag wordpress-nginx-run:latest wordpress-nginx-run:$RENAME_TARGET)
           echo "Tag Results: ${TAG_RESULTS}"

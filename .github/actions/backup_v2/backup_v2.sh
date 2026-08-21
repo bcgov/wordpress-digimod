@@ -178,7 +178,7 @@ echo "${CMD5_RESULTS}"
 #Generate GH Actions summary
 echo "### Created Backup" >> $GITHUB_STEP_SUMMARY
 echo "Backup File: $S3_BUCKET_NAME/oc-sites-bk/${BACKUP_FILENAME}" >> $GITHUB_STEP_SUMMARY
-echo "Backup File: $S3_BUCKET_NAME/oc-sites-bk/${BACKUP_DB_FILENAME}" >> $GITHUB_STEP_SUMMARY
+echo "Backup DB-Only File: $S3_BUCKET_NAME/oc-sites-bk/${BACKUP_DB_FILENAME}" >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
 echo "### Command Results: " >> $GITHUB_STEP_SUMMARY
