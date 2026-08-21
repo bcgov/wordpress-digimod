@@ -268,8 +268,12 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         CMD_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- sh -c 'df -h /var/www/html/wp-content')
         echo "$CMD_RESULTS"
 
+        #erase the old wp-content files
+        echo "Removing wp-content-bk folder"
+        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- rm -rf /var/www/html/wp-content-bk
+
         #move the destination wp-content to wp-content-bk
-        echo "Moving wp-content to wp-content-bk"
+        echo "Moving wp-content to wp-content-bk. Creating folder."
         oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- mkdir -p /var/www/html/wp-content-bk
 
         #only move the files if the folder has files
@@ -290,6 +294,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         mkdir extracted-files
         tar -xzf files.tar.gz -C extracted-files
         oc cp extracted-files/wp-content  -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html
+        echo "Done"
 
         echo "::endgroup::"
     fi
@@ -309,7 +314,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
 
     NEW_SITE_URL="https://$PROJECT_NAME-$SITE_NAME.apps.${OC_TIER}.devops.gov.bc.ca"
 
-    echo "Changing database url from $CMD1_RESULTS to $NEW_SITE_URL"
+    echo "Changing database url from $OLD_SITE_DOMAIN to $NEW_SITE_URL"
 
     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar search-replace "http://$OLD_SITE_DOMAIN" "$NEW_SITE_URL" --all-tables
     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar search-replace "https://$OLD_SITE_DOMAIN" "$NEW_SITE_URL" --all-tables
