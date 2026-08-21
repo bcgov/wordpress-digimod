@@ -27,6 +27,18 @@ on:
         required: true
         default: '1'
 
+      restore-files:
+        description: 'Restore Files'
+        required: true
+        type: boolean
+        default: true
+
+      restore-db:
+        description: 'Restore Database'
+        required: true
+        type: boolean
+        default: true
+
 env:
   # Change this per project.
   OC_NAMEPLATE: "c0cce6" 
@@ -52,6 +64,8 @@ jobs:
           backup-number: ${{ github.event.inputs.backup-number }}
           s3-token: "${{ secrets.BCGOV_S3_SECRET_ACCESS_KEY }}"
           oc_nameplate: "${{ env.OC_NAMEPLATE }}"
+          restore-files: ${{ github.event.inputs.restore-files }}
+          restore-db: ${{ github.event.inputs.restore-db }}
 
       - name: Backup Restore Check V2
         uses: ./.github/actions/backup_restore_check_v2

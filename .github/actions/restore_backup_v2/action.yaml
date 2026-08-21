@@ -34,6 +34,12 @@ inputs:
   oc_nameplate:
     description: 'OpenShift nameplate'
     required: true
+  restore-files:
+    description: 'Restore Files'
+    required: true
+  restore-db:
+    description: 'Restore Database'
+    required: true
 
 runs:
   using: 'composite'

@@ -13,6 +13,8 @@ PROD_TOKEN=$7
 BACKUP_NUMBER=$8
 S3_TOKEN=$9
 OC_NAMEPLATE=${10}
+RESTORE_FILES=${11}
+RESTORE_DB=${12}
 
 
 S3_AKI="webbkaki"
@@ -160,6 +162,9 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
     echo " Namespace: ${NAMESPACE}"
     echo " Container Name: ${WORDPRESS_CONTAINER_NAME}"
     echo " Pod Name: ${WORDPRESS_POD_NAME}"
+
+    echo " Restore Files: ${RESTORE_FILES}"
+    echo " Restore DB: ${RESTORE_DB}"
     
 
     # Download wp-cli in the GitHub Actions workspace
@@ -177,61 +182,82 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
     #should end up with db.sql.gz and files.tar.gz
 
 
-    #move the destination wp-content to wp-content-bk
-    echo "Moving wp-content to wp-content-bk"
-    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- mkdir -p /var/www/html/wp-content-bk
 
-    #only move the files if the folder has files
-    set +e
-    CMD1_RESULTS=$( (oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- sh -c 'ls /var/www/html/wp-content/*'))
-    CMD1_EXIT_CODE=$?
-    set -e
+    if [ "$RESTORE_DB" = "true" ]; then
+        echo "::group::Restore DB backup"
 
-    if [ $CMD1_EXIT_CODE -eq 0 ]; then
-        echo "Moved files"
-        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- sh -c 'mv /var/www/html/wp-content/* /var/www/html/wp-content-bk'
-    fi
+        echo "DB sql size uncompressed:"
+        CMD_RESULTS=$(gzip -l db.sql.gz | tail -n 1)
+        echo $CMD_RESULTS;
 
 
-    echo "::group::Restore DB backup"
-    #need to copy the file then do restore.
-    oc cp db.sql.gz -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME:/tmp/db.sql.gz
-    
-    set +e
-    CMD1_RESULTS=$( (oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'gunzip < /tmp/db.sql.gz | mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) $MYSQL_DATABASE' ) 2>&1)
-    CMD1_EXIT_CODE=$?
-    set -e
+        echo "Free space on db pod:"
+        CMD_RESULTS=$(oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'df -h .')
+        echo "$CMD_RESULTS"
+        
+        
+        #need to copy the file then do restore.
+        oc cp db.sql.gz -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME:/tmp/db.sql.gz
+        
+        set +e
+        CMD1_RESULTS=$( (oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'gunzip < /tmp/db.sql.gz | mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) $MYSQL_DATABASE' ) 2>&1)
+        CMD1_EXIT_CODE=$?
+        set -e
 
-    oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- rm /tmp/db.sql.gz
+        echo "Removing the /tmp/db.sql.gz file from the pod"
+        oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- rm /tmp/db.sql.gz
 
-    if [ $CMD1_EXIT_CODE -eq 0 ]; then
-        echo "Success restoring database backup"
-        echo "Code: $CMD1_EXIT_CODE"
-        echo "$CMD1_RESULTS"
+        if [ $CMD1_EXIT_CODE -eq 0 ]; then
+            echo "Success restoring database backup"
+            echo "Code: $CMD1_EXIT_CODE"
+            echo "$CMD1_RESULTS"
 
-    else
-        echo "Error restoring database backup:"
-        echo "Code: $CMD1_EXIT_CODE"
-        echo "$CMD1_RESULTS"
+        else
+            echo "Error restoring database backup:"
+            echo "Code: $CMD1_EXIT_CODE"
+            echo "$CMD1_RESULTS"
 
-        if [[ "$S3_FILENAME" != *".problem"* ]]; then
-            #update the filename of the backup to mark it as such
-            echo "Renaming the backup file to mark it as problematic"
-            rclone moveto :s3:$S3_BUCKET_NAME/oc-sites-bk/$S3_FILENAME :s3:$S3_BUCKET_NAME/oc-sites-bk/$S3_FILENAME.problem  --s3-provider Other --s3-access-key-id "$S3_AKI" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "$S3_ENDPOINT_URL" -P --stats-log-level NOTICE --stats 60s
+            if [[ "$S3_FILENAME" != *".problem"* ]]; then
+                #update the filename of the backup to mark it as such
+                echo "Renaming the backup file to mark it as problematic"
+                rclone moveto :s3:$S3_BUCKET_NAME/oc-sites-bk/$S3_FILENAME :s3:$S3_BUCKET_NAME/oc-sites-bk/$S3_FILENAME.problem  --s3-provider Other --s3-access-key-id "$S3_AKI" --s3-secret-access-key "$S3_TOKEN" --s3-endpoint "$S3_ENDPOINT_URL" -P --stats-log-level NOTICE --stats 60s
+            fi
+
+            exit 99
         fi
-
-        exit 99
+        echo "::endgroup::"
     fi
 
-    echo "::endgroup::"
+    if [ "$RESTORE_FILES" = "true" ]; then
+        echo "::group::Restore Files"
 
+        echo "Files archive size uncompressed:"
+        CMD_RESULTS=$(gzip -l files.tar.gz | tail -n 1)
+        echo $CMD_RESULTS;
 
-    echo "::group::Restore Files backup"
-    #restore files. only wp-content
-    mkdir extracted-files
-    tar -xzf files.tar.gz -C extracted-files
-    oc cp extracted-files/wp-content  -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html
-    echo "::endgroup::"
+        #move the destination wp-content to wp-content-bk
+        echo "Moving wp-content to wp-content-bk"
+        oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- mkdir -p /var/www/html/wp-content-bk
+
+        #only move the files if the folder has files
+        set +e
+        CMD1_RESULTS=$( (oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- sh -c 'ls /var/www/html/wp-content/*'))
+        CMD1_EXIT_CODE=$?
+        set -e
+
+        if [ $CMD1_EXIT_CODE -eq 0 ]; then
+            echo "Moved files"
+            oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- sh -c 'mv /var/www/html/wp-content/* /var/www/html/wp-content-bk'
+        fi
+        
+
+        #restore files. only wp-content
+        mkdir extracted-files
+        tar -xzf files.tar.gz -C extracted-files
+        oc cp extracted-files/wp-content  -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html
+
+        echo "::endgroup::"
+    fi
 
 
 
