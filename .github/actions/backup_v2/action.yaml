@@ -36,6 +36,10 @@ inputs:
   oc_nameplate:
     description: 'OpenShift nameplate'
     required: true
+  oc_tier:
+    description: 'OpenShift Tier'
+    required: true
+
 
 runs:
   using: 'composite'
@@ -119,6 +123,10 @@ runs:
         prod-token: ${{ inputs.prod-token }}
         backup-number: 1
         s3-token: "${{ inputs.s3-token }}"
+        oc_nameplate: "${{ inputs.oc_nameplate }}"
+        oc_tier: "${{ inputs.oc_tier }}"
+        restore-files: 1
+        restore-db: 1
 
     - name: Backup Restore Check V2
       if: inputs.restore-check == 'true' 
@@ -131,3 +139,5 @@ runs:
         dev-token: ${{ inputs.dev-token }}
         test-token: ${{ inputs.test-token }}
         prod-token: ${{ inputs.prod-token }}
+        oc_nameplate: "${{ inputs.oc_nameplate }}"
+        oc_tier: "${{ inputs.oc_tier }}"

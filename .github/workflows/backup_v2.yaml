@@ -62,3 +62,4 @@ jobs:
           s3-token: "${{ secrets.BCGOV_S3_SECRET_ACCESS_KEY }}"
           restore-check: ${{ github.event.inputs.restore-check || true }}
           oc_nameplate: "${{ env.OC_NAMEPLATE }}"
+          oc_tier: "${{ env.OC_TIER }}"
