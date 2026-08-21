@@ -263,6 +263,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         
 
         #restore files. only wp-content
+        echo "Restoring wp-content files from backup"
         mkdir extracted-files
         tar -xzf files.tar.gz -C extracted-files
         oc cp extracted-files/wp-content  -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME:/var/www/html
