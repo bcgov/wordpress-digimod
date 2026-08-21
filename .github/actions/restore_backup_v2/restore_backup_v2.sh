@@ -192,7 +192,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         echo "::group::Restore DB backup"
 
         echo "DB sql size uncompressed:"
-        CMD_RESULTS=$(gzip -l db.sql.gz | tail -n 1 | | awk 'NR>1 {print "Compressed:", $1, "| Uncompressed:", $2, "| Ratio:", $3, "| File:", $4}' | numfmt --field=2,5 --to=iec-i --suffix=B)
+        CMD_RESULTS=$(gzip -l db.sql.gz | tail -n 1 | awk 'NR>1 {print "Compressed:", $1, "| Uncompressed:", $2, "| Ratio:", $3, "| File:", $4}' | numfmt --field=2,5 --to=iec-i --suffix=B)
         echo $CMD_RESULTS;
 
 
