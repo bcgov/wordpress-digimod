@@ -95,7 +95,7 @@ echo "DB Container Name: $DB_CONTAINER_NAME"
 
 
 set +e
-CMD1_RESULTS=$( (oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb-dump  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) $MYSQL_DATABASE | gzip' > db.sql.gz) 2>&1)
+CMD1_RESULTS=$( (oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb-dump  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) --quick --extended-insert --max-allowed-packet=500M --net-buffer-length=16M $MYSQL_DATABASE | gzip' > db.sql.gz) 2>&1)
 CMD1_EXIT_CODE=$?
 set -e
 if [ $CMD1_EXIT_CODE -eq 0 ]; then
