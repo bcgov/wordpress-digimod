@@ -25,11 +25,18 @@ inputs:
   prod-token:
     description: 'Prod token'
     required: true
+  oc_nameplate:
+    description: 'OpenShift nameplate'
+    required: true
+  oc_tier:
+    description: 'OpenShift Tier'
+    required: true
+
 runs:
   using: 'composite'
   steps:
     - name: Create the instance
       run: |
         chmod +x ./.github/actions/create_wp_instance/deploy.sh
-        ./.github/actions/create_wp_instance/deploy.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
+        ./.github/actions/create_wp_instance/deploy.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.oc_nameplate }}" "${{ inputs.oc_tier }}"
       shell: bash

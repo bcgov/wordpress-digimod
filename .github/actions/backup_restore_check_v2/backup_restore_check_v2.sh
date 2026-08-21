@@ -11,11 +11,12 @@ DEV_TOKEN=$5
 TEST_TOKEN=$6
 PROD_TOKEN=$7
 OC_NAMEPLATE=$8
+OC_TIER=$9
 
 
 NAMESPACE="$OC_NAMEPLATE-$ENVIRONMENT"
 
-NEW_SITE_URL="https://$PROJECT_NAME-$SITE_NAME.apps.gold.devops.gov.bc.ca/"
+NEW_SITE_URL="https://$PROJECT_NAME-$SITE_NAME.apps.$OC_TIER.devops.gov.bc.ca/"
 echo "Checking the site $NEW_SITE_URL"
 
 

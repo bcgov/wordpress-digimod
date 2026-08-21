@@ -10,6 +10,7 @@ OPENSHIFT_SERVER=$4
 DEV_TOKEN=$5
 TEST_TOKEN=$6
 PROD_TOKEN=$7
+OC_NAMEPLATE=$8
 
 case "$ENVIRONMENT" in
     "dev")
@@ -38,7 +39,7 @@ oc login $OPENSHIFT_SERVER --token=$token                   #--insecure-skip-tls
 
 # Deploy theme
 THEME_NAME="bcgov-wordpress-block-theme"
-NAMESPACE="c0cce6-$ENVIRONMENT"
+NAMESPACE="$OC_NAMEPLATE-$ENVIRONMENT"
 WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l  app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 DATE=$(date +%Y-%m-%d-%H-%M)

@@ -25,6 +25,10 @@ inputs:
   prod-token:
     description: 'Prod token'
     required: true  
+  oc_nameplate:
+    description: 'OpenShift nameplate'
+    required: true
+
 runs:
   using: 'composite'
   steps:
@@ -34,18 +38,21 @@ runs:
         php-version: '8.1'
         extensions: mbstring, intl, pdo_mysql
         coverage: none
+
     - name: Install Composer
       run: |
         curl -sS https://getcomposer.org/installer | php
         sudo mv composer.phar /usr/local/bin/composer
         composer --version
       shell: bash
+
     - name: Clone bcgov-wordpress-block-theme-digimod repository
       run: |
         git clone -b development https://github.com/bcgov/bcgov-wordpress-block-theme-digimod.git
       shell: bash
+      
     - name: Deploy theme
       run: |
         chmod +x ./.github/actions/deploy_theme/deploy_theme.sh
-        ./.github/actions/deploy_theme/deploy_theme.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}"
+        ./.github/actions/deploy_theme/deploy_theme.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.oc_nameplate }}"
       shell: bash
