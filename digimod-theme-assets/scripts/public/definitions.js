@@ -385,11 +385,12 @@ export const digmodPluginDefnitions = () => {
                     return;
                 }
 
+                event.preventDefault();
+
                 if ('true' === triggerElement.dataset.definitionLoading) {
                     return;
                 }
 
-                event.preventDefault();
                 setDialogWideState(shouldUseWideDialog(triggerElement));
                 setDialogPinToTopState(shouldPinToTopDialog(triggerElement));
                 const url = getDefinitionUrl(triggerElement);

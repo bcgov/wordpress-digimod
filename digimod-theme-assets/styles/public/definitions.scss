@@ -60,12 +60,15 @@ a.icon-definition.icon-definition {
 }
 
 a.icon-definition.icon-definition.is-loading-definition {
+	background-color: transparent;
+	outline-color: transparent;
 	cursor: progress;
 
 	span.last-word {
 
 		&::after {
 			animation: definition-link-spin 0.85s linear infinite;
+			background-color: transparent;
 			border-color: currentcolor currentcolor currentcolor transparent;
 			box-sizing: border-box;
 			content: "";

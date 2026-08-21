@@ -165,6 +165,8 @@ body.glossary {
 	}
 
 	&.is-loading-definition {
+		background-color: transparent;
+		outline-color: transparent;
 		cursor: progress;
 
 		span.last-word {
