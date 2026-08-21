@@ -57,6 +57,11 @@ runs:
     - name: Verify Installation
       run: rclone version
       shell: bash
+
+    - name: Install pv
+      run: sudo apt-get install -y pv
+      shell: bash
+
       
     - name: Restore Backup
       run: |

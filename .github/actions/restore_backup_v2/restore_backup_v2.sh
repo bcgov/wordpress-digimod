@@ -211,9 +211,12 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         set +e
         #CMD1_RESULTS=$( (oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'gunzip < /tmp/db.sql.gz | mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) $MYSQL_DATABASE' ) 2>&1)
         
-        CMD1_RESULTS=$( (oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) $MYSQL_DATABASE' < db.sql) 2>&1)
+        CMD1_RESULTS=$( pv db.sql (oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c "mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) $MYSQL_DATABASE --init-command='SET GLOBAL innodb_flush_log_at_trx_commit=2; SET GLOBAL foreign_key_checks=0; SET GLOBAL unique_checks=0; SET GLOBAL autocommit=0;'") 2>&1)
         CMD1_EXIT_CODE=$?
         set -e
+
+        echo "Restoring database settings to default"
+        oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c "mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) -e 'SET GLOBAL innodb_flush_log_at_trx_commit=1; SET GLOBAL foreign_key_checks = 1; SET GLOBAL unique_checks = 1; COMMIT;'"
 
         #echo "Removing the /tmp/db.sql.gz file from the pod"
         #oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- rm /tmp/db.sql.gz
