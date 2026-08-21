@@ -214,7 +214,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         echo "Current innodb_buffer_pool_size: $CMD_RESULTS"
 
         ORIGINAL_INNODB_BUFFER_POOL_SIZE=$CMD_RESULTS
-        NEW_INNODB_BUFFER_POOL_SIZE=$(($ORIGINAL_INNODB_BUFFER_POOL_SIZE + 822144000))  #set the pool memory to 820mb temporarily.
+        NEW_INNODB_BUFFER_POOL_SIZE=$((822144000))  #set the pool memory to 820mb temporarily.
 
 
         echo "Performing actual db restore...please wait"
@@ -226,7 +226,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         set -e
 
         echo "Restoring database settings to default"
-        oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) -e "SET GLOBAL innodb_flush_log_at_trx_commit=1; SET GLOBAL foreign_key_checks = 1; SET GLOBAL unique_checks = 1; SET GLOBAL innodb_buffer_pool_size='$ORIGINAL_INNODB_BUFFER_POOL_SIZE'; COMMIT; "'
+        oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) -e "SET GLOBAL innodb_flush_log_at_trx_commit=1; SET GLOBAL foreign_key_checks = 1; SET GLOBAL unique_checks = 1; SET GLOBAL autocommit=1; SET GLOBAL innodb_buffer_pool_size='$ORIGINAL_INNODB_BUFFER_POOL_SIZE'; COMMIT; "'
 
         echo "Retrieving post-restore innodb_buffer_pool_size"
         CMD_RESULTS=$(oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) -e "SELECT @@innodb_buffer_pool_size;" -N -s'  )
