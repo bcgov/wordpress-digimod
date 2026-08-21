@@ -305,12 +305,14 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
 
         exit 97
     fi 
+    OLD_SITE_DOMAIN=$(echo "$CMD1_RESULTS" | sed -E 's|https?://||')
 
     NEW_SITE_URL="https://$PROJECT_NAME-$SITE_NAME.apps.${OC_TIER}.devops.gov.bc.ca"
 
     echo "Changing database url from $CMD1_RESULTS to $NEW_SITE_URL"
 
-    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar search-replace "$CMD1_RESULTS" "$NEW_SITE_URL" --all-tables
+    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar search-replace "http://$OLD_SITE_DOMAIN" "$NEW_SITE_URL" --all-tables
+    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar search-replace "https://$OLD_SITE_DOMAIN" "$NEW_SITE_URL" --all-tables
     
     #Disable site indexing
     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar option set blog_public 0
@@ -318,6 +320,8 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
     #Update the site urls
     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar option update siteurl "$NEW_SITE_URL"
     oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar option update home "$NEW_SITE_URL"
+
+    oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar cache flush
     
     echo "::endgroup::"
 
