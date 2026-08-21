@@ -417,7 +417,7 @@ body:has(.searchwp-live-search-results[aria-expanded="true"]) .live-search-extra
 		border-bottom: 0;
 		color: var(--wp--preset--color--primary-brand);
 		display: inline-block;
-		padding: 0.25rem;
+		padding: 0;
 
 		&:is(:hover, :focus-visible) {
 			color: var(--wp--preset--color--secondary-brand);
