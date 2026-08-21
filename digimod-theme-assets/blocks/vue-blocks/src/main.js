@@ -14,7 +14,6 @@ const appDefinitions = {
             showAllLabel: element.dataset.showAllLabel || 'Show all',
             showTagCounts: 'false' !== (element.dataset.showTagCounts || 'true'),
             browseTitle: element.dataset.browseTitle || 'Browse terms',
-            filterTitle: element.dataset.filterTitle || 'Filter by tag',
             suggestTitle: element.dataset.suggestTitle || 'Suggest a new glossary term',
             suggestBody: element.dataset.suggestBody || 'Send us your submission for review.',
             suggestEmail: element.dataset.suggestEmail || 'do_contentdesign@gov.bc.ca',

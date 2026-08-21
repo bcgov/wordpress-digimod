@@ -139,7 +139,14 @@ body:has(#dialog[open]) {
 			font-weight: bold;
 			text-underline-offset: 0.15rem;
 
-			&:is(:hover, :focus-visible) {
+			&:hover {
+				background-color: var(--bcds-surface-brand-blue-20, #d8eafd);
+				outline: 8px solid var(--bcds-surface-brand-blue-20, #d8eafd);
+				border-radius: 0.2rem;
+				text-decoration-thickness: 2px;
+			}
+
+			&:focus-visible {
 				outline: 2px solid currentcolor;
 				outline-offset: 2px;
 				border-radius: 0.2rem;

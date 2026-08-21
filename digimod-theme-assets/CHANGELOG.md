@@ -1,3 +1,6 @@
+## 1.4.3 August 20, 2026
+– Removed tooling header and multiple style updates for glossary and defintions modals
+
 ## 1.4.2 August 19, 2026
 – Added Glossary link handling to defintions dialogs
 – Updated safe CSS for inline styles on limited HTML inside glossary output
