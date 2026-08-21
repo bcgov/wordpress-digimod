@@ -202,16 +202,21 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         
         
         #need to copy the file then do restore.
-        oc cp db.sql.gz -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME:/tmp/db.sql.gz
+        #oc cp db.sql.gz -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME:/tmp/db.sql.gz
+        
+
+        gunzip db.sql.gz
         
         echo "Performing actual db restore...please wait"
         set +e
-        CMD1_RESULTS=$( (oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'gunzip < /tmp/db.sql.gz | mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) $MYSQL_DATABASE' ) 2>&1)
+        #CMD1_RESULTS=$( (oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'gunzip < /tmp/db.sql.gz | mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) $MYSQL_DATABASE' ) 2>&1)
+        
+        CMD1_RESULTS=$( pv db.sql | (oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) $MYSQL_DATABASE' ) 2>&1)
         CMD1_EXIT_CODE=$?
         set -e
 
-        echo "Removing the /tmp/db.sql.gz file from the pod"
-        oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- rm /tmp/db.sql.gz
+        #echo "Removing the /tmp/db.sql.gz file from the pod"
+        #oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- rm /tmp/db.sql.gz
 
         if [ $CMD1_EXIT_CODE -eq 0 ]; then
             echo "Success restoring database backup"
