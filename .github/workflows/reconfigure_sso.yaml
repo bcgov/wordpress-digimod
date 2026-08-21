@@ -28,8 +28,9 @@ env:
   # Change this per project.
   OC_NAMEPLATE: "c0cce6" 
   OC_TIER: "silver"   #gold, silver
-  PLUGIN_NAME_CONFIG_MO: "digimod-config-mo"
-  PLUGIN_NAME_FIX_MO: "digimod-fix-mo"
+  WPCMD_NAME_CONFIG_MO: "digimod-config-mo"
+  WPCMD_NAME_FIX_MO: "digimod-fix-mo"
+  WPCMD_PLUGIN_NAME: "digimod-misc"  #cleanbcdx-misc
 
 jobs:
   prepare:
@@ -224,19 +225,19 @@ jobs:
           exit 1
         fi
 
-        if [ "$OC_NAMEPLATE" = "c0cce6" ]; then
-          echo "Activating cleanbcdx-misc plugin"
-          oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate cleanbcdx-misc
-        fi
+        #if [ "$OC_NAMEPLATE" = "c0cce6" ]; then
+          echo "Activating $WPCMD_PLUGIN_NAME plugin"
+          oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar plugin activate $WPCMD_PLUGIN_NAME
+        #fi
 
 
 
         #run command to change miniorange plugin variables
-        CMD1_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar $PLUGIN_NAME_CONFIG_MO $clientSecret $ssoURI $siteURL ")
+        CMD1_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar $WPCMD_NAME_CONFIG_MO $clientSecret $ssoURI $siteURL ")
         echo "${CMD1_RESULTS}"
 
         #run command to fix any miniorange plugin settings
-        CMD2_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar $PLUGIN_NAME_FIX_MO ")
+        CMD2_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- bash -c "echo 'y' | php /tmp/wp-cli.phar $WPCMD_NAME_FIX_MO ")
         echo "${CMD2_RESULTS}"
 
 
