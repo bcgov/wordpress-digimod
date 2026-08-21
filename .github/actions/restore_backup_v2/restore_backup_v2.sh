@@ -209,7 +209,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         
         echo "Performing actual db restore...please wait"
 
-        CMD1_RESULTS=$(oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c "mariadb -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) -e 'SELECT @@innodb_buffer_pool_size;' -N -s"  )
+        CMD1_RESULTS=$(oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) -e "SELECT @@innodb_buffer_pool_size;" -N -s'  )
         echo "Current innodb_buffer_pool_size: $CMD1_RESULTS"
 
         ORIGINAL_INNODB_BUFFER_POOL_SIZE=$CMD1_RESULTS
