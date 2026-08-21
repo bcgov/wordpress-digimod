@@ -470,6 +470,7 @@ onMounted(async () => {
 .digimod-glossary__panel.digimod-glossary__tags {
   background-color: var(--wp--preset--color--white, #fff);
   border-bottom: 1px solid rgb(241,241,241);
+  border-radius: 0;
   padding-inline: 0;
   padding-block-end: .5rem;
 }

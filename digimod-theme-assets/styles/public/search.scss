@@ -396,7 +396,7 @@ body:has(.searchwp-live-search-results[aria-expanded="true"]) .live-search-extra
 	.flex-list-row {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.25rem;
+		gap: 0.66rem;
 		padding: 1rem;
 
 		li {
@@ -407,7 +407,7 @@ body:has(.searchwp-live-search-results[aria-expanded="true"]) .live-search-extra
 	.popular-searches-header {
 		display: inline-block;
 		font-size: 1rem;
-		padding: 0.25rem;
+		padding: 0.66rem;
 		margin: 0;
 	}
 
@@ -417,7 +417,7 @@ body:has(.searchwp-live-search-results[aria-expanded="true"]) .live-search-extra
 		border-bottom: 0;
 		color: var(--wp--preset--color--primary-brand);
 		display: inline-block;
-		padding: 0.25rem;
+		padding: 0;
 
 		&:is(:hover, :focus-visible) {
 			color: var(--wp--preset--color--secondary-brand);

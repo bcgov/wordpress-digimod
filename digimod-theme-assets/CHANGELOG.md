@@ -1,3 +1,6 @@
+## 1.4.4 August 21, 2026
+– Minor style updates
+
 ## 1.4.3 August 20, 2026
 – Removed tooling header and multiple style updates for glossary and defintions modals
 

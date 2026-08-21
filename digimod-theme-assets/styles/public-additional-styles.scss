@@ -30,8 +30,10 @@
 // 	// background: rgba(0, 255, 0, 0.01) !important;
 // }
 
-:root {
-	color-scheme: light dark;
+:root:root:root {
+	--scroll-padding: 0 !important;
+
+	color-scheme: light;
 	color: $white;
 	background-color: $mineshaft;
 
@@ -42,11 +44,9 @@
 	-webkit-text-size-adjust: 100%;
 }
 
-html {
-	--scroll-padding: 2rem !important;
-}
-
 body {
+	scroll-padding: var(--scroll-padding) !important;
+
 	flex-direction: column;
 	overflow-x: hidden;
 
