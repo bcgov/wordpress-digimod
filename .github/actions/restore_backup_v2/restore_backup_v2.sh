@@ -13,8 +13,9 @@ PROD_TOKEN=$7
 BACKUP_NUMBER=$8
 S3_TOKEN=$9
 OC_NAMEPLATE=${10}
-RESTORE_FILES=${11}
-RESTORE_DB=${12}
+OC_TIER=${11}
+RESTORE_FILES=${12}
+RESTORE_DB=${13}
 
 
 S3_AKI="webbkaki"
@@ -204,21 +205,22 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         #need to copy the file then do restore.
         #oc cp db.sql.gz -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME:/tmp/db.sql.gz
         
-
+        echo "Extracting db.sql.gz"
         gunzip db.sql.gz
         
-        echo "Performing actual db restore...please wait"
 
+        echo "Retrieving pre-restore innodb_buffer_pool_size"
         CMD_RESULTS=$(oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) -e "SELECT @@innodb_buffer_pool_size;" -N -s'  )
         echo "Current innodb_buffer_pool_size: $CMD_RESULTS"
 
         ORIGINAL_INNODB_BUFFER_POOL_SIZE=$CMD_RESULTS
-        NEW_INNODB_BUFFER_POOL_SIZE=$(($ORIGINAL_INNODB_BUFFER_POOL_SIZE + 462144000))
+        NEW_INNODB_BUFFER_POOL_SIZE=$(($ORIGINAL_INNODB_BUFFER_POOL_SIZE + 822144000))  #set the pool memory to 820mb temporarily.
 
+
+        echo "Performing actual db restore...please wait"
         set +e
         #CMD1_RESULTS=$( (oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'gunzip < /tmp/db.sql.gz | mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) $MYSQL_DATABASE' ) 2>&1)
         
-        ##THIS works.... disabled for now to test rest of script
         CMD1_RESULTS=$( pv db.sql | (oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) $MYSQL_DATABASE --init-command="SET GLOBAL innodb_flush_log_at_trx_commit=2; SET GLOBAL foreign_key_checks=0; SET GLOBAL unique_checks=0; SET GLOBAL autocommit=0; SET GLOBAL innodb_buffer_pool_size='$NEW_INNODB_BUFFER_POOL_SIZE';"' ) 2>&1) #SET GLOBAL innodb_doublewrite=0; 
         CMD1_EXIT_CODE=$?
         set -e
@@ -277,8 +279,9 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         set -e
 
         if [ $CMD1_EXIT_CODE -eq 0 ]; then
-            echo "Moved files"
+            echo "Moving files..."
             oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- sh -c 'mv /var/www/html/wp-content/* /var/www/html/wp-content-bk'
+            echo "Done"
         fi
         
 
@@ -303,7 +306,7 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         exit 97
     fi 
 
-    NEW_SITE_URL="https://$PROJECT_NAME-$SITE_NAME.apps.gold.devops.gov.bc.ca"
+    NEW_SITE_URL="https://$PROJECT_NAME-$SITE_NAME.apps.${OC_TIER}.devops.gov.bc.ca"
 
     echo "Changing database url from $CMD1_RESULTS to $NEW_SITE_URL"
 
