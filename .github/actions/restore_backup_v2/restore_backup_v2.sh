@@ -33,7 +33,7 @@ fi
 
 
 if [ $RESTORE_FILES != "true" ] && [ $RESTORE_DB != "true" ]; then
-    echo "At least one of restore files or restore db must be true"
+    echo "At least one of restore files or restore db must be true. $RESTORE_FILES $RESTORE_DB"
     exit 99
 fi
 
