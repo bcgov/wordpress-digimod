@@ -202,7 +202,7 @@ jobs:
             if [ "${{ github.event.inputs.SITE-NAME }}" == "digital" ];  then #production
               echo "Running on production"
               siteURL=https://${OC_SITE_NAME}.gov.bc.ca
-            else
+            #else
               #echo "Running on prod environment, but not on production site. You will need to manually fix SSO. Use the test/dev settings."
               #exit 1
             fi
@@ -226,7 +226,7 @@ jobs:
               echo "Running on production"
               siteURL=https://cleanbc.gov.bc.ca
 
-            else
+            #else
               #echo "Running on prod environment, but not on production site. You will need to manually fix SSO. Use the test/dev settings."
               #exit 1
             fi
