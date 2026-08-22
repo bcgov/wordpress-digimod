@@ -50,7 +50,12 @@ jobs:
           fi
 
           if [ "${PROJECT_NAME}" == "digital" ];  then #legacy key name for digital
-            CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${ENVIRONMENT^^}_CLIENT_SECRET"
+            if [ "$SITE_NAME" == "digital" ];  then #production live site
+              echo "Running on production"
+              CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_${ENVIRONMENT^^}_CLIENT_SECRET"
+            else
+              CLIENT_KEYCLOAK_SECRET_NAME="KEYCLOAK_TEST_CLIENT_SECRET" 
+            fi
 
           else
             #For unknown reason, dev secret doesnt always work. Use test key in dev. Only do this in the prepare step.
@@ -160,8 +165,19 @@ jobs:
           exit 1
         fi
 
+
+        OC_ENV_FOR_KEY=$ENVIRONMENT
+        if [ "${ENVIRONMENT}" == "prod" ];  then 
+          if [ "${{ github.event.inputs.SITE-NAME }}" == "digital" ];  then #production
+            OC_ENV_FOR_KEY="prod"
+          else  #other site on production, ie. backup
+            OC_ENV_FOR_KEY="test"
+          fi
+        fi
+
+        echo "Env for SSO Key: $OC_ENV_FOR_KEY"
         clientSecret=${{ secrets[env.CLIENT_KEYCLOAK_SECRET_NAME] }}
-        case $OC_ENV in
+        case $OC_ENV_FOR_KEY in
           'dev')
             ssoURI='https://test.loginproxy.gov.bc.ca/auth'            
             ;;
@@ -170,7 +186,7 @@ jobs:
             ssoURI='https://test.loginproxy.gov.bc.ca/auth'
             ;;
 
-          'prod') #this branch wont run due to exit above.
+          'prod') 
             ssoURI='https://loginproxy.gov.bc.ca/auth'        
             ;;
 
@@ -187,8 +203,8 @@ jobs:
               echo "Running on production"
               siteURL=https://${OC_SITE_NAME}.gov.bc.ca
             else
-              echo "Running on prod environment, but not on production site. You will need to manually fix SSO. Use the test/dev settings."
-              exit 1
+              #echo "Running on prod environment, but not on production site. You will need to manually fix SSO. Use the test/dev settings."
+              #exit 1
             fi
           fi
 
@@ -211,8 +227,8 @@ jobs:
               siteURL=https://cleanbc.gov.bc.ca
 
             else
-              echo "Running on prod environment, but not on production site. You will need to manually fix SSO. Use the test/dev settings."
-              exit 1
+              #echo "Running on prod environment, but not on production site. You will need to manually fix SSO. Use the test/dev settings."
+              #exit 1
             fi
           fi
         fi
