@@ -225,15 +225,6 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         CMD1_EXIT_CODE=$?
         set -e
 
-        echo "Restoring database settings to default"
-        oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) -e "SET GLOBAL innodb_flush_log_at_trx_commit=1; SET GLOBAL foreign_key_checks = 1; SET GLOBAL unique_checks = 1; SET GLOBAL autocommit=1; SET GLOBAL innodb_buffer_pool_size='$ORIGINAL_INNODB_BUFFER_POOL_SIZE'; COMMIT; "'
-
-        echo "Retrieving post-restore innodb_buffer_pool_size"
-        CMD_RESULTS=$(oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) -e "SELECT @@innodb_buffer_pool_size;" -N -s'  )
-        echo "Post-restore innodb_buffer_pool_size: $CMD_RESULTS"
-
-        #echo "Removing the /tmp/db.sql.gz file from the pod"
-        #oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- rm /tmp/db.sql.gz
 
         if [ $CMD1_EXIT_CODE -eq 0 ]; then
             echo "Success restoring database backup"
@@ -253,6 +244,18 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
 
             exit 99
         fi
+
+        echo "Restoring database settings to default"
+        oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) -e "SET GLOBAL innodb_flush_log_at_trx_commit=1; SET GLOBAL foreign_key_checks = 1; SET GLOBAL unique_checks = 1; SET GLOBAL autocommit=1; SET GLOBAL innodb_buffer_pool_size='$ORIGINAL_INNODB_BUFFER_POOL_SIZE'; COMMIT; "'
+
+        echo "Retrieving post-restore innodb_buffer_pool_size"
+        CMD_RESULTS=$(oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) -e "SELECT @@innodb_buffer_pool_size;" -N -s'  )
+        echo "Post-restore innodb_buffer_pool_size: $CMD_RESULTS"
+
+        #echo "Removing the /tmp/db.sql.gz file from the pod"
+        #oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- rm /tmp/db.sql.gz
+
+        
         echo "::endgroup::"
     fi
 
