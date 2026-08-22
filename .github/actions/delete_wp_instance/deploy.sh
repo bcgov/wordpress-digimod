@@ -12,8 +12,12 @@ TEST_TOKEN=$6
 PROD_TOKEN=$7
 OC_NAMEPLATE=$8
 
-#NG. no longer grabbing the branch    -b digimod-deploy
-git clone  https://github.com/bcgov/wordpress-deploy-digimod.git
+if [ "$OC_NAMEPLATE" == "c0cce6" ]; then
+    #NG. no longer grabbing the branch    -b digimod-deploy
+    git clone  https://github.com/bcgov/wordpress-deploy-digimod.git
+else
+    git clone  https://github.com/bcgov/wordpress-deploy-cleanbcdx.git
+fi
       
 #Log in to OpenShift
 echo "Deploying to $ENVIRONMENT"
@@ -38,11 +42,33 @@ esac
 
 
 echo "::group::Login to OC"
-oc login $OPENSHIFT_SERVER --token=$token       #--insecure-skip-tls-verify=true
+#Sometimes oc login will fail to connect, so lets re-try on failure.
+set +e
+oc login $OPENSHIFT_SERVER --token=$token
+ret=$?
+set -e
+if [ $ret -eq 0 ]; then
+    # The command was successful
+    echo "Login successful"
+
+else
+    echo "Re-trying oc-login in 10s..."
+
+    sleep 10
+
+    # The command was not successful, lets try again
+    oc login $OPENSHIFT_SERVER --token=$token
+
+fi
+
 echo "::endgroup::"
 
 #Go into the deployment folder
-cd wordpress-deploy-digimod
+if [ "$OC_NAMEPLATE" == "c0cce6" ]; then
+    cd wordpress-deploy-digimod
+else
+    cd wordpress-deploy-cleanbcdx
+fi
 
 #Setup some variables
 export NAMESPACE="$OC_NAMEPLATE-$ENVIRONMENT"

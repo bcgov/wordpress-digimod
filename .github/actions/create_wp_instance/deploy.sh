@@ -13,9 +13,14 @@ PROD_TOKEN=$7
 OC_NAMEPLATE=$8
 OC_TIER=$9
 
-#NG. no longer grabbing the branch    -b digimod-deploy
-git clone  https://github.com/bcgov/wordpress-deploy-digimod.git
-      
+if [ "$OC_NAMEPLATE" == "c0cce6" ]; then
+    #NG. no longer grabbing the branch    -b digimod-deploy
+    git clone  https://github.com/bcgov/wordpress-deploy-digimod.git
+else
+    git clone  https://github.com/bcgov/wordpress-deploy-cleanbcdx.git
+fi
+
+
 #Log in to OpenShift
 echo "Deploying to $ENVIRONMENT"
 case "$ENVIRONMENT" in
@@ -39,11 +44,36 @@ esac
 
 
 echo "::group::Login to OC"
-oc login $OPENSHIFT_SERVER --token=$token           #--insecure-skip-tls-verify=true
+#Sometimes oc login will fail to connect, so lets re-try on failure.
+set +e
+oc login $OPENSHIFT_SERVER --token=$token
+ret=$?
+set -e
+if [ $ret -eq 0 ]; then
+    # The command was successful
+    echo "Login successful"
+
+else
+    echo "Re-trying oc-login in 10s..."
+
+    sleep 10
+
+    # The command was not successful, lets try again
+    oc login $OPENSHIFT_SERVER --token=$token
+
+fi
 echo "::endgroup::"
 
 #Go into the deployment folder
-cd wordpress-deploy-digimod
+if [ "$OC_NAMEPLATE" == "c0cce6" ]; then
+    echo "Using digimod deploy folder"
+    cd wordpress-deploy-digimod
+
+else
+    echo "Using cleanbcdx deploy folder"
+    cd wordpress-deploy-cleanbcdx
+fi
+
 
 #Setup some variables
 export NAMESPACE="$OC_NAMEPLATE-$ENVIRONMENT"
@@ -110,14 +140,18 @@ sleep 15
 
 # Install wordpress
 echo "::group::Install wordpress"
+
+echo "Downloading wp-cli to action runner"
 # Download wp-cli in the GitHub Actions workspace
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 chmod +x wp-cli.phar
 
+echo "Copying wp-cli to pod"
 # Copy wp-cli to the WordPress instance and install wordpress
 oc cp --no-preserve wp-cli.phar $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/wp-cli.phar -c $WORDPRESS_CONTAINER_NAME
 oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
 
+echo "Performing wordpress install"
 #Perform a site install
 WP_INSTALL_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar core install --url=${OC_SITE_NAME}.apps.${OC_TIER}.devops.gov.bc.ca --admin_user=tester --admin_email=info@example.com  --title="${OC_SITE_NAME}.gov.bc.ca Testing Framework")
 echo "WP Install Results: ${WP_INSTALL_RESULTS}"

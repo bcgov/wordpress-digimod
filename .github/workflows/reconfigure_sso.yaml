@@ -120,11 +120,7 @@ jobs:
 
             "prod")
             token=${{ secrets.OPENSHIFT_PROD_API_TOKEN }}
-            #if [ "$OC_NAMEPLATE" = "c0cce6" ]; then
-            #  OC_SITE_NAME=${{ github.event.inputs.SITE-NAME }}
-            #else
-              OC_SITE_NAME=${{ github.event.inputs.PROJECT-NAME }}-${{ github.event.inputs.SITE-NAME }}
-            #fi
+            OC_SITE_NAME=${{ github.event.inputs.PROJECT-NAME }}-${{ github.event.inputs.SITE-NAME }}
             #echo "For safety reasons, we won't run this action on prod!"
             #exit 1
             ;;
@@ -202,9 +198,6 @@ jobs:
             if [ "${{ github.event.inputs.SITE-NAME }}" == "digital" ];  then #production
               echo "Running on production"
               siteURL=https://${OC_SITE_NAME}.gov.bc.ca
-            #else
-              #echo "Running on prod environment, but not on production site. You will need to manually fix SSO. Use the test/dev settings."
-              #exit 1
             fi
           fi
 
@@ -225,10 +218,6 @@ jobs:
             elif [ "${{ github.event.inputs.SITE-NAME }}" == "cleanbc-prod" ];  then #production
               echo "Running on production"
               siteURL=https://cleanbc.gov.bc.ca
-
-            #else
-              #echo "Running on prod environment, but not on production site. You will need to manually fix SSO. Use the test/dev settings."
-              #exit 1
             fi
           fi
         fi
