@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-MAX_RETRIES=${OC_MAX_RETRIES:-3}
-BACKOFF_DELAY=${OC_BACKOFF_DELAY:-2}
+MAX_RETRIES=${OC_MAX_RETRIES:-5}
+BACKOFF_DELAY=${OC_BACKOFF_DELAY:-5}
 REAL_OC="${REAL_OC_PATH:-/usr/local/bin/oc}"
 
 if [[ ! -x "$REAL_OC" ]]; then
