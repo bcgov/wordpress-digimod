@@ -113,24 +113,33 @@ if [ $CMD_EXIT_CODE -ne 0 ]; then
 
 
     exit $CMD_EXIT_CODE
+
+
+elif [ $CMD_EXIT_CODE = 52 ]; then
+    #soft fail.
+    echo "::warning::Error trying to check remote url, ${CMD_RESULTS}"
+    echo "::warning::Exit code: ${CMD_EXIT_CODE}"
+
+
+
+else
+    if [ $CMD_RESULTS -eq 200 ]; then
+        echo "Success, restored site responded with http 200 - $NEW_SITE_URL"
+    fi
+
+    if [ "$CMD_RESULTS" -ne 200 ]; then
+        echo "::error::Incorrect http status returned, ${CMD_RESULTS}"
+
+
+        echo "Restoring pod ip whitelist"
+        oc annotate route -n $NAMESPACE $NGINX_ROUTE_NAME --overwrite haproxy.router.openshift.io/ip_whitelist="$NGINX_ROUTE_IP_WHITELIST"
+
+
+        exit 99
+    fi 
 fi
 
 
-
-if [ $CMD_RESULTS -eq 200 ]; then
-    echo "Success, restored site responded with http 200 - $NEW_SITE_URL"
-fi
-
-if [ "$CMD_RESULTS" -ne 200 ]; then
-    echo "::error::Incorrect http status returned, ${CMD_RESULTS}"
-
-
-    echo "Restoring pod ip whitelist"
-    oc annotate route -n $NAMESPACE $NGINX_ROUTE_NAME --overwrite haproxy.router.openshift.io/ip_whitelist="$NGINX_ROUTE_IP_WHITELIST"
-
-
-    exit 99
-fi 
 
 
 echo "Restoring pod ip whitelist"
