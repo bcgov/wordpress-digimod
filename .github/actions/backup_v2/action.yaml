@@ -68,6 +68,7 @@ runs:
     - name: Perform the backup and push to S3
       run: |
         chmod +x ./.github/actions/backup_v2/backup_v2.sh
+        chmod +x ./.github/oc-retry-wrapper.sh
 
         set +e
         ./.github/actions/backup_v2/backup_v2.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.s3-token }}" "${{ inputs.oc_nameplate }}"

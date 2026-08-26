@@ -78,11 +78,11 @@ fi
 echo "OC Nameplate: $OC_NAMEPLATE"
 echo "OC Site Name: $OC_SITE_NAME"
 
-WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
+WORDPRESS_POD_NAME=$(./.github/oc-retry-wrapper.sh get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+WORDPRESS_CONTAINER_NAME=$(./.github/oc-retry-wrapper.sh get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
-DB_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=mariadb,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-DB_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $DB_POD_NAME -o jsonpath='{.spec.containers[0].name}')
+DB_POD_NAME=$(./.github/oc-retry-wrapper.sh get pods -n $NAMESPACE -l app=wordpress,role=mariadb,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+DB_CONTAINER_NAME=$(./.github/oc-retry-wrapper.sh get pods -n $NAMESPACE $DB_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
 
 #create backup of database 
@@ -95,7 +95,7 @@ echo "DB Container Name: $DB_CONTAINER_NAME"
 
 
 set +e
-CMD1_RESULTS=$( (oc exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb-dump  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) --quick --net-buffer-length=4K  $MYSQL_DATABASE | gzip' > db.sql.gz) 2>&1) #--extended-insert --max-allowed-packet=500M --net-buffer-length=16M
+CMD1_RESULTS=$( (./.github/oc-retry-wrapper.sh exec -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb-dump  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) --quick --net-buffer-length=4K  $MYSQL_DATABASE | gzip' > db.sql.gz) 2>&1) #--extended-insert --max-allowed-packet=500M --net-buffer-length=16M
 CMD1_EXIT_CODE=$?
 set -e
 if [ $CMD1_EXIT_CODE -eq 0 ]; then
@@ -123,7 +123,7 @@ echo "::group::Create files backup"
 echo "WP Pod Name: $WORDPRESS_POD_NAME"
 echo "WP Container Name: $WORDPRESS_CONTAINER_NAME"  
 set +e
-CMD2_RESULTS=$( (oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar --warning=no-file-changed -czf  - -C /var/www/html . > files.tar.gz) 2>&1)
+CMD2_RESULTS=$( (./.github/oc-retry-wrapper.sh exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- tar --warning=no-file-changed -czf  - -C /var/www/html . > files.tar.gz) 2>&1)
 CMD2_EXIT_CODE=$?
 set -e
 if [[ $CMD2_EXIT_CODE -eq 0 || $CMD2_EXIT_CODE -eq 1 ]]; then   #file-changed warning will still causes an exit code of 1, so dont error.
