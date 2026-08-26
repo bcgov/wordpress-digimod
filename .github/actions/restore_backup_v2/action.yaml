@@ -69,5 +69,6 @@ runs:
     - name: Restore Backup
       run: |
         chmod +x ./.github/actions/restore_backup_v2/restore_backup_v2.sh
+        chmod +x ./.github/actions/oc-retry-wrapper.sh
         ./.github/actions/restore_backup_v2/restore_backup_v2.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.backup-number }}" "${{ inputs.s3-token }}" "${{ inputs.oc_nameplate }}" "${{ inputs.oc_tier }}" "${{ inputs.restore-files }}" "${{ inputs.restore-db }}"
       shell: bash
