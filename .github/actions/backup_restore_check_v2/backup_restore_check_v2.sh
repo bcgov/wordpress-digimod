@@ -103,7 +103,13 @@ CMD_RESULTS=$(curl -s -o /dev/null -w "%{http_code}" ${NEW_SITE_URL})
 CMD_EXIT_CODE=$?
 set -e
 
-if [ $CMD_EXIT_CODE -ne 0 ]; then
+if [ $CMD_EXIT_CODE = 52 ]; then
+    #soft fail.
+    echo "::warning::Error trying to check remote url, ${CMD_RESULTS}"
+    echo "::warning::Exit code: ${CMD_EXIT_CODE}"
+
+
+elif [ $CMD_EXIT_CODE -ne 0 ]; then    
     echo "::error::Error trying to check remote url, ${CMD_RESULTS}"
     echo "::error::Exit code: ${CMD_EXIT_CODE}"
     
@@ -111,15 +117,7 @@ if [ $CMD_EXIT_CODE -ne 0 ]; then
     echo "Restoring pod ip whitelist"
     oc annotate route -n $NAMESPACE $NGINX_ROUTE_NAME --overwrite haproxy.router.openshift.io/ip_whitelist="$NGINX_ROUTE_IP_WHITELIST"
 
-
     exit $CMD_EXIT_CODE
-
-
-elif [ $CMD_EXIT_CODE = 52 ]; then
-    #soft fail.
-    echo "::warning::Error trying to check remote url, ${CMD_RESULTS}"
-    echo "::warning::Exit code: ${CMD_EXIT_CODE}"
-
 
 
 else
