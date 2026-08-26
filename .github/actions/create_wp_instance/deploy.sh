@@ -65,13 +65,16 @@ fi
 echo "::endgroup::"
 
 #Go into the deployment folder
+DEPLOY_REPO_FOLDER=""
 if [ "$OC_NAMEPLATE" == "c0cce6" ]; then
     echo "Using digimod deploy folder"
-    cd wordpress-deploy-digimod
+    #cd wordpress-deploy-digimod
+    DEPLOY_REPO_FOLDER=wordpress-deploy-digimod
 
 else
     echo "Using cleanbcdx deploy folder"
-    cd wordpress-deploy-cleanbcdx
+    #cd wordpress-deploy-cleanbcdx
+    DEPLOY_REPO_FOLDER=wordpress-deploy-cleanbcdx
 fi
 
 
@@ -81,7 +84,7 @@ export OC_ENV=$ENVIRONMENT
 export OC_SITE_NAME=$PROJECT_NAME-$SITE_NAME
 
 # Delete existing deployment, if it exists
-echo "::group::Delete existing deployment"
+echo "::group::Checking for existing deployment"
 export WORDPRESS_POD_NAME=$(./.github/oc-retry-wrapper.sh get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
 WORDPRESS_CONTAINER_NAME=$(./.github/oc-retry-wrapper.sh get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
@@ -89,8 +92,8 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     echo "::endgroup::"
 
     #Changed to not delete if it exists, just in case the site has content. Delete should be an active action.
-    #chmod +x site-delete-unix.sh
-    # ./site-delete-unix.sh
+    #chmod +x $DEPLOY_REPO_FOLDER/site-delete-unix.sh
+    # ./$DEPLOY_REPO_FOLDER/site-delete-unix.sh
 
 
     echo "::error::Found existing site!"
@@ -114,8 +117,8 @@ echo "::endgroup::"
 
 # Create new WordPress instance
 echo "::group::Create new deployment"
-chmod +x site-builder-unix.sh
-./site-builder-unix.sh
+chmod +x $DEPLOY_REPO_FOLDER/site-builder-unix.sh
+./$DEPLOY_REPO_FOLDER/site-builder-unix.sh
 echo "::endgroup::"
 
 # Wait for WordPress pod to be running
