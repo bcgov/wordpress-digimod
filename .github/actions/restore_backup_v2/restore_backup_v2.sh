@@ -259,6 +259,11 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
         echo "::endgroup::"
     fi
 
+    #just in case the flow gets cancelled, re-run this any time the action is called to make sure the DB is in a proper state again
+    echo "Re-Restoring database settings to default"
+    oc exec -i -n $NAMESPACE -c $DB_CONTAINER_NAME $DB_POD_NAME -- sh -c 'mariadb  -u root -p$(cat $MYSQL_ROOT_PASSWORD_FILE) -e "SET GLOBAL innodb_flush_log_at_trx_commit=1; SET GLOBAL foreign_key_checks = 1; SET GLOBAL unique_checks = 1; SET GLOBAL autocommit=1; COMMIT; "'
+
+
 
     if [ "$RESTORE_FILES" = "true" ]; then
         echo "::group::Restore Files"
