@@ -82,8 +82,8 @@ export OC_SITE_NAME=$PROJECT_NAME-$SITE_NAME
 
 # Delete existing deployment, if it exists
 echo "::group::Delete existing deployment"
-export WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
+export WORDPRESS_POD_NAME=$(./.github/oc-retry-wrapper.sh get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+WORDPRESS_CONTAINER_NAME=$(./.github/oc-retry-wrapper.sh get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     echo "Found existing site."
     echo "::endgroup::"
@@ -121,12 +121,12 @@ echo "::endgroup::"
 # Wait for WordPress pod to be running
 
 echo "Waiting for WordPress container to be created...5 minutes timeout"
-WORDPRESS_POD_NAME=$(oc get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-oc wait --for=condition=Ready pod/$WORDPRESS_POD_NAME -n $NAMESPACE --timeout=5m
+WORDPRESS_POD_NAME=$(./.github/oc-retry-wrapper.sh get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+./.github/oc-retry-wrapper.sh wait --for=condition=Ready pod/$WORDPRESS_POD_NAME -n $NAMESPACE --timeout=5m
 # Wait for the WordPress container to be created
 WORDPRESS_CONTAINER_NAME=null;
 while true; do
-    WORDPRESS_CONTAINER_NAME=$(oc get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
+    WORDPRESS_CONTAINER_NAME=$(./.github/oc-retry-wrapper.sh get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
     if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     break
     fi
@@ -148,16 +148,16 @@ chmod +x wp-cli.phar
 
 echo "Copying wp-cli to pod"
 # Copy wp-cli to the WordPress instance and install wordpress
-oc cp --no-preserve wp-cli.phar $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/wp-cli.phar -c $WORDPRESS_CONTAINER_NAME
-oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
+./.github/oc-retry-wrapper.sh cp --no-preserve wp-cli.phar $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/wp-cli.phar -c $WORDPRESS_CONTAINER_NAME
+./.github/oc-retry-wrapper.sh exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
 
 echo "Performing wordpress install"
 #Perform a site install
-WP_INSTALL_RESULTS=$(oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar core install --url=${OC_SITE_NAME}.apps.${OC_TIER}.devops.gov.bc.ca --admin_user=tester --admin_email=info@example.com  --title="${OC_SITE_NAME}.gov.bc.ca Testing Framework")
+WP_INSTALL_RESULTS=$(./.github/oc-retry-wrapper.sh exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar core install --url=${OC_SITE_NAME}.apps.${OC_TIER}.devops.gov.bc.ca --admin_user=tester --admin_email=info@example.com  --title="${OC_SITE_NAME}.gov.bc.ca Testing Framework")
 echo "WP Install Results: ${WP_INSTALL_RESULTS}"
 
 #Disable site indexing
-oc exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar option set blog_public 0
+./.github/oc-retry-wrapper.sh exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar option set blog_public 0
 echo "::endgroup::"
 
 #Generate GH Actions summary

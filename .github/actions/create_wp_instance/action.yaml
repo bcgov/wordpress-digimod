@@ -38,5 +38,6 @@ runs:
     - name: Create the instance
       run: |
         chmod +x ./.github/actions/create_wp_instance/deploy.sh
+        chmod +x ./.github/oc-retry-wrapper.sh
         ./.github/actions/create_wp_instance/deploy.sh "${{ inputs.environment }}" "${{ inputs.project-name }}" "${{ inputs.site-name }}" "${{ inputs.openshift-server }}" "${{ inputs.dev-token }}" "${{ inputs.test-token }}" "${{ inputs.prod-token }}" "${{ inputs.oc_nameplate }}" "${{ inputs.oc_tier }}"
       shell: bash
