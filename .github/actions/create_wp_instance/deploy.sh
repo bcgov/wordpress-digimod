@@ -92,8 +92,10 @@ if [ -n "$WORDPRESS_CONTAINER_NAME" ]; then
     echo "::endgroup::"
 
     #Changed to not delete if it exists, just in case the site has content. Delete should be an active action.
-    #chmod +x $DEPLOY_REPO_FOLDER/site-delete-unix.sh
-    # ./$DEPLOY_REPO_FOLDER/site-delete-unix.sh
+    #cd $DEPLOY_REPO_FOLDER
+    #chmod +x site-delete-unix.sh
+    # ./site-delete-unix.sh
+    #cd ..
 
 
     echo "::error::Found existing site!"
@@ -117,8 +119,10 @@ echo "::endgroup::"
 
 # Create new WordPress instance
 echo "::group::Create new deployment"
-chmod +x $DEPLOY_REPO_FOLDER/site-builder-unix.sh
-./$DEPLOY_REPO_FOLDER/site-builder-unix.sh
+cd $DEPLOY_REPO_FOLDER
+chmod +x site-builder-unix.sh
+./site-builder-unix.sh
+cd ..
 echo "::endgroup::"
 
 # Wait for WordPress pod to be running
