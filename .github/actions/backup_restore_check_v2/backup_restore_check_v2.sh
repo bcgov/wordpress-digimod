@@ -105,6 +105,8 @@ set -e
 
 if [ $CMD_EXIT_CODE -ne 0 ]; then
     echo "::error::Error trying to check remote url, ${CMD_RESULTS}"
+    echo "::error::Exit code: ${CMD_EXIT_CODE}"
+    
 
     echo "Restoring pod ip whitelist"
     oc annotate route -n $NAMESPACE $NGINX_ROUTE_NAME --overwrite haproxy.router.openshift.io/ip_whitelist="$NGINX_ROUTE_IP_WHITELIST"
