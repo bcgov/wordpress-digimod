@@ -133,11 +133,11 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
 
 
     NAMESPACE="$OC_NAMEPLATE-$ENVIRONMENT"
-    WORDPRESS_POD_NAME=$(../oc-retry-wrapper.sh get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-    WORDPRESS_CONTAINER_NAME=$(../oc-retry-wrapper.sh get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
+    WORDPRESS_POD_NAME=$(../../oc-retry-wrapper.sh get pods -n $NAMESPACE -l app=wordpress,role=wordpress-core,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+    WORDPRESS_CONTAINER_NAME=$(../../oc-retry-wrapper.sh get pods -n $NAMESPACE $WORDPRESS_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
-    DB_POD_NAME=$(../oc-retry-wrapper.sh get pods -n $NAMESPACE -l app=wordpress,role=mariadb,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
-    DB_CONTAINER_NAME=$(../oc-retry-wrapper.sh get pods -n $NAMESPACE $DB_POD_NAME -o jsonpath='{.spec.containers[0].name}')
+    DB_POD_NAME=$(../../oc-retry-wrapper.sh get pods -n $NAMESPACE -l app=wordpress,role=mariadb,site=${OC_SITE_NAME} -o jsonpath='{.items[0].metadata.name}')
+    DB_CONTAINER_NAME=$(../../oc-retry-wrapper.sh get pods -n $NAMESPACE $DB_POD_NAME -o jsonpath='{.spec.containers[0].name}')
 
     if [ -z "$WORDPRESS_CONTAINER_NAME" ]; then
         echo "::error::Unknown site name: ${SITE_NAME}"
@@ -179,8 +179,8 @@ if [[ "$CMD1_EXIT_CODE" -eq 0 && -f "$S3_FILENAME" ]]; then
     chmod +x wp-cli.phar
 
     # Copy wp-cli to the WordPress instance and install wordpress
-    ../oc-retry-wrapper.sh cp --no-preserve wp-cli.phar $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/wp-cli.phar -c $WORDPRESS_CONTAINER_NAME
-    ../oc-retry-wrapper.sh exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
+    ../../oc-retry-wrapper.sh cp --no-preserve wp-cli.phar $NAMESPACE/$WORDPRESS_POD_NAME:/tmp/wp-cli.phar -c $WORDPRESS_CONTAINER_NAME
+    ../../oc-retry-wrapper.sh exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
 
 
     echo "Expanding backup archive on runner"
