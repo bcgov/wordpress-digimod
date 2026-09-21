@@ -1,3 +1,8 @@
+## 1.5.0 September 21, 2026
+– Added consolodated endpoint for WCAG cards and Common Components
+– Removed training cards support from filter block selector
+– Updated Vue block to normalise fields
+
 ## 1.4.4 August 21, 2026
 – Minor style updates
 

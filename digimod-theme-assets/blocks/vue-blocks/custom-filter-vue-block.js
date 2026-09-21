@@ -27,7 +27,6 @@ class VueAppEditorComponent extends Component {
         const { className, columns, postType, postTypeLabel } = this.props.attributes;
         const postTypes = [
             { label: 'WCAG card', value: 'wcag-card' },
-            { label: 'Training card', value: 'training-card' },
             { label: 'Common Component', value: 'common-components' },
         ];
         const postTypeOptions = postTypes.map((type) => ({ label: type.label, value: type.value }));

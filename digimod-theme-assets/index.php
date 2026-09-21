@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DIGIMOD - Block Theme Frontend Enhancements
  * Description: A plugin to load custom scripts, styles and theme settings to augment the default BCGov Block Theme capabilities
- * Version: 1.4.4
+ * Version: 1.5.0
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -663,6 +663,146 @@ function digimod_glossary_api_callback( $request ) {
 }
 
 /**
+ * Get a card field value from ACF or post meta.
+ *
+ * @param int    $post_id    Post ID.
+ * @param string $field_name Field name.
+ *
+ * @return string
+ */
+function digimod_filter_cards_get_field_value( $post_id, $field_name ) {
+    if ( function_exists( 'get_field' ) ) {
+        $value = get_field( $field_name, $post_id );
+    } else {
+        $value = get_post_meta( $post_id, $field_name, true );
+    }
+
+    if ( ! is_scalar( $value ) ) {
+        return '';
+    }
+
+    return (string) $value;
+}
+
+/**
+ * Get normalized card taxonomy tag names.
+ *
+ * @param int    $post_id        Post ID.
+ * @param string $taxonomy       Taxonomy name.
+ * @param array  $excluded_terms Term names to omit.
+ *
+ * @return array
+ */
+function digimod_filter_cards_get_tags( $post_id, $taxonomy, $excluded_terms = array() ) {
+    $terms = get_the_terms( $post_id, $taxonomy );
+
+    if ( is_wp_error( $terms ) || empty( $terms ) ) {
+        return array();
+    }
+
+    $tags = array();
+
+    foreach ( $terms as $term ) {
+        if ( in_array( $term->name, $excluded_terms, true ) ) {
+            continue;
+        }
+
+        $tags[] = $term->name;
+    }
+
+    return $tags;
+}
+
+/**
+ * Return normalized filter cards for the Vue card filter block.
+ *
+ * @param WP_REST_Request $request Request object.
+ *
+ * @return WP_REST_Response|WP_Error
+ */
+function digimod_filter_cards_api_callback( $request ) {
+    $post_type = sanitize_key( $request->get_param( 'post_type' ) );
+
+    $supported_post_types = array(
+        'wcag-card'         => array(
+            'query_post_type' => 'wcag-card',
+            'taxonomy'        => 'wcag_tag',
+            'excluded_terms'  => array(),
+        ),
+        'common-components' => array(
+            'query_post_type' => 'common-component',
+            'taxonomy'        => 'common_component_category',
+            'excluded_terms'  => array( 'Active' ),
+        ),
+    );
+
+    if ( ! isset( $supported_post_types[ $post_type ] ) ) {
+        return new WP_Error(
+            'digimod_filter_cards_invalid_post_type',
+            'Unsupported card post type.',
+            array( 'status' => 400 )
+        );
+    }
+
+    $post_type_config = $supported_post_types[ $post_type ];
+
+    if ( ! post_type_exists( $post_type_config['query_post_type'] ) ) {
+        return rest_ensure_response( array() );
+    }
+
+    $posts = get_posts(
+        array(
+            'post_type'      => $post_type_config['query_post_type'],
+            'posts_per_page' => -1,
+            'post_status'    => 'publish',
+            'orderby'        => 'title',
+            'order'          => 'ASC',
+        )
+    );
+
+    $cards = array();
+
+    foreach ( $posts as $post ) {
+        setup_postdata( $post );
+
+        $post_id                 = (int) $post->ID;
+        $description             = digimod_filter_cards_get_field_value( $post_id, 'description' );
+        $card_link               = '';
+        $team_name_ministry      = '';
+        $success_criteria_number = '';
+        $success_criteria_level  = '';
+
+        if ( 'wcag-card' === $post_type ) {
+            $card_link               = digimod_filter_cards_get_field_value( $post_id, 'card_hyperlink' );
+            $success_criteria_number = digimod_filter_cards_get_field_value( $post_id, 'success_criteria_number' );
+            $success_criteria_level  = digimod_filter_cards_get_field_value( $post_id, 'success_criteria_level' );
+        }
+
+        if ( 'common-components' === $post_type ) {
+            $short_description  = digimod_filter_cards_get_field_value( $post_id, 'short_description' );
+            $description        = ! empty( $short_description ) ? $short_description : $description;
+            $team_name_ministry = digimod_filter_cards_get_field_value( $post_id, 'team_name_ministry' );
+        }
+
+        $cards[] = array(
+            'id'                    => $post_id,
+            'title'                 => get_the_title( $post_id ),
+            'link'                  => get_permalink( $post_id ),
+            'cardLink'              => $card_link,
+            'description'           => $description,
+            'teamNameMinistry'      => $team_name_ministry,
+            'successCriteriaNumber' => $success_criteria_number,
+            'successCriteriaLevel'  => $success_criteria_level,
+            'tags'                  => digimod_filter_cards_get_tags( $post_id, $post_type_config['taxonomy'], $post_type_config['excluded_terms'] ),
+        );
+    }
+
+    wp_reset_postdata();
+
+    return rest_ensure_response( $cards );
+}
+
+/**
  * Custom API routes for the VUE app
  */
 function custom_api_posts_routes() {
@@ -688,6 +828,22 @@ function digimod_glossary_routes() {
             'methods'             => WP_REST_Server::READABLE,
             'callback'            => 'digimod_glossary_api_callback',
             'permission_callback' => '__return_true',
+        )
+    );
+
+    register_rest_route(
+        'digimod/v1',
+        '/filter-cards',
+        array(
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => 'digimod_filter_cards_api_callback',
+            'permission_callback' => '__return_true',
+            'args'                => array(
+                'post_type' => array(
+                    'required'          => true,
+                    'sanitize_callback' => 'sanitize_key',
+                ),
+            ),
         )
     );
 }

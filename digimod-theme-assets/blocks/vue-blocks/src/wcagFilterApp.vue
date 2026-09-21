@@ -29,33 +29,31 @@
 
         <li v-for="post in filteredPosts" :key="post.id" class="filter-card common-component">
 
-          <a :href="post.acf.card_hyperlink ? post.acf.card_hyperlink.value : post.link" class="card-title-link">
+          <a :href="post.cardLink || post.link" class="card-title-link">
             <div
               class="wcag-card-content is-layout-constrained wp-block-group common-component-group flex-card has-white-background-color has-background">
 
               <h3 style="margin-bottom:0;margin-top:var(--wp--preset--spacing--20);"
-                class="has-text-color has-secondary-brand-color is-style-default wp-block-post-title card-title"
-                v-html="post.title.rendered"></h3>
+                class="has-text-color has-secondary-brand-color is-style-default wp-block-post-title card-title">{{ post.title }}</h3>
 
-              <p v-if="undefined !== post.acf.success_criteria_number && post.acf.success_criteria_number.value"
+              <p v-if="post.successCriteriaNumber"
                 class="has-text-color has-secondary-brand-color" style="margin-block:1rem 0; font-size:1rem">Success
-                criterion {{ post.acf.success_criteria_number.value }}
+                criterion {{ post.successCriteriaNumber }}
                 <span
-                  v-if="undefined !== post.acf.success_criteria_level && 'null' !== post.acf.success_criteria_level.value">(Level
-                  {{ post.acf.success_criteria_level.value }})</span>
+                  v-if="post.successCriteriaLevel && 'null' !== post.successCriteriaLevel">(Level
+                  {{ post.successCriteriaLevel }})</span>
               </p>
 
-              <p v-if="post.acf.team_name_ministry" style="margin-top:0;">{{ post.acf.team_name_ministry.value }}
+              <p v-if="post.teamNameMinistry" style="margin-top:0;">{{ post.teamNameMinistry }}
               </p>
 
               <p style="font-size:1rem;"><span class="value">
-                  {{ post.acf.short_description ? post.acf.short_description.value : post.acf.description.value
-                  }}
+                  {{ post.description }}
                 </span></p>
               <div role="heading" class="sr-only">Applicable filter categories</div>
-              <ul v-if="post.wcag_tag" class="taxonomy-common_component_category wp-block-post-terms wcag-card-tags">
-                <template v-for="tag in post.wcag_tag" :key="tag">
-                  <li v-if="tag !== 'Active'" :class="{ tag: true, active: selectedTags.includes(tag) }">{{ removePrefix(tag)
+              <ul v-if="post.tags && post.tags.length" class="taxonomy-common_component_category wp-block-post-terms wcag-card-tags">
+                <template v-for="tag in post.tags" :key="tag">
+                  <li :class="{ tag: true, active: selectedTags.includes(tag) }">{{ removePrefix(tag)
                     }}</li>
                 </template>
               </ul>
@@ -107,7 +105,7 @@ const fetchData = async () => {
     return;
   }
 
-  const url = `/wp-json/wp/v2/${props.postType}?_embed&per_page=100`;
+  const url = `/wp-json/digimod/v1/filter-cards?post_type=${encodeURIComponent(props.postType)}`;
   try {
     const response = await fetch(url);
     if (!response.ok) {
@@ -116,10 +114,10 @@ const fetchData = async () => {
     const postsData = await response.json();
     posts.value = postsData.map((post) => ({
       ...post,
-      wcag_tag: post._embedded?.['wp:term']?.flatMap((term) => term.map((t) => t.name)) || [],
+      tags: Array.isArray(post.tags) ? post.tags : [],
     }))
       .slice()
-      .sort((a, b) => (a.title.rendered > b.title.rendered) ? 1 : -1);
+      .sort((a, b) => a.title.localeCompare(b.title));
   } catch (error) {
     console.error(error);
   }
@@ -207,7 +205,7 @@ const clearFilters = () => {
   selectedTags.value = [];
 };
 
-const uniqueTags = computed(() => [...new Set(posts.value.flatMap((post) => post.wcag_tag || []).filter(tag => tag !== 'Active').filter(tag => tag !== 'Common component').sort())]);
+const uniqueTags = computed(() => [...new Set(posts.value.flatMap((post) => post.tags || []).filter(tag => tag !== 'Active').filter(tag => tag !== 'Common component').sort())]);
 const filteredPosts = computed(() => {
   if (!selectedTags.value.length) {
     return posts.value;
@@ -215,10 +213,10 @@ const filteredPosts = computed(() => {
 
   return posts.value
     .filter((post) =>
-      post.wcag_tag && post.wcag_tag.length && selectedTags.value.some((tag) => post.wcag_tag.includes(tag))
+      post.tags && post.tags.length && selectedTags.value.some((tag) => post.tags.includes(tag))
     )
     .slice()
-    .sort((a, b) => (a.title.rendered > b.title.rendered) ? 1 : -1);
+    .sort((a, b) => a.title.localeCompare(b.title));
 });
 
 const removePrefix = (label) => {
