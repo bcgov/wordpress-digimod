@@ -159,9 +159,9 @@ echo "Copying wp-cli to pod"
 ./.github/oc-retry-wrapper.sh exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- chmod +x /tmp/wp-cli.phar
 
 echo "Performing wordpress install"
-#Perform a site install
-WP_INSTALL_RESULTS=$(./.github/oc-retry-wrapper.sh exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar core install --url=${OC_SITE_NAME}.apps.${OC_TIER}.devops.gov.bc.ca --admin_user=tester --admin_email=info@example.com  --title="${OC_SITE_NAME}.gov.bc.ca Testing Framework")
-echo "WP Install Results: ${WP_INSTALL_RESULTS}"
+#Perform a site install. Dont keep the admin password, we will set one later if needed, allow errors to show however.
+WP_INSTALL_RESULTS=$(./.github/oc-retry-wrapper.sh exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar core install --url=${OC_SITE_NAME}.apps.${OC_TIER}.devops.gov.bc.ca --admin_user=tester --admin_email=info@example.com  --title="${OC_SITE_NAME}.gov.bc.ca Testing Framework" > /dev/null)
+echo "WP Install Results (blank is good): ${WP_INSTALL_RESULTS}"
 
 #Disable site indexing
 ./.github/oc-retry-wrapper.sh exec -n $NAMESPACE -c $WORDPRESS_CONTAINER_NAME $WORDPRESS_POD_NAME -- php /tmp/wp-cli.phar option set blog_public 0
@@ -174,9 +174,6 @@ echo "Project: ${PROJECT_NAME}" >> $GITHUB_STEP_SUMMARY
 echo "Site: ${SITE_NAME}"  >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
 
-echo "### WP Install Results: " >> $GITHUB_STEP_SUMMARY
+echo "### WP Install Results: (blank is good)" >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
-echo "Admin Username: tester" >> $GITHUB_STEP_SUMMARY 
 echo "${WP_INSTALL_RESULTS}" >> $GITHUB_STEP_SUMMARY
-
-echo "**Change the ADMIN password ASAP!**" >> $GITHUB_STEP_SUMMARY
