@@ -22,18 +22,13 @@ on:
         description: 'Site name'
         required: true
         default: 'test'
-
-env:
-  # Change this per project.
-  OC_NAMEPLATE: "c0cce6" 
-
 jobs:
   deploy:
     runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v2
 
     - name: Install OC CLI
       run: |
@@ -44,7 +39,6 @@ jobs:
     - name: Restart instance
       run: |
         ENVIRONMENT=${{ github.event.inputs.ENVIRONMENT }}
-        PROJECT_NAME=${{ github.event.inputs.project-name }}
         SITE_NAME=${{ github.event.inputs.site-name }}
         OC_SITE_NAME=${{ github.event.inputs.project-name }}-${{ github.event.inputs.site-name }}
         case "$ENVIRONMENT" in
@@ -66,21 +60,15 @@ jobs:
             exit 1
             ;;
         esac
-
         echo "Restarting the site $OC_SITE_NAME in $ENVIRONMENT"
-        NAMESPACE="${{ env.OC_NAMEPLATE }}-$ENVIRONMENT"
+        oc login ${{ secrets.OPENSHIFT_SERVER }} --token=$token             #--insecure-skip-tls-verify=true
+        NAMESPACE="c0cce6-$ENVIRONMENT"
         OC_ENV=$ENVIRONMENT
-
-        oc login ${{ secrets.OPENSHIFT_SERVER }} -n $NAMESPACE --token=$token             #--insecure-skip-tls-verify=true
-        
         DEPLOYMENT=$(oc get deployment -n $NAMESPACE -l app=wordpress,site=$OC_SITE_NAME -o jsonpath='{.items[0].metadata.name}')
 
         #run command to restart the deployment
-        CMD1_RESULTS=$(oc rollout restart -n $NAMESPACE deployment/$DEPLOYMENT)
+        CMD1_RESULTS=$(oc rollout restart deployment/$DEPLOYMENT)
         echo "${CMD1_RESULTS}"
-
-        CMD2_RESULTS=$(oc rollout restart -n $NAMESPACE deployment/$DEPLOYMENT-mariadb)
-        echo "${CMD2_RESULTS}"
 
 
         #Generate GH Actions summary
@@ -93,4 +81,3 @@ jobs:
         echo "### Command 1 Results: " >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
         echo "${CMD1_RESULTS}" >> $GITHUB_STEP_SUMMARY
-        echo "${CMD2_RESULTS}" >> $GITHUB_STEP_SUMMARY

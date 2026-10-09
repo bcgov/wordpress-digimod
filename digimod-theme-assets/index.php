@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DIGIMOD - Block Theme Frontend Enhancements
  * Description: A plugin to load custom scripts, styles and theme settings to augment the default BCGov Block Theme capabilities
- * Version: 1.5.0
+ * Version: 1.5.1
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -871,9 +871,129 @@ function disable_wp_emojicons() {
 add_action( 'init', 'disable_wp_emojicons' );
 
 
+/**
+ * Disable WordPress's default taxonomy metabox for the Status taxonomy.
+ *
+ * @param array  $args     Taxonomy registration arguments.
+ * @param string $taxonomy Taxonomy name.
+ */
+function remove_standard_status_default_checkboxes( $args, $taxonomy ) {
 
+	if ( 'standard_status' === $taxonomy ) {
+		$args['meta_box_cb'] = false;
+	}
 
+	return $args;
+}
+add_filter( 'register_taxonomy_args', 'remove_standard_status_default_checkboxes', 10, 2 );
 
+/**
+ * Remove the default Gutenberg taxonomy panel for the Status taxonomy.
+ */
+function remove_standard_status_editor_checkboxes() {
+
+	$taxonomy = 'standard_status';
+
+	wp_add_inline_script(
+		'wp-edit-post',
+		sprintf(
+			"wp.domReady(function() {
+				wp.data.dispatch('core/edit-post').removeEditorPanel('taxonomy-panel-%s');
+			});",
+			esc_js( $taxonomy )
+		)
+	);
+}
+add_action( 'enqueue_block_editor_assets', 'remove_standard_status_editor_checkboxes' );
+
+/**
+ * Make a hierarchical taxonomy single-select in the classic taxonomy metabox.
+ *
+ * Change `standard_status` to your taxonomy slug.
+ */
+function standard_status_single_select() {
+
+	$taxonomy = 'standard_status';
+
+	add_meta_box(
+		$taxonomy . 'div',
+		'Status',
+		function ( $post ) use ( $taxonomy ) {
+
+			$terms = get_terms(
+                [
+					'taxonomy'   => $taxonomy,
+					'hide_empty' => false,
+				]
+            );
+
+			if ( is_wp_error( $terms ) ) {
+				return;
+			}
+
+			$selected = wp_get_object_terms(
+				$post->ID,
+				$taxonomy,
+				[ 'fields' => 'ids' ]
+			);
+
+			$selected = $selected[0] ?? 0;
+
+			$options = [];
+
+			foreach ( $terms as $term ) {
+
+				// Only include child terms.
+				if ( ! $term->parent ) {
+					continue;
+				}
+
+				$parent = get_term(
+					$term->parent,
+					$taxonomy
+				);
+
+				if ( is_wp_error( $parent ) || ! $parent ) {
+					continue;
+				}
+
+				$options[] = [
+					'id'     => $term->term_id,
+					'label'  => $term->name,
+					'colour' => strtolower( $parent->name ),
+				];
+			}
+
+			// Sort alphabetically by status label.
+			usort(
+                $options,
+                function ( $a, $b ) {
+					return strcasecmp( $a['label'], $b['label'] );
+				}
+            );
+
+			echo '<select name="tax_input[' . esc_attr( $taxonomy ) . '][]" style="width:auto;">';
+
+			echo '<option value="">— Select status —</option>';
+
+			foreach ( $options as $option ) {
+				printf(
+					'<option value="%1$d" %2$s>%3$s (%4$s)</option>',
+					(int) $option['id'],
+					selected( $selected, $option['id'], false ),
+					esc_html( $option['label'] ),
+					esc_html( $option['colour'] )
+				);
+			}
+
+			echo '</select>';
+		},
+		null,
+		'side',
+		'default'
+	);
+}
+add_action( 'add_meta_boxes', 'standard_status_single_select' );
 
 // Begin function to check for updates to plugin.
 require_once 'digimod-update-check.php';

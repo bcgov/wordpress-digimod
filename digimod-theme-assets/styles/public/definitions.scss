@@ -60,15 +60,12 @@ a.icon-definition.icon-definition {
 }
 
 a.icon-definition.icon-definition.is-loading-definition {
-	background-color: transparent;
-	outline-color: transparent;
 	cursor: progress;
 
 	span.last-word {
 
 		&::after {
 			animation: definition-link-spin 0.85s linear infinite;
-			background-color: transparent;
 			border-color: currentcolor currentcolor currentcolor transparent;
 			box-sizing: border-box;
 			content: "";
@@ -142,14 +139,7 @@ body:has(#dialog[open]) {
 			font-weight: bold;
 			text-underline-offset: 0.15rem;
 
-			&:hover {
-				background-color: var(--bcds-surface-brand-blue-20, #d8eafd);
-				outline: 8px solid var(--bcds-surface-brand-blue-20, #d8eafd);
-				border-radius: 0.2rem;
-				text-decoration-thickness: 2px;
-			}
-
-			&:focus-visible {
+			&:is(:hover, :focus-visible) {
 				outline: 2px solid currentcolor;
 				outline-offset: 2px;
 				border-radius: 0.2rem;

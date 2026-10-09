@@ -1,10 +1,11 @@
 *:has(body.glossary) {
 	--glossary-gap: 0;
 	--glossary-letter-heading-size: 1.75rem;
+	scroll-padding: 12rem !important;
 }
 
 *:has(body.glossary.admin-bar) {
-	scroll-padding: calc(var(--scroll-padding) + 32px) !important;
+	scroll-padding: calc(12rem + 32px) !important;
 }
 
 body.glossary {
@@ -165,8 +166,6 @@ body.glossary {
 	}
 
 	&.is-loading-definition {
-		background-color: transparent;
-		outline-color: transparent;
 		cursor: progress;
 
 		span.last-word {

@@ -1,3 +1,7 @@
+## 1.5.1 Octomber 9, 2026
+– Editor status category select handling for Standards taxonomy 
+– Glossary tweaks and improvements to work better with definitions with related styling updates
+
 ## 1.5.0 September 21, 2026
 – Added consolodated endpoint for WCAG cards and Common Components
 – Removed training cards support from filter block selector
