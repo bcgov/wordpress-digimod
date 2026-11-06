@@ -49,7 +49,7 @@
 
               <ul v-if="post.resources.length > 0" class="standard-card-resources" aria-label="Standard resources">
                 <li v-for="(resource, index) in post.resources" :key="`${post.id}-resource-${index}`">
-                  <a :href="resource.url" class="standard-resource-link" target="_blank" rel="noopener noreferrer"
+                  <a :href="resource.url" class="standard-resource-link" rel="noopener noreferrer"
                     :download="'url' !== resource.icon ? '' : null">
                     <span v-if="resource.icon && resourceIcon(resource.icon)" class="standard-resource-icon"
                       :class="`standard-resource-icon--${resource.icon}`" aria-hidden="true">
