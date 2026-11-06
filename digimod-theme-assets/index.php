@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DIGIMOD - Block Theme Frontend Enhancements
  * Description: A plugin to load custom scripts, styles and theme settings to augment the default BCGov Block Theme capabilities
- * Version: 1.5.1
+ * Version: 1.6.0
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -478,6 +478,34 @@ function vuejs_custom_app_dynamic_block_plugin( $attributes ) {
 }
 
 /**
+ * Enqueue files for the filterable Standards Vue app.
+ *
+ * @param array $attributes Block attributes.
+ *
+ * @return string
+ */
+function digimod_standards_filter_dynamic_block_plugin( $attributes ) {
+	$plugin_dir = plugin_dir_path( __FILE__ );
+
+	$plugin_data    = get_plugin_data( $plugin_dir . 'index.php' );
+	$plugin_version = $plugin_data['Version'];
+	$instance_id    = function_exists( 'wp_unique_id' ) ? wp_unique_id( 'digimod-standards-filter-' ) : uniqid( 'digimod-standards-filter-', false );
+
+	digimod_enqueue_vue_bundle_assets( $plugin_dir, $plugin_version );
+
+	$columns                     = isset( $attributes['columns'] ) ? absint( $attributes['columns'] ) : 3;
+	$columns                     = in_array( $columns, array( 2, 3, 4 ), true ) ? $columns : 3;
+	$card_heading_level          = isset( $attributes['cardHeadingLevel'] ) ? $attributes['cardHeadingLevel'] : 'h3';
+	$card_heading_level          = in_array( $card_heading_level, array( 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ? $card_heading_level : 'h3';
+	$card_heading_font_size      = isset( $attributes['cardHeadingFontSize'] ) ? $attributes['cardHeadingFontSize'] : '';
+	$card_heading_font_size_slug = isset( $attributes['cardHeadingFontSizeSlug'] ) ? $attributes['cardHeadingFontSizeSlug'] : '';
+	$class_name                  = isset( $attributes['className'] ) ? $attributes['className'] : '';
+	$class_names                 = trim( 'digimod-vue-app-root digimod-standards-filter-block ' . $class_name );
+
+	return '<div class="' . esc_attr( $class_names ) . '" data-vue-app="standards-filter" data-instance-id="' . esc_attr( $instance_id ) . '" data-columns="' . esc_attr( $columns ) . '" data-card-heading-level="' . esc_attr( $card_heading_level ) . '" data-card-heading-font-size="' . esc_attr( $card_heading_font_size ) . '" data-card-heading-font-size-slug="' . esc_attr( $card_heading_font_size_slug ) . '">Loading Standards...</div>';
+}
+
+/**
  * Enqueue files for the glossary Vue app.
  *
  * @param array $attributes Block attributes.
@@ -535,6 +563,13 @@ function vuejs_app_plugin_block_init() {
 			'render_callback' => 'digimod_glossary_dynamic_block_plugin',
 		)
     );
+
+	register_block_type(
+		'digimod-plugin/standards-filter-block',
+		array(
+			'render_callback' => 'digimod_standards_filter_dynamic_block_plugin',
+		)
+	);
 
     // phpcs:disable
     /* 
@@ -659,7 +694,211 @@ function digimod_glossary_api_callback( $request ) {
 
     wp_reset_postdata();
 
-    return rest_ensure_response( $entries );
+	return rest_ensure_response( $entries );
+}
+
+/**
+ * Get a Standards ACF field value, preserving group/array values.
+ *
+ * @param int    $post_id    Post ID.
+ * @param string $field_name Field name.
+ *
+ * @return mixed
+ */
+function digimod_standards_get_field_value( $post_id, $field_name ) {
+	if ( function_exists( 'get_field' ) ) {
+		return get_field( $field_name, $post_id );
+	}
+
+	return get_post_meta( $post_id, $field_name, true );
+}
+
+/**
+ * Normalize a taxonomy term for the Standards API.
+ *
+ * @param WP_Term $term Taxonomy term.
+ *
+ * @return array
+ */
+function digimod_standards_normalize_term( $term ) {
+	return array(
+		'id'     => (int) $term->term_id,
+		'name'   => $term->name,
+		'slug'   => $term->slug,
+		'parent' => (int) $term->parent,
+	);
+}
+
+/**
+ * Normalize a Standard resource group from ACF.
+ *
+ * @param array $resource_group Resource group values.
+ * @param int   $index    Resource number.
+ *
+ * @return array|null
+ */
+function digimod_standards_normalize_resource( $resource_group, $index ) {
+	if ( ! is_array( $resource_group ) ) {
+		return null;
+	}
+
+	$url = isset( $resource_group[ 'resource_' . $index . '_file_url' ] )
+		? (string) $resource_group[ 'resource_' . $index . '_file_url' ]
+		: '';
+	$url = esc_url_raw( $url );
+
+	if ( '' === $url ) {
+		return null;
+	}
+
+	$label        = isset( $resource_group[ 'resource_' . $index . '_label' ] ) ? (string) $resource_group[ 'resource_' . $index . '_label' ] : '';
+	$custom_label = isset( $resource_group[ 'resource_' . $index . '_custom_label' ] ) ? (string) $resource_group[ 'resource_' . $index . '_custom_label' ] : '';
+	$details      = isset( $resource_group[ 'resource_' . $index . '_details' ] ) && is_array( $resource_group[ 'resource_' . $index . '_details' ] )
+		? $resource_group[ 'resource_' . $index . '_details' ]
+		: array();
+
+	$label_names = array(
+		'standard'       => 'Standard',
+		'guidelines'     => 'Guidelines',
+		'specifications' => 'Specifications',
+		'outline'        => 'Outline',
+		'memo'           => 'Memo',
+		'other'          => $custom_label,
+	);
+
+	return array(
+		'label'     => $label,
+		'labelText' => isset( $label_names[ $label ] ) ? $label_names[ $label ] : $custom_label,
+		'url'       => $url,
+		'icon'      => isset( $details[ 'resource_' . $index . '_icon' ] ) ? (string) $details[ 'resource_' . $index . '_icon' ] : '',
+		'filesize'  => isset( $details[ 'resource_' . $index . '_filesize' ] ) ? (string) $details[ 'resource_' . $index . '_filesize' ] : '',
+	);
+}
+
+/**
+ * Return Standards posts for the Vue filterable Standards block.
+ *
+ * @param WP_REST_Request $request Request object.
+ *
+ * @return WP_REST_Response
+ */
+function digimod_standards_api_callback( $request ) {
+	unset( $request );
+
+	$posts = get_posts(
+		array(
+			'post_type'      => 'standard',
+			'posts_per_page' => -1,
+			'post_status'    => 'publish',
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+		)
+	);
+
+	$standards = array();
+
+	foreach ( $posts as $post ) {
+		setup_postdata( $post );
+
+		$post_id = (int) $post->ID;
+		$meta_1  = digimod_standards_get_field_value( $post_id, 'meta_1' );
+		$meta_1  = is_array( $meta_1 ) ? $meta_1 : array();
+
+		$resource_setting = isset( $meta_1['add_resources'] ) ? (string) $meta_1['add_resources'] : 'show_0';
+		$resource_count   = 0;
+
+		if ( preg_match( '/^show_(\d+)$/', $resource_setting, $matches ) ) {
+			$resource_count = min( 5, absint( $matches[1] ) );
+		}
+
+		$resources = array();
+
+		for ( $resource_index = 1; $resource_index <= 5; $resource_index++ ) {
+			if ( $resource_index > $resource_count ) {
+				continue;
+			}
+
+			$resource = digimod_standards_normalize_resource(
+				digimod_standards_get_field_value( $post_id, 'resource-' . $resource_index ),
+				$resource_index
+			);
+
+			if ( null !== $resource ) {
+				$resources[] = $resource;
+			}
+		}
+
+		$categories     = array();
+		$category_terms = get_the_terms( $post_id, 'standard_category' );
+		$status         = null;
+		$status_terms   = get_the_terms( $post_id, 'standard_status' );
+
+		if ( ! is_wp_error( $category_terms ) && ! empty( $category_terms ) ) {
+			foreach ( $category_terms as $category_term ) {
+				$categories[] = digimod_standards_normalize_term( $category_term );
+			}
+		}
+
+		if ( ! is_wp_error( $status_terms ) && ! empty( $status_terms ) ) {
+			$status_term = reset( $status_terms );
+			$parent_term = $status_term;
+
+			if ( ! empty( $status_term->parent ) ) {
+				$maybe_parent = get_term( $status_term->parent, 'standard_status' );
+
+				if ( $maybe_parent && ! is_wp_error( $maybe_parent ) ) {
+					$parent_term = $maybe_parent;
+				}
+			}
+
+			$status = array(
+				'id'        => (int) $status_term->term_id,
+				'name'      => $status_term->name,
+				'slug'      => $status_term->slug,
+				'parent'    => digimod_standards_normalize_term( $parent_term ),
+				'colorSlug' => $parent_term->slug,
+			);
+		}
+
+		$standards[] = array(
+			'id'           => $post_id,
+			'title'        => get_the_title( $post_id ),
+			'content'      => apply_filters( 'the_content', $post->post_content ),
+			'standardCode' => isset( $meta_1['standard_code'] ) ? (string) $meta_1['standard_code'] : '',
+			'resources'    => $resources,
+			'categories'   => $categories,
+			'status'       => $status,
+		);
+	}
+
+	usort(
+		$standards,
+		function ( $standard_a, $standard_b ) {
+			$code_a          = trim( (string) $standard_a['standardCode'] );
+			$code_b          = trim( (string) $standard_b['standardCode'] );
+			$numeric_code_a  = '' !== $code_a && is_numeric( $code_a );
+			$numeric_code_b  = '' !== $code_b && is_numeric( $code_b );
+			$code_comparison = 0;
+
+			if ( $numeric_code_a && $numeric_code_b ) {
+				$numeric_a       = (float) $code_a;
+				$numeric_b       = (float) $code_b;
+				$code_comparison = $numeric_a <=> $numeric_b;
+			} else {
+				$code_comparison = strnatcasecmp( $code_a, $code_b );
+			}
+
+			if ( 0 !== $code_comparison ) {
+				return $code_comparison;
+			}
+
+			return strcasecmp( (string) $standard_a['title'], (string) $standard_b['title'] );
+		}
+	);
+
+	wp_reset_postdata();
+
+	return rest_ensure_response( $standards );
 }
 
 /**
@@ -846,6 +1085,16 @@ function digimod_glossary_routes() {
             ),
         )
     );
+
+	register_rest_route(
+		'digimod/v1',
+		'/standards',
+		array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => 'digimod_standards_api_callback',
+			'permission_callback' => '__return_true',
+		)
+	);
 }
 
 // phpcs:ignore
@@ -899,7 +1148,114 @@ function remove_standard_status_editor_checkboxes() {
 		sprintf(
 			"wp.domReady(function() {
 				wp.data.dispatch('core/edit-post').removeEditorPanel('taxonomy-panel-%s');
+
+				var syncStandardStatusSelect = function() {
+					var select = document.querySelector('select[name=\"tax_input[%s][]\"]');
+
+					if (!select || select.dataset.digimodStatusSync) {
+						return;
+					}
+
+					select.dataset.digimodStatusSync = 'true';
+					select.addEventListener('change', function() {
+						var selectedTerm = parseInt(select.value, 10);
+						wp.data.dispatch('core/editor').editPost({ '%s': selectedTerm ? [selectedTerm] : [] });
+					});
+
+					var selectedTerm = parseInt(select.value, 10);
+					wp.data.dispatch('core/editor').editPost({ '%s': selectedTerm ? [selectedTerm] : [] });
+				};
+
+				syncStandardStatusSelect();
+
+				if ('undefined' !== typeof MutationObserver) {
+					new MutationObserver(syncStandardStatusSelect).observe(document.body, { childList: true, subtree: true });
+				}
+
+				var requirementsLock = 'digimod-standard-requirements';
+				var requirementsNotice = 'digimod-standard-requirements-notice';
+
+				var syncStandardRequirements = function() {
+					var editor = wp.data.select('core/editor');
+					var dispatcher = wp.data.dispatch('core/editor');
+					var currentPost = editor.getCurrentPost ? editor.getCurrentPost() : {};
+					var currentPostType = editor.getCurrentPostType ? editor.getCurrentPostType() : currentPost.type;
+
+					if ('standard' !== currentPostType) {
+						return;
+					}
+
+					var currentStatus = editor.getCurrentPostAttribute('status') || currentPost.status;
+					var postId = editor.getCurrentPostId ? editor.getCurrentPostId() : currentPost.id;
+					var coreSelect = wp.data.select('core');
+					var entityEdits = postId && coreSelect.getEntityRecordEdits
+						? coreSelect.getEntityRecordEdits('postType', 'standard', postId)
+						: {};
+					var editedRecord = postId && coreSelect.getEditedEntityRecord
+						? coreSelect.getEditedEntityRecord('postType', 'standard', postId)
+						: null;
+					var getTerms = function(taxonomy) {
+						var editedTerms = editor.getEditedPostAttribute(taxonomy);
+
+						if (Object.prototype.hasOwnProperty.call(entityEdits || {}, taxonomy)) {
+							return entityEdits[taxonomy];
+						}
+
+						if (undefined !== editedTerms) {
+							return editedTerms;
+						}
+
+						if (editedRecord && Object.prototype.hasOwnProperty.call(editedRecord, taxonomy)) {
+							return editedRecord[taxonomy];
+						}
+
+						return editor.getCurrentPostAttribute(taxonomy) || [];
+					};
+					var categories = getTerms('standard_category');
+					var statuses = getTerms('standard_status');
+					var hasTerms = function(terms) {
+						if (Array.isArray(terms)) {
+							return terms.some(hasTerms);
+						}
+
+						if (!terms || 'object' !== typeof terms) {
+							return !!terms;
+						}
+
+						return Object.keys(terms).some(function(key) {
+							if ('id' === key || 'term_id' === key || /^\d+$/.test(key)) {
+								return !!terms[key];
+							}
+
+							return Array.isArray(terms[key]) || 'object' === typeof terms[key]
+								? hasTerms(terms[key])
+								: false;
+						});
+					};
+					var missingCategory = !hasTerms(categories);
+					var missingStatus = !hasTerms(statuses);
+					var missingRequirement = missingCategory || missingStatus;
+					var isExistingPost = !!postId && 'auto-draft' !== currentStatus;
+					var isPublishing = editor.isPublishingPost ? editor.isPublishingPost() : false;
+
+					if ((isExistingPost || isPublishing) && missingRequirement) {
+						dispatcher.lockPostSaving(requirementsLock);
+						wp.data.dispatch('core/notices').createErrorNotice(
+							'Select at least one Standards Category and a Status before saving this Standard.',
+							{ id: requirementsNotice, isDismissible: false }
+						);
+					} else {
+						dispatcher.unlockPostSaving(requirementsLock);
+						wp.data.dispatch('core/notices').removeNotice(requirementsNotice);
+					}
+				};
+
+				wp.data.subscribe(syncStandardRequirements);
+				syncStandardRequirements();
 			});",
+			esc_js( $taxonomy ),
+			esc_js( $taxonomy ),
+			esc_js( $taxonomy ),
 			esc_js( $taxonomy )
 		)
 	);
@@ -972,9 +1328,9 @@ function standard_status_single_select() {
 				}
             );
 
-			echo '<select name="tax_input[' . esc_attr( $taxonomy ) . '][]" style="width:auto;">';
+			echo '<select name="tax_input[' . esc_attr( $taxonomy ) . '][]" style="width:auto;" required aria-required="true">';
 
-			echo '<option value="">— Select status —</option>';
+			echo '<option value="" disabled>— Select status —</option>';
 
 			foreach ( $options as $option ) {
 				printf(
@@ -994,6 +1350,324 @@ function standard_status_single_select() {
 	);
 }
 add_action( 'add_meta_boxes', 'standard_status_single_select' );
+
+/**
+ * Check whether a Standard has at least one Status term.
+ *
+ * @param int $post_id Post ID.
+ *
+ * @return bool
+ */
+function digimod_standard_has_status( $post_id ) {
+	$terms = wp_get_post_terms( $post_id, 'standard_status', array( 'fields' => 'ids' ) );
+
+	return ! is_wp_error( $terms ) && ! empty( $terms );
+}
+
+/**
+ * Check whether a Standard has at least one Standards Category term.
+ *
+ * @param int $post_id Post ID.
+ *
+ * @return bool
+ */
+function digimod_standard_has_category( $post_id ) {
+	$terms = wp_get_post_terms( $post_id, 'standard_category', array( 'fields' => 'ids' ) );
+
+	return ! is_wp_error( $terms ) && ! empty( $terms );
+}
+
+/**
+ * Keep Standards without a Status from being published.
+ *
+ * The editor's required select is not enforced for every REST/editor save
+ * path, so published Standards are downgraded to drafts when no Status is
+ * assigned.
+ *
+ * @param array $data    Sanitized post data.
+ * @param array $postarr Raw post data.
+ *
+ * @return array
+ */
+function digimod_require_standard_status_before_save( $data, $postarr ) {
+	if ( 'standard' !== ( $data['post_type'] ?? '' ) || ! in_array( $data['post_status'], array( 'publish', 'future', 'private' ), true ) ) {
+		return $data;
+	}
+
+	if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		return $data;
+	}
+
+	$post_id           = isset( $postarr['ID'] ) ? absint( $postarr['ID'] ) : 0;
+	$status_is_set     = false;
+	$status_was_sent   = false;
+	$status_parameters = array( 'standard_status', 'tax_input' );
+
+	foreach ( $status_parameters as $parameter ) {
+		if ( ! array_key_exists( $parameter, $postarr ) ) {
+			continue;
+		}
+
+		if ( 'tax_input' === $parameter ) {
+			if ( ! is_array( $postarr[ $parameter ] ) || ! array_key_exists( 'standard_status', $postarr[ $parameter ] ) ) {
+				continue;
+			}
+
+			$status_value = $postarr[ $parameter ]['standard_status'];
+		} else {
+			$status_value = $postarr[ $parameter ];
+		}
+
+		$status_was_sent = true;
+		$status_values   = is_array( $status_value ) ? $status_value : array( $status_value );
+		$status_is_set   = ! empty( array_filter( $status_values ) );
+		break;
+	}
+
+	if ( ! $status_was_sent && $post_id ) {
+		$status_is_set = digimod_standard_has_status( $post_id );
+	}
+
+	if ( ! $status_is_set ) {
+		$data['post_status'] = 'draft';
+	}
+
+	return $data;
+}
+add_filter( 'wp_insert_post_data', 'digimod_require_standard_status_before_save', 10, 2 );
+
+/**
+ * Reject published Standard REST updates when a required taxonomy is
+ * explicitly emptied. This runs before the REST controller can save the post,
+ * avoiding a save followed by a silent downgrade to draft.
+ *
+ * @param mixed           $result  Response to short-circuit, if any.
+ * @param WP_REST_Server  $server  REST server instance.
+ * @param WP_REST_Request $request REST request.
+ *
+ * @return mixed
+ */
+function digimod_validate_standard_rest_requirements( $result, $server, $request ) {
+	unset( $server );
+
+	if ( null !== $result || ! in_array( $request->get_method(), array( 'POST', 'PUT', 'PATCH' ), true ) ) {
+		return $result;
+	}
+
+	$route          = $request->get_route();
+	$post_type      = get_post_type_object( 'standard' );
+	$standard_route = $post_type && ! empty( $post_type->rest_base ) ? $post_type->rest_base : 'standard';
+
+	if ( ! preg_match( '#^/wp/v2/' . preg_quote( $standard_route, '#' ) . '(?:/(\d+))?$#', $route, $matches ) ) {
+		return $result;
+	}
+
+	$post_id = isset( $matches[1] ) ? absint( $matches[1] ) : 0;
+	$post    = $post_id ? get_post( $post_id ) : null;
+	$params  = $request->get_params();
+	$status  = isset( $params['status'] ) && '' !== $params['status'] ? $params['status'] : ( $post ? $post->post_status : 'draft' );
+
+	if ( ! in_array( $status, array( 'publish', 'future', 'private' ), true ) ) {
+		return $result;
+	}
+
+	$required_taxonomies = array(
+		'standard_status'   => 'Standards require a Status before they can be published.',
+		'standard_category' => 'Standards require at least one Standards Category before they can be published.',
+	);
+
+	foreach ( $required_taxonomies as $taxonomy => $message ) {
+		$taxonomy_was_sent = array_key_exists( $taxonomy, $params );
+		$taxonomy_value    = $taxonomy_was_sent ? $params[ $taxonomy ] : null;
+
+		if ( ! $taxonomy_was_sent && isset( $params['tax_input'] ) && is_array( $params['tax_input'] ) && array_key_exists( $taxonomy, $params['tax_input'] ) ) {
+			$taxonomy_was_sent = true;
+			$taxonomy_value    = $params['tax_input'][ $taxonomy ];
+		}
+
+		if ( $taxonomy_was_sent ) {
+			$taxonomy_values = is_array( $taxonomy_value ) ? $taxonomy_value : array( $taxonomy_value );
+
+			if ( empty( array_filter( $taxonomy_values ) ) ) {
+				return new WP_Error(
+					'digimod_' . $taxonomy . '_required',
+					$message,
+					array( 'status' => 400 )
+				);
+			}
+		} elseif ( ! $post_id ) {
+			return new WP_Error(
+				'digimod_' . $taxonomy . '_required',
+				$message,
+				array( 'status' => 400 )
+			);
+		}
+	}
+
+	return $result;
+}
+add_filter( 'rest_pre_dispatch', 'digimod_validate_standard_rest_requirements', 10, 3 );
+
+/**
+ * Reject REST saves that would publish a Standard without a Status.
+ *
+ * @param WP_Post|WP_Error $prepared_post Prepared post object.
+ * @param WP_REST_Request  $request       REST request.
+ *
+ * @return WP_Post|WP_Error
+ */
+function digimod_require_standard_status_rest_save( $prepared_post, $request ) {
+	if ( is_wp_error( $prepared_post ) || ! in_array( $prepared_post->post_status, array( 'publish', 'future', 'private' ), true ) ) {
+		return $prepared_post;
+	}
+
+	$status_is_set = false;
+
+	if ( $request->has_param( 'standard_status' ) ) {
+		$status_value  = $request->get_param( 'standard_status' );
+		$status_values = is_array( $status_value ) ? $status_value : array( $status_value );
+		$status_is_set = ! empty( array_filter( $status_values ) );
+	} elseif ( $prepared_post->ID ) {
+		$status_is_set = digimod_standard_has_status( $prepared_post->ID );
+	}
+
+	if ( ! $status_is_set ) {
+		return new WP_Error(
+			'digimod_standard_status_required',
+			'Standards require a Status before they can be published.',
+			array( 'status' => 400 )
+		);
+	}
+
+	return $prepared_post;
+}
+add_filter( 'rest_pre_insert_standard', 'digimod_require_standard_status_rest_save', 10, 2 );
+
+/**
+ * Reject REST saves that would publish a Standard without a Category.
+ *
+ * @param WP_Post|WP_Error $prepared_post Prepared post object.
+ * @param WP_REST_Request  $request       REST request.
+ *
+ * @return WP_Post|WP_Error
+ */
+function digimod_require_standard_category_rest_save( $prepared_post, $request ) {
+	if ( is_wp_error( $prepared_post ) || ! in_array( $prepared_post->post_status, array( 'publish', 'future', 'private' ), true ) ) {
+		return $prepared_post;
+	}
+
+	$category_is_set = false;
+	$request_params  = $request->get_params();
+
+	if ( array_key_exists( 'standard_category', $request_params ) ) {
+		$category_value  = $request_params['standard_category'];
+		$category_values = is_array( $category_value ) ? $category_value : array( $category_value );
+		$category_is_set = ! empty( array_filter( $category_values ) );
+	} elseif ( isset( $request_params['tax_input'] ) && is_array( $request_params['tax_input'] ) && array_key_exists( 'standard_category', $request_params['tax_input'] ) ) {
+		$category_value  = $request_params['tax_input']['standard_category'];
+		$category_values = is_array( $category_value ) ? $category_value : array( $category_value );
+		$category_is_set = ! empty( array_filter( $category_values ) );
+	} elseif ( $prepared_post->ID ) {
+		$category_is_set = digimod_standard_has_category( $prepared_post->ID );
+	}
+
+	if ( ! $category_is_set ) {
+		return new WP_Error(
+			'digimod_standard_category_required',
+			'Standards require at least one Standards Category before they can be published.',
+			array( 'status' => 400 )
+		);
+	}
+
+	return $prepared_post;
+}
+add_filter( 'rest_pre_insert_standard', 'digimod_require_standard_category_rest_save', 10, 2 );
+
+/**
+ * Final safeguard for published Standards without a Status.
+ *
+ * @param int     $post_id Post ID.
+ * @param WP_Post $post    Post object.
+ */
+function digimod_require_standard_status_after_save( $post_id, $post ) {
+	if ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || 'standard' !== $post->post_type || 'publish' !== $post->post_status || digimod_standard_has_status( $post_id ) ) {
+		return;
+	}
+
+	wp_update_post(
+		array(
+			'ID'          => $post_id,
+			'post_status' => 'draft',
+		)
+	);
+}
+add_action( 'save_post_standard', 'digimod_require_standard_status_after_save', 10, 2 );
+
+/**
+ * Final safeguard for classic saves without a Standards Category.
+ *
+ * @param int     $post_id Post ID.
+ * @param WP_Post $post    Post object.
+ */
+function digimod_require_standard_category_after_save( $post_id, $post ) {
+	if ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || 'standard' !== $post->post_type || 'publish' !== $post->post_status || digimod_standard_has_category( $post_id ) ) {
+		return;
+	}
+
+	wp_update_post(
+		array(
+			'ID'          => $post_id,
+			'post_status' => 'draft',
+		)
+	);
+}
+add_action( 'save_post_standard', 'digimod_require_standard_category_after_save', 10, 2 );
+
+/**
+ * Final safeguard for REST saves after taxonomy terms have been assigned.
+ *
+ * @param WP_Post         $post    Inserted post object.
+ * @param WP_REST_Request $request REST request.
+ * @param bool            $creating Whether this is a new post.
+ */
+function digimod_require_standard_status_after_rest_save( $post, $request, $creating ) {
+	unset( $request, $creating );
+
+	if ( 'standard' !== $post->post_type || 'publish' !== $post->post_status || digimod_standard_has_status( $post->ID ) ) {
+		return;
+	}
+
+	wp_update_post(
+		array(
+			'ID'          => $post->ID,
+			'post_status' => 'draft',
+		)
+	);
+}
+add_action( 'rest_after_insert_standard', 'digimod_require_standard_status_after_rest_save', 10, 3 );
+
+/**
+ * Final safeguard for REST saves without a Standards Category.
+ *
+ * @param WP_Post         $post    Inserted post object.
+ * @param WP_REST_Request $request REST request.
+ * @param bool            $creating Whether this is a new post.
+ */
+function digimod_require_standard_category_after_rest_save( $post, $request, $creating ) {
+	unset( $request, $creating );
+
+	if ( 'standard' !== $post->post_type || 'publish' !== $post->post_status || digimod_standard_has_category( $post->ID ) ) {
+		return;
+	}
+
+	wp_update_post(
+		array(
+			'ID'          => $post->ID,
+			'post_status' => 'draft',
+		)
+	);
+}
+add_action( 'rest_after_insert_standard', 'digimod_require_standard_category_after_rest_save', 10, 3 );
 
 // Begin function to check for updates to plugin.
 require_once 'digimod-update-check.php';

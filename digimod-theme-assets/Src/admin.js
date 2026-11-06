@@ -1,6 +1,7 @@
 import '../blocks/search-results/index.js';
 import '../blocks/vue-blocks/custom-filter-vue-block.js';
 import '../blocks/vue-blocks/glossary-vue-block.js';
+import '../blocks/vue-blocks/standards-filter-vue-block.js';
 
 
 

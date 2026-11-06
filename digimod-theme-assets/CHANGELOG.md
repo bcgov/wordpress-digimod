@@ -1,4 +1,7 @@
-## 1.5.1 Octomber 9, 2026
+## 1.6.0 November 6, 2026
+– Added IMIT Standards filtering tool
+
+## 1.5.1 October 9, 2026
 – Editor status category select handling for Standards taxonomy 
 – Glossary tweaks and improvements to work better with definitions with related styling updates
 

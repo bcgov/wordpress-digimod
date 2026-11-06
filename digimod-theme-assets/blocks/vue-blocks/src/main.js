@@ -1,6 +1,7 @@
 import './assets/main.css';
 import { createApp } from 'vue';
 import GlossaryApp from './glossaryApp.vue';
+import StandardsFilterApp from './standardsFilterApp.vue';
 import WcagFilterApp from './wcagFilterApp.vue';
 
 const appDefinitions = {
@@ -30,6 +31,24 @@ const appDefinitions = {
                 columns: Number.isNaN(columns) ? 3 : columns,
                 postType: element.dataset.postType || 'wcag-card',
                 postTypeLabel: element.dataset.postTypeLabel || 'WCAG card',
+                instanceId: element.dataset.instanceId || fallbackInstanceId,
+            };
+        },
+    },
+    'standards-filter': {
+        component: StandardsFilterApp,
+        getProps: (element, fallbackInstanceId) => {
+            const columns = Number.parseInt(element.dataset.columns || '3', 10);
+            const headingLevels = ['h2', 'h3', 'h4', 'h5', 'h6'];
+            const cardHeadingLevel = headingLevels.includes(element.dataset.cardHeadingLevel)
+                ? element.dataset.cardHeadingLevel
+                : 'h3';
+
+            return {
+                columns: Number.isNaN(columns) ? 3 : columns,
+                cardHeadingLevel,
+                cardHeadingFontSize: element.dataset.cardHeadingFontSize || '',
+                cardHeadingFontSizeSlug: element.dataset.cardHeadingFontSizeSlug || '',
                 instanceId: element.dataset.instanceId || fallbackInstanceId,
             };
         },
