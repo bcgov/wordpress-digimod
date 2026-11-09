@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DIGIMOD - Block Theme Frontend Enhancements
  * Description: A plugin to load custom scripts, styles and theme settings to augment the default BCGov Block Theme capabilities
- * Version: 1.6.0
+ * Version: 1.6.1
  * Author: Digimod
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -1263,6 +1263,17 @@ function remove_standard_status_editor_checkboxes() {
 add_action( 'enqueue_block_editor_assets', 'remove_standard_status_editor_checkboxes' );
 
 /**
+ * Get the default Status term ID for new Standards.
+ *
+ * @return int
+ */
+function digimod_standard_default_status_id() {
+	$term = get_term_by( 'slug', 'active', 'standard_status' );
+
+	return $term && ! is_wp_error( $term ) ? (int) $term->term_id : 0;
+}
+
+/**
  * Make a hierarchical taxonomy single-select in the classic taxonomy metabox.
  *
  * Change `standard_status` to your taxonomy slug.
@@ -1293,7 +1304,7 @@ function standard_status_single_select() {
 				[ 'fields' => 'ids' ]
 			);
 
-			$selected = $selected[0] ?? 0;
+			$selected = $selected[0] ?? digimod_standard_default_status_id();
 
 			$options = [];
 
@@ -1469,6 +1480,17 @@ function digimod_validate_standard_rest_requirements( $result, $server, $request
 
 	if ( ! in_array( $status, array( 'publish', 'future', 'private' ), true ) ) {
 		return $result;
+	}
+
+	// A new Standard uses Active by default. Set it on the request so the
+	// editor does not require the user to change the select before publishing.
+	if ( ! $post_id && ! array_key_exists( 'standard_status', $params ) && ( ! isset( $params['tax_input'] ) || ! is_array( $params['tax_input'] ) || ! array_key_exists( 'standard_status', $params['tax_input'] ) ) ) {
+		$default_status_id = digimod_standard_default_status_id();
+
+		if ( $default_status_id ) {
+			$request->set_param( 'standard_status', array( $default_status_id ) );
+			$params = $request->get_params();
+		}
 	}
 
 	$required_taxonomies = array(

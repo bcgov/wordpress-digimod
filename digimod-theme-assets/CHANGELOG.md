@@ -1,3 +1,6 @@
+## 1.6.1 November 9, 2026
+– Fixed default selection of Standard status to use Active by default
+
 ## 1.6.0 November 6, 2026
 – Added IMIT Standards filtering tool
 
