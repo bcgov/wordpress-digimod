@@ -1152,18 +1152,28 @@ function remove_standard_status_editor_checkboxes() {
 				var syncStandardStatusSelect = function() {
 					var select = document.querySelector('select[name=\"tax_input[%s][]\"]');
 
-					if (!select || select.dataset.digimodStatusSync) {
+					if (!select) {
 						return;
 					}
 
-					select.dataset.digimodStatusSync = 'true';
-					select.addEventListener('change', function() {
-						var selectedTerm = parseInt(select.value, 10);
-						wp.data.dispatch('core/editor').editPost({ '%s': selectedTerm ? [selectedTerm] : [] });
-					});
+					if (!select.dataset.digimodStatusSync) {
+						select.dataset.digimodStatusSync = 'true';
+						select.addEventListener('change', function() {
+							var selectedTerm = parseInt(select.value, 10);
+							wp.data.dispatch('core/editor').editPost({ '%s': selectedTerm ? [selectedTerm] : [] });
+						});
+					}
 
 					var selectedTerm = parseInt(select.value, 10);
-					wp.data.dispatch('core/editor').editPost({ '%s': selectedTerm ? [selectedTerm] : [] });
+					var editor = wp.data.select('core/editor');
+					var currentTerms = editor.getEditedPostAttribute('%s');
+					var hasTerms = Array.isArray(currentTerms)
+						? currentTerms.some(function(term) { return !!term; })
+						: !!currentTerms;
+
+					if (selectedTerm && !hasTerms) {
+						wp.data.dispatch('core/editor').editPost({ '%s': [selectedTerm] });
+					}
 				};
 
 				syncStandardStatusSelect();
@@ -1184,6 +1194,8 @@ function remove_standard_status_editor_checkboxes() {
 					if ('standard' !== currentPostType) {
 						return;
 					}
+
+					syncStandardStatusSelect();
 
 					var currentStatus = editor.getCurrentPostAttribute('status') || currentPost.status;
 					var postId = editor.getCurrentPostId ? editor.getCurrentPostId() : currentPost.id;
@@ -1253,6 +1265,7 @@ function remove_standard_status_editor_checkboxes() {
 				wp.data.subscribe(syncStandardRequirements);
 				syncStandardRequirements();
 			});",
+			esc_js( $taxonomy ),
 			esc_js( $taxonomy ),
 			esc_js( $taxonomy ),
 			esc_js( $taxonomy ),
@@ -1478,19 +1491,30 @@ function digimod_validate_standard_rest_requirements( $result, $server, $request
 	$params  = $request->get_params();
 	$status  = isset( $params['status'] ) && '' !== $params['status'] ? $params['status'] : ( $post ? $post->post_status : 'draft' );
 
-	if ( ! in_array( $status, array( 'publish', 'future', 'private' ), true ) ) {
-		return $result;
+	// Standards use Active by default. The editor can send an empty
+	// standard_status array even when the select displays that default, so set
+	// it on the request when the value is omitted or empty.
+	$status_was_sent = array_key_exists( 'standard_status', $params );
+	$status_value    = $status_was_sent ? $params['standard_status'] : null;
+
+	if ( ! $status_was_sent && isset( $params['tax_input'] ) && is_array( $params['tax_input'] ) && array_key_exists( 'standard_status', $params['tax_input'] ) ) {
+		$status_was_sent = true;
+		$status_value    = $params['tax_input']['standard_status'];
 	}
 
-	// A new Standard uses Active by default. Set it on the request so the
-	// editor does not require the user to change the select before publishing.
-	if ( ! $post_id && ! array_key_exists( 'standard_status', $params ) && ( ! isset( $params['tax_input'] ) || ! is_array( $params['tax_input'] ) || ! array_key_exists( 'standard_status', $params['tax_input'] ) ) ) {
+	$status_values = is_array( $status_value ) ? $status_value : array( $status_value );
+
+	if ( ! $status_was_sent || empty( array_filter( $status_values ) ) ) {
 		$default_status_id = digimod_standard_default_status_id();
 
 		if ( $default_status_id ) {
 			$request->set_param( 'standard_status', array( $default_status_id ) );
 			$params = $request->get_params();
 		}
+	}
+
+	if ( ! in_array( $status, array( 'publish', 'future', 'private' ), true ) ) {
+		return $result;
 	}
 
 	$required_taxonomies = array(
@@ -1549,8 +1573,24 @@ function digimod_require_standard_status_rest_save( $prepared_post, $request ) {
 		$status_value  = $request->get_param( 'standard_status' );
 		$status_values = is_array( $status_value ) ? $status_value : array( $status_value );
 		$status_is_set = ! empty( array_filter( $status_values ) );
+	} elseif ( $request->has_param( 'tax_input' ) && is_array( $request->get_param( 'tax_input' ) ) && array_key_exists( 'standard_status', $request->get_param( 'tax_input' ) ) ) {
+		$status_value  = $request->get_param( 'tax_input' )['standard_status'];
+		$status_values = is_array( $status_value ) ? $status_value : array( $status_value );
+		$status_is_set = ! empty( array_filter( $status_values ) );
 	} elseif ( $prepared_post->ID ) {
 		$status_is_set = digimod_standard_has_status( $prepared_post->ID );
+	}
+
+	// The editor can submit an empty value even though the Status select
+	// displays Active. Set the request value before WordPress processes
+	// taxonomy terms so the default is actually saved.
+	if ( ! $status_is_set ) {
+		$default_status_id = digimod_standard_default_status_id();
+
+		if ( $default_status_id ) {
+			$request->set_param( 'standard_status', array( $default_status_id ) );
+			$status_is_set = true;
+		}
 	}
 
 	if ( ! $status_is_set ) {
