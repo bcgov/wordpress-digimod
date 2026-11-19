@@ -1,3 +1,6 @@
+## 1.6.2 November 19, 2026
+– Fixed visitor-facing glossary filter title
+
 ## 1.6.1 November 9, 2026
 – Fixed default selection of Standard status to use Active by default
 
